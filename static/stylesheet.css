@@ -1,0 +1,27 @@
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#wrapper {
+    width: 300px;
+    margin: 0 auto;
+}
+
+#dropzone {
+    top: 50%;
+    margin: -150px auto 0 auto;
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+    
+    padding: 10px;
+    border: 1px solid black;
+}
+
+#ad {
+    margin-top: 10px;
+    border: 1px solid black;
+    height: 100px;
+    width: 100%;
+}
