@@ -1,27 +1,59 @@
-* {
+body {
     font-family: 'Open Sans', sans-serif;
 }
 
-#wrapper {
-    width: 300px;
+.wrapper {
+    width: 1000px;
     margin: 0 auto;
 }
 
-#dropzone {
-    top: 50%;
-    margin: -150px auto 0 auto;
+.content {
+    width: 1000px;
+    height: 650px;
     position: absolute;
-
-    width: 300px;
-    height: 300px;
-    
-    padding: 10px;
-    border: 1px solid black;
+    margin-top: -325px;
+    top: 50%;
+    padding: 5px;
 }
 
-#ad {
-    margin-top: 10px;
-    border: 1px solid black;
-    height: 100px;
-    width: 100%;
+.droparea {
+    border-radius: 5px;
+    border: 1px solid #000;
+    height: 640px;
+    width: 600px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    background: #eee;
+}
+
+.sidebar {
+    position: absolute;
+    right: 120px;
+    top: 0;
+    width: 274px;
+    padding: 5px;
+}
+
+.gad {
+    width: 120px;
+    height: 620px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: center;
+}
+
+a {
+    color: #08c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005580;
+    text-decoration: underline;
+}
+
+a.small {
+    font-size: 7pt;
 }
