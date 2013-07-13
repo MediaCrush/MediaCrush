@@ -1,0 +1,15 @@
+<html lang="en">
+    <!-- BTC 1F5cRcwzZNR3L9j5oVYkCtYhGgnGwiz6jA -->
+    <head>
+        <meta charset=utf-8 />
+        <title>gifquick</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+    </head>
+    <body>
+        <video width="560" height="340">
+            <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
+        </video>
+        <br />
+        <a href="{{ url_for('get_gif', id=filename) }}">Click here to download the original gif</a>
+    </body>
+</html>
