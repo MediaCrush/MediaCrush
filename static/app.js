@@ -53,11 +53,42 @@ function prepareImage(parentElement, file) {
     parentElement.appendChild(wrapper);
 }
 
+function showURL(result, url) {
+    var text = document.createElement('p');
+    text.innerHTML = "Upload complete!";
+    var link = document.createElement('a');
+    link.href = "/" + url;
+    link.setAttribute('target', '_blank');
+    link.innerHTML = window.location.origin + "/" + url;
+    result.appendChild(text);
+    result.appendChild(link);
+}
+
+function checkStatus(result, url) {
+    console.log("checking in");
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('GET', '/gif/status/' + url + '?' + Math.random());
+    xhr.onload = function() {
+        if (this.responseText == "done") {
+            document.getElementById(url + "-spinner").remove();
+            showURL(result, url)
+        } else {
+            // Try again.
+            setTimeout(function() {
+                checkStatus(result, url);
+            }, 1000);
+        }
+    };
+
+    xhr.send();
+}
+
 function uploadFile(progress, result, file) {
     var xhr = new XMLHttpRequest();
     
     xhr.open('POST', '/gif/');
-    xhr.onprogress = function(e) {
+    xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
             console.log(e.loaded + " " + e.total + " " + (e.loaded / e.total));
             progress.style.width = (e.loaded / e.total) * 100 + "%";
@@ -66,19 +97,29 @@ function uploadFile(progress, result, file) {
     xhr.onload = function() {
         progress.style.width = 0;
         var status = this.status;
-        console.log(this.responseText);
         var error = '';
+        var url = this.responseText;
+
         if (status == 415) {        // Unsupported media type
             error = 'This image format is not supported.';
-        } else if (status == 200 || status == 409) { // OK/already uploaded
-            var text = document.createElement('p');
-            text.innerHTML = "Upload complete!";
-            var link = document.createElement('a');
-            link.href = "/" + this.responseText;
-            link.setAttribute('target', '_blank');
-            link.innerHTML = window.location.origin + "/" + this.responseText;
-            result.appendChild(text);
-            result.appendChild(link);
+        } else if (status == 409) { // Already uploaded
+            showURL(result, url);
+        } else if (status == 200) { // OK
+            // Add the spinner overlay
+            overlay = document.createElement("div");
+            overlay.className = "overlay";
+            overlay.setAttribute("id", url + "-spinner");
+
+            img = document.createElement("img");
+            img.src = "/static/img/spinner.gif";
+
+            overlay.appendChild(img);
+            
+            p = result.parentNode;
+            p.insertBefore(overlay, p.firstChild);
+
+            // Start a timer that checks whether the gif has finished processing successfully.
+            checkStatus(result, url);
         } else {
             error = 'An error has occured. Please try again.';
         }

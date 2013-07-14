@@ -35,11 +35,18 @@ class GifView(FlaskView):
             filename = os.path.splitext(filename)[0]
 
             r.lpush(_k("gifqueue"), filename) # Add this job to the queue
+            r.set(_k("%s.lock" % filename), "1") # Add a processing lock
 
             return SERVER_STRING + filename
         else:
             return "no", 415
-   
+  
+    def status(self, id):
+        filename = id[2:]
+        if not r.exists(_k("%s.lock" % filename)):
+            return "done"
+        return "processing"
+
 class QuickView(FlaskView):
     route_base = '/'
 
