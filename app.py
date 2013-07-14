@@ -26,6 +26,10 @@ def index():
     opted_out = "ad-opt-out" in request.cookies
     return render_template("index.html", ads=not opted_out)
 
+@app.route("/demo")
+def demo():
+    return render_template("demo.html")
+
 GifView.register(app)
 QuickView.register(app)
 RawView.register(app)
