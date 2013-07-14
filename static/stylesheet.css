@@ -167,3 +167,19 @@ a:hover {
         background-position-x: 39px;
     }
 }
+
+.row .left {
+    float: left;
+}
+
+.row .right {
+    float: right;
+    text-align: right;
+}
+
+.row .middle {
+    float: left;
+    margin-left: 40px;
+    margin-top: 150px;
+    text-align: center;
+}

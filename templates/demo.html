@@ -2,7 +2,34 @@
 {% block content %}
 <div class="wrapper">
     <div class="content">
-        Test
+        <h1>GifQuick</h1>
+        <p>We make gifs load super fast. In fact, generally our gifs load about 10 times faster than
+        any other image hosting site. Why? Because we convert gifs to videos when you upload them.
+        You see, the gif <a href="https://en.wikipedia.org/wiki/GIF">file format</a> is actually
+        pretty ill-suited to animations. There have been huge advances in video compression since 
+        gif was first created. Specifically, GifQuick uses h.264 and vorbis to encode gifs as videos,
+        with dramatic results:</p>
+        <div class="row">
+            <div class="left">
+                <h3>GIF</h3>
+                <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
+                <p>Filesize: 1965 kB (~2.0 MB)</p>
+            </div>
+            <div class="middle">
+                Result:<br />
+                1600% compression
+            </div>
+            <div class="right">
+                <h3>Video</h3>
+                <video preload autoplay loop>
+                    <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
+                    <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
+                    <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
+                </video>
+                <p>Filesize: 118 kB (~0.118 MB)</p>
+            </div>
+        </div>
+        <p class="clearfix">Impressed? <a href="/">Try it for yourself</a>!</p>
     </div>
 </div>
 {% include "analytics.html" %}
