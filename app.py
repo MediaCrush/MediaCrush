@@ -1,16 +1,24 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, g
 from gifquick.views import GifView, QuickView, RawView
 from gifquick.config import _cfg
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
 
+@app.before_request
+def find_dnt():
+    field = "Dnt"
+    do_not_track = False
+    if field in request.headers:
+        do_not_track = True if request.headers[field] == "1" else False
+
+    g.do_not_track = do_not_track
+
 @app.context_processor
 def analytics():
     return {
         'analytics_id': _cfg("google_analytics_id"),
         'analytics_domain': _cfg("google_analytics_domain"),
-        'do_not_track': False,
     }
 
 @app.route("/")
