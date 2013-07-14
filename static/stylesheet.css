@@ -14,7 +14,7 @@ body {
     width: 40px;
     height: 40px;
     position: absolute;
-    top: 5px;
+    bottom: 5px;
     right: 130px;
 }
 
@@ -23,7 +23,7 @@ body {
     font-size: 14pt;
     color: #fff;
     right: 5px;
-    top: 10px;
+    bottom: 10px;
 }
 
 .wrapper {
@@ -88,6 +88,10 @@ body {
     background-size: 40px 40px;
     -webkit-animation: progressbar 1s linear infinite;
     animation: progressbar 1s linear infinite;
+}
+
+.progress-green {
+    background-color: #5eb95e;
 }
 
 .image-loading {
