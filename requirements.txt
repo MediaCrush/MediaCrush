@@ -3,6 +3,8 @@ Flask-Classy==0.6.3
 Jinja2==2.7
 MarkupSafe==0.18
 Werkzeug==0.9.1
+argparse==1.2.1
+gunicorn==17.5
 itsdangerous==0.22
 redis==2.7.6
 wsgiref==0.1.2
