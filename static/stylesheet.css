@@ -10,11 +10,12 @@ body {
     opacity: 0.6;
 }
 
-// TODO: Center this?
 .overlay img {
     width: 40px;
     height: 40px;
-    margin: 10px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 .wrapper {
