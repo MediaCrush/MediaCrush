@@ -16,7 +16,7 @@ body {
     padding: 5px;
 }
 
-.droparea {
+#droparea {
     border-radius: 5px;
     border: 1px solid #000;
     height: 640px;
@@ -110,7 +110,7 @@ a:hover {
     text-decoration: underline;
 }
 
-a.small {
+.small {
     font-size: 7pt;
 }
 

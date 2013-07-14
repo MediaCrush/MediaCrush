@@ -93,6 +93,18 @@ function evtNop(evt) {
     evt.preventDefault();
 }
 
+function evtEnter(evt) {
+    evt.target.setAttribute('class', 'hover');
+    evt.stopPropagation();
+    evt.preventDefault();
+}
+
+function evtLeave(evt) {
+    evt.target.setAttribute('class', '');
+    evt.stopPropagation();
+    evt.preventDefault();
+}
+
 function dropDo(evt) {
     evtNop(evt);
     var files = evt.dataTransfer.files;
