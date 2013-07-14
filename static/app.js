@@ -6,37 +6,6 @@ function handleFiles(files) {
     }
     uploading = true;
     uploadFiles(files);
-    return;
-    var file = files[0]; // TODO
-    var xhr = new XMLHttpRequest();
-    var droparea = document.getElementById('droparea');
-    
-    xhr.open('POST', '/gif/');
-    xhr.upload.onloadstart = function(evt) {
-    };
-    xhr.onload = function() {
-        var status = this.status;
-        if (status == 415) { // Unsupported media type
-            droparea.innerHTML = 'You need to upload a gif file. Try again.';
-            uploading = false;
-        } else if (status == 409) { // Conflict
-            droparea.innerHTML = 'That .gif is already uploaded.';
-            uploading = false;
-        } else if (status == 400) { // Bad Request
-            droparea.innerHTML = 'Bad request. Please specify a quality in the 1..10 range.'; 
-            uploading = false;
-        } else if (status == 500) { // Internal Server Error
-            droparea.innerHTML = 'Server error. Please try again.'; 
-            uploading = false;
-        } else if (status == 200) { // Ok
-            //location.href = this.responseText;
-            uploading = false;
-        }
-    };
-
-    var formData = new FormData();
-    formData.append('gif', file);
-    xhr.send(formData);
 }
 
 function uploadFiles(files) {
