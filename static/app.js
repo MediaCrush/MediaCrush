@@ -64,19 +64,20 @@ function showURL(result, url) {
     result.appendChild(link);
 }
 
-function checkStatus(result, url) {
+function checkStatus(processing, progress, result, url) {
     console.log('checking in');
     var xhr = new XMLHttpRequest();
 
     xhr.open('GET', '/gif/status/' + url + '?' + Math.random());
     xhr.onload = function() {
         if (this.responseText == 'done') {
-            document.getElementById(url + '-spinner').remove();
+            progress.style.width = 0;
+            processing.remove();
             showURL(result, url)
         } else {
             // Try again.
             setTimeout(function() {
-                checkStatus(result, url);
+                checkStatus(processing, progress, result, url);
             }, 1000);
         }
     };
@@ -105,25 +106,15 @@ function uploadFile(progress, result, file) {
         } else if (status == 409) { // Already uploaded
             showURL(result, url);
         } else if (status == 200) { // OK
-            // Add the spinner overlay
-            overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            overlay.setAttribute('id', url + '-spinner');
-
             processing = document.createElement('span');
             processing.innerHTML = 'Processing...';
 
-            img = document.createElement('img');
-            img.src = '/static/img/spinner.gif';
-
-            overlay.appendChild(processing);
-            overlay.appendChild(img);
-            
-            p = result.parentNode;
-            p.insertBefore(overlay, p.firstChild);
+            progress.style.width = "100%";
+            progress.className += " progress-green"
+            result.appendChild(processing);
 
             // Start a timer that checks whether the gif has finished processing successfully.
-            //checkStatus(result, url);
+            checkStatus(processing, progress, result, url);
         } else {
             error = 'An error has occured. Please try again.';
         }
