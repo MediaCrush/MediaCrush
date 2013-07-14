@@ -51,6 +51,11 @@ class GifView(FlaskView):
     def status(self, id):
         filename = id[2:]
         if not r.exists(_k("%s.lock" % filename)):
+            if r.exists(_k("%s.error" % filename)):
+                failure_type = r.get(_k("%s.error" % filename))
+                r.delete(_k("%s.error") % filename)
+
+                return failure_type
             return "done"
         return "processing"
 

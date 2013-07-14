@@ -84,10 +84,18 @@ function checkStatus(processing, progress, result, url) {
 
     xhr.open('GET', '/gif/status/' + url);
     xhr.onload = function() {
-        if (this.responseText == 'done') {
+        var response = this.responseText;
+        if (response == 'done') {
             progress.style.width = 0;
             processing.remove();
             showURL(result, url)
+        } else if (response == 'timeout' || response == 'error') {
+            error = document.createElement("span");
+            if (response == 'timeout') {
+                error.innerHTML = "This file took too long to process.";
+            } else {
+                error.innerHTML = "There was an error processing this file.";
+            }
         } else {
             // Try again.
             setTimeout(function() {
