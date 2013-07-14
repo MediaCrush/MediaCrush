@@ -9,3 +9,6 @@ redis-ip = 127.0.0.1
 redis-port = 6379
 
 secret_key = !!CHANGEME!!
+
+google_analytics_id = UA-00000000-0
+google_analytics_domain = gifquick.net
