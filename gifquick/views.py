@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flask import render_template, request, current_app, send_from_directory, url_for
+from flask import render_template, request, current_app, send_from_directory, url_for, abort, send_file
 from werkzeug import secure_filename
 import os
 import hashlib
@@ -74,5 +74,7 @@ class RawView(FlaskView):
 
     @route("/<id>.gif", endpoint="get_gif") 
     def gif(self, id):
-        return send_from_directory(_cfg("upload_folder"), id + ".gif") 
- 
+        if ".." in id or id.startswith("/"):
+            abort(404)
+        path = os.path.join(_cfg("upload_folder"), id + ".gif")
+        return send_file(path, as_attachment=True)
