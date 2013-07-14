@@ -55,23 +55,23 @@ function prepareImage(parentElement, file) {
 
 function showURL(result, url) {
     var text = document.createElement('p');
-    text.innerHTML = "Upload complete!";
+    text.innerHTML = 'Upload complete!';
     var link = document.createElement('a');
-    link.href = "/" + url;
+    link.href = '/' + url;
     link.setAttribute('target', '_blank');
-    link.innerHTML = window.location.origin + "/" + url;
+    link.innerHTML = window.location.origin + '/' + url;
     result.appendChild(text);
     result.appendChild(link);
 }
 
 function checkStatus(result, url) {
-    console.log("checking in");
+    console.log('checking in');
     var xhr = new XMLHttpRequest();
 
     xhr.open('GET', '/gif/status/' + url + '?' + Math.random());
     xhr.onload = function() {
-        if (this.responseText == "done") {
-            document.getElementById(url + "-spinner").remove();
+        if (this.responseText == 'done') {
+            document.getElementById(url + '-spinner').remove();
             showURL(result, url)
         } else {
             // Try again.
@@ -90,8 +90,8 @@ function uploadFile(progress, result, file) {
     xhr.open('POST', '/gif/');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
-            console.log(e.loaded + " " + e.total + " " + (e.loaded / e.total));
-            progress.style.width = (e.loaded / e.total) * 100 + "%";
+            console.log(e.loaded + ' ' + e.total + ' ' + (e.loaded / e.total));
+            progress.style.width = (e.loaded / e.total) * 100 + '%';
         }
     };
     xhr.onload = function() {
@@ -106,15 +106,15 @@ function uploadFile(progress, result, file) {
             showURL(result, url);
         } else if (status == 200) { // OK
             // Add the spinner overlay
-            overlay = document.createElement("div");
-            overlay.className = "overlay";
-            overlay.setAttribute("id", url + "-spinner");
+            overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.setAttribute('id', url + '-spinner');
 
             processing = document.createElement('span');
             processing.innerHTML = 'Processing...';
 
-            img = document.createElement("img");
-            img.src = "/static/img/spinner.gif";
+            img = document.createElement('img');
+            img.src = '/static/img/spinner.gif';
 
             overlay.appendChild(processing);
             overlay.appendChild(img);
