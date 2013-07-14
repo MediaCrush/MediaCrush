@@ -82,7 +82,7 @@ function checkStatus(processing, progress, result, url) {
     console.log('checking in');
     var xhr = new XMLHttpRequest();
 
-    xhr.open('GET', '/gif/status/' + url + '?' + Math.random());
+    xhr.open('GET', '/gif/status/' + url);
     xhr.onload = function() {
         if (this.responseText == 'done') {
             progress.style.width = 0;
