@@ -11,11 +11,13 @@
             <p>Simply drag and drop your gif files on the left to upload them. It takes us a moment to process each
             gif, since we convert them to videos to improve loading speed. On average, this makes our gifs load
             about 10 times faster!</p>
-            <p>GifQuick is open source! Browse the code <a href="https://github.com/SirCmpwn/GifQuick" target="_blank">here</a>.</p>
+            <p>GifQuick is open source! Browse the code <a href="https://github.com/GifQuick/GifQuick" target="_blank">here</a>.</p>
         </div>
         <div class="gad">
+            {% if ads %}
             <img src="http://placehold.it/120x600" />
-            <a href="#" class="small">Click here to disable ads</a>
+            <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
+            {% endif %}
         </div>
     </div>
 </div>

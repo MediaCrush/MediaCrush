@@ -1,5 +1,20 @@
 var firstUpload = true;
 
+function createCookie(name,value,days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function adOptOut() {
+    createCookie("ad-opt-out", '1', 0);
+    location.href = "/";
+}
+
 function handleFiles(files) {
     uploadFiles(files);
 }
