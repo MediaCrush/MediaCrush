@@ -1,17 +1,16 @@
-var uploading = false;
+var firstUpload = true;
 
 function handleFiles(files) {
-    if (uploading) {
-        return;
-    }
-    uploading = true;
     uploadFiles(files);
 }
 
 function uploadFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
-    droparea.innerHTML = '';
+    if (firstUpload) {
+        droparea.innerHTML = '';
+        firstUpload = false;
+    }
     for (var i = 0; i < files.length; i++) {
         var element = document.createElement('div');
         element.className = 'image-loading';

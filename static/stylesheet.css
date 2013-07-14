@@ -80,7 +80,7 @@ body {
     width: 50%;
     position: absolute;
     bottom: 0;
-    left: 0;
+    left: 201px;
     background-color: #149bdf;
     background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
@@ -118,7 +118,8 @@ body {
 .img-wrapper {
     float: left;
     width: 200px;
-    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #888;
 }
 
 .image-loading .img-wrapper img {
