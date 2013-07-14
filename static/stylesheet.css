@@ -52,8 +52,8 @@ body {
 
 /* Mostly stolen from Twitter bootstrap */
 .progress {
-    height: 18px;
-    width: 0;
+    height: 8px;
+    width: 50%;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -83,6 +83,8 @@ body {
 
 .image-loading h2, .image-loading p {
     margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .img-wrapper {
@@ -112,6 +114,11 @@ a:hover {
 
 .small {
     font-size: 7pt;
+}
+
+.error {
+    color: red;
+    font-size: 10pt;
 }
 
 @-webkit-keyframes progressbar {

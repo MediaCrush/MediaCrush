@@ -21,7 +21,7 @@ class GifView(FlaskView):
 
         if gif and allowed_file(gif.filename):
             h = get_hash(gif)
-            filename = "%s.gif" % h[:6] 
+            filename = "%s.gif" % h[:8] 
 
             path = os.path.join(_cfg("upload_folder"), filename)
             if os.path.isfile(path):

@@ -14,7 +14,7 @@ function uploadFiles(files) {
     droparea.innerHTML = '';
     for (var i = 0; i < files.length; i++) {
         var element = document.createElement('div');
-        element.setAttribute('class', 'image-loading');
+        element.className = 'image-loading';
         prepareImage(element, files[i]);
         
         var name = document.createElement('h2');
@@ -23,10 +23,10 @@ function uploadFiles(files) {
         var result = document.createElement('div');
 
         var progress = document.createElement('div');
-        progress.setAttribute('class', 'progress');
+        progress.className = 'progress';
 
         var clearfix = document.createElement('div');
-        clearfix.setAttribute('class', 'clearfix');
+        clearfix.className = 'clearfix';
 
         element.appendChild(name);
         element.appendChild(result);
@@ -59,6 +59,7 @@ function uploadFile(progress, result, file) {
     xhr.open('POST', '/gif/');
     xhr.onprogress = function(e) {
         if (e.lengthComputable) {
+            console.log(e.loaded + " " + e.total + " " + (e.loaded / e.total));
             progress.style.width = (e.loaded / e.total) * 100 + "%";
         }
     };
@@ -81,6 +82,12 @@ function uploadFile(progress, result, file) {
         } else {
             error = 'An error has occured. Please try again.';
         }
+        if (error != '') {
+            var errorText = document.createElement('p');
+            errorText.innerHTML = 'Error: ' + error;
+            errorText.className = 'error';
+            result.appendChild(errorText);
+        }
     };
 
     var formData = new FormData();
@@ -94,15 +101,15 @@ function evtNop(evt) {
 }
 
 function evtEnter(evt) {
-    evt.target.setAttribute('class', 'hover');
     evt.stopPropagation();
     evt.preventDefault();
+    evt.target.className = 'hover';
 }
 
-function evtLeave(evt) {
-    evt.target.setAttribute('class', '');
+function evtExit(evt) {
     evt.stopPropagation();
     evt.preventDefault();
+    evt.target.className = '';
 }
 
 function dropDo(evt) {
@@ -117,8 +124,8 @@ function dropDo(evt) {
 
 function dropEnable() {
     var droparea = document.getElementById('droparea');
-    droparea.addEventListener('dragenter', evtNop, false);
-    droparea.addEventListener('dragexit', evtNop, false);
+    droparea.addEventListener('dragenter', evtEnter, false);
+    droparea.addEventListener('dragexit', evtExit, false);
     droparea.addEventListener('dragover', evtNop, false);
     droparea.addEventListener('drop', dropDo, false);
 }
