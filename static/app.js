@@ -110,16 +110,20 @@ function uploadFile(progress, result, file) {
             overlay.className = "overlay";
             overlay.setAttribute("id", url + "-spinner");
 
+            processing = document.createElement('span');
+            processing.innerHTML = 'Processing...';
+
             img = document.createElement("img");
             img.src = "/static/img/spinner.gif";
 
+            overlay.appendChild(processing);
             overlay.appendChild(img);
             
             p = result.parentNode;
             p.insertBefore(overlay, p.firstChild);
 
             // Start a timer that checks whether the gif has finished processing successfully.
-            checkStatus(result, url);
+            //checkStatus(result, url);
         } else {
             error = 'An error has occured. Please try again.';
         }

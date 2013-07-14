@@ -14,8 +14,16 @@ body {
     width: 40px;
     height: 40px;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    top: 5px;
+    right: 130px;
+}
+
+.overlay span {
+    position: absolute;
+    font-size: 14pt;
+    color: #fff;
+    right: 5px;
+    top: 10px;
 }
 
 .wrapper {
