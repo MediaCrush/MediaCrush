@@ -4,11 +4,12 @@
         <meta charset=utf-8 />
         <title>gifquick</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+        <style type="text/css">body{margin:0;padding:0;}</style>
     </head>
     <body>
-        <video width="560" height="340" preload autoplay loop>
-            <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
+        <video preload autoplay loop>
             <source src="{{ url_for('get_mp4', id=filename) }}" type='video/mp4;'>
+            <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
         </video>
         <br />
         <a href="{{ url_for('get_gif', id=filename) }}">Click here to download the original gif</a>

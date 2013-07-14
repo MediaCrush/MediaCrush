@@ -18,10 +18,6 @@ def get_hash(f):
 class GifView(FlaskView):
     def post(self):
         gif = request.files['gif']
-        quality = int(request.form['quality'])
-
-        if quality < 1 or quality > 10:
-            return "no", 400
 
         if gif and allowed_file(gif.filename):
             h = get_hash(gif)
@@ -30,7 +26,7 @@ class GifView(FlaskView):
             path = os.path.join(_cfg("upload_folder"), filename)
             if os.path.isfile(path):
                 if h == get_hash(open(path, "r")):
-                    return "no", 409
+                    return SERVER_STRING + filename[:-4], 409
                 else:
                     filename = "%s.gif" % h[:7]
 
@@ -38,9 +34,9 @@ class GifView(FlaskView):
             gif.save(path)
             filename = os.path.splitext(filename)[0]
 
-            r.lpush(_k("gifqueue"), filename + "." + str(quality)) # Add this job to the queue
+            r.lpush(_k("gifqueue"), filename) # Add this job to the queue
 
-            return url_for('QuickView:get', id=SERVER_STRING + filename)
+            return SERVER_STRING + filename
         else:
             return "no", 415
    

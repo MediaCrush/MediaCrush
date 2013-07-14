@@ -20,18 +20,24 @@ body {
     border-radius: 5px;
     border: 1px solid #000;
     height: 640px;
-    width: 600px;
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
+    width: 590px;
     background: #eee;
+    position: relative;
+    padding: 5px;
+}
+
+#droptext {
+    width: 100%;
+    height: 100%;
+    line-height: 640px;
+    text-align: center;
 }
 
 .sidebar {
     position: absolute;
     right: 110px;
     top: 0;
-    width: 274px;
+    width: 270px;
     padding: 10px;
 }
 
@@ -42,6 +48,56 @@ body {
     right: 0;
     top: 0;
     text-align: center;
+}
+
+/* Mostly stolen from Twitter bootstrap */
+.progress {
+    height: 18px;
+    width: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #149bdf;
+    background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+    -webkit-animation: progressbar 1s linear infinite;
+    animation: progressbar 1s linear infinite;
+}
+
+.image-loading {
+    clear: both;
+    margin-bottom: 5px;
+    border: 1px solid #888;
+    background: white;
+    border-radius: 5px;
+    height: 112px;
+    overflow: hidden;
+    position: relative;
+}
+
+.image-loading:last-child {
+    margin-bottom: 0;
+}
+
+.image-loading h2, .image-loading p {
+    margin: 0;
+}
+
+.img-wrapper {
+    float: left;
+    width: 200px;
+    padding-right: 10px;
+}
+
+.image-loading .img-wrapper img {
+    max-width: 200px;
+    max-height: 113px;
+}
+
+.clearfix {
+    clear: both;
 }
 
 a {
@@ -56,4 +112,22 @@ a:hover {
 
 a.small {
     font-size: 7pt;
+}
+
+@-webkit-keyframes progressbar {
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: 39px;
+    }
+}
+
+@keyframes progressbar {
+    from {
+        background-position-x: 0px;
+    }
+    to {
+        background-position-x: 39px;
+    }
 }

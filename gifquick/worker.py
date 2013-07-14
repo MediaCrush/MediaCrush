@@ -28,14 +28,14 @@ class TimeLimitedCommand(object):
 
         return self.process.returncode
 
-def process_gif(filename, quality):
-    path = os.path.join(_cfg("upload_folder"), filename + ".gif")
+def process_gif(filename):
+    path = os.path.join(_cfg("upload_folder"), [filename + ".gif"])
     folder = tempfile.mkdtemp()
     
     # Generate videos
     outputpath = os.path.join(_cfg("processed_folder"), filename)
-    for ext in ["ogv", "mp4"]:
-        TimeLimitedCommand(["ffmpeg", "-i", path, "-q", quality, "-pix_fmt", "yuv420p", "%s.%s" % (outputpath, ext)]).run()
+    TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]).run()
+    TimeLimitedCommand(["ffmpeg", "-i", path, "-q", 5, "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]).run()
 
     # Delete temporary folder
     shutil.rmtree(folder)

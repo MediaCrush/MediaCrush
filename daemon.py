@@ -7,8 +7,8 @@ if __name__ == '__main__':
     while True:
         while r.llen(_k("gifqueue")):
             job = r.lpop(_k("gifqueue")) 
-            gif, quality = job.rsplit(".")
-            process_gif(gif, quality)
+            gif = job.rsplit(".")
+            process_gif(gif)
 
             print "Processed", gif
        
