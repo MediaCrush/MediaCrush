@@ -6,8 +6,9 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
     </head>
     <body>
-        <video width="560" height="340">
+        <video width="560" height="340" preload autoplay loop>
             <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
+            <source src="{{ url_for('get_mp4', id=filename) }}" type='video/mp4;'>
         </video>
         <br />
         <a href="{{ url_for('get_gif', id=filename) }}">Click here to download the original gif</a>

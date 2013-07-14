@@ -1,4 +1,4 @@
-function handleFiles(files)
+function handleFiles(files, quality)
 {
     var file = files[0]; // TODO
     var xhr = new XMLHttpRequest();
@@ -9,17 +9,30 @@ function handleFiles(files)
         dropzone.innerHTML = "Uploading...";
     }
     xhr.onload = function() {
-        if(this.status == 415) // Unsupported media type
+        console.log(this);
+        var status = this.status;
+        if(status == 415) // Unsupported media type
         {
             dropzone.innerHTML = "You need to upload a gif file. Try again.";
-        } else if(status == 200) 
+        } else if(status == 409) // Conflict
+        {
+            dropzone.innerHTML = "That .gif is already uploaded.";
+        } else if(status == 400) // Bad Request
+        {
+            dropzone.innerHTML = "Bad request. Please specify a quality in the 1..10 range."; 
+        } else if(status == 500) // Internal Server Error
+        {
+            dropzone.innerHTML = "Server error. Please try again."; 
+        } else if(status == 200) // Ok
         {
             location.href = this.responseText;
+            console.log(this.responseText);
         }
     }
 
     var formData = new FormData();
     formData.append("gif", file);
+    formData.append("quality", quality);
     xhr.send(formData);
 }
 
@@ -37,7 +50,7 @@ function dropDo(evt)
 
     if(count > 0)
     {
-        handleFiles(files);
+        handleFiles(files, 5);
     }
 }
 
