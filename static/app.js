@@ -96,6 +96,9 @@ function checkStatus(processing, progress, result, url) {
             } else {
                 error.innerHTML = "There was an error processing this file.";
             }
+
+            error.className = "error";
+            result.appendChild(error);
         } else {
             // Try again.
             setTimeout(function() {
@@ -137,6 +140,8 @@ function uploadFile(progress, result, file) {
 
             // Start a timer that checks whether the gif has finished processing successfully.
             checkStatus(processing, progress, result, url);
+        } else if (status == 400) {
+            error = 'You have consumed your hourly quota. Please try again later.';
         } else {
             error = 'An error has occured. Please try again.';
         }

@@ -10,5 +10,7 @@ redis-port = 6379
 
 secret_key = !!CHANGEME!!
 
+bytes_per_hour = 250000000
+
 google_analytics_id = UA-00000000-0
 google_analytics_domain = gifquick.net

@@ -6,6 +6,7 @@ import hashlib
 
 from .config import _cfg
 from .database import r, _k
+from .ratelimit import rate_limit_exceeded, rate_limit_update
 
 SERVER_STRING = "00"
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
@@ -23,6 +24,10 @@ class GifView(FlaskView):
         gif = request.files['gif']
 
         if gif and allowed_file(gif.filename):
+            rate_limit_update(gif)
+            if rate_limit_exceeded():
+                return "ratelimit", 400
+
             h = get_hash(gif)
             filename = "%s.%s" % (h[:8], extension(gif.filename))
 
