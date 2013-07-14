@@ -11,8 +11,8 @@ function createCookie(name,value,days) {
 }
 
 function adOptOut() {
-    createCookie("ad-opt-out", '1', 0);
-    location.href = "/";
+    createCookie('ad-opt-out', '1', 0);
+    document.getElementById('gad').remove();
 }
 
 function handleFiles(files) {
