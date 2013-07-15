@@ -44,9 +44,9 @@ def process_gif(filename):
     # Generate videos
     outputpath = os.path.join(_cfg("processed_folder"), filename)
     code, exit = TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]).run()
-    statuscode += code, exited |= exit
+    statuscode += code; exited |= exit
     code, exit = TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]).run()
-    statuscode += code, exited |= exit
+    statuscode += code; exited |= exit
 
     # Remove "processing lock"
     r.delete(_k("%s.lock" % filename))
