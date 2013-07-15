@@ -33,7 +33,10 @@ class GifView(FlaskView):
             path = os.path.join(_cfg("upload_folder"), filename)
             if os.path.isfile(path):
                 if h == get_hash(open(path, "r")):
-                    return filename[:-4], 409
+                    if (extension(gif.filename) == "gif"):
+                        return filename[:-4], 409
+                    else:
+                        return filename, 409
                 else:
                     filename = "%s.%s" % (h[:7], extension(gif.filename))
 
