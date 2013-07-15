@@ -163,18 +163,6 @@ function evtNop(evt) {
     evt.preventDefault();
 }
 
-function evtEnter(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    evt.target.className = 'hover';
-}
-
-function evtExit(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    evt.target.className = '';
-}
-
 function dropDo(evt) {
     evtNop(evt);
     var files = evt.dataTransfer.files;
@@ -187,8 +175,8 @@ function dropDo(evt) {
 
 function dropEnable() {
     var droparea = document.getElementById('droparea');
-    droparea.addEventListener('dragenter', evtEnter, false);
-    droparea.addEventListener('dragexit', evtExit, false);
+    droparea.addEventListener('dragenter', evtNop, false);
+    droparea.addEventListener('dragexit', evtNop, false);
     droparea.addEventListener('dragover', evtNop, false);
     droparea.addEventListener('drop', dropDo, false);
 }
