@@ -5,6 +5,7 @@ from gifquick.config import _cfg
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
 
+
 @app.before_request
 def find_dnt():
     field = "Dnt"
@@ -14,6 +15,7 @@ def find_dnt():
 
     g.do_not_track = do_not_track
 
+
 @app.context_processor
 def analytics():
     return {
@@ -21,10 +23,12 @@ def analytics():
         'analytics_domain': _cfg("google_analytics_domain"),
     }
 
+
 @app.route("/")
 def index():
     opted_out = "ad-opt-out" in request.cookies
     return render_template("index.html", ads=not opted_out)
+
 
 @app.route("/demo")
 def demo():
