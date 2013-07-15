@@ -64,6 +64,12 @@ class GifView(FlaskView):
             return "done"
         return "processing"
 
+    def get(self, id):
+        if ".." in id or id.startswith("/"):
+            abort(404)
+        path = os.path.join(_cfg("upload_folder"), id + ".gif")
+        return send_file(path, as_attachment=True)
+
 class QuickView(FlaskView):
     route_base = '/'
 

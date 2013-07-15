@@ -13,7 +13,7 @@
                 <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
             </video>
             <br />
-            <a href="{{ url_for('get_gif', id=filename) }}" style="text-align: center; display: block;">Download original gif</a>
+            <a href="{{ url_for('GifView:get', id=filename) }}" style="text-align: center; display: block;">Download original gif</a>
         </div>
     </body>
     {% include "analytics.html" %}
