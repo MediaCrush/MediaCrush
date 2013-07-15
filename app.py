@@ -17,8 +17,10 @@ def find_dnt():
 
 
 @app.context_processor
-def analytics():
+def inject():
+    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
     return {
+        'mobile': mobile,
         'analytics_id': _cfg("google_analytics_id"),
         'analytics_domain': _cfg("google_analytics_domain"),
     }
