@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, g
-from gifquick.views import GifView, QuickView, RawView
+from gifquick.views import GifView, QuickView, RawView, HookView
 from gifquick.config import _cfg
 
 app = Flask(__name__)
@@ -34,6 +34,7 @@ def index():
 def demo():
     return render_template("demo.html")
 
+HookView.register(app)
 GifView.register(app)
 QuickView.register(app)
 RawView.register(app)

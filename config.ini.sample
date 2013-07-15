@@ -6,6 +6,10 @@ upload_folder = original_gifs
 processed_folder = video
 max_processing_time = 60
 
+hook_ips = 204.232.175.64/27,192.30.252.0/22,127.0.0.1
+hook_branch = master
+restart_command = supervisorctl reload
+
 redis-ip = 127.0.0.1
 redis-port = 6379
 
