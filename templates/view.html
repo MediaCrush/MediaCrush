@@ -11,6 +11,8 @@
             <video preload autoplay loop>
                 <source src="{{ url_for('get_mp4', id=filename) }}" type='video/mp4;'>
                 <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
+                <!-- Fallback -->
+                <img src="{{ url_for('GifView:get'), id=filename }}" />
             </video>
             <br />
             <a href="{{ url_for('GifView:get', id=filename) }}" style="text-align: center; display: block;">Download original gif</a>
