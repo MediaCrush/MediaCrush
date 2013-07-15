@@ -8,7 +8,6 @@ from .config import _cfg
 from .database import r, _k
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 
-SERVER_STRING = "00"
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
@@ -29,12 +28,12 @@ class GifView(FlaskView):
                 return "ratelimit", 400
 
             h = get_hash(gif)
-            filename = "%s.%s" % (h[:8], extension(gif.filename))
+            filename = "%s.%s" % (h[:10], extension(gif.filename))
 
             path = os.path.join(_cfg("upload_folder"), filename)
             if os.path.isfile(path):
                 if h == get_hash(open(path, "r")):
-                    return SERVER_STRING + filename[:-4], 409
+                    return filename[:-4], 409
                 else:
                     filename = "%s.%s" % (h[:7], extension(gif.filename))
 
@@ -49,12 +48,12 @@ class GifView(FlaskView):
             r.lpush(_k("gifqueue"), filename) # Add this job to the queue
             r.set(_k("%s.lock" % filename), "1") # Add a processing lock
 
-            return SERVER_STRING + filename
+            return filename
         else:
             return "no", 415
   
     def status(self, id):
-        filename = id[2:]
+        filename = id
         if not r.exists(_k("%s.lock" % filename)):
             if r.exists(_k("%s.error" % filename)):
                 failure_type = r.get(_k("%s.error" % filename))
@@ -75,9 +74,9 @@ class QuickView(FlaskView):
 
     def get(self, id):
         if "." in id:
-            return send_from_directory(_cfg("upload_folder"), id[2:])
+            return send_from_directory(_cfg("upload_folder"), id)
 
-        return render_template("view.html", filename=id[2:])
+        return render_template("view.html", filename=id)
 
 class RawView(FlaskView):
     @route("/<id>.ogv", endpoint="get_ogv")
