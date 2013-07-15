@@ -20,7 +20,7 @@ Note: you'll need libtheora enabled to output ogv files.
 
 Pull the repository to a folder:
 
-    git pull http://github.com/GifQuick/GifQuick /home/service/webapps/gifquick
+    git clone http://github.com/GifQuick/GifQuick /home/service/webapps/gifquick
 
 Create a virtual environment:
 Note: you'll need to use python2. If python3 is your default python interpreter, add "--python=python2" to the `virtualenv` command.
