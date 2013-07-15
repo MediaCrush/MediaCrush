@@ -5,12 +5,11 @@ from subprocess import call
 import os
 import hashlib
 import json
-import socket
-import struct
 
 from .config import _cfg
 from .database import r, _k
 from .ratelimit import rate_limit_exceeded, rate_limit_update
+from .network import addressInNetwork
 
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
 
@@ -92,7 +91,6 @@ class QuickView(FlaskView):
 
 
 class HookView(FlaskView):
-
     def post(self):
         allow = False
         for ip in _cfg("hook_ips").split(","):
@@ -125,24 +123,3 @@ class RawView(FlaskView):
     @route("/<id>.mp4", endpoint="get_mp4")
     def mp4(self, id):
         return send_from_directory(_cfg("processed_folder"), id + ".mp4")
-
-
-def makeMask(n):
-    "return a mask of n bits as a long integer"
-    return (2L << n - 1) - 1
-
-
-def dottedQuadToNum(ip):
-    "convert decimal dotted quad string to long integer"
-    parts = ip.split(".")
-    return int(parts[0]) | (int(parts[1]) << 8) | (int(parts[2]) << 16) | (int(parts[3]) << 24)
-
-
-def networkMask(ip, bits):
-    "Convert a network address to a long integer"
-    return dottedQuadToNum(ip) & makeMask(bits)
-
-
-def addressInNetwork(ip, net):
-    "Is an address in a network"
-    return ip & net == net
