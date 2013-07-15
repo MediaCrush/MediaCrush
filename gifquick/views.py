@@ -41,7 +41,7 @@ class GifView(FlaskView):
             gif.save(path)
 
             if extension(gif.filename) != "gif":
-                return SERVER_STRING + filename
+                return filename
 
             filename = os.path.splitext(filename)[0]
 
