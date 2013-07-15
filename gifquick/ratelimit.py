@@ -16,5 +16,5 @@ def rate_limit_update(f):
     f.seek(0)
 
     if not r.exists(key):
-        r.setex(key, 3600 * 60 * 60, b)
+        r.setex(key, 3600, b)
     else: r.incrby(key, b)
