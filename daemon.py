@@ -12,5 +12,4 @@ if __name__ == '__main__':
             job = r.lpop(_k("gifqueue")) 
             pool.apply_async(process_gif, args=(job,))
        
-        print "Sleeping" 
         time.sleep(1)
