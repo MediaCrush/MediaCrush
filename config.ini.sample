@@ -6,6 +6,11 @@ upload_folder = original_gifs
 processed_folder = video
 max_processing_time = 60
 
+# Hooks allow the site to rebuild itself when there's a commit to the repository
+# POST github-style hook messages to /hook/ to update
+# Only these IP (ranges) will be allowed. By default, we use localhost and the
+# GitHub hook IPs.
+# The site will `git pull` and then execute restart_command
 hook_ips = 204.232.175.64/27,192.30.252.0/22,127.0.0.1
 hook_branch = master
 restart_command = supervisorctl reload
