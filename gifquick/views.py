@@ -96,10 +96,3 @@ class RawView(FlaskView):
     @route("/<id>.mp4", endpoint="get_mp4")
     def mp4(self, id):
         return send_from_directory(_cfg("processed_folder"), id + ".mp4")
-
-    @route("/<id>.gif", endpoint="get_gif")
-    def gif(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(404)
-        path = os.path.join(_cfg("upload_folder"), id + ".gif")
-        return send_file(path, as_attachment=True)
