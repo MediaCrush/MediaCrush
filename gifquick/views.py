@@ -5,7 +5,8 @@ from subprocess import call
 import os
 import hashlib
 import json
-import socket,struct
+import socket
+import struct
 
 from .config import _cfg
 from .database import r, _k
@@ -89,7 +90,9 @@ class QuickView(FlaskView):
 
         return render_template("view.html", filename=id)
 
+
 class HookView(FlaskView):
+
     def post(self):
         allow = False
         for ip in _cfg("hook_ips").split(","):
@@ -108,7 +111,7 @@ class HookView(FlaskView):
             return "ignored"
         if "refs/heads/" + _cfg("hook_branch") == event["ref"]:
             call(["git", "pull"])
-            call(_cfg("restart_command"), shell=True)
+            call(_cfg("restart_command").split())
             return "thanks"
         return "ignored"
 
@@ -123,19 +126,23 @@ class RawView(FlaskView):
     def mp4(self, id):
         return send_from_directory(_cfg("processed_folder"), id + ".mp4")
 
+
 def makeMask(n):
     "return a mask of n bits as a long integer"
-    return (2L<<n-1) - 1
+    return (2L << n - 1) - 1
+
 
 def dottedQuadToNum(ip):
     "convert decimal dotted quad string to long integer"
     parts = ip.split(".")
     return int(parts[0]) | (int(parts[1]) << 8) | (int(parts[2]) << 16) | (int(parts[3]) << 24)
 
-def networkMask(ip,bits):
-    "Convert a network address to a long integer" 
+
+def networkMask(ip, bits):
+    "Convert a network address to a long integer"
     return dottedQuadToNum(ip) & makeMask(bits)
 
-def addressInNetwork(ip,net):
-   "Is an address in a network"
-   return ip & net == net
+
+def addressInNetwork(ip, net):
+    "Is an address in a network"
+    return ip & net == net
