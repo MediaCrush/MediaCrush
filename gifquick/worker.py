@@ -7,7 +7,7 @@ import threading
 from datetime import datetime
 
 
-from .config import _cfg
+from .config import _cfg, _cfgi
 from .database import r, _k
 
 
@@ -23,7 +23,7 @@ class TimeLimitedCommand(object):
                 *self.args, stdout=devnull, stderr=devnull)
             self.process.communicate()
 
-    def run(self, timeout=30):
+    def run(self, timeout=_cfgi("max_processing_time")):
         exited = False
 
         thread = threading.Thread(target=self._target)
