@@ -203,3 +203,8 @@ function dropEnable() {
 }
 
 window.onload = dropEnable;
+window.onbeforeunload = function() {
+    if (uploads != 0) {
+        return "If you leave the page, these uploads will be cancelled.";
+    }
+};
