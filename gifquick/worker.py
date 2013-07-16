@@ -17,9 +17,18 @@ conversions = {
 }
 
 conversions_needed = {
-    'gif': ['mp4', 'ogv'],
-    'mp4': ['ogv'],
-    'ogv': ['mp4'],
+    'gif': {
+        'formats': ['mp4', 'ogv'],
+        'time': 60,
+    },
+    'mp4': {
+        'formats': ['ogv'],
+        'time': 120,
+    },
+    'ogv': {
+        'formats': ['mp4'],
+        'time': 120,
+    },
 }
 
 
@@ -67,8 +76,9 @@ def process_gif(filename):
   
     # Perform conversions
     outputpath = os.path.join(_cfg("storage_folder"), filename)
-    for conversion in conversions_needed[ext]:
-        code, exit = conversions[conversion](path, outputpath).run()
+    config = conversions_needed[ext]
+    for conversion in config['formats']:
+        code, exit = conversions[conversion](path, outputpath).run(timeout=config['time'])
         statuscode += code
         exited |= exit
 
