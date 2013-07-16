@@ -10,7 +10,11 @@
         <div style="display: inline-block">
             {% if video %}
                 {% if not mobile %}
+                {% if controls %}
+                <video loop controls>
+                {% else %}
                 <video autoplay loop>
+                {% endif %}
                     <source src="/{{ filename }}.mp4" type='video/mp4;'>
                     <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 </video>

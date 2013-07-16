@@ -1,4 +1,5 @@
 var firstUpload = true;
+var uploads = 0;
 
 function createCookie(name,value,days) {
     if (days) {
@@ -27,6 +28,7 @@ function uploadFiles(files) {
         firstUpload = false;
     }
     for (var i = 0; i < files.length; i++) {
+        uploads++;
         var element = document.createElement('div');
         element.className = 'image-loading';
         prepareImage(element, files[i]);
@@ -106,6 +108,7 @@ function checkStatus(processing, progress, result, url) {
             progress.style.width = 0;
             processing.remove();
             showURL(result, url)
+            uploads--;
         } else if (response == 'timeout' || response == 'error') {
             error = document.createElement("span");
             if (response == 'timeout') {
@@ -116,6 +119,7 @@ function checkStatus(processing, progress, result, url) {
 
             error.className = "error";
             result.appendChild(error);
+            uploads--;
         } else {
             // Try again.
             setTimeout(function() {
