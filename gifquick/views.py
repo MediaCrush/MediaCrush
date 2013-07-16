@@ -12,7 +12,8 @@ from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import addressInNetwork, dottedQuadToNum, networkMask
 from .utils import to_id, extension
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
+CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
+VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS
 
 def allowed_file(filename):
@@ -76,7 +77,12 @@ class QuickView(FlaskView):
     
         f = r.get(_k("%s.file") % id)
         ext = extension(f)
-        return render_template("view.html", filename=id, original=f, video=ext in VIDEO_EXTENSIONS)
+        return render_template(
+            "view.html", 
+            filename=id, 
+            original=f, 
+            video=ext in VIDEO_EXTENSIONS,
+            controls=ext in CONTROLS_EXTENSIONS)
 
 class HookView(FlaskView):
     def post(self):
