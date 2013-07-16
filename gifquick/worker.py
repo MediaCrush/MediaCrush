@@ -74,10 +74,20 @@ def process_gif(filename):
 
     # Remove "processing lock"
     r.delete(_k("%s.lock" % filename))
+    failed = False
     if statuscode != 0:
         r.set(_k("%s.error") % filename, "status")
+        failed = True
     if exited:
         r.set(_k("%s.error") % filename, "timeout")
+        failed = True
+
+    # Remove artifacts if the conversion fails
+    if failed:
+        for artifact_ext in conversions_needed['ext']:
+            path = outputpath + "." + artifact_ext
+            if os.path.exists(path):
+                os.unlink(path)
 
     end = datetime.now()
 
