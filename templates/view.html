@@ -9,13 +9,13 @@
     <body>
         <div style="display: inline-block">
             <video preload autoplay loop>
-                <source src="{{ url_for('get_mp4', id=filename) }}" type='video/mp4;'>
-                <source src="{{ url_for('get_ogv', id=filename) }}" type='video/ogg; codecs="theora, vorbis"'>
+                <source src="/{{ filename }}.mp4" type='video/mp4;'>
+                <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 <!-- Fallback -->
-                <img src="{{ url_for('GifView:get', id=filename) }}" />
+                <img src="/{{ filename }}.gif" />
             </video>
             <br />
-            <a href="{{ url_for('GifView:get', id=filename) }}" style="text-align: center; display: block;">Download original gif</a>
+            <a href="/{{ filename }}.gif" style="text-align: center; display: block;">Download original gif</a>
         </div>
     </body>
     {% include "analytics.html" %}
