@@ -76,7 +76,8 @@ class GifView(FlaskView):
     def get(self, id):
         if ".." in id or id.startswith("/"):
             abort(404)
-        path = os.path.join(_cfg("upload_folder"), id + ".gif")
+        filename = id + ".gif" if "." not in id else id
+        path = os.path.join(_cfg("upload_folder"), filename)
         return send_file(path, as_attachment=True)
 
 
@@ -85,10 +86,9 @@ class QuickView(FlaskView):
 
     def get(self, id):
         if "." in id:
-            return send_from_directory(_cfg("upload_folder"), id)
+            return render_template("view_static.html", filename=id) 
 
         return render_template("view.html", filename=id)
-
 
 class HookView(FlaskView):
     def post(self):
