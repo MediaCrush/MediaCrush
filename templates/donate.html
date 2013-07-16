@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block scripts %}
+<script type="text/javascript">
+    function createCookie(name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+    function adOptIn() {
+        createCookie("ad-opt-out", "", -1);
+        window.location.href = window.location.href;
+    }
+</script>
+{% endblock %}
+{% block content %}
+<div class="wrapper">
+    <div class="content">
+        <h1>Support GifQuick</h1>
+        <p>GifQuick is a free service, and we're really glad you'd like to support us. There are a
+        number of simple ways to help.
+        {% if not ads %}
+        Since it looks like you've disabled ads, the easiest way to support us is to 
+        <a href="javascript:adOptIn()">opt back in</a> for advertisements. Otherwise, 
+        there's these other ways you can help:
+        {% endif %}
+        </p>
+        <div class="row">
+            <div class="item">
+                {% include "bitcoin.html" %}
+            </div>
+            <div class="item">
+                {% include "dwolla.html" %}
+            </div>
+            <div class="item">
+                {% include "flattr.html" %}
+            </div>
+        </div>
+        <p class="clearfix"><a href="/">Back to the home page</a></p>
+    </div>
+</div>
+{% include "analytics.html" %}
+{% endblock %}

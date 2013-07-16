@@ -3,7 +3,7 @@
     <head>
         <meta charset=utf-8 />
         <title>gifquick</title>
-        <script src="{{ url_for('static', filename='app.js') }}"></script>
+        {% block scripts %}{% endblock %}
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
     </head>

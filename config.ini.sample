@@ -24,3 +24,7 @@ bytes_per_hour = 250000000
 
 google_analytics_id = UA-00000000-0
 google_analytics_domain = gifquick.net
+
+dwolla_id = changeme
+flattr_id = changeme
+coinbase_id = changeme

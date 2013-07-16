@@ -136,6 +136,7 @@ a {
     text-decoration: none;
 
 }
+
 a:hover {
     color: #005580;
     text-decoration: underline;
@@ -182,4 +183,11 @@ a:hover {
     margin-left: 40px;
     margin-top: 150px;
     text-align: center;
+}
+
+.row .item {
+    float: left;
+    width: 333px;
+    height: 43px;
+    line-height: 43px;
 }

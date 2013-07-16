@@ -23,6 +23,9 @@ def inject():
         'mobile': mobile,
         'analytics_id': _cfg("google_analytics_id"),
         'analytics_domain': _cfg("google_analytics_domain"),
+        'dwolla_id': _cfg("dwolla_id"),
+        'coinbase_id': _cfg("coinbase_id"),
+        'flattr_id': _cfg("flattr_id")
     }
 
 
@@ -35,6 +38,15 @@ def index():
 @app.route("/demo")
 def demo():
     return render_template("demo.html")
+
+@app.route("/donate")
+def donate():
+    opted_out = "ad-opt-out" in request.cookies
+    return render_template("donate.html", ads=not opted_out)
+
+@app.route("/thanks")
+def thanks():
+    return render_template("thanks.html")
 
 HookView.register(app)
 GifView.register(app)
