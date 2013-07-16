@@ -68,18 +68,18 @@ function prepareImage(parentElement, file) {
         wrapper.appendChild(image);
     } else { 
         var video = document.createElement('video');
+        video.setAttribute('loop', 'loop');
         var source = document.createElement('source');
-        video.setAttribute("autoplay", '1');
-        video.setAttribute("loop", '1');
 
         reader.onloadend = function(e) {
-            source.src = e.target.result;
-            source.type = file.type;
+            source.setAttribute('src', e.target.result);
+            source.setAttribute('type', file.type);
+            video.appendChild(source);
+            wrapper.appendChild(video);
+            video.volume = 0;
+            video.play();
         };
         reader.readAsDataURL(file);
-
-        video.appendChild(source);
-        wrapper.appendChild(video);
     }
     parentElement.appendChild(wrapper);
 }
