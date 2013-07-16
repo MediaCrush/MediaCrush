@@ -38,6 +38,9 @@ class GifView(FlaskView):
             filename = "%s.%s" % (identifier, extension(gif.filename))
             path = os.path.join(_cfg("storage_folder"), filename)
 
+            if os.path.exists(path):
+                return identifier, 409
+
             gif.seek(0)  # Otherwise it'll write a 0-byte file
             gif.save(path)
     
