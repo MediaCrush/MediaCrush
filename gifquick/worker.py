@@ -84,7 +84,7 @@ def process_gif(filename):
 
     # Remove artifacts if the conversion fails
     if failed:
-        for artifact_ext in conversions_needed['ext']:
+        for artifact_ext in conversions_needed[ext]:
             path = outputpath + "." + artifact_ext
             if os.path.exists(path):
                 os.unlink(path)
