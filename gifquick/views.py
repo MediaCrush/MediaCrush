@@ -5,6 +5,7 @@ from subprocess import call
 import os
 import hashlib
 import json
+import base64
 
 from .config import _cfg
 from .database import r, _k
@@ -14,14 +15,14 @@ from .network import addressInNetwork, dottedQuadToNum, networkMask
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
-
+to_id = lambda h: base64.b64encode(h)[:12].replace('/', '-').replace('+', '.')
 
 def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
 
 
 def get_hash(f):
-    return hashlib.md5(f.read()).hexdigest()
+    return hashlib.md5(f.read()).digest()
 
 
 class GifView(FlaskView):
@@ -35,30 +36,20 @@ class GifView(FlaskView):
                 return "ratelimit", 400
 
             h = get_hash(gif)
-            filename = "%s.%s" % (h[:10], extension(gif.filename))
-
-            path = os.path.join(_cfg("upload_folder"), filename)
-            if os.path.isfile(path):
-                if h == get_hash(open(path, "r")):
-                    if (extension(gif.filename) == "gif"):
-                        return filename[:-4], 409
-                    else:
-                        return filename, 409
-                else:
-                    filename = "%s.%s" % (h[:7], extension(gif.filename))
+            identifier = to_id(h)
+            filename = "%s.%s" % (identifier, extension(gif.filename))
+            path = os.path.join(_cfg("storage_folder"), filename)
 
             gif.seek(0)  # Otherwise it'll write a 0-byte file
             gif.save(path)
+    
+            r.set(_k("%s.file") % identifier, filename)
+            
+            if extension(filename) == "gif":
+                r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+                r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
-            if extension(gif.filename) != "gif":
-                return filename
-
-            filename = os.path.splitext(filename)[0]
-
-            r.lpush(_k("gifqueue"), filename)  # Add this job to the queue
-            r.set(_k("%s.lock" % filename), "1")  # Add a processing lock
-
-            return filename
+            return identifier 
         else:
             return "no", 415
 
@@ -73,20 +64,22 @@ class GifView(FlaskView):
             return "done"
         return "processing"
 
-    def get(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(404)
-        filename = id + ".gif" if "." not in id else id
-        path = os.path.join(_cfg("upload_folder"), filename)
-        return send_file(path, as_attachment=True)
-
 
 class QuickView(FlaskView):
     route_base = '/'
 
     def get(self, id):
-        if "." in id:
-            return render_template("view_static.html", filename=id) 
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id: # These requests are handled by nginx if it's set up
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)):
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
+    
+        f = r.get(_k("%s.file") % id)
+        if extension(f) != "gif":
+            return render_template("view_static.html", filename=id, extension=extension(f)) 
 
         return render_template("view.html", filename=id)
 
@@ -112,14 +105,3 @@ class HookView(FlaskView):
             call(_cfg("restart_command").split())
             return "thanks"
         return "ignored"
-
-
-class RawView(FlaskView):
-
-    @route("/<id>.ogv", endpoint="get_ogv")
-    def ogv(self, id):
-        return send_from_directory(_cfg("processed_folder"), id + ".ogv")
-
-    @route("/<id>.mp4", endpoint="get_mp4")
-    def mp4(self, id):
-        return send_from_directory(_cfg("processed_folder"), id + ".mp4")

@@ -40,13 +40,13 @@ class TimeLimitedCommand(object):
 
 
 def process_gif(filename):
-    path = os.path.join(_cfg("upload_folder"), filename + ".gif")
+    path = os.path.join(_cfg("storage_folder"), r.get(_k("%s.file") % filename))
 
     statuscode = 0
     exited = False
     start = datetime.now()
     # Generate videos
-    outputpath = os.path.join(_cfg("processed_folder"), filename)
+    outputpath = os.path.join(_cfg("storage_folder"), filename)
     code, exit = TimeLimitedCommand(
         ["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]).run()
     statuscode += code

@@ -8,9 +8,9 @@
     </head>
     <body>
         <div style="display: inline-block">
-            <img src="{{ url_for('GifView:get', id=filename) }}">
+            <img src="/{{ filename }}.{{ extension }}">
             <br />
-            <a href="{{ url_for('GifView:get', id=filename) }}" style="text-align: center; display: block;">Download original image</a>
+            <a href="/{{ filename }}.{{ extension }}" style="text-align: center; display: block;">Download original image</a>
         </div>
     </body>
     {% include "analytics.html" %}

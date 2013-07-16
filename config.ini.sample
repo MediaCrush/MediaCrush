@@ -2,8 +2,7 @@
 environment = dev
 
 [dev]
-upload_folder = original_gifs
-processed_folder = video
+storage_folder = storage
 max_processing_time = 60
 
 # Hooks allow the site to rebuild itself when there's a commit to the repository
