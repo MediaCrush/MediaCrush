@@ -23,11 +23,11 @@ conversions_needed = {
     },
     'mp4': {
         'formats': ['ogv'],
-        'time': 120,
+        'time': 300,
     },
     'ogv': {
         'formats': ['mp4'],
-        'time': 120,
+        'time': 300,
     },
 }
 
