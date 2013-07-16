@@ -15,6 +15,10 @@ def find_dnt():
 
     g.do_not_track = do_not_track
 
+@app.before_request
+def set_real_ip():
+    if "X-Real-IP" in request.headers:
+        request.remote_addr = request.headers.get("X-Real-IP")
 
 @app.context_processor
 def inject():
