@@ -5,17 +5,15 @@ from subprocess import call
 import os
 import hashlib
 import json
-import base64
 
 from .config import _cfg
 from .database import r, _k
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import addressInNetwork, dottedQuadToNum, networkMask
+from .utils import to_id, extension
 
-EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
-
-extension = lambda f: f.rsplit('.', 1)[1].lower()
-to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')
+VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
+EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS
 
 def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
@@ -44,7 +42,7 @@ class GifView(FlaskView):
     
             r.set(_k("%s.file") % identifier, filename)
             
-            if extension(filename) == "gif":
+            if extension(filename) in VIDEO_EXTENSIONS:
                 r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
                 r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
@@ -77,10 +75,8 @@ class QuickView(FlaskView):
                 return send_file(path, as_attachment=True)
     
         f = r.get(_k("%s.file") % id)
-        if extension(f) != "gif":
-            return render_template("view_static.html", filename=id, extension=extension(f)) 
-
-        return render_template("view.html", filename=id)
+        ext = extension(f)
+        return render_template("view.html", filename=id, original=f, video=ext in VIDEO_EXTENSIONS)
 
 class HookView(FlaskView):
     def post(self):

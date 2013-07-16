@@ -55,15 +55,32 @@ function uploadFiles(files) {
 function prepareImage(parentElement, file) {
     var wrapper = document.createElement('div');
     wrapper.setAttribute('class', 'img-wrapper');
-    var image = document.createElement('img');
-
     var reader = new FileReader();
-    reader.onloadend = function(e) {
-        image.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
 
-    wrapper.appendChild(image);
+    if(file.type.indexOf("image") != -1) {
+        var image = document.createElement('img');
+
+        reader.onloadend = function(e) {
+            image.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        wrapper.appendChild(image);
+    } else { 
+        var video = document.createElement('video');
+        var source = document.createElement('source');
+        video.setAttribute("autoplay", '1');
+        video.setAttribute("loop", '1');
+
+        reader.onloadend = function(e) {
+            source.src = e.target.result;
+            source.type = file.type;
+        };
+        reader.readAsDataURL(file);
+
+        video.appendChild(source);
+        wrapper.appendChild(video);
+    }
     parentElement.appendChild(wrapper);
 }
 

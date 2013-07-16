@@ -9,6 +9,18 @@ from datetime import datetime
 
 from .config import _cfg, _cfgi
 from .database import r, _k
+from .utils import extension
+
+conversions = {
+    'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
+    'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]),
+}
+
+conversions_needed = {
+    'gif': ['mp4', 'ogv'],
+    'mp4': ['ogv'],
+    'ogv': ['mp4'],
+}
 
 
 class TimeLimitedCommand(object):
@@ -40,21 +52,25 @@ class TimeLimitedCommand(object):
 
 
 def process_gif(filename):
-    path = os.path.join(_cfg("storage_folder"), r.get(_k("%s.file") % filename))
+    f = r.get(_k("%s.file" % filename))
+    ext = extension(f)
+    path = os.path.join(_cfg("storage_folder"), f)
 
     statuscode = 0
     exited = False
     start = datetime.now()
-    # Generate videos
+
+    # Check if we know how to treat this file
+    if ext not in conversions_needed:
+        r.set(_k("%s.error") % filename, "noconversion")
+        return
+  
+    # Perform conversions
     outputpath = os.path.join(_cfg("storage_folder"), filename)
-    code, exit = TimeLimitedCommand(
-        ["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]).run()
-    statuscode += code
-    exited |= exit
-    code, exit = TimeLimitedCommand(
-        ["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]).run()
-    statuscode += code
-    exited |= exit
+    for conversion in conversions_needed[ext]:
+        code, exit = conversions[conversion](path, outputpath).run()
+        statuscode += code
+        exited |= exit
 
     # Remove "processing lock"
     r.delete(_k("%s.lock" % filename))

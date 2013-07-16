@@ -8,16 +8,20 @@
     </head>
     <body>
         <div style="display: inline-block">
-            {% if not mobile %}
-            <video autoplay loop>
-                <source src="/{{ filename }}.mp4" type='video/mp4;'>
-                <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
-            </video>
+            {% if video %}
+                {% if not mobile %}
+                <video autoplay loop>
+                    <source src="/{{ filename }}.mp4" type='video/mp4;'>
+                    <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+                </video>
+                {% else %}
+                <img src="/{{ filename }}.gif" alt="Fallback" />
+                {% endif %}
             {% else %}
-            <img src="/{{ filename }}.gif" alt="Fallback" />
+            <img src="/{{ original }}" />
             {% endif %}
             <br />
-            <a href="/{{ filename }}.gif" style="text-align: center; display: block;">Download original gif</a>
+            <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
         </div>
     </body>
     {% include "analytics.html" %}

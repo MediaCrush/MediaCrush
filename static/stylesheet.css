@@ -127,6 +127,11 @@ body {
     max-height: 113px;
 }
 
+.image-loading .img-wrapper video {
+    max-width: 200px;
+    max-height: 113px;
+}
+
 .clearfix {
     clear: both;
 }
