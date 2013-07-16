@@ -8,12 +8,14 @@
     </head>
     <body>
         <div style="display: inline-block">
-            <video preload autoplay loop>
+            {% if not mobile %}
+            <video autoplay loop>
                 <source src="/{{ filename }}.mp4" type='video/mp4;'>
                 <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
-                <!-- Fallback -->
-                <img src="/{{ filename }}.gif" />
             </video>
+            {% else %}
+            <img src="/{{ filename }}.gif" alt="Fallback" />
+            {% endif %}
             <br />
             <a href="/{{ filename }}.gif" style="text-align: center; display: block;">Download original gif</a>
         </div>

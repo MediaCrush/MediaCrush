@@ -20,7 +20,6 @@ to_id = lambda h: base64.b64encode(h)[:12].replace('/', '-').replace('+', '.')
 def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
 
-
 def get_hash(f):
     return hashlib.md5(f.read()).digest()
 
