@@ -13,7 +13,8 @@ def rate_limit_exceeded():
 
 
 def rate_limit_update(f):
-    key = _k("rate_limit.%s" % request.remote_addr)
+    ip = request.remote_addr if "X-Real-IP" not in request.headers else request.headers.get("X-Real-IP")
+    key = _k("rate_limit.%s" % ip)
     f.seek(0, 2)
     b = f.tell()
     f.seek(0)
