@@ -15,7 +15,7 @@ from .network import addressInNetwork, dottedQuadToNum, networkMask
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
-to_id = lambda h: base64.b64encode(h)[:12].replace('/', '-').replace('+', '.')
+to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')
 
 def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
