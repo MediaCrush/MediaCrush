@@ -9,7 +9,7 @@ import json
 from .config import _cfg
 from .database import r, _k
 from .ratelimit import rate_limit_exceeded, rate_limit_update
-from .network import addressInNetwork
+from .network import addressInNetwork, dottedQuadToNum, networkMask
 
 EXTENSIONS = set(['gif', 'png', 'jpg', 'jpeg'])
 
