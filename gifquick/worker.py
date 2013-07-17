@@ -9,28 +9,12 @@ from datetime import datetime
 
 from .config import _cfg, _cfgi
 from .database import r, _k
-from .utils import extension
+from .files import conversions_needed, extension
 
 conversions = {
     'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
     'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]),
 }
-
-conversions_needed = {
-    'gif': {
-        'formats': ['mp4', 'ogv'],
-        'time': 60,
-    },
-    'mp4': {
-        'formats': ['ogv'],
-        'time': 300,
-    },
-    'ogv': {
-        'formats': ['mp4'],
-        'time': 300,
-    },
-}
-
 
 class TimeLimitedCommand(object):
 
