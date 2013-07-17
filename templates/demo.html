@@ -22,10 +22,9 @@
             </div>
             <div class="right">
                 <h3>Video</h3>
-                <video preload autoplay loop>
+                <video autoplay loop>
                     <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
                     <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
-                    <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
                 </video>
                 <p>Filesize: 118 kB (~0.118 MB)</p>
             </div>

@@ -1,4 +1,5 @@
 var firstUpload = true;
+var uploads = 0;
 
 function createCookie(name,value,days) {
     if (days) {
@@ -27,6 +28,7 @@ function uploadFiles(files) {
         firstUpload = false;
     }
     for (var i = 0; i < files.length; i++) {
+        uploads++;
         var element = document.createElement('div');
         element.className = 'image-loading';
         prepareImage(element, files[i]);
@@ -68,18 +70,18 @@ function prepareImage(parentElement, file) {
         wrapper.appendChild(image);
     } else { 
         var video = document.createElement('video');
+        video.setAttribute('loop', 'loop');
         var source = document.createElement('source');
-        video.setAttribute("autoplay", '1');
-        video.setAttribute("loop", '1');
 
         reader.onloadend = function(e) {
-            source.src = e.target.result;
-            source.type = file.type;
+            source.setAttribute('src', e.target.result);
+            source.setAttribute('type', file.type);
+            video.appendChild(source);
+            wrapper.appendChild(video);
+            video.volume = 0;
+            video.play();
         };
         reader.readAsDataURL(file);
-
-        video.appendChild(source);
-        wrapper.appendChild(video);
     }
     parentElement.appendChild(wrapper);
 }
@@ -106,6 +108,7 @@ function checkStatus(processing, progress, result, url) {
             progress.style.width = 0;
             processing.remove();
             showURL(result, url)
+            uploads--;
         } else if (response == 'timeout' || response == 'error') {
             error = document.createElement("span");
             if (response == 'timeout') {
@@ -116,6 +119,7 @@ function checkStatus(processing, progress, result, url) {
 
             error.className = "error";
             result.appendChild(error);
+            uploads--;
         } else {
             // Try again.
             setTimeout(function() {
@@ -199,3 +203,8 @@ function dropEnable() {
 }
 
 window.onload = dropEnable;
+window.onbeforeunload = function() {
+    if (uploads != 0) {
+        return "If you leave the page, these uploads will be cancelled.";
+    }
+};

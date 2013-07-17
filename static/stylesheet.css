@@ -26,18 +26,25 @@ body {
     bottom: 10px;
 }
 
-.wrapper {
-    width: 1000px;
-    margin: 0 auto;
+@media (min-width: 1000px) {
+    .wrapper {
+        width: 1000px;
+        margin: 0 auto;
+    }
 }
 
 .content {
     width: 1000px;
     height: 650px;
-    position: absolute;
-    margin-top: -325px;
-    top: 50%;
     padding: 5px;
+        position: absolute;
+}
+
+@media (min-height: 650px) {
+    .content {
+        margin-top: -325px;
+        top: 50%;
+    }
 }
 
 #droparea {
