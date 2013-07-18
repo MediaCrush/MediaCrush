@@ -33,11 +33,17 @@ body {
     }
 }
 
+.container {
+    width: 1000px;
+    padding: 5px;
+    margin: 0 auto;
+}
+
 .content {
     width: 1000px;
     height: 650px;
     padding: 5px;
-        position: absolute;
+    position: absolute;
 }
 
 @media (min-height: 650px) {

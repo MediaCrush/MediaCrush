@@ -48,6 +48,10 @@ def donate():
 def thanks():
     return render_template("thanks.html")
 
+@app.route("/serious")
+def serious():
+    return render_template("serious.html")
+
 APIView.register(app)
 HookView.register(app)
 GifView.register(app)
