@@ -24,7 +24,7 @@ class ImageView(FlaskView):
 
         compression = r.get(_k("%s.compression") % id)
         if compression:
-            compression = int(float(r.get(_k("%s.compression") % id)) * 100)
+            compression = int(float(compression) * 100)
 
         ext = extension(f)
         return render_template(
