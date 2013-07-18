@@ -4,8 +4,8 @@
         <meta charset=utf-8 />
         <meta type="robots" content="noindex,nofollow" />
         <title>gifquick</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-        <style type="text/css">body{margin:0;padding:0;}</style>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{position:relative;height:14px;}.left{position:absolute;left:0;}.right{position:absolute;right:0;}video,img{clear:both;}</style>
     </head>
     <body>
         <div style="display: inline-block">
@@ -25,12 +25,26 @@
             {% else %}
             <img src="/{{ original }}" />
             {% endif %}
-            <br />
-            <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
-            {% if compression %}
-            <div class="small">{{ compression }}% faster!</div><!-- fixme -->
-            {% endif %}
+            <div class="row">
+                {% if compression %}
+                <div class="left small">{{ compression }}% faster!</div>
+                {% endif %}
+                <span class="right small">
+                    <a href="#" id="report">Report</a>
+                </span>
+                <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
+            </div>
         </div>
+        <script type="text/javascript">
+            window.onload = function() {
+                var report = document.getElementById('report');
+                report.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var report = document.getElementById('report');
+                    report.parentNode.innerHTML = "Reported";
+                }, false);
+            };
+        </script>
     </body>
     {% include "analytics.html" %}
 </html>
