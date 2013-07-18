@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flask import send_file, render_template
+from flask import send_file, render_template, abort
 import os
 
 from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS
@@ -19,6 +19,9 @@ class ImageView(FlaskView):
                 return send_file(path, as_attachment=True)
     
         f = r.get(_k("%s.file") % id)
+        if not f:
+            abort(404)
+
         compression = r.get(_k("%s.compression") % id)
         if compression:
             compression = int(float(r.get(_k("%s.compression") % id)) * 100)

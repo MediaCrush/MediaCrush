@@ -15,6 +15,9 @@ def find_dnt():
 
     g.do_not_track = do_not_track
 
+@app.errorhandler(404)
+def not_found_(e):
+    return render_template("error.html", error="File not found."), 404
 
 @app.context_processor
 def inject():
