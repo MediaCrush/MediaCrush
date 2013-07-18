@@ -20,6 +20,8 @@ class APIView(FlaskView):
     @json_output
     def get(self, id):
         f = r.get(_k("%s.file") % id)
+        compression = r.get(_k("%s.compression") % id)
+
         if not f:
             return {'error': 404}, 404
 
@@ -29,7 +31,9 @@ class APIView(FlaskView):
             'original': media_url(f),
             'files': [],
         }
-       
+        if compression:
+            ret['compression'] = float(compression)
+             
         if ext in conversions_needed:
             for f_ext in conversions_needed[ext]['formats']:
                 ret['files'].append(APIView._file_entry("%s.%s" % (id, f_ext)))

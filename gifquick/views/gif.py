@@ -7,6 +7,7 @@ from ..database import r, _k
 from ..ratelimit import rate_limit_exceeded, rate_limit_update
 from ..config import _cfg
 
+# TODO: Rename this to UploadView
 class GifView(FlaskView):
     def post(self):
         gif = request.files['gif']
@@ -45,5 +46,8 @@ class GifView(FlaskView):
                 r.delete(_k("%s.error") % filename)
 
                 return failure_type
+            compression = compression_rate(id)
+            r.set(_k("%s.compression" % id), compression)
+
             return "done"
         return "processing"
