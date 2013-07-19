@@ -22,7 +22,11 @@
             </div>
             <div class="right">
                 <h3>Video</h3>
-                <video autoplay loop>
+                {% if mobile %}
+                    <video controls loop>
+                {% else %}
+                    <video autoplay loop>
+                {% endif %}
                     <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
                     <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
                 </video>
