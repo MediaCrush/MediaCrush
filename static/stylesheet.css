@@ -87,6 +87,11 @@ body {
     text-align: center;
 }
 
+#gad > div {
+    width: 120px;
+    height: 600px;
+}
+
 /* Mostly stolen from Twitter bootstrap */
 .progress {
     height: 8px;
