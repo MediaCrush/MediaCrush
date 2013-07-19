@@ -14,7 +14,7 @@
                 {% if controls %}
                 <video controls>
                 {% else %}
-                    {% if mobile %}
+                    {% if not mobile %}
                         <video autoplay loop>
                     {% else %}
                         <video controls loop>

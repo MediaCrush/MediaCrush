@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flask import send_file, render_template, abort
+from flask import send_file, render_template, abort, request
 import os
 
 from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS
@@ -27,10 +27,13 @@ class ImageView(FlaskView):
             compression = int(float(compression) * 100)
 
         ext = extension(f)
+        mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
+        print mobile
         return render_template(
             "view.html", 
             filename=id, 
             original=f, 
+            mobile=mobile,
             video=ext in VIDEO_EXTENSIONS,
             controls=ext in CONTROLS_EXTENSIONS,
             compression=compression)

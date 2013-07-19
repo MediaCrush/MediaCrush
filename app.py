@@ -35,7 +35,6 @@ def inject():
         'flattr_id': _cfg("flattr_id")
     }
 
-
 @app.route("/")
 def index():
     opted_out = "ad-opt-out" in request.cookies
@@ -45,7 +44,7 @@ def index():
 @app.route("/demo")
 def demo():
     mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
-    return render_template("demo.html")
+    return render_template("demo.html", mobile=mobile)
 
 @app.route("/donate")
 def donate():
