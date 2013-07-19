@@ -24,6 +24,10 @@ bytes_per_hour = 250000000
 google_analytics_id = UA-00000000-0
 google_analytics_domain = gifquick.net
 
+# Make sure you use the 120x600 "skyscraper" ad format
+adsense_client = CHANGEME
+adsense_slot = CHANGEME
+
 dwolla_id = changeme
 flattr_id = changeme
 coinbase_id = changeme

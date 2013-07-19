@@ -32,7 +32,9 @@ def inject():
         'analytics_domain': _cfg("google_analytics_domain"),
         'dwolla_id': _cfg("dwolla_id"),
         'coinbase_id': _cfg("coinbase_id"),
-        'flattr_id': _cfg("flattr_id")
+        'flattr_id': _cfg("flattr_id"),
+        'adsense_client': _cfg("adsense_client"),
+        'adsense_slot': _cfg("adsense_slot")
     }
 
 @app.route("/")
