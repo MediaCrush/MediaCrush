@@ -19,9 +19,9 @@ def find_dnt():
 def not_found(e):
     return render_template("error.html", error="File not found."), 404
 
-#@app.errorhandler(Exception)
-#def exception_catch_all(e):
-#    return render_template("error.html", error=repr(e)), 500 
+@app.errorhandler(Exception)
+def exception_catch_all(e):
+    return render_template("error.html", error=repr(e)), 500 
 
 @app.context_processor
 def inject():
@@ -45,8 +45,7 @@ def index():
 
 @app.route("/demo")
 def demo():
-    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
-    return render_template("demo.html", mobile=mobile)
+    return render_template("demo.html")
 
 @app.route("/donate")
 def donate():
