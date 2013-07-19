@@ -38,20 +38,14 @@ def inject():
 
 @app.route("/")
 def index():
-    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
     opted_out = "ad-opt-out" in request.cookies
-    return render_template("index.html", {
-        'ads': not opted_out,
-        'mobile': mobile
-    })
+    return render_template("index.html", ads=not opted_out)
 
 
 @app.route("/demo")
 def demo():
     mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
-    return render_template("demo.html", {
-        'mobile': mobile
-    })
+    return render_template("demo.html")
 
 @app.route("/donate")
 def donate():
