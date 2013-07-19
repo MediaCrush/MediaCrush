@@ -65,6 +65,8 @@ def process_gif(filename):
     # Do processing
     if ext in processors:
         code, exit = processors[ext](path).run(timeout=config['time'])
+    statuscode += code
+    exited |= exit
 
     # Do conversions
     outputpath = os.path.join(_cfg("storage_folder"), filename)
