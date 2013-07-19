@@ -9,12 +9,13 @@ Install the redis server:
     sudo apt-get install redis-server
 
 Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
+
 Note: you'll need libtheora enabled to output ogv files.
 
     mkdir /tmp/ffmpeg
     git clone git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
     cd /tmp/ffmpeg
-    ./configure --enable-libtheora
+    ./configure --enable-libtheora --enable-x264 --enable-gpl
     make
     sudo make install
 
@@ -23,7 +24,8 @@ Pull the repository to a folder:
     git clone http://github.com/GifQuick/GifQuick /home/service/webapps/gifquick
 
 Create a virtual environment:
-Note: you'll need to use python2. If python3 is your default python interpreter, add "--python=python2" to the `virtualenv` command.
+
+Note: you'll need to use python2. If python3 is your default python interpreter, add `"--python=python2"` to the `virtualenv` command.
 
     virtualenv /home/service/webapps/gifquick --no-site-packages
 
