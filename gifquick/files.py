@@ -48,7 +48,6 @@ def compression_rate(f):
     original = r.get(_k("%s.file") % f)
     ext = extension(original)
     if ext not in processing_needed: return 0
-    print processing_needed[ext]['formats']
     if len(processing_needed[ext]['formats']) == 0: return 0
 
     original_size = os.path.getsize(file_storage(original))

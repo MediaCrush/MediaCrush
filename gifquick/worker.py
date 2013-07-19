@@ -59,12 +59,9 @@ def process_gif(filename):
     # Check if we know how to treat this file
     if ext not in processing_needed:
         r.delete(_k("%s.lock" % filename))
-        failed = False
-        end = datetime.now()
         return
 
     config = processing_needed[ext]
-    print config
     # Do processing
     if ext in processors:
         code, exit = processors[ext](path).run(timeout=config['time'])
@@ -94,3 +91,4 @@ def process_gif(filename):
                 os.unlink(path)
 
     end = datetime.now()
+    print "Processed", filename, end - start
