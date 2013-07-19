@@ -11,7 +11,6 @@
     <body>
         <div style="display: inline-block">
             {% if video %}
-                {% if not mobile %}
                 {% if controls %}
                 <video controls>
                 {% else %}
@@ -20,9 +19,6 @@
                     <source src="/{{ filename }}.mp4" type='video/mp4;'>
                     <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 </video>
-                {% else %}
-                <img src="/{{ filename }}.gif" alt="Fallback" />
-                {% endif %}
             {% else %}
             <img src="/{{ original }}" />
             {% endif %}
