@@ -1,7 +1,7 @@
 from flask.ext.classy import FlaskView, route
 
 from ..decorators import json_output
-from ..files import media_url, get_mimetype, extension, conversions_needed
+from ..files import media_url, get_mimetype, extension, processing_needed
 from ..database import r, _k
 
 class APIView(FlaskView):
@@ -35,7 +35,7 @@ class APIView(FlaskView):
             ret['compression'] = float(compression)
              
         if ext in conversions_needed:
-            for f_ext in conversions_needed[ext]['formats']:
+            for f_ext in processing_needed[ext]['formats']:
                 ret['files'].append(APIView._file_entry("%s.%s" % (id, f_ext)))
 
         ret['files'].append(APIView._file_entry(f))

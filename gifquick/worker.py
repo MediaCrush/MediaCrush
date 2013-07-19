@@ -6,14 +6,17 @@ import threading
 
 from datetime import datetime
 
-
 from .config import _cfg, _cfgi
 from .database import r, _k
-from .files import conversions_needed, extension
+from .files import processing_needed, extension
 
-conversions = {
+converters = {
     'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
     'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]),
+}
+
+processors = {
+    'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path])
 }
 
 class TimeLimitedCommand(object):
@@ -54,15 +57,22 @@ def process_gif(filename):
     start = datetime.now()
 
     # Check if we know how to treat this file
-    if ext not in conversions_needed:
-        r.set(_k("%s.error") % filename, "noconversion")
+    if ext not in processing_needed:
+        r.delete(_k("%s.lock" % filename))
+        failed = False
+        end = datetime.now()
         return
-  
-    # Perform conversions
+
+    config = processing_needed[ext]
+    print config
+    # Do processing
+    if ext in processors:
+        code, exit = processors[ext](path).run(timeout=config['time'])
+
+    # Do conversions
     outputpath = os.path.join(_cfg("storage_folder"), filename)
-    config = conversions_needed[ext]
     for conversion in config['formats']:
-        code, exit = conversions[conversion](path, outputpath).run(timeout=config['time'])
+        code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
         statuscode += code
         exited |= exit
 
@@ -84,5 +94,3 @@ def process_gif(filename):
                 os.unlink(path)
 
     end = datetime.now()
-
-    print "Processed", filename, end - start

@@ -10,8 +10,7 @@ CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS
 
-
-conversions_needed = {
+processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv'],
         'time': 60,
@@ -24,6 +23,10 @@ conversions_needed = {
         'formats': ['mp4'],
         'time': 300,
     },
+    'jpg': {
+        'formats': [],
+        'time': 5
+    }
 }
 
 def allowed_file(filename):
@@ -44,11 +47,13 @@ def file_storage(f):
 def compression_rate(f):
     original = r.get(_k("%s.file") % f)
     ext = extension(original)
-    if ext not in conversions_needed: return 0
+    if ext not in processing_needed: return 0
+    print processing_needed[ext]['formats']
+    if len(processing_needed[ext]['formats']) == 0: return 0
 
     original_size = os.path.getsize(file_storage(original))
     minsize = original_size
-    for f_ext in conversions_needed[ext]['formats']:
+    for f_ext in processing_needed[ext]['formats']:
         convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
         minsize = min(minsize, convsize)
 

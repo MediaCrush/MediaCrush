@@ -30,9 +30,8 @@ class GifView(FlaskView):
     
             r.set(_k("%s.file") % identifier, filename)
             
-            if extension(filename) in VIDEO_EXTENSIONS:
-                r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
-                r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
+            r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+            r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
             return identifier 
         else:
