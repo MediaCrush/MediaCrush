@@ -4,9 +4,9 @@ A website for serving GIFs super fast.
 
 ## Installation
 
-Install the redis server:
+Install the requirements:
 
-    sudo apt-get install redis-server
+    sudo apt-get install redis-server jhead
 
 Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
 

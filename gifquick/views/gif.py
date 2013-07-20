@@ -6,6 +6,7 @@ from ..files import *
 from ..database import r, _k
 from ..ratelimit import rate_limit_exceeded, rate_limit_update
 from ..config import _cfg
+from ..objects import File
 
 # TODO: Rename this to UploadView
 class GifView(FlaskView):
@@ -27,8 +28,10 @@ class GifView(FlaskView):
 
             gif.seek(0)  # Otherwise it'll write a 0-byte file
             gif.save(path)
-    
-            r.set(_k("%s.file") % identifier, filename)
+   
+            file_object = File(hash=identifier) 
+            file_object.original = filename
+            file_object.save()
             
             r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
             r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
@@ -45,8 +48,6 @@ class GifView(FlaskView):
                 r.delete(_k("%s.error") % filename)
 
                 return failure_type
-            compression = compression_rate(id)
-            r.set(_k("%s.compression" % id), compression)
 
             return "done"
         return "processing"

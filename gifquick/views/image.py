@@ -5,6 +5,7 @@ import os
 from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS
 from ..database import r, _k
 from ..config import _cfg
+from ..objects import File
 
 class ImageView(FlaskView):
     route_base = '/'
@@ -18,19 +19,18 @@ class ImageView(FlaskView):
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
     
-        f = r.get(_k("%s.file") % id)
-        if not f:
+        f = File.from_hash(id) 
+        if not f.original:
             abort(404)
 
-        compression = r.get(_k("%s.compression") % id)
-        if compression:
-            compression = int(float(compression) * 100)
+        if f.compression:
+            compression = int(float(f.compression) * 100)
 
-        ext = extension(f)
+        ext = extension(f.original)
         return render_template(
             "view.html", 
             filename=id, 
-            original=f, 
+            original=f.original, 
             video=ext in VIDEO_EXTENSIONS,
             controls=ext in CONTROLS_EXTENSIONS,
             compression=compression)

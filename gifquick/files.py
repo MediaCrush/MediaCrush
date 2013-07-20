@@ -5,6 +5,7 @@ import os
 
 from .config import _cfg
 from .database import r, _k
+from .objects import File
 
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
@@ -45,12 +46,12 @@ def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
 def compression_rate(f):
-    original = r.get(_k("%s.file") % f)
-    ext = extension(original)
+    f_original = File.from_hash(f) 
+    ext = extension(f_original.original)
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
-    original_size = os.path.getsize(file_storage(original))
+    original_size = os.path.getsize(file_storage(f_original.original))
     minsize = original_size
     for f_ext in processing_needed[ext]['formats']:
         convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
