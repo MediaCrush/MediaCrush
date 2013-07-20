@@ -14,7 +14,7 @@ EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS
 processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv'],
-        'time': 60,
+        'time': 120,
     },
     'mp4': {
         'formats': ['ogv'],
