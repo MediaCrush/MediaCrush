@@ -5,6 +5,7 @@ import os
 from ..files import *
 from ..database import r, _k
 from ..ratelimit import rate_limit_exceeded, rate_limit_update
+from ..network import secure_ip
 from ..config import _cfg
 from ..objects import File
 
@@ -31,6 +32,7 @@ class GifView(FlaskView):
    
             file_object = File(hash=identifier) 
             file_object.original = filename
+            file_object.ip = secure_ip()
             file_object.save()
             
             r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue

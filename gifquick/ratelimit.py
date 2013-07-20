@@ -1,13 +1,12 @@
 from .config import _cfg, _cfgi
 from .database import r, _k
+from .network import get_ip
 
 from flask import request
 
 
-get_ip = lambda: request.remote_addr if "X-Real-IP" not in request.headers else request.headers.get("X-Real-IP")
-
 def rate_limit_exceeded():
-    consumed = int(r.get(_k("rate_limit.%s") % get_ip()))
+    consumed = int(r.get(_k("rate_limit.%s" % get_ip())))
     if not consumed:
         return False
 

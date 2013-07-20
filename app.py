@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, g
+from flaskext.bcrypt import Bcrypt
+import traceback
+
 from gifquick.views import GifView, ImageView, HookView, APIView
 from gifquick.config import _cfg
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
+bcrypt = Bcrypt(app)
 
 
 @app.before_request
@@ -21,6 +25,7 @@ def not_found(e):
 
 @app.errorhandler(Exception)
 def exception_catch_all(e):
+    traceback.print_exc()
     return render_template("error.html", error=repr(e)), 500 
 
 @app.context_processor
