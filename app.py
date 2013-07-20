@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, g
 from flaskext.bcrypt import Bcrypt
 import traceback
 
-from gifquick.views import GifView, ImageView, HookView, APIView
+from gifquick.views import UploadView, HookView, APIView, ImageView
 from gifquick.config import _cfg
 
 app = Flask(__name__)
@@ -67,7 +67,7 @@ def serious():
 
 APIView.register(app)
 HookView.register(app)
-GifView.register(app)
+UploadView.register(app)
 ImageView.register(app)
 
 if __name__ == '__main__':

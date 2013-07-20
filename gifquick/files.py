@@ -6,6 +6,8 @@ import os
 from .config import _cfg
 from .database import r, _k
 from .objects import File
+from .ratelimit import rate_limit_exceeded, rate_limit_update
+from .network import secure_ip
 
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
@@ -66,6 +68,36 @@ def compression_rate(f):
 
     # Compression rate: 1/x
     return round(1/x, 2)
+
+def upload(f):
+    if f and allowed_file(f.filename):
+        rate_limit_update(f)
+        if rate_limit_exceeded():
+            return "ratelimit", 400
+
+        h = get_hash(f)
+        identifier = to_id(h)
+        filename = "%s.%s" % (identifier, extension(f.filename))
+        path = os.path.join(_cfg("storage_folder"), filename)
+
+        if os.path.exists(path):
+            return identifier, 409
+
+        f.seek(0)  # Otherwise it'll write a 0-byte file
+        f.save(path)
+
+        file_object = File(hash=identifier) 
+        file_object.original = filename
+        file_object.ip = secure_ip()
+        file_object.save()
+        
+        r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+        r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
+
+        return identifier 
+    else:
+        return "no", 415
+
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

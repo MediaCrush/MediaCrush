@@ -101,7 +101,7 @@ function checkStatus(processing, progress, result, url) {
     console.log('checking in');
     var xhr = new XMLHttpRequest();
 
-    xhr.open('GET', '/gif/status/' + url);
+    xhr.open('GET', '/upload/status/' + url);
     xhr.onload = function() {
         var response = this.responseText;
         if (response == 'done') {
@@ -134,7 +134,7 @@ function checkStatus(processing, progress, result, url) {
 function uploadFile(progress, result, file) {
     var xhr = new XMLHttpRequest();
     
-    xhr.open('POST', '/gif/');
+    xhr.open('POST', '/upload/');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
             console.log(e.loaded + ' ' + e.total + ' ' + (e.loaded / e.total));
@@ -175,7 +175,7 @@ function uploadFile(progress, result, file) {
     };
 
     var formData = new FormData();
-    formData.append('gif', file);
+    formData.append('file', file);
     xhr.send(formData);
 }
 
