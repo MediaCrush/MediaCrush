@@ -18,6 +18,7 @@ def database_upgrade(arguments):
         hash = key.split(".")[1]
         f = File(hash=hash)
         f.original = r.get(key)
+        f.save()
         f.compression = compression_rate(hash)
         f.save()
         r.delete(key)
