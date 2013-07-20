@@ -8,7 +8,8 @@ from datetime import datetime
 
 from .config import _cfg, _cfgi
 from .database import r, _k
-from .files import processing_needed, extension
+from .files import processing_needed, extension, compression_rate
+from .objects import File
 
 converters = {
     'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
@@ -43,14 +44,16 @@ class TimeLimitedCommand(object):
             self.process.terminate()
             thread.join()
             exited = True
-
+    
+        if self.process == None:
+            return 0, exited
         return self.process.returncode, exited
 
 
 def process_gif(filename):
-    f = r.get(_k("%s.file" % filename))
-    ext = extension(f)
-    path = os.path.join(_cfg("storage_folder"), f)
+    f = File.from_hash(filename) 
+    ext = extension(f.original)
+    path = os.path.join(_cfg("storage_folder"), f.original)
 
     statuscode = 0
     exited = False
@@ -75,6 +78,9 @@ def process_gif(filename):
         statuscode += code
         exited |= exit
 
+    # Set the compression rate
+    f.compression = compression_rate(filename)
+
     # Remove "processing lock"
     r.delete(_k("%s.lock" % filename))
     failed = False
@@ -91,6 +97,9 @@ def process_gif(filename):
             path = outputpath + "." + artifact_ext
             if os.path.exists(path):
                 os.unlink(path)
+
+    # Save the file
+    f.save()
 
     end = datetime.now()
     print "Processed", filename, end - start

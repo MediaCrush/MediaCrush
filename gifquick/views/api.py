@@ -3,6 +3,7 @@ from flask.ext.classy import FlaskView, route
 from ..decorators import json_output
 from ..files import media_url, get_mimetype, extension, processing_needed
 from ..database import r, _k
+from ..objects import File
 
 class APIView(FlaskView):
     route_base = '/'
@@ -19,24 +20,23 @@ class APIView(FlaskView):
     @route("/<id>.json")
     @json_output
     def get(self, id):
-        f = r.get(_k("%s.file") % id)
-        compression = r.get(_k("%s.compression") % id)
+        f = File.from_hash(id) 
 
-        if not f:
+        if not f.original:
             return {'error': 404}, 404
 
-        ext = extension(f)
+        ext = extension(f.original)
 
         ret = {
-            'original': media_url(f),
+            'original': media_url(f.original),
             'files': [],
         }
-        if compression:
-            ret['compression'] = float(compression)
+        if f.compression:
+            ret['compression'] = float(f.compression)
              
-        if ext in conversions_needed:
+        if ext in processing_needed:
             for f_ext in processing_needed[ext]['formats']:
                 ret['files'].append(APIView._file_entry("%s.%s" % (id, f_ext)))
 
-        ret['files'].append(APIView._file_entry(f))
+        ret['files'].append(APIView._file_entry(f.original))
         return ret
