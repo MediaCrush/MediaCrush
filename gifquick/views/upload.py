@@ -2,6 +2,7 @@ from flask.ext.classy import FlaskView, route
 from flask import request
 import os
 
+from ..files import upload
 from ..database import r, _k
 
 class UploadView(FlaskView):
