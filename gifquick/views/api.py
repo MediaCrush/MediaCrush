@@ -29,6 +29,7 @@ class APIView(FlaskView):
 
         ret = {
             'original': media_url(f.original),
+            'type': get_mimetype(f.original),
             'files': [],
         }
         if f.compression:
