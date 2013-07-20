@@ -6,8 +6,8 @@ class RedisObject(object):
     hash = None
 
     def __init__(self, **kw):
-        for k in kw:
-            setattr(self, k, kw.get(k))
+        for k, v in kw.items():
+            setattr(self, k, v)
    
     def __get_vars(self):
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
@@ -15,16 +15,16 @@ class RedisObject(object):
         return dict(names)
     
     def __get_key(self):
-        return RedisObject.get_key(self.__class__, self.hash)
-  
-    @staticmethod 
+        return self.__class__.get_key(self.hash)  
+
+    @classmethod 
     def get_key(cls, hash):
         classname = cls.__name__
         return _k("%s.%s" % (classname.lower(), hash))
     
     @classmethod
     def from_hash(cls, hash):
-        obj = r.hgetall(RedisObject.get_key(cls, hash))
+        obj = r.hgetall(cls.get_key(hash))
         obj['hash'] = hash
 
         return cls(**obj)
@@ -46,7 +46,6 @@ class File(RedisObject):
     ip = None
 
 if __name__ == '__main__':
-    from .objects import File
     a = File(hash="aasdf", compression=2)
     a.save()
 
