@@ -22,6 +22,8 @@ class HookView(FlaskView):
             abort(403)
         # Pull and restart site
         event = json.loads(request.form["payload"])
+        if not _cfg("hook_repository") == "%s/%s" % (json["repository"]["owner"]["name"], json["repository"]["name"]):
+            return "ignored"
         if any("[noupdate]" in c["message"] for c in event["commits"]):
             return "ignored"
         if "refs/heads/" + _cfg("hook_branch") == event["ref"]:
