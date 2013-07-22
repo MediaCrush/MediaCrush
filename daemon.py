@@ -1,5 +1,5 @@
-from gifquick.worker import process_gif
-from gifquick.database import r, _k
+from mediacrush.worker import process_gif
+from mediacrush.database import r, _k
 
 import time
 import multiprocessing
