@@ -21,17 +21,17 @@ Note: you'll need libtheora enabled to output ogv files.
 
 Pull the repository to a folder:
 
-    git clone http://github.com/GifQuick/GifQuick /home/service/webapps/gifquick
+    git clone http://github.com/MediaCrush/MediaCrush /home/service/webapps/mediacrush
 
 Create a virtual environment:
 
 Note: you'll need to use python2. If python3 is your default python interpreter, add `"--python=python2"` to the `virtualenv` command.
 
-    virtualenv /home/service/webapps/gifquick --no-site-packages
+    virtualenv /home/service/webapps/mediacrush --no-site-packages
 
 Go to the folder you created and activate the virtual environment:
 
-    cd /home/services/webapps/gifquick
+    cd /home/services/webapps/mediacrush
     source bin/activate
 
 Install the Python modules:
