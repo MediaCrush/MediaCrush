@@ -1,7 +1,7 @@
 import logging
 from ConfigParser import ConfigParser
 
-logger = logging.getLogger("GifQuick")
+logger = logging.getLogger("MediaCrush")
 logger.setLevel(logging.DEBUG)
 
 sh = logging.StreamHandler()

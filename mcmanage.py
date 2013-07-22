@@ -1,17 +1,17 @@
-"""GifQuick manage.
+"""MediaCrush manage.
 
 Usage:
-    gqmanage.py database clear
-    gqmanage.py database upgrade
-    gqmanage.py admin list
-    gqmanage.py admin add <pwhash>
-    gqmanage.py admin delete <pwhash>
+    mcmanage.py database clear
+    mcmanage.py database upgrade
+    mcmanage.py admin list
+    mcmanage.py admin add <pwhash>
+    mcmanage.py admin delete <pwhash>
 
 """
 
 from docopt import docopt
 
-from gifquick.gqmanage.database import database_clear, database_upgrade
+from mediacrush.mcmanage.database import database_clear, database_upgrade
 
 database_commands = {
     'clear': database_clear,

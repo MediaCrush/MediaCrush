@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, g
 from flaskext.bcrypt import Bcrypt
 import traceback
 
-from gifquick.views import UploadView, HookView, APIView, ImageView
-from gifquick.config import _cfg
+from mediacrush.views import UploadView, HookView, APIView, ImageView
+from mediacrush.config import _cfg
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
