@@ -1,6 +1,6 @@
-# gifquick
+# mediacrush
 
-A website for serving GIFs super fast. 
+A website for serving media super fast. 
 
 ## Installation
 
