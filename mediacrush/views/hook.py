@@ -27,7 +27,7 @@ class HookView(FlaskView):
         if any("[noupdate]" in c["message"] for c in event["commits"]):
             return "ignored"
         if "refs/heads/" + _cfg("hook_branch") == event["ref"]:
-            call(["git", "pull"])
+            call(["git", "pull", "origin", "master"])
             call(_cfg("restart_command").split())
             return "thanks"
         return "ignored"
