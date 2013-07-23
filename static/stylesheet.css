@@ -66,7 +66,7 @@ body {
 #droptext {
     width: 100%;
     height: 100%;
-    line-height: 640px;
+    margin-top: 300px;
     text-align: center;
 }
 
