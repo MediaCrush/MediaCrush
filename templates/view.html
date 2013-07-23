@@ -10,7 +10,7 @@
     </head>
     <body>
         <div style="display: inline-block">
-            {% if video %}
+            {% if mimetype.startswith("video") %}
                 {% if controls %}
                 <video controls>
                 {% else %}
@@ -23,8 +23,13 @@
                     <source src="/{{ filename }}.mp4" type='video/mp4;'>
                     <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 </video>
-            {% else %}
+            {% elif mimetype.startswith("image") %}
             <img src="/{{ original }}" />
+            {% elif mimetype.startswith("audio") %}
+            <audio controls>
+                <source src="/{{ filename }}.mp3" type='audio/mpeg'>
+                <source src="/{{ filename }}.ogg" type='audio/ogg'>
+            </audio>
             {% endif %}
             <div class="row">
                 <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>

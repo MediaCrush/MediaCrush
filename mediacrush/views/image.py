@@ -2,7 +2,7 @@ from flask.ext.classy import FlaskView, route
 from flask import send_file, render_template, abort, request
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS
+from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -27,10 +27,12 @@ class ImageView(FlaskView):
             compression = int(float(f.compression) * 100)
 
         ext = extension(f.original)
+        mimetype = get_mimetype(f.original)
         return render_template(
             "view.html", 
             filename=id, 
             original=f.original, 
             video=ext in VIDEO_EXTENSIONS,
             controls=ext in CONTROLS_EXTENSIONS,
-            compression=compression)
+            compression=compression,
+            mimetype=mimetype)

@@ -11,7 +11,8 @@ from .network import secure_ip
 
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
-EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS
+AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
+EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
 
 processing_needed = {
     'gif': {
