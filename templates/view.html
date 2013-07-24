@@ -10,7 +10,7 @@
     </head>
     <body>
         <div style="display: inline-block">
-            {% if mimetype.startswith("video") %}
+            {% if mimetype.startswith("video") or mimetype == "image/gif" %}
                 {% if controls %}
                 <video controls>
                 {% else %}
