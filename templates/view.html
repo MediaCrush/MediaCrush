@@ -39,7 +39,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            {% if mimetype.startswith('image') && mimetype != 'image/gif' %}
+            {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
             var zoomedOut = true;
             {% endif %}
             window.addEventListener('load', function() {
@@ -59,7 +59,7 @@
                 }, false);
                 {% endif %}
             }, false);
-            {% if mimetype.startswith('image') && mimetype != 'image/gif' %}
+            {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
             function applyZoom() {
                 var image = document.getElementById('image');
                 if (zoomedOut) {
