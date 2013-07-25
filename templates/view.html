@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-    <!-- BTC 1F5cRcwzZNR3L9j5oVYkCtYhGgnGwiz6jA -->
     <head>
         <meta charset=utf-8 />
         <meta type="robots" content="noindex,nofollow" />
@@ -40,7 +39,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            {% if mimetype.startswith('image') %}
+            {% if mimetype.startswith('image') && mimetype != 'image/gif' %}
             var zoomedOut = true;
             {% endif %}
             window.addEventListener('load', function() {
@@ -50,7 +49,7 @@
                     var report = document.getElementById('report');
                     report.parentNode.innerHTML = "Reported";
                 }, false);
-                {% if mimetype.startswith("image") %}
+                {% if mimetype.startswith("image") && mimetype != 'image/gif' %}
                 applyZoom();
                 window.onresize = applyZoom;
                 var image = document.getElementById('image');
@@ -60,7 +59,7 @@
                 }, false);
                 {% endif %}
             }, false);
-            {% if mimetype.startswith('image') %}
+            {% if mimetype.startswith('image') && mimetype != 'image/gif' %}
             function applyZoom() {
                 var image = document.getElementById('image');
                 if (zoomedOut) {
