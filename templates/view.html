@@ -4,9 +4,9 @@
     <head>
         <meta charset=utf-8 />
         <meta type="robots" content="noindex,nofollow" />
-        <title>gifquick</title>
+        <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.row *{display:block;}</style>
+        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.row *{display:block;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}</style>
     </head>
     <body>
         <div style="display: inline-block">
@@ -24,7 +24,7 @@
                     <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 </video>
             {% elif mimetype.startswith("image") %}
-            <img src="/{{ original }}" />
+            <img src="/{{ original }}" alt="MediaQuick" id="image" />
             {% elif mimetype.startswith("audio") %}
             <audio controls>
                 <source src="/{{ filename }}.mp3" type='audio/mpeg'>
@@ -36,18 +36,45 @@
                 {% if compression %}
                 <span class="small">{{ compression }}% faster!</span>
                 {% endif %}
-                <a class="small" href="#" id="report">Report</a>
+                <span class="small"><a href="#" id="report">Report</a></span>
             </div>
         </div>
         <script type="text/javascript">
-            window.onload = function() {
+            {% if mimetype.startswith('image') %}
+            var zoomedOut = true;
+            {% endif %}
+            window.addEventListener('load', function() {
                 var report = document.getElementById('report');
                 report.addEventListener('click', function(e) {
                     e.preventDefault();
                     var report = document.getElementById('report');
                     report.parentNode.innerHTML = "Reported";
                 }, false);
-            };
+                {% if mimetype.startswith("image") %}
+                applyZoom();
+                window.onresize = applyZoom;
+                var image = document.getElementById('image');
+                image.addEventListener('click', function(e) {
+                    zoomedOut = !zoomedOut;
+                    applyZoom();
+                }, false);
+                {% endif %}
+            }, false);
+            {% if mimetype.startswith('image') %}
+            function applyZoom() {
+                var image = document.getElementById('image');
+                if (zoomedOut) {
+                    var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+                    image.style.maxWidth = x + "px";
+                    image.style.maxHeight = y + "px";
+                    image.className = 'zout';
+                } else {
+                    image.style.maxWidth = null;
+                    image.style.maxHeight = null;
+                    image.className = 'zin';
+                }
+            }
+            {% endif %}
         </script>
     </body>
     {% include "analytics.html" %}
