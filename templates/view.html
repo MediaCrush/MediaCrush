@@ -49,7 +49,7 @@
                     var report = document.getElementById('report');
                     report.parentNode.innerHTML = "Reported";
                 }, false);
-                {% if mimetype.startswith("image") && mimetype != 'image/gif' %}
+                {% if mimetype.startswith("image") and mimetype != 'image/gif' %}
                 applyZoom();
                 window.onresize = applyZoom;
                 var image = document.getElementById('image');
