@@ -2,6 +2,36 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+.logo {
+    float: left;
+    position: relative;
+    margin-top: 5px;
+    margin-right: 5px;
+    width: 32px;
+    height: 32px;
+}
+
+.logo img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-transition: linear 0.2s;
+    -moz-transition: linear 0.2s;
+    transition: linear 0.2s;
+}
+
+.logo:hover img.bg {
+    -webkit-transform: rotate(120deg);
+    -moz-transform: rotate(120deg);
+    transform: rotate(120deg);
+    left: -3px;
+    top: 3px;
+}
+
+.sidebar h1 {
+    margin: 0;
+}
+
 .overlay {
     background: #000;
     width: 100%;
@@ -26,17 +56,13 @@ body {
     bottom: 10px;
 }
 
-@media (min-width: 1000px) {
-    .wrapper {
-        width: 1000px;
-        margin: 0 auto;
-    }
+.wrapper {
+    width: 1000px;
 }
 
 .container {
     width: 1000px;
     padding: 5px;
-    margin: 0 auto;
 }
 
 .content {
@@ -46,7 +72,10 @@ body {
     position: absolute;
 }
 
-@media (min-height: 650px) {
+@media (min-height: 650px), (min-width: 1000px) {
+    .wrapper {
+        margin: 0 auto;
+    }
     .content {
         margin-top: -325px;
         top: 50%;
@@ -68,6 +97,15 @@ body {
     width: 100%;
     margin-top: 300px;
     text-align: center;
+}
+
+@media (max-height: 800px) {
+    #droparea {
+        height: 320px;
+    }
+    #droptext {
+        margin-top: 150px;
+    }
 }
 
 .sidebar {
