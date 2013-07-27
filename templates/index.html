@@ -5,16 +5,18 @@
 {% block content %}
 <div class="wrapper">
     <div class="content">
-        <div id="droparea">
-            <div id="droptext">Drag and drop your files here.<br />PNG, JPG, GIF, MP4, OGV, MP3</div>
+        <div class="column dropcolumn">
+            <div id="droparea">
+                <div id="droptext">Drag and drop your files here.<br />PNG, JPG, SGV, GIF, MP4, OGV, MP3</div>
+            </div>
+            <div class="small">
+                <a href="mailto:support@mediacru.sh">support@mediacru.sh</a> &mdash;
+                <a href="/donate">Donate to MediaCrush</a> &mdash;
+                <a href="/serious">Terms of Use & Privacy</a> &mdash;
+                <a href="https://blog.mediacru.sh">Blog</a>
+            </div>
         </div>
-        <div class="small">
-            <a href="mailto:support@mediacru.sh">support@mediacru.sh</a> &mdash;
-            <a href="/donate">Donate to MediaCrush</a> &mdash;
-            <a href="/serious">Terms of Use & Privacy</a> &mdash;
-            <a href="https://blog.mediacru.sh">Blog</a>
-        </div>
-        <div class="sidebar">
+        <div class="sidebar column">
             <a class="logo" href="https://blog.mediacru.sh/2013/07/27/MediaCrush-logo.html" target="_blank">
                 <img src="/static/logo-bg.png" class="bg" alt="logo" />
                 <img src="/static/logo-fg.png" alt="logo" />
@@ -23,8 +25,23 @@
             <p>We make your media files load super fast by reducing the file size, without sacrificing quality.
             See a demo <a href="/demo">here</a>!</p>
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
+            {% if ads %}
+            <div id="lgad">
+                <script type="text/javascript"><!--
+                google_ad_client = "{{ adsense_client }}";
+                google_ad_slot = "5280784572";
+                google_ad_width = 234;
+                google_ad_height = 60;
+                //-->
+                </script>
+                <script type="text/javascript" src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+                <div>
+                    <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
+                </div>
+            </div>
+            {% endif %}
         </div>
-        <div id="gad">
+        <div id="gad" class="column">
             {% if ads %}
             <div>
                 {% include "ads.html" %}

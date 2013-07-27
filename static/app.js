@@ -13,7 +13,10 @@ function createCookie(name,value,days) {
 
 function adOptOut() {
     createCookie('ad-opt-out', '1', 0);
-    document.getElementById('gad').remove();
+    var gad = document.getElementById('gad');
+    var lgad = document.getElementById('lgad');
+    gad.parentElement.removeChild(gad);
+    lgad.parentElement.removeChild(lgad);
 }
 
 function handleFiles(files) {

@@ -5,7 +5,7 @@ body {
 .logo {
     float: left;
     position: relative;
-    margin-top: 6px;
+    margin-top: 8px;
     margin-right: 5px;
     width: 32px;
     height: 32px;
@@ -15,17 +15,6 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    -webkit-transition: linear 0.2s;
-    -moz-transition: linear 0.2s;
-    transition: linear 0.2s;
-}
-
-.logo:hover img.bg {
-    -webkit-transform: rotate(120deg);
-    -moz-transform: rotate(120deg);
-    transform: rotate(120deg);
-    left: -3px;
-    top: 3px;
 }
 
 .sidebar h1 {
@@ -57,25 +46,43 @@ body {
 }
 
 .wrapper {
-    width: 1000px;
+    width: 1012px;
 }
 
 .container {
-    width: 1000px;
+    width: 1012px;
     padding: 5px;
 }
 
 .content {
-    width: 1000px;
-    height: 650px;
+    width: 1012px;
     padding: 5px;
     position: absolute;
 }
 
-@media (min-height: 650px), (min-width: 1000px) {
-    .wrapper {
+.content .column {
+    float: left;
+}
+
+#lgad {
+    display: none;
+    text-align: center;
+}
+
+@media (min-width: 1000px)  {
+    .wrapper, .container {
         margin: 0 auto;
     }
+}
+@media (max-width: 1000px), (max-height: 700px) {
+    #gad {
+        display: none;
+    }
+    #lgad {
+        display: block;
+    }
+}
+@media (min-height: 800px) {
     .content {
         margin-top: -325px;
         top: 50%;
@@ -89,7 +96,6 @@ body {
     width: 590px;
     background: #fff;
     box-shadow: 0 0 10px 1px #999 inset;
-    position: relative;
     padding: 5px;
 }
 
@@ -108,10 +114,17 @@ body {
     }
 }
 
+@media (max-width: 800px) {
+    #droparea, .dropcolumn {
+        width: 300px;
+        margin-right: 10px;
+    }
+    .wrapper, .content, .container {
+        width: auto;
+    }
+}
+
 .sidebar {
-    position: absolute;
-    right: 110px;
-    top: 0;
     width: 270px;
     padding: 10px;
 }
@@ -119,9 +132,6 @@ body {
 #gad {
     width: 120px;
     height: 620px;
-    position: absolute;
-    right: 0;
-    top: 0;
     text-align: center;
 }
 
