@@ -34,6 +34,10 @@ processing_needed = {
     'jpeg': {
         'formats': [],
         'time': 5
+    },
+    'svg': {
+        'formats': [],
+        'time': 5
     }
 }
 

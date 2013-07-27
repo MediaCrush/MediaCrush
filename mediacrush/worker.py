@@ -17,7 +17,9 @@ converters = {
 }
 
 processors = {
-    'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path])
+    'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
+    'jpeg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
+    'svg': lambda path: TimeLimitedCommand(["tidy", "-asxml", "-xml", "--hide-comments", "1", "--wrap", "0", "--quiet", "--write-back", "1", path])
 }
 
 class TimeLimitedCommand(object):
