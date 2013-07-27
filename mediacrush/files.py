@@ -12,7 +12,7 @@ from .network import secure_ip
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
-EXTENSIONS = set(['png', 'jpg', 'jpeg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
 
 processing_needed = {
     'gif': {
@@ -28,6 +28,10 @@ processing_needed = {
         'time': 300,
     },
     'jpg': {
+        'formats': [],
+        'time': 5
+    },
+    'jpeg': {
         'formats': [],
         'time': 5
     }

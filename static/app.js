@@ -71,6 +71,10 @@ function prepareImage(parentElement, file) {
         reader.readAsDataURL(file);
 
         wrapper.appendChild(image);
+    } else if (file.type.indexOf("audio") != -1) {
+        var image = document.createElement('img');
+        image.src = '/static/audio.png';
+        wrapper.appendChild(image);
     } else { 
         var video = document.createElement('video');
         video.setAttribute('loop', 'loop');
@@ -98,6 +102,7 @@ function showURL(result, url) {
     link.innerHTML = window.location.origin + '/' + url;
     result.appendChild(text);
     result.appendChild(link);
+    uploads--;
 }
 
 function checkStatus(processing, progress, result, url) {
@@ -111,7 +116,6 @@ function checkStatus(processing, progress, result, url) {
             progress.style.width = 0;
             processing.parentElement.removeChild(processing);
             showURL(result, url)
-            uploads--;
         } else if (response == 'timeout' || response == 'error') {
             error = document.createElement("span");
             if (response == 'timeout') {
