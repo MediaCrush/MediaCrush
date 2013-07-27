@@ -109,7 +109,7 @@ function checkStatus(processing, progress, result, url) {
         var response = this.responseText;
         if (response == 'done') {
             progress.style.width = 0;
-            processing.remove();
+            processing.parentElement.removeChild(processing);
             showURL(result, url)
             uploads--;
         } else if (response == 'timeout' || response == 'error') {
