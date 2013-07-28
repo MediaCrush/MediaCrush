@@ -106,7 +106,6 @@ function showURL(result, url) {
 }
 
 function checkStatus(processing, progress, result, url) {
-    console.log('checking in');
     var xhr = new XMLHttpRequest();
 
     xhr.open('GET', '/upload/status/' + url);
@@ -144,7 +143,6 @@ function uploadFile(progress, result, file) {
     xhr.open('POST', '/upload/');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
-            console.log(e.loaded + ' ' + e.total + ' ' + (e.loaded / e.total));
             progress.style.width = (e.loaded / e.total) * 100 + '%';
         }
     };
@@ -186,14 +184,16 @@ function uploadFile(progress, result, file) {
     xhr.send(formData);
 }
 
-function evtNop(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
+function dragNop(e) {
+    e.stopPropagation();
+    e.preventDefault();
 }
 
-function dropDo(evt) {
-    evtNop(evt);
-    var files = evt.dataTransfer.files;
+function dragDrop(e) {
+    dragNop(e);
+    var droparea = document.getElementById('droparea');
+    droparea.className = null;
+    var files = e.dataTransfer.files;
     var count = files.length;
 
     if (count > 0) {
@@ -201,12 +201,24 @@ function dropDo(evt) {
     }
 }
 
+function dragEnter(e) {
+    dragNop(e);
+    var droparea = document.getElementById('droparea');
+    droparea.className = 'hover';
+}
+
+function dragLeave(e) {
+    dragNop(e);
+    var droparea = document.getElementById('droparea');
+    droparea.className = null;
+}
+
 function dropEnable() {
     var droparea = document.getElementById('droparea');
-    droparea.addEventListener('dragenter', evtNop, false);
-    droparea.addEventListener('dragexit', evtNop, false);
-    droparea.addEventListener('dragover', evtNop, false);
-    droparea.addEventListener('drop', dropDo, false);
+    droparea.addEventListener('dragenter', dragEnter, false);
+    droparea.addEventListener('dragleave', dragLeave, false);
+    droparea.addEventListener('dragover', dragNop, false);
+    droparea.addEventListener('drop', dragDrop, false);
 }
 
 window.onload = dropEnable;

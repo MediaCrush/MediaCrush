@@ -101,6 +101,13 @@ body {
     background: #fff;
     box-shadow: 0 0 10px 1px #999 inset;
     padding: 5px;
+    -webkit-transition: 0.25s linear;
+    -moz-transition: 0.25s linear;
+    transition: 0.25s linear;
+}
+
+#droparea.hover {
+    box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
 }
 
 #droptext {
