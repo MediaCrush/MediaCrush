@@ -2,6 +2,10 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+.container {
+    text-align: justify;
+}
+
 .logo {
     float: left;
     position: relative;
