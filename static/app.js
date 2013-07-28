@@ -49,11 +49,20 @@ function uploadFiles(files) {
 
         element.appendChild(name);
         element.appendChild(result);
-        element.appendChild(progress);
-        element.appendChild(clearfix);
-        droparea.appendChild(element);
-
-        uploadFile(progress, result, files[i]);
+        
+        if (files[i].size > 26214400) {
+            var error = document.createElement("span");
+            error.innerHTML = "This file is too large. The maximum is 25 MB.";
+            error.className = "error";
+            result.appendChild(error);
+            droparea.appendChild(element);
+            uploads--;
+        } else {
+            element.appendChild(progress);
+            element.appendChild(clearfix);
+            droparea.appendChild(element);
+            uploadFile(progress, result, files[i]);
+        }
     }
 }
 
