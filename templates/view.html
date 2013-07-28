@@ -5,7 +5,7 @@
         <meta type="robots" content="noindex,nofollow" />
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.row *{display:block;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}</style>
+        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}</style>
     </head>
     <body>
         <div style="display: inline-block">
@@ -31,11 +31,19 @@
             </audio>
             {% endif %}
             <div class="row">
-                <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
+                <div>
+                    <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
+                </div>
                 {% if compression %}
-                <span class="small">{{ compression }}% faster!</span>
+                <div>
+                    <span class="small">{{ compression }}% faster!</span>
+                </div>
                 {% endif %}
-                <span class="small"><a href="#" id="report">Report</a></span>
+                <div>
+                    <span class="small"><a href="#" id="report">Report</a></span>
+                    <span class="small"> &mdash; <a href="/">Upload</a></span>
+                </div>
+                <br />
             </div>
         </div>
         <script type="text/javascript">
