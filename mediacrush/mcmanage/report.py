@@ -56,7 +56,7 @@ def report():
         f = File.from_hash(report)
         reportinfo += "    https://mediacru.sh/%s (%s reports)\n" % (report, f.reports) 
 
-    if reports_len == 0:
+    if len(reports) == 0:
         reportinfo += "    No reports today. Good job!"
 
     report = TEMPLATE % (
