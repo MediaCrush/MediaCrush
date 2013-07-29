@@ -52,7 +52,7 @@ class File(RedisObject):
         r.hincrby(File.get_key(self.hash), "reports", 1)
 
         if self.reports > 10:
-            r.lpush(_k("reports-triggered"), self.hash)
+            r.sadd(_k("reports-triggered"), self.hash)
 
 if __name__ == '__main__':
     a = File(hash="aasdf", compression=2)

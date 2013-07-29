@@ -48,14 +48,13 @@ def report():
 
     diskinfo = ''.join(["    %s\n" % s for s in subprocess.check_output(["df", "-kh"]).split("\n")])
 
-    reports_len = r.llen(_k("reports-triggered"))
-    reports = r.lrange(_k("reports-triggered"), 0, reports_len)
+    reports = r.smembers(_k("reports-triggered"))
     r.delete(_k("reports-triggered"))
 
     reportinfo = ""
     for report in reports:
         f = File.from_hash(report)
-        reportinfo += "    https://mediacru.sh/%s (%s reports)" % (report, f.reports) 
+        reportinfo += "    https://mediacru.sh/%s (%s reports)\n" % (report, f.reports) 
 
     if reports_len == 0:
         reportinfo += "    No reports today. Good job!"
