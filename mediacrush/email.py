@@ -23,17 +23,8 @@ def _email_admins(subject, content):
 
     return email.messages.send(message=message, async=True)
 
-def report(url):
-    message = """
-Hello!
-
-There has been a report. Please verify https://mediacru.sh/%s.
-
-Thank you,
-The email bot.
-    """ % url
-
-    return _email_admins("Media reported", message)
+def send_report(text):
+    return _email_admins("MediaCrush report", text)
 
 if __name__ == '__main__':
     print report('bruasdf')

@@ -6,20 +6,33 @@ Usage:
     mcmanage.py admin list
     mcmanage.py admin add <pwhash>
     mcmanage.py admin delete <pwhash>
-
+    mcmanage.py report show
+    mcmanage.py report email 
 """
 
 from docopt import docopt
 
 from mediacrush.mcmanage.database import database_clear, database_upgrade
+from mediacrush.mcmanage.report import report
+
+from mediacrush.email import send_report
+
+def show_report(args):
+    print report()
 
 database_commands = {
     'clear': database_clear,
     'upgrade': database_upgrade,
 }
 
+report_commands = {
+    'show': show_report,
+    'email': lambda args: send_report(report())
+}
+
 mapping = {
     'database': database_commands,
+    'report': report_commands,
     'admin': None,
 }
 

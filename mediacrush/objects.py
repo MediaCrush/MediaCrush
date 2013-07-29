@@ -43,7 +43,16 @@ class RedisObject(object):
 class File(RedisObject):
     original = None
     compression = 0
+    reports = 0
     ip = None
+
+    def add_report(self):
+        self.reports = int(self.reports)
+        self.reports += 1
+        r.hincrby(File.get_key(self.hash), "reports", 1)
+
+        if self.reports > 10:
+            r.lpush(_k("reports-triggered"), self.hash)
 
 if __name__ == '__main__':
     a = File(hash="aasdf", compression=2)

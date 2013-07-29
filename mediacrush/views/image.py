@@ -6,7 +6,6 @@ from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimety
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
-from ..email import report
 
 class ImageView(FlaskView):
     route_base = '/'
@@ -39,5 +38,6 @@ class ImageView(FlaskView):
             mimetype=mimetype)
 
     def report(self, id):
-        report(id)
+        f = File.from_hash(id)
+        f.add_report()
         return "ok"
