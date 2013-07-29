@@ -6,10 +6,12 @@ MarkupSafe==0.18
 Werkzeug==0.9.1
 argparse==1.2.1
 autopep8==0.9.2
-docopt==0.6.1
+docopt==0.4.0
 gunicorn==17.5
 itsdangerous==0.22
+mandrill==1.0.42
 pep8==1.4.6
 py-bcrypt==0.3
 redis==2.7.6
+requests==1.2.3
 wsgiref==0.1.2
