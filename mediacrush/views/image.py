@@ -6,6 +6,7 @@ from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimety
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
+from ..email import report
 
 class ImageView(FlaskView):
     route_base = '/'
@@ -36,3 +37,7 @@ class ImageView(FlaskView):
             controls=ext in CONTROLS_EXTENSIONS,
             compression=compression,
             mimetype=mimetype)
+
+    def report(self, id):
+        report(id)
+        return "ok"

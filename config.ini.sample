@@ -32,3 +32,7 @@ adsense_slot = CHANGEME
 dwolla_id = changeme
 flattr_id = changeme
 coinbase_id = changeme
+
+mandrill_api = changeme
+admin_email = changeme@changeme.com
+from_email = admin@mediacru.sh
