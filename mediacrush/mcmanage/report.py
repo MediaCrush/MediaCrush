@@ -1,0 +1,73 @@
+from ..database import r, _k
+from ..config import _cfg
+from ..objects import File
+from ..files import extension
+
+from datetime import datetime
+import os
+import subprocess 
+
+TEMPLATE = """
+This is the report for %s.
+
+File usage:
+%s
+
+Disk info:
+%s
+
+Files with more than 10 reports:
+%s
+
+%s"""
+
+sizes = {}
+extensions = {}
+
+def report():
+    d = os.walk(_cfg("storage_folder"))    
+    for f in list(d)[0][2]: # Forgive me for this.
+        size = os.path.getsize(os.path.join(_cfg("storage_folder"), f))
+        size /= float(1 << 20) # log2(1048576) = 20
+        size = round(size, 2)
+        ext = extension(f)
+
+        if ext not in extensions:
+            extensions[ext] = 1
+        else:
+            extensions[ext] += 1
+
+        if ext not in sizes:
+            sizes[ext] = size
+        else:
+            sizes[ext] += size
+
+    fileinfo = "" 
+    for ext in extensions:
+        fileinfo += "    -%d %ss (%0.2f MB)\n" % (extensions[ext], ext.upper(), sizes[ext])
+
+    diskinfo = ''.join(["    %s\n" % s for s in subprocess.check_output(["df", "-kh"]).split("\n")])
+
+    reports_len = r.llen(_k("reports-triggered"))
+    reports = r.lrange(_k("reports-triggered"), 0, reports_len)
+    r.delete(_k("reports-triggered"))
+
+    reportinfo = ""
+    for report in reports:
+        f = File.from_hash(report)
+        reportinfo += "    https://mediacru.sh/%s (%s reports)" % (report, f.reports) 
+
+    if reports_len == 0:
+        reportinfo += "    No reports today. Good job!"
+
+    report = TEMPLATE % (
+        datetime.now().strftime("%d/%m/%Y"),
+        fileinfo,
+        diskinfo,
+        reportinfo,
+
+        "Meow."
+    )
+
+
+    return report 
