@@ -6,7 +6,7 @@ A website for serving media super fast.
 
 Install the requirements:
 
-    sudo apt-get install redis-server jhead
+    sudo apt-get install redis-server jhead tidy
 
 Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
 
