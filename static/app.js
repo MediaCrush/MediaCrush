@@ -162,8 +162,8 @@ function finish(statusUI, hash) {
     a2.setAttribute('target', '_blank');
     a2.href = '/' + hash;
     a2.className = 'full-size';
-    statusUI.appendChild(a2);
     statusUI.innerHTML = '';
+    statusUI.appendChild(a2);
     statusUI.appendChild(p);
     statusUI.appendChild(a);
     uploads--;
