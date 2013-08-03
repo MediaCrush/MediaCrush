@@ -6,10 +6,14 @@
 <div class="wrapper">
     <div class="content">
         <div class="column dropcolumn">
-            <div id="droparea">
+            <div id="droparea"{% if mobile %} class="mobile"{% endif %}>
+                {% if not mobile %}
                 <div id="droptext">Drag and drop your files here, or <br />
-                <a  href="#" id="browseLink">click to browse</a> for files.<br />
+                <a href="#" id="browseLink">click to browse</a> for files.<br />
                 PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
+                {% else %}
+                <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
+                {% endif %}
                 <input type="file" id="browse" multiple />
             </div>
             <div class="small">

@@ -60,6 +60,11 @@ function handleFile(file) {
                     a.setAttribute('target', '_blank');
                     a.textContent = window.location.origin + '/' + hash;
                     a.href = '/' + hash;
+                    var a2 = document.createElement('a');
+                    a2.setAttribute('target', '_blank');
+                    a2.href = '/' + hash;
+                    a2.className = 'full-size';
+                    preview.fileStatus.appendChild(a2);
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
                     uploads--;
@@ -153,6 +158,11 @@ function finish(statusUI, hash) {
     a.setAttribute('target', '_blank');
     a.textContent = window.location.origin + '/' + hash;
     a.href = '/' + hash;
+    var a2 = document.createElement('a');
+    a2.setAttribute('target', '_blank');
+    a2.href = '/' + hash;
+    a2.className = 'full-size';
+    statusUI.appendChild(a2);
     statusUI.innerHTML = '';
     statusUI.appendChild(p);
     statusUI.appendChild(a);
