@@ -104,6 +104,7 @@ body {
     -webkit-transition: 0.25s linear;
     -moz-transition: 0.25s linear;
     transition: 0.25s linear;
+    position: relative;
 }
 
 #droparea.hover {
@@ -112,8 +113,33 @@ body {
 
 #droptext {
     width: 100%;
-    margin-top: 300px;
+    margin-top: 290px;
     text-align: center;
+}
+
+#droparea input {
+    display: none;
+}
+
+.mobile-browse {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    line-height: 640px;
+}
+
+.mobile-browse span {
+    padding: 20px;
+    background: #428bca;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.mobile-browse:hover {
+    text-decoration: none;
 }
 
 @media (max-height: 800px) {
@@ -121,7 +147,10 @@ body {
         height: 320px;
     }
     #droptext {
-        margin-top: 150px;
+        margin-top: 130px;
+    }
+    .mobile-browse {
+        line-height: 320px;
     }
 }
 
@@ -189,6 +218,14 @@ body {
     margin: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.image-loading .full-size {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .img-wrapper {
