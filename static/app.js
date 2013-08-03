@@ -1,6 +1,3 @@
-var firstUpload = true;
-var uploads = 0;
-
 function createCookie(name,value,days) {
     if (days) {
         var date = new Date();
@@ -19,11 +16,9 @@ function adOptOut() {
     lgad.parentElement.removeChild(lgad);
 }
 
+var firstUpload = true;
+var uploads = 0;
 function handleFiles(files) {
-    uploadFiles(files);
-}
-
-function uploadFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     if (firstUpload) {
@@ -32,165 +27,179 @@ function uploadFiles(files) {
     }
     for (var i = 0; i < files.length; i++) {
         uploads++;
-        var element = document.createElement('div');
-        element.className = 'image-loading';
-        prepareImage(element, files[i]);
-        
-        var name = document.createElement('h2');
-        name.innerHTML = files[i].name;
-
-        var result = document.createElement('div');
-
-        var progress = document.createElement('div');
-        progress.className = 'progress';
-
-        var clearfix = document.createElement('div');
-        clearfix.className = 'clearfix';
-
-        element.appendChild(name);
-        element.appendChild(result);
-        
-        if (files[i].size > 26214400) {
-            var error = document.createElement("span");
-            error.innerHTML = "This file is too large. The maximum is 25 MB.";
-            error.className = "error";
-            result.appendChild(error);
-            droparea.appendChild(element);
-            uploads--;
-        } else {
-            element.appendChild(progress);
-            element.appendChild(clearfix);
-            droparea.appendChild(element);
-            uploadFile(progress, result, files[i]);
-        }
+        handleFile(files[i]);
     }
 }
 
-function prepareImage(parentElement, file) {
-    var wrapper = document.createElement('div');
-    wrapper.setAttribute('class', 'img-wrapper');
+function handleFile(file) {
     var reader = new FileReader();
-
-    if(file.type.indexOf("image") != -1) {
-        var image = document.createElement('img');
-
-        reader.onloadend = function(e) {
-            image.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        wrapper.appendChild(image);
-    } else if (file.type.indexOf("audio") != -1) {
-        var image = document.createElement('img');
-        image.src = '/static/audio.png';
-        wrapper.appendChild(image);
-    } else { 
-        var video = document.createElement('video');
-        video.setAttribute('loop', 'loop');
-        var source = document.createElement('source');
-
-        reader.onloadend = function(e) {
-            source.setAttribute('src', e.target.result);
-            source.setAttribute('type', file.type);
-            video.appendChild(source);
-            wrapper.appendChild(video);
-            video.volume = 0;
-            video.play();
-        };
-        reader.readAsDataURL(file);
-    }
-    parentElement.appendChild(wrapper);
-}
-
-function showURL(result, url) {
-    var text = document.createElement('p');
-    text.innerHTML = 'Upload complete!';
-    var link = document.createElement('a');
-    link.href = '/' + url;
-    link.setAttribute('target', '_blank');
-    link.innerHTML = window.location.origin + '/' + url;
-    result.appendChild(text);
-    result.appendChild(link);
-    uploads--;
-}
-
-function checkStatus(processing, progress, result, url) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.open('GET', '/upload/status/' + url);
-    xhr.onload = function() {
-        var response = this.responseText;
-        if (response == 'done') {
-            progress.style.width = 0;
-            processing.parentElement.removeChild(processing);
-            showURL(result, url)
-        } else if (response == 'timeout' || response == 'error') {
-            error = document.createElement("span");
-            if (response == 'timeout') {
-                error.innerHTML = "This file took too long to process.";
-            } else {
-                error.innerHTML = "There was an error processing this file.";
-            }
-
-            error.className = "error";
-            result.appendChild(error);
-            uploads--;
+    var droparea = document.getElementById('droparea');
+    reader.onloadend = function(e) {
+        var data = e.target.result;
+        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
+        var dataURI = 'data:' + file.type + ';base64,' + btoa(data);
+        var preview = createPreview(file, dataURI);
+        if (!preview.supported) {
+            var error = document.createElement('span');
+            error.className = 'error';
+            error.textContent = 'This filetype is not supported.';
+            preview.fileStatus.appendChild(error);
         } else {
-            // Try again.
-            setTimeout(function() {
-                checkStatus(processing, progress, result, url);
-            }, 1000);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/upload/exists/' + hash);
+            xhr.onload = function() {
+                if (this.responseText == 'true') {
+                    var p = document.createElement('p');
+                    p.textContent = 'Upload complete!';
+                    var a = document.createElement('a');
+                    a.setAttribute('target', '_blank');
+                    a.textContent = window.location.origin + '/' + hash;
+                    a.href = '/' + hash;
+                    preview.fileStatus.appendChild(p);
+                    preview.fileStatus.appendChild(a);
+                    uploads--;
+                } else {
+                    var p = document.createElement('p');
+                    p.textContent = 'Uploading...';
+                    preview.fileStatus.appendChild(p);
+                    uploadFile(file, hash, preview.fileStatus, preview.progress);
+                }
+            };
+            xhr.send();
         }
     };
-
-    xhr.send();
+    reader.readAsBinaryString(file);
 }
 
-function uploadFile(progress, result, file) {
+function uploadFile(file, hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
-    
     xhr.open('POST', '/upload/');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
-            progress.style.width = (e.loaded / e.total) * 100 + '%';
+            progressUI.style.width = (e.loaded / e.total) * 100 + '%';
         }
     };
     xhr.onload = function() {
-        progress.style.width = 0;
-        var status = this.status;
-        var error = '';
-        var url = this.responseText;
-
-        if (status == 415) {        // Unsupported media type
-            error = 'This image format is not supported.';
-        } else if (status == 409) { // Already uploaded
-            showURL(result, url);
-        } else if (status == 200) { // OK
-            processing = document.createElement('span');
-            processing.innerHTML = 'Processing...';
-
-            progress.style.width = "100%";
-            progress.className += " progress-green"
-            result.appendChild(processing);
-
-            // Start a timer that checks whether the gif has finished processing successfully.
-            checkStatus(processing, progress, result, url);
-        } else if (status == 400) {
-            error = 'You have consumed your hourly quota. Please try again later.';
-        } else {
-            error = 'An error has occured. Please try again.';
+        var error = null;
+        if (this.status == 415) {
+            error = 'This media format is not supported.';
+        } else if (this.status == 409) {
+            finish(statusUI, this.responseText);
+        } else if (this.status == 400) {
+            error = 'You have consumed your hourly quota. Try again later.';
+        } else if (this.status == 200) {
+            statusUI.innerHTML = '';
+            var p = document.createElement('p');
+            p.textContent = 'Processing...';
+            statusUI.appendChild(p);
+            hash = this.responseText;
+            progressUI.className += ' progress-green';
+            progressUI.style.width = '100%';
+            setTimeout(function() {
+                checkStatus(file, hash, statusUI, progressUI);
+            }, 1000);
         }
-        if (error != '') {
+        if (error != null) {
+            progressUI.parentElement.removeChild(progressUI);
             var errorText = document.createElement('p');
-            errorText.innerHTML = 'Error: ' + error;
             errorText.className = 'error';
-            result.appendChild(errorText);
+            errorText.innerText = error;
+            statusUI.appendChild(errorText);
+            progressUI.style.width = 0;
         }
     };
-
     var formData = new FormData();
     formData.append('file', file);
     xhr.send(formData);
+}
+
+function checkStatus(file, hash, statusUI, progressUI) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/upload/status/' + hash);
+    xhr.onload = function() {
+        if (this.responseText == 'done') {
+            progressUI.parentElement.removeChild(progressUI);
+            finish(statusUI, hash);
+        } else if (this.responseText == 'timeout' || this.responseText == 'error') {
+            progressUI.parentElement.removeChild(progressUI);
+            var error = document.createElement('p');
+            error.className = 'error';
+            statusUI.innerHTML = '';
+            if (this.responseText == 'timeout') {
+                error.textContent = 'This file took too long to process.';
+            } else {
+                error.textContent = 'There was an error processing this file.';
+            }
+            statusUI.appendChild(error);
+            uploads--;
+        } else {
+            setTimeout(function() {
+                checkStatus(file, hash, statusUI, progressUI);
+            }, 1000);
+        }
+    };
+    xhr.send();
+}
+
+function finish(statusUI, hash) {
+    var p = document.createElement('p');
+    p.textContent = 'Upload complete!';
+    var a = document.createElement('a');
+    a.setAttribute('target', '_blank');
+    a.textContent = window.location.origin + '/' + hash;
+    a.href = '/' + hash;
+    statusUI.innerHTML = '';
+    statusUI.appendChild(p);
+    statusUI.appendChild(a);
+    uploads--;
+}
+
+function createPreview(file, dataURI) {
+    var supported = false;
+    var container = document.createElement('div');
+    container.className = 'image-loading';
+    var wrapper = document.createElement('div');
+    wrapper.className = 'img-wrapper';
+
+    var preview = null;
+    if (file.type.indexOf('image/') == 0) {
+        supported = true;
+        preview = document.createElement('img');
+        preview.src = dataURI;
+    } else if (file.type.indexOf('audio/') == 0) {
+        supported = true;
+        preview = document.createElement('img');
+        preview.src = '/static/audio.png';
+    } else if (file.type.indexOf('video/') == 0) {
+        supported = true;
+        preview = document.createElement('video');
+        preview.setAttribute('loop', 'loop');
+        var source = document.createElement('source');
+        source.setAttribute('src', dataURI);
+        source.setAttribute('type', file.type);
+        preview.appendChild(source);
+        preview.volume = 0;
+        preview.play();
+    }
+
+    var name = document.createElement('h2');
+    name.textContent = file.name;
+    var fileStatus = document.createElement('div');
+    var progress = document.createElement('div');
+    progress.className = 'progress';
+    progress.style.width = 0;
+
+    if (preview !== null) {
+        wrapper.appendChild(preview);
+    }
+    container.appendChild(wrapper);
+    container.appendChild(name);
+    container.appendChild(fileStatus);
+    container.appendChild(progress);
+    var droparea = document.getElementById('droparea');
+    droparea.appendChild(container);
+
+    return { supported: supported, fileStatus: fileStatus, progress: progress };
 }
 
 function dragNop(e) {
@@ -236,3 +245,12 @@ window.onbeforeunload = function() {
         return "If you leave the page, these uploads will be cancelled.";
     }
 };
+
+/* Slightly modified version of https://github.com/blueimp/JavaScript-MD5 */
+function h(a,g){var c=(a&65535)+(g&65535);return(a>>16)+(g>>16)+(c>>16)<<16|c&65535}function k(a,g,c,l,q,r,b){return h(h(h(a,g&c|~g&l),h(q,b))<<r|h(h(a,g&c|~g&l),h(q,b))>>>32-r,g)}function m(a,g,c,l,q,r,b){return h(h(h(a,g&l|c&~l),h(q,b))<<r|h(h(a,g&l|c&~l),h(q,b))>>>32-r,g)}function n(a,g,c,l,q,r,b){return h(h(h(a,g^c^l),h(q,b))<<r|h(h(a,g^c^l),h(q,b))>>>32-r,g)}function p(a,g,c,l,q,r,b){return h(h(h(a,c^(g|~l)),h(q,b))<<r|h(h(a,c^(g|~l)),h(q,b))>>>32-r,g)}
+window.rstr_md5=function(a){var g,c=[];c[(a.length>>2)-1]=void 0;for(g=0;g<c.length;g+=1)c[g]=0;for(g=0;g<8*a.length;g+=8)c[g>>5]|=(a.charCodeAt(g/8)&255)<<g%32;a=8*a.length;c[a>>5]|=128<<a%32;c[(a+64>>>9<<4)+14]=a;var l,q,r,b=1732584193,d=-271733879,e=-1732584194,f=271733878;for(a=0;a<c.length;a+=16)g=b,l=d,q=e,r=f,b=k(b,d,e,f,c[a],7,-680876936),f=k(f,b,d,e,c[a+1],12,-389564586),e=k(e,f,b,d,c[a+2],17,606105819),d=k(d,e,f,b,c[a+3],22,-1044525330),b=k(b,d,e,f,c[a+4],7,-176418897),f=k(f,b,d,e,c[a+5],
+12,1200080426),e=k(e,f,b,d,c[a+6],17,-1473231341),d=k(d,e,f,b,c[a+7],22,-45705983),b=k(b,d,e,f,c[a+8],7,1770035416),f=k(f,b,d,e,c[a+9],12,-1958414417),e=k(e,f,b,d,c[a+10],17,-42063),d=k(d,e,f,b,c[a+11],22,-1990404162),b=k(b,d,e,f,c[a+12],7,1804603682),f=k(f,b,d,e,c[a+13],12,-40341101),e=k(e,f,b,d,c[a+14],17,-1502002290),d=k(d,e,f,b,c[a+15],22,1236535329),b=m(b,d,e,f,c[a+1],5,-165796510),f=m(f,b,d,e,c[a+6],9,-1069501632),e=m(e,f,b,d,c[a+11],14,643717713),d=m(d,e,f,b,c[a],20,-373897302),b=m(b,d,e,f,
+c[a+5],5,-701558691),f=m(f,b,d,e,c[a+10],9,38016083),e=m(e,f,b,d,c[a+15],14,-660478335),d=m(d,e,f,b,c[a+4],20,-405537848),b=m(b,d,e,f,c[a+9],5,568446438),f=m(f,b,d,e,c[a+14],9,-1019803690),e=m(e,f,b,d,c[a+3],14,-187363961),d=m(d,e,f,b,c[a+8],20,1163531501),b=m(b,d,e,f,c[a+13],5,-1444681467),f=m(f,b,d,e,c[a+2],9,-51403784),e=m(e,f,b,d,c[a+7],14,1735328473),d=m(d,e,f,b,c[a+12],20,-1926607734),b=n(b,d,e,f,c[a+5],4,-378558),f=n(f,b,d,e,c[a+8],11,-2022574463),e=n(e,f,b,d,c[a+11],16,1839030562),d=n(d,e,
+f,b,c[a+14],23,-35309556),b=n(b,d,e,f,c[a+1],4,-1530992060),f=n(f,b,d,e,c[a+4],11,1272893353),e=n(e,f,b,d,c[a+7],16,-155497632),d=n(d,e,f,b,c[a+10],23,-1094730640),b=n(b,d,e,f,c[a+13],4,681279174),f=n(f,b,d,e,c[a],11,-358537222),e=n(e,f,b,d,c[a+3],16,-722521979),d=n(d,e,f,b,c[a+6],23,76029189),b=n(b,d,e,f,c[a+9],4,-640364487),f=n(f,b,d,e,c[a+12],11,-421815835),e=n(e,f,b,d,c[a+15],16,530742520),d=n(d,e,f,b,c[a+2],23,-995338651),b=p(b,d,e,f,c[a],6,-198630844),f=p(f,b,d,e,c[a+7],10,1126891415),e=p(e,
+f,b,d,c[a+14],15,-1416354905),d=p(d,e,f,b,c[a+5],21,-57434055),b=p(b,d,e,f,c[a+12],6,1700485571),f=p(f,b,d,e,c[a+3],10,-1894986606),e=p(e,f,b,d,c[a+10],15,-1051523),d=p(d,e,f,b,c[a+1],21,-2054922799),b=p(b,d,e,f,c[a+8],6,1873313359),f=p(f,b,d,e,c[a+15],10,-30611744),e=p(e,f,b,d,c[a+6],15,-1560198380),d=p(d,e,f,b,c[a+13],21,1309151649),b=p(b,d,e,f,c[a+4],6,-145523070),f=p(f,b,d,e,c[a+11],10,-1120210379),e=p(e,f,b,d,c[a+2],15,718787259),d=p(d,e,f,b,c[a+9],21,-343485551),b=h(b,g),d=h(d,l),e=h(e,q),f=
+h(f,r);c=[b,d,e,f];g="";for(a=0;a<32*c.length;a+=8)g+=String.fromCharCode(c[a>>5]>>>a%32&255);return g};
