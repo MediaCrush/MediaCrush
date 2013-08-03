@@ -17,8 +17,9 @@
     an image, we run your IP address through a hashing function and store it in our database. It is mathematically impossible to reverse
     the hashing process, so your IP address is safe, even if our database is compromised. We couldn't share it even if we wanted to.</p>
     <p>This means that if for some reason our database were stolen or we were pressured by anyone to release information about you, we
-    are unable to. However, it allows us to ban malicous users from using the site. Every time we hash your IP address, we get the same
-    hash, so we can use it as a basis for banning an anonymous user.</p>
+    are unable to. However, it allows us to ban malicous users from using the site. What we can do is determine if a hash matches a given
+    IP address, so we can use it as a basis for banning an anonymous user. For the technically savvy, we run IPs through bcrypt with 12
+    rounds.</p>
     <p>There is some other data we gather about you that you <em>are</em> able to turn off. We gather anonymous information about
     our users via Google Analytics. This data includes (but is not limited to):</p>
     <ul>
