@@ -112,8 +112,12 @@ body {
 
 #droptext {
     width: 100%;
-    margin-top: 300px;
+    margin-top: 290px;
     text-align: center;
+}
+
+#droparea input {
+    display: none;
 }
 
 @media (max-height: 800px) {
@@ -121,7 +125,7 @@ body {
         height: 320px;
     }
     #droptext {
-        margin-top: 150px;
+        margin-top: 130px;
     }
 }
 

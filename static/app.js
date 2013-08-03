@@ -16,6 +16,11 @@ function adOptOut() {
     lgad.parentElement.removeChild(lgad);
 }
 
+function browse() {
+    var file = document.getElementById('browse');
+    file.click();
+}
+
 var firstUpload = true;
 var uploads = 0;
 function handleFiles(files) {
@@ -237,6 +242,15 @@ function dropEnable() {
     droparea.addEventListener('dragleave', dragLeave, false);
     droparea.addEventListener('dragover', dragNop, false);
     droparea.addEventListener('drop', dragDrop, false);
+    var file = document.getElementById('browse');
+    file.addEventListener('change', function() {
+        handleFiles(file.files);
+    }, false);
+    var link = document.getElementById('browseLink');
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        browse();
+    }, false);
 }
 
 window.onload = dropEnable;
