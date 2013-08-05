@@ -121,6 +121,10 @@ body {
     display: none;
 }
 
+#droparea.files #droptext {
+    margin-top: 5px;
+}
+
 .mobile-browse {
     position: absolute;
     top: 0;
@@ -220,12 +224,18 @@ body {
     text-overflow: ellipsis;
 }
 
-.image-loading .full-size {
+.image-loading a {
+    position: relative;
+    z-index: 1;
+}
+
+.image-loading a.full-size {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 0;
 }
 
 .img-wrapper {
