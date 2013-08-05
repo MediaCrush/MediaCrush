@@ -7,14 +7,18 @@
     <div class="content">
         <div class="column dropcolumn">
             <div id="droparea"{% if mobile %} class="mobile"{% endif %}>
-                {% if not mobile %}
-                <div id="droptext">Drag and drop your files here, or <br />
-                <a href="#" id="browseLink">click to browse</a> for files.<br />
-                PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
-                {% else %}
-                <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
-                {% endif %}
+                <div id="files">
+                    {% if not mobile %}
+                    {% else %}
+                    <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
+                    {% endif %}
+                </div>
                 <input type="file" id="browse" multiple />
+                <div class="controls">
+                    <div id="droptext">Drag and drop your files here, or <br />
+                    <a href="#" id="browseLink">click to browse</a> for files.<br />
+                    PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
+                </div>
             </div>
             <div class="small">
                 <a href="mailto:support@mediacru.sh">support@mediacru.sh</a> &mdash;

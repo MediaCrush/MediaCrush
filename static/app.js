@@ -26,8 +26,9 @@ var uploads = 0;
 function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
+    droparea.className = 'files';
     if (firstUpload) {
-        droparea.innerHTML = '';
+        document.getElementById('files').innerHTML = '';
         firstUpload = false;
     }
     for (var i = 0; i < files.length; i++) {
@@ -211,8 +212,8 @@ function createPreview(file, dataURI) {
     container.appendChild(name);
     container.appendChild(fileStatus);
     container.appendChild(progress);
-    var droparea = document.getElementById('droparea');
-    droparea.appendChild(container);
+    var fileList = document.getElementById('files');
+    fileList.appendChild(container);
 
     return { supported: supported, fileStatus: fileStatus, progress: progress };
 }
