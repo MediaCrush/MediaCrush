@@ -101,9 +101,9 @@ body {
     background: #fff;
     box-shadow: 0 0 10px 1px #999 inset;
     padding: 5px;
-    -webkit-transition: 0.25s linear;
-    -moz-transition: 0.25s linear;
-    transition: 0.25s linear;
+    -webkit-transition: box-shadow 0.25s linear;
+    -moz-transition: box-shadow 0.25s linear;
+    transition: box-shadow 0.25s linear;
     position: relative;
 }
 
@@ -158,13 +158,19 @@ body {
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
     #droparea, .dropcolumn {
         width: 300px;
         margin-right: 10px;
     }
     .wrapper, .content, .container {
         width: auto;
+    }
+    .responsiveBreak {
+        display: block;
+    }
+    .responsiveHidden {
+        display: none;
     }
 }
 
