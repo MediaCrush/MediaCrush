@@ -3,9 +3,12 @@ from ..config import _cfg
 from ..objects import File
 from ..files import extension
 
+from .compliments import compliments
+
 from datetime import datetime
 import os
 import subprocess 
+import random
 
 TEMPLATE = """
 This is the report for %s.
@@ -65,7 +68,7 @@ def report():
         diskinfo,
         reportinfo,
 
-        "Meow."
+        random.choice(compliments)
     )
 
 
