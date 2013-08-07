@@ -9,7 +9,7 @@ function createCookie(name,value,days) {
 }
 
 function adOptOut() {
-    createCookie('ad-opt-out', '1', 0);
+    createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
     var gad = document.getElementById('gad');
     var lgad = document.getElementById('lgad');
     gad.parentElement.removeChild(gad);
