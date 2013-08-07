@@ -248,11 +248,10 @@ function dragLeave(e) {
 }
 
 function dropEnable() {
-    var droparea = document.getElementById('droparea');
-    droparea.addEventListener('dragenter', dragEnter, false);
-    droparea.addEventListener('dragleave', dragLeave, false);
-    droparea.addEventListener('dragover', dragNop, false);
-    droparea.addEventListener('drop', dragDrop, false);
+    window.addEventListener('dragenter', dragEnter, false);
+    window.addEventListener('dragleave', dragLeave, false);
+    window.addEventListener('dragover', dragNop, false);
+    window.addEventListener('drop', dragDrop, false);
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
