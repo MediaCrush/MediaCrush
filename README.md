@@ -1,6 +1,25 @@
 # mediacrush
 
-A website for serving media super fast. 
+A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and [jdiez](https://github.com/jdiez17),
+and several [other contributors](https://github.com/MediaCrush/MediaCrush/graphs/contributors).
+
+https://mediacru.sh
+
+MediaCrush runs on the following things:
+
+* Linux!
+* Python!
+* ffmpeg
+* jhead
+* tidy
+* redis
+* flask-classy
+
+This list grows as we find more cool tech to make media smaller.
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md).
 
 ## Installation
 
@@ -55,9 +74,3 @@ If you plan to host the service in a more robust fashion, consider using gunicor
 You will also need to have the daemon running in order to process files. To do this, execute:
 
     python daemon.py
-
-## Development
-
-The master branch is a copy of the production site. As such, please submit any pull requests in their own feature
-branch. All of our development happens like that, too. Follow the coding standards we're already using with your
-own pull requests.
