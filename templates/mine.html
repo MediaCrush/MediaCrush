@@ -40,11 +40,19 @@
     </div>
 
     <script type="text/javascript">
+        function deleteItem(id) {
+            if (!window.localStorage)
+                return;
+
+            window.localStorage.removeItem('hist:'+id);
+            $('#hist'+id).remove();
+        }
+
         (function() {
             var container = $('#ul-hist');
 
             function displayItem(it, id) {
-                var itemStart ="<li><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
+                var itemStart ="<li id='hist--ID--'><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
 href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 var vidElem ="<video controls class='item-view'><video autoplay loop><source src='--URL--.mp4' type='video/mp4;' > \
 <source src='--URL--.ogv' type='video/ogg; codecs=\"theory, vorbis\"' ></video>";
