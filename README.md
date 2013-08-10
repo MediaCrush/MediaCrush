@@ -40,7 +40,11 @@ Install the Python modules:
 
 Review the config.ini.sample file and rename it as config.ini.
 
-If everything went according to plan, you can now run the development server with debug capabilities by executing:
+Make the storage directory:
+
+    mkdir storage
+
+Make sure the redis daemon is running, and if everything went according to plan, you can now run the development server with debug capabilities by executing:
 
     python app.py
 
