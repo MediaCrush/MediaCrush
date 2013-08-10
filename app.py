@@ -47,6 +47,9 @@ def index():
     opted_out = "ad-opt-out" in request.cookies
     return render_template("index.html", ads=not opted_out)
 
+@app.route("/mine")
+def mine():
+    return render_template("mine.html")
 
 @app.route("/demo")
 def demo():

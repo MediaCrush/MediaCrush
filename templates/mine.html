@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<style>
+    .item-view {
+       display: block;
+       padding: 5px 0px;
+    }
+
+    #ul-hist li{
+        padding: 12px 0px;
+    }
+
+    .hist-url {
+        padding-bottom: 5px;
+    }
+
+    .hist-del {
+        display: inline;
+        padding-left: 20px;
+        color: #dd1111;
+    }
+
+</style>
+
+<div class="wrapper">
+    <div class="content">
+        <div class="header">
+            <h2>Your Content</h2>
+            <p>
+            Note: List of content is stored on your browser using LocalStorage. It is <strong>not</strong> stored on our
+            servers.
+            <a href="#" id="hist-opt-out">Opt-out of storage feature</a>
+        </div>
+        <ul id="ul-hist">
+        </ul>
+    </div>
+
+    <script type="text/javascript">
+        (function() {
+            var container = $('#ul-hist');
+
+            function displayItem(it, id) {
+                var itemStart ="<li><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
+href='javascript:deleteItem(--ID--);'>[ X ]</a>";
+                var vidElem ="<video controls class='item-view'><video autoplay loop><source src='--URL--.mp4' type='video/mp4;' > \
+<source src='--URL--.ogv' type='video/ogg; codecs=\"theory, vorbis\"' ></video>";
+                var imageElem = '<img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">';
+                var audioElem = '<audio controls class="item-view"><source src="--URL--.mp3" type="audio/mpeg"> \
+<source src="--URL--.ogg" type="audio/ogg"></audio>';
+
+                $.get(
+                    it.url + '.json',
+                    function (data) {
+                        var type = data.type.split('/')[0];
+
+                        if (type === 'audio')
+                            itemStart = itemStart + audioElem;
+                        else if (type == 'video')
+                            itemStart = itemStart + vidElem;
+                        else if (type == 'image') {
+                            itemStart = itemStart + imageElem;
+                            itemStart = itemStart.replace(/--IMG-TYPE--/g, data.type.split('/')[1]);
+                        }
+
+                        itemStart = itemStart.replace(/--URL--/g, it.url);
+                        itemStart = itemStart.replace(/--ID--/g, id);
+
+                        console.log('appending ' + itemStart);
+                        container.append(itemStart);
+                    }
+                );
+            }
+
+            if (!window.localStorage)
+                return;
+
+            var index = window.localStorage.getItem('hist:index');
+            if (index === null)
+                return;
+
+            index = parseInt(index);
+            for (var i = 0; i < index; i++) {
+                var item = window.localStorage.getItem('hist:'+i);
+                if (item) {
+                    item = JSON.parse(item);
+                    displayItem(item, i);
+                }
+            }
+        })();
+    </script>
+</div>
+{% include "analytics.html" %}
+{% endblock %}
