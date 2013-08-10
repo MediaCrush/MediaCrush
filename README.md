@@ -32,7 +32,7 @@ Install ffmpeg (you'll need to compile from source if the ffmpeg version in your
 Note: you'll need libtheora enabled to output ogv files.
 
     mkdir /tmp/ffmpeg
-    git clone git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
+    git clone --depth 1 git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
     cd /tmp/ffmpeg
     ./configure --enable-libtheora --enable-x264 --enable-gpl
     make
