@@ -258,6 +258,22 @@ function dragLeave(e) {
     droparea.className = null;
 }
 
+var histEnabled, histStatus, histView;
+function histToggle() {
+    if (histEnabled) {
+        createCookie('hist-opt-out', '1', 3650);
+        histView.classList.add('hidden');
+        histStatus.innerHTML = "(Opt in to History)";
+    } else {
+        // this will essentially delete the cookie
+        createCookie('hist-opt-out', '', 0);
+        histView.classList.remove('hidden');
+        histStatus.innerHTML = "(Opt out of History)";
+    }
+
+    histEnabled = !histEnabled;
+}
+
 function dropEnable() {
     window.addEventListener('dragenter', dragEnter, false);
     window.addEventListener('dragleave', dragLeave, false);
@@ -272,6 +288,15 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
+
+    // history handling
+    histEnabled = readCookie('hist-opt-out') === null;
+    histStatus = document.getElementById('histStatus');
+    histView = document.getElementById('histView');
+    if (!histEnabled) {
+        histView.classList.add('hidden');
+        histStatus.innerHTML = "(Opt in of History)";
+    }
 }
 
 window.onload = dropEnable;

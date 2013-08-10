@@ -37,6 +37,12 @@
             See a demo <a href="/demo">here</a>!</p>
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
             {% if ads %}
+
+            <div id="histDiv" class="column">
+                <a href="/mine" class="small" id="histView">View your History</a>
+                <a href="javascript:histToggle();" class="small" id="histStatus">(Opt out)</a>
+            </div>
+
             <div id="lgad">
                 <script type="text/javascript"><!--
                 google_ad_client = "{{ adsense_client }}";
