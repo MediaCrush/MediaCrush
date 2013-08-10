@@ -14,7 +14,6 @@ our repository and the changes will immediately go live.
 We have a few standards, though. Make sure you write your code like this.
 
 * Four spaces, not tabs
-* camelCase everywhere
 * Spaces between mathematical operators: `2 + 4 / (10 - 4)`
 
 ### Python
@@ -30,12 +29,11 @@ We have a few standards, though. Make sure you write your code like this.
 
 ### JavaScript
 
-    function foo() {
+    function fooBar() {
         var example = 1234;
         registerThing(function(e) {
             // Do stuff
         }, false);
-
         bar(1, 2, 3);
     }
 
