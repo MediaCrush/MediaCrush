@@ -80,6 +80,9 @@ function handleFile(file) {
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
                     uploads--;
+
+                    if (histEnabled)
+                        addHist('/' + hash);
                 } else {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
@@ -179,6 +182,9 @@ function finish(statusUI, hash) {
     statusUI.appendChild(p);
     statusUI.appendChild(a);
     uploads--;
+
+    if (histEnabled)
+        addHist('/' + hash);
 }
 
 function createPreview(file, dataURI) {
@@ -264,6 +270,7 @@ function histToggle() {
         createCookie('hist-opt-out', '1', 3650);
         histView.classList.add('hidden');
         histStatus.innerHTML = "(Opt in to History)";
+        clearHist();
     } else {
         // this will essentially delete the cookie
         createCookie('hist-opt-out', '', 0);
@@ -272,6 +279,37 @@ function histToggle() {
     }
 
     histEnabled = !histEnabled;
+}
+
+function addHist(mURL) {
+    if (!window.localStorage)
+        return;
+
+    var index = window.localStorage.getItem('hist:index');
+    if (index === null)
+        index = 0;
+    else
+        index = parseInt(index);
+
+    var obj = {url: mURL};
+    window.localStorage.setItem('hist:'+index, JSON.stringify(obj));
+    window.localStorage.setItem('hist:index', ++index);
+}
+
+function clearHist() {
+    if (!window.localStorage)
+        return;
+
+    var index = window.localStorage.getItem('hist:index');
+    if (index === null)
+        return;
+    else
+        index = parseInt(index);
+
+    for (var i = 0; i < index; i++) {
+        window.localStorage.removeItem('hist:'+i);
+    }
+    window.localStorage.removeItem('hist:index');
 }
 
 function dropEnable() {
@@ -289,11 +327,14 @@ function dropEnable() {
         browse();
     }, false);
 
-    // history handling
     histEnabled = readCookie('hist-opt-out') === null;
     histStatus = document.getElementById('histStatus');
     histView = document.getElementById('histView');
-    if (!histEnabled) {
+
+    if (!window.localStorage) {
+        histStatus.classList.add('hidden');
+        histView.classList.add('hidden');
+    } else if (!histEnabled) {
         histView.classList.add('hidden');
         histStatus.innerHTML = "(Opt in of History)";
     }
