@@ -1,11 +1,13 @@
 from flask.ext.classy import FlaskView, route
+from flaskext.bcrypt import check_password_hash 
 from flask import send_file, render_template, abort, request
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype
+from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype, delete_file
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
+from ..network import get_ip
 
 class ImageView(FlaskView):
     route_base = '/'
@@ -26,18 +28,39 @@ class ImageView(FlaskView):
         if f.compression:
             compression = int(float(f.compression) * 100)
 
+        can_delete = None
+        if request.cookies.get('hist-opt-out', '0') == '1':
+            can_delete = check_password_hash(f.ip, get_ip())
+
         ext = extension(f.original)
         mimetype = get_mimetype(f.original)
-        return render_template(
-            "view.html", 
-            filename=id, 
-            original=f.original, 
-            video=ext in VIDEO_EXTENSIONS,
-            controls=ext in CONTROLS_EXTENSIONS,
-            compression=compression,
-            mimetype=mimetype)
+
+        template_params = {
+            'filename': f.hash,
+            'original': f.original,
+            'video': ext in VIDEO_EXTENSIONS,
+            'controls': ext in CONTROLS_EXTENSIONS,
+            'compression': compression,
+            'mimetype': mimetype,
+            'can_delete': can_delete if can_delete is not None else 'check'
+        }
+
+        return render_template("view.html", **template_params)
 
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()
         return "ok"
+    
+    @route("/<h>/delete")
+    def delete(self, h):
+        f = File.from_hash(h)
+        if not f.original:
+            abort(404)
+
+        if not check_password_hash(f.ip, get_ip()):
+            abort(401)
+
+        delete_file(f)
+        return "ok" # TODO(SirCmpwn): Add a frontend thing
+
