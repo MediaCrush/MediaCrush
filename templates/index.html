@@ -36,7 +36,7 @@
             <p>We make your media files load super fast by reducing the file size, without sacrificing quality.
             See a demo <a href="/demo">here</a>!</p>
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
-            {% if ads %}
+            {% if ads and adsense_client != "CHANGEME"  %}
             <div id="lgad">
                 <script type="text/javascript"><!--
                 google_ad_client = "{{ adsense_client }}";
