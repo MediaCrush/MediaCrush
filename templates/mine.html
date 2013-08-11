@@ -89,7 +89,7 @@
         (function() {
             var container = $('#ul-hist');
 
-            function displayItem(it, id) {
+            function addItem(hash, id, data) {
                 var itemStart ="<li id='hist--ID--'><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
 href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 var vidElem ="<video controls class='item-view'><video autoplay loop><source src='--URL--.mp4' type='video/mp4;' > \
@@ -98,26 +98,33 @@ href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 var audioElem = '<audio controls class="item-view"><source src="--URL--.mp3" type="audio/mpeg"> \
 <source src="--URL--.ogg" type="audio/ogg"></audio>';
 
+                var type = data.type.split('/')[0];
+
+                if (type === 'audio')
+                    itemStart = itemStart + audioElem;
+                else if (type == 'video')
+                    itemStart = itemStart + vidElem;
+                else if (type == 'image') {
+                    var splits = data.original.split('.');
+                    itemStart = itemStart + imageElem;
+                    itemStart = itemStart.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
+                }
+
+                itemStart = itemStart.replace(/--URL--/g, '/'+hash);
+                itemStart = itemStart.replace(/--ID--/g, id);
+
+                container.append(itemStart);
+            }
+
+            function parseHashes(hashes, hashString) {
                 $.get(
-                    it.url + '.json',
+                    '/api/info?list=' + hashString,
                     function (data) {
-                        var type = data.type.split('/')[0];
-
-                        if (type === 'audio')
-                            itemStart = itemStart + audioElem;
-                        else if (type == 'video')
-                            itemStart = itemStart + vidElem;
-                        else if (type == 'image') {
-                            var splits = data.original.split('.');
-                            itemStart = itemStart + imageElem;
-                            itemStart = itemStart.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
+                        for (hash in data) {
+                            if (data[hash]) {
+                                addItem(hash, hashes[hash], data[hash]);
+                            }
                         }
-
-                        itemStart = itemStart.replace(/--URL--/g, it.url);
-                        itemStart = itemStart.replace(/--ID--/g, id);
-
-                        console.log('appending ' + itemStart);
-                        container.append(itemStart);
                     }
                 );
             }
@@ -130,13 +137,18 @@ href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 return;
 
             index = parseInt(index);
+            var hashes = {};
+            var hashString = '';
             for (var i = 0; i < index; i++) {
                 var item = window.localStorage.getItem('hist:'+i);
                 if (item) {
                     item = JSON.parse(item);
-                    displayItem(item, i);
+                    hashString += item.hash + ',';
+                    hashes[item.hash] = i;
                 }
             }
+
+            parseHashes(hashes, hashString);
         })();
     </script>
 </div>
