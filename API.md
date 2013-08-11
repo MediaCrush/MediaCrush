@@ -17,6 +17,7 @@ Example:
 *Note*: this method is equivalent to `/<hash>.json`.
 
 *Parameters*: none.
+
 *Returns*: information about the file whose hash is `<hash>`. 
 
     GET /api/CPvuR5lRhmS0
@@ -46,6 +47,7 @@ Example:
 ## /api/info?list=&lt;hash&gt;,...
 
 *Parameters*: `list`, a comma-separated list of hashes.
+
 *Returns*: an array of file objects.
 
     GET /api/info?list=tVWMM_ziA3nm,CPvuR5lRhmS0
