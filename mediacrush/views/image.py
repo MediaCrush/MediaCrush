@@ -42,10 +42,8 @@ class ImageView(FlaskView):
             'controls': ext in CONTROLS_EXTENSIONS,
             'compression': compression,
             'mimetype': mimetype,
+            'can_delete': can_delete if can_delete is not None else 'check'
         }
-
-        if can_delete is not None:
-            template_parms['can_delete'] = can_delete
 
         return render_template("view.html", **template_params)
 
