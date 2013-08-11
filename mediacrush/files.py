@@ -107,6 +107,16 @@ def upload(f):
     else:
         return "no", 415
 
+def delete_file(f):
+    ext = extension(f.original)
+    delete_file_storage(f.original)
 
+    if ext in processing_needed:
+        for f_ext in processing_needed[ext]['formats']:
+            delete_file_storage("%s.%s" % (f.hash, f_ext))
+
+    f.delete()
+
+delete_file_storage = lambda f: os.unlink(file_storage(f)) # Abstraction: we may need it if we switch to a non-fs-based storage in the future.
 extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

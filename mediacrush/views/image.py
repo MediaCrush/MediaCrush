@@ -1,11 +1,13 @@
 from flask.ext.classy import FlaskView, route
+from flaskext.bcrypt import check_password_hash 
 from flask import send_file, render_template, abort, request
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype
+from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype, delete_file
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
+from ..network import get_ip
 
 class ImageView(FlaskView):
     route_base = '/'
@@ -41,3 +43,16 @@ class ImageView(FlaskView):
         f = File.from_hash(id)
         f.add_report()
         return "ok"
+    
+    @route("/<h>/delete")
+    def delete(self, h):
+        f = File.from_hash(h)
+        if not f.original:
+            abort(404)
+
+        if not check_password_hash(f.ip, get_ip()):
+            abort(401)
+
+        delete_file(f)
+        return "ok" # TODO(SirCmpwn): Add a frontend thing
+
