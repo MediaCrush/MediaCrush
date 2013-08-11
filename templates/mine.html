@@ -5,6 +5,10 @@
 {% block content %}
 
 <style>
+    .header div {
+        display: block;
+    }
+
     .item-view {
        display: block;
        padding: 5px 0px;
@@ -33,7 +37,10 @@
             <p>
             Note: List of content is stored on your browser using LocalStorage. It is <strong>not</strong> stored on our
             servers.
-            <a href="#" id="hist-opt-out">Opt-out of storage feature</a>
+            <div>
+            <a href="javascript:optOutStorage();" id="hist-opt-out">Opt-out of storage feature</a>
+            <a href="javascript:clearHist();">[ Clear All ]</a>
+            </div>
         </div>
         <ul id="ul-hist">
         </ul>
@@ -46,6 +53,37 @@
 
             window.localStorage.removeItem('hist:'+id);
             $('#hist'+id).remove();
+        }
+
+        function clearHist() {
+            if (window.localStorage) {
+                var index = window.localStorage.getItem('hist:index');
+                if (index === null)
+                    return;
+                else
+                    index = parseInt(index);
+
+                for (var i = 0; i < index; i++) {
+                    window.localStorage.removeItem('hist:'+i);
+                }
+                window.localStorage.removeItem('hist:index');
+            }
+        }
+
+        function createCookie(name,value,days) {
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime()+(days*24*60*60*1000));
+                var expires = "; expires="+date.toGMTString();
+            }
+            else var expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+            document.cookie = name+"="+value+expires+"; path=/";
+        }
+
+        function optOutStorage() {
+            createCookie('hist-opt-out', '1', 3650);
+            clearHist();
+            window.location = "/";
         }
 
         (function() {
