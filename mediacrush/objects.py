@@ -51,7 +51,7 @@ class File(RedisObject):
         self.reports += 1
         r.hincrby(File.get_key(self.hash), "reports", 1)
 
-        if self.reports > 10:
+        if self.reports > 0:
             r.sadd(_k("reports-triggered"), self.hash)
 
 if __name__ == '__main__':

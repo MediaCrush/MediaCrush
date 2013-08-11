@@ -16,7 +16,7 @@
                 <input type="file" id="browse" multiple />
                 <div class="controls">
                     <div id="droptext">Drag and drop your files here, or <br />
-                    <a href="#" id="browseLink">click to browse</a> for files.<br />
+                    <a href="#" id="browseLink">click to browse</a> for files up to 25 MB.<br />
                     PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
                 </div>
             </div>
@@ -36,13 +36,13 @@
             <p>We make your media files load super fast by reducing the file size, without sacrificing quality.
             See a demo <a href="/demo">here</a>!</p>
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
-            {% if ads %}
 
             <div id="histDiv" class="column">
                 <a href="/mine" class="small" id="histView">View your History</a>
                 <a href="javascript:histToggle();" class="small" id="histStatus">(Opt out)</a>
             </div>
 
+            {% if ads and adsense_client != "CHANGEME"  %}
             <div id="lgad">
                 <script type="text/javascript"><!--
                 google_ad_client = "{{ adsense_client }}";
