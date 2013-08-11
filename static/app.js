@@ -276,7 +276,7 @@ function handleHistory() {
         histView.classList.add('hidden');
     } else if (!histEnabled) {
         histView.classList.add('hidden');
-        histStatus.innerHTML = "(Opt in of History)";
+        histStatus.innerHTML = "(Enable local history)";
     }
 
     histUpdateThumbnails();
@@ -371,13 +371,13 @@ function histToggle() {
     if (histEnabled) {
         createCookie('hist-opt-out', '1', 3650);
         histView.classList.add('hidden');
-        histStatus.innerHTML = "(Opt in to History)";
+        histStatus.innerHTML = "(Enable local history)";
         clearHist();
     } else {
         // this will essentially delete the cookie
         createCookie('hist-opt-out', '', 0);
         histView.classList.remove('hidden');
-        histStatus.innerHTML = "(Opt out of History)";
+        histStatus.innerHTML = "(Disable local history)";
     }
 
     histEnabled = !histEnabled;

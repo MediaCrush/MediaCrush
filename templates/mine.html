@@ -38,7 +38,7 @@
             servers.
             <div>
             <a href="javascript:optOutHistToggle();" id="hist-opt-toggle">Opt-out of storage feature</a>
-            <a href="javascript:clearHist();">[ Clear All ]</a>
+            <a href="javascript:clearHist();">[ Forget All ]</a>
             </div>
         </div>
         <ul id="ul-hist">
@@ -48,7 +48,7 @@
     <script type="text/template" id="template-video">
         <li id="hist--ID--">
             <a class="hist-url" href="--URL--">--URL--</a>
-            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ forget ]</a>
             <video controls class="item-view">
             <video autoplay loop>
                 <source src="--URL--.mp4" type="video/mp4;" > \
@@ -59,14 +59,14 @@
     <script type="text/template" id="template-image">
         <li id="hist--ID--">
             <a class="hist-url" href="--URL--">--URL--</a>
-            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ forget ]</a>
             <img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">
         </li>
     </script>
     <script type="text/template" id="template-audio">
         <li id="hist--ID--">
             <a class="hist-url" href="--URL--">--URL--</a>
-            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ forget ]</a>
             <audio controls class="item-view">
                 <source src="--URL--.mp3" type="audio/mpeg">
                 <source src="--URL--.ogg" type="audio/ogg">
@@ -127,9 +127,9 @@
         var histOptToggleElem = document.getElementById('hist-opt-toggle');
 
         if (histOptEnabled)
-            histOptToggleElem.innerHTML = "Opt-out of storage feature";
+            histOptToggleElem.innerHTML = "Disable local history";
         else
-            histOptToggleElem.innerHTML = "Opt-in to storage feature";
+            histOptToggleElem.innerHTML = "Enable local history";
 
         function optOutHistToggle() {
             if (histOptEnabled) {
@@ -138,7 +138,7 @@
                 window.location = "/";
             } else {
                 createCookie('hist-opt-out', '', 0);
-                histOptToggleElem.innerHTML = "Opt-out of storage feature";
+                histOptToggleElem.innerHTML = "Disable local history";
             }
 
             histOptEnabled = !histOptEnabled
