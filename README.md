@@ -21,6 +21,9 @@ This list grows as we find more cool tech to make media smaller.
 
 See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md).
 
+Also join our [IRC channel](http://webchat.freenode.net/?channels=mediacrush&uio=d4) to listen in on (and participate
+in) dev chatter. It's #mediacrush on irc.freenode.net, if you already have a client.
+
 ## Installation
 
 Install the requirements:
