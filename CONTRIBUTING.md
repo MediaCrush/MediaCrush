@@ -9,6 +9,21 @@ Thanks for offering your help! Here's how you contribute:
 After you submit a pull request, we will review it and suggest changes and improvements. Then, we'll merge it into
 our repository and the changes will immediately go live.
 
+
+## DOs and DON'Ts
+
+Follow these guidelines to contribute to MediaCrush.
+
+### DO
+
+* Add documentation for things that seem odd to you
+* Install a copy of MediaCrush locally
+* Test changes (especially ones to the backend) on your local copy
+
+### DON'T
+
+* Add dependencies without checking with the maintainers (through GitHub issues or IRC)
+
 ## Coding Standards
 
 We have a few standards, though. Make sure you write your code like this.
