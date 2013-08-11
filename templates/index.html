@@ -40,6 +40,9 @@
             <div id="histDiv" class="column">
                 <a href="/mine" class="small" id="histView">View your History</a>
                 <a href="javascript:histToggle();" class="small" id="histStatus">(Opt out)</a>
+
+                <ul id="histThumb">
+                </ul>
             </div>
 
             {% if ads and adsense_client != "CHANGEME"  %}
@@ -67,6 +70,33 @@
             {% endif %}
         </div>
     </div>
+
+    <script type="text/template" id="template-video">
+        <li>
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <video controls class="item-view">
+            <video autoplay loop>
+                <source src="--URL--.mp4" type="video/mp4;" > \
+                <source src="--URL--.ogv" type='video/ogg; codecs="theory, vorbis"' >
+            </video>
+        </li>
+    </script>
+    <script type="text/template" id="template-image">
+        <li>
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">
+        </li>
+    </script>
+    <script type="text/template" id="template-audio">
+        <li>
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <audio controls class="item-view">
+                <source src="--URL--.mp3" type="audio/mpeg">
+                <source src="--URL--.ogg" type="audio/ogg">
+            </audio>
+        </li>
+    </script>
+
 </div>
 {% include "analytics.html" %}
 {% endblock %}
