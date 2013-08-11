@@ -141,7 +141,22 @@ href='javascript:deleteItem(--ID--);'>[ X ]</a>";
 
                 var temp = document.createElement('div');
                 temp.innerHTML = itemStart;
-                container.appendChild(temp.firstChild);
+
+                // append in sorted order
+                var children = container.children;
+                var i;
+                for (i = 0; i < children.length; i++) {
+                    if (id > parseInt(children[i].id.match(/\d+/)[0])) {
+                        break;
+                    }
+                }
+
+                if (children.length === 0)
+                    container.appendChild(temp.firstChild);
+                else if (i == 0)
+                    container.insertBefore(temp.firstChild, container.firstChild);
+                else
+                    container.insertBefore(temp.firstChild, children[i]);
             }
 
             function parseHashes(hashes, hashString) {
