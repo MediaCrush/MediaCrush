@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block scripts %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 {% endblock %}
 {% block content %}
 
@@ -52,7 +51,8 @@
                 return;
 
             window.localStorage.removeItem('hist:'+id);
-            $('#hist'+id).remove();
+            var elem = document.getElementById('hist'+id);
+            elem.parentElement.remove(elem);
         }
 
         function clearHist() {
@@ -113,7 +113,7 @@
         }
 
         (function() {
-            var container = $('#ul-hist');
+            var container = document.getElementById('ul-hist');
 
             function addItem(hash, id, data) {
                 var itemStart ="<li id='hist--ID--'><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
@@ -139,20 +139,26 @@ href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 itemStart = itemStart.replace(/--URL--/g, '/'+hash);
                 itemStart = itemStart.replace(/--ID--/g, id);
 
-                container.append(itemStart);
+                var temp = document.createElement('div');
+                temp.innerHTML = itemStart;
+                container.appendChild(temp.firstChild);
             }
 
             function parseHashes(hashes, hashString) {
-                $.get(
-                    '/api/info?list=' + hashString,
-                    function (data) {
-                        for (hash in data) {
-                            if (data[hash]) {
-                                addItem(hash, hashes[hash], data[hash]);
-                            }
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/info?list=' + hashString);
+                xhr.onload = function() {
+                    if (xhr.status != 200)
+                        alert("Can't show your history at this time, please refresh the page");
+
+                    var data = JSON.parse(this.response);
+                    for (hash in data) {
+                        if (data[hash]) {
+                            addItem(hash, hashes[hash], data[hash]);
                         }
                     }
-                );
+                }
+                xhr.send();
             }
 
             if (!window.localStorage)
