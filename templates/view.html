@@ -10,7 +10,9 @@
     </head>
     <body>
         <div style="display: inline-block">
-            {% if mimetype.startswith("video") or mimetype == "image/gif" %}
+            {% if mimetype == "image/gif" and mobile %}
+                <img src="/{{ original }}">
+            {% elif mimetype.startswith("video") or (mimetype == "image/gif" and not mobile) %}
                 {% if controls %}
                 <video controls>
                 {% else %}
