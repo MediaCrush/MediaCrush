@@ -2,6 +2,8 @@ import mimetypes
 import base64
 import hashlib
 import os
+import tempfile
+import requests
 
 from .config import _cfg
 from .database import r, _k
@@ -13,6 +15,41 @@ CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
 EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+
+
+class URLFile(object):
+    filename = None
+    override_methods = ["save"]
+
+    def __init__(self, *args, **kwargs):
+        self.f = tempfile.TemporaryFile()
+
+
+    def __getattr__(self, name):
+        target = self.f if name not in self.override_methods else self
+        return getattr(target, name)
+
+    def save(self, path):
+        bufsize = 1024 * 1024
+        with open(path, "w") as f:
+            while True:
+                cpbuffer = self.f.read(bufsize)
+                if cpbuffer:
+                    f.write(cpbuffer)
+                else:
+                    break
+
+            f.flush()
+            f.close()
+            
+
+    def download(self, url):
+        r = requests.get(url, stream=True)
+        for chunk in r.iter_content(chunk_size=1024):
+            self.f.write(chunk)
+            self.f.flush()
+
+        self.filename = list(reversed(url.split("/")))[0]
 
 processing_needed = {
     'gif': {
@@ -78,15 +115,15 @@ def compression_rate(f):
     # Compression rate: 1/x
     return round(1/x, 2)
 
-def upload(f):
-    if f and allowed_file(f.filename):
+def upload(f, filename):
+    if f and allowed_file(filename):
         rate_limit_update(f)
         if rate_limit_exceeded():
             return "ratelimit", 400
 
         h = get_hash(f)
         identifier = to_id(h)
-        filename = "%s.%s" % (identifier, extension(f.filename))
+        filename = "%s.%s" % (identifier, extension(filename))
         path = os.path.join(_cfg("storage_folder"), filename)
 
         if os.path.exists(path):
