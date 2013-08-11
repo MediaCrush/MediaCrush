@@ -45,6 +45,35 @@
         </ul>
     </div>
 
+    <script type="text/template" id="template-video">
+        <li id="hist--ID--">
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <video controls class="item-view">
+            <video autoplay loop>
+                <source src="--URL--.mp4" type="video/mp4;" > \
+                <source src="--URL--.ogv" type='video/ogg; codecs="theory, vorbis"' >
+            </video>
+        </li>
+    </script>
+    <script type="text/template" id="template-image">
+        <li id="hist--ID--">
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">
+        </li>
+    </script>
+    <script type="text/template" id="template-audio">
+        <li id="hist--ID--">
+            <a class="hist-url" href="--URL--">--URL--</a>
+            <a class="hist-del" href="javascript:deleteItem(--ID--);">[ X ]</a>
+            <audio controls class="item-view">
+                <source src="--URL--.mp3" type="audio/mpeg">
+                <source src="--URL--.ogg" type="audio/ogg">
+            </audio>
+        </li>
+    </script>
+
     <script type="text/javascript">
         function deleteItem(id) {
             if (!window.localStorage)
@@ -118,32 +147,29 @@
         (function() {
             var container = document.getElementById('ul-hist');
 
-            function addItem(hash, id, data) {
-                var itemStart ="<li id='hist--ID--'><a class='hist-url' href='--URL--'>--URL--</a><a class='hist-del' \
-href='javascript:deleteItem(--ID--);'>[ X ]</a>";
-                var vidElem ="<video controls class='item-view'><video autoplay loop><source src='--URL--.mp4' type='video/mp4;' > \
-<source src='--URL--.ogv' type='video/ogg; codecs=\"theory, vorbis\"' ></video>";
-                var imageElem = '<img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">';
-                var audioElem = '<audio controls class="item-view"><source src="--URL--.mp3" type="audio/mpeg"> \
-<source src="--URL--.ogg" type="audio/ogg"></audio>';
+            var templateVideo = document.getElementById('template-video').innerHTML;
+            var templateImage = document.getElementById('template-image').innerHTML;
+            var templateAudio = document.getElementById('template-audio').innerHTML;
 
+            function addItem(hash, id, data) {
                 var type = data.type.split('/')[0];
+                var template;
 
                 if (type === 'audio')
-                    itemStart = itemStart + audioElem;
+                    template = templateAudio;
                 else if (type == 'video')
-                    itemStart = itemStart + vidElem;
+                    template = templateVideo
                 else if (type == 'image') {
                     var splits = data.original.split('.');
-                    itemStart = itemStart + imageElem;
-                    itemStart = itemStart.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
+                    template = templateImage;
+                    template = template.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
                 }
 
-                itemStart = itemStart.replace(/--URL--/g, '/'+hash);
-                itemStart = itemStart.replace(/--ID--/g, id);
+                template = template.replace(/--URL--/g, '/'+hash);
+                template = template.replace(/--ID--/g, id);
 
                 var temp = document.createElement('div');
-                temp.innerHTML = itemStart;
+                temp.innerHTML = template;
 
                 // append in sorted order
                 var children = container.children;
@@ -155,11 +181,9 @@ href='javascript:deleteItem(--ID--);'>[ X ]</a>";
                 }
 
                 if (children.length === 0)
-                    container.appendChild(temp.firstChild);
-                else if (i == 0)
-                    container.insertBefore(temp.firstChild, container.firstChild);
+                    container.appendChild(temp.firstElementChild);
                 else
-                    container.insertBefore(temp.firstChild, children[i]);
+                    container.insertBefore(temp.firstElementChild, children[i]);
             }
 
             function parseHashes(hashes, hashString) {
