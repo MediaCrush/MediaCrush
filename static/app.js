@@ -291,8 +291,14 @@ function addHist(mURL) {
     else
         index = parseInt(index);
 
-    var obj = {url: mURL};
-    window.localStorage.setItem('hist:'+index, JSON.stringify(obj));
+    var obj = JSON.stringify({url: mURL});
+    // check if object is already in history
+    for (var i = 0; i < index; i++) {
+        if (window.localStorage.getItem('hist:'+i) === obj)
+            return;
+    }
+
+    window.localStorage.setItem('hist:'+index, obj);
     window.localStorage.setItem('hist:index', ++index);
 }
 
