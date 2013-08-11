@@ -82,7 +82,7 @@ function handleFile(file) {
                     uploads--;
 
                     if (histEnabled)
-                        addHist('/' + hash);
+                        addHist(hash);
                 } else {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
@@ -184,7 +184,7 @@ function finish(statusUI, hash) {
     uploads--;
 
     if (histEnabled)
-        addHist('/' + hash);
+        addHist(hash);
 }
 
 function createPreview(file, dataURI) {
@@ -281,7 +281,7 @@ function histToggle() {
     histEnabled = !histEnabled;
 }
 
-function addHist(mURL) {
+function addHist(mHash) {
     if (!window.localStorage)
         return;
 
@@ -291,7 +291,7 @@ function addHist(mURL) {
     else
         index = parseInt(index);
 
-    var obj = JSON.stringify({url: mURL});
+    var obj = JSON.stringify({hash: mHash});
     // check if object is already in history
     for (var i = 0; i < index; i++) {
         if (window.localStorage.getItem('hist:'+i) === obj)
