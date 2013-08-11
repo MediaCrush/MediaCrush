@@ -67,6 +67,9 @@
                     window.localStorage.removeItem('hist:'+i);
                 }
                 window.localStorage.removeItem('hist:index');
+
+                var histList = document.getElementById('ul-hist');
+                histList.parentElement.removeChild(histList);
             }
         }
 
