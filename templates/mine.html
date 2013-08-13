@@ -43,6 +43,8 @@
         </div>
         <ul id="ul-hist">
         </ul>
+        <ul id="ul-page">
+        </ul>
     </div>
 
     <script type="text/template" id="template-video">
@@ -99,6 +101,8 @@
 
                 var histList = document.getElementById('ul-hist');
                 histList.parentElement.removeChild(histList);
+                var pageList = document.getElementById('ul-page');
+                pageList.parentElement.removeChild(pageList);
             }
         }
 
@@ -186,12 +190,23 @@
                     container.insertBefore(temp.firstElementChild, children[i]);
             }
 
-            function parseHashes(hashes, hashString) {
+            function parseHashes(hashes, display) {
+                var hashString = '';
+                for (hash in hashes) {
+                    if (hash in display)
+                        hashString += hash + ',';
+                }
+
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/api/info?list=' + hashString);
                 xhr.onload = function() {
                     if (xhr.status != 200)
                         alert("Can't show your history at this time, please refresh the page");
+
+                    // clear all elements displayed now
+                    while (container.lastChild) {
+                        container.removeChild(container.lastChild);
+                    }
 
                     var data = JSON.parse(this.response);
                     for (hash in data) {
@@ -211,18 +226,66 @@
                 return;
 
             index = parseInt(index);
-            var hashes = {};
-            var hashString = '';
-            for (var i = 0; i < index; i++) {
+            var allHashes = {};
+            var hashes = [];
+            for (var i = index; i >= 0; i--) {
                 var item = window.localStorage.getItem('hist:'+i);
                 if (item) {
                     item = JSON.parse(item);
-                    hashString += item.hash + ',';
-                    hashes[item.hash] = i;
+                    allHashes[item.hash] = i;
+                    hashes.push(item.hash);
                 }
             }
 
-            parseHashes(hashes, hashString);
+            // pagination
+            var CPAGE = 5;
+            var paginateContainer = document.getElementById('ul-page');
+            var nodeHTML = "<a href='#--NO--'>--NO--</a>";
+            for (var i = 0, len = hashes.length / CPAGE; i < len; i++) {
+                var node = document.createElement("li");
+                node.innerHTML = nodeHTML.replace(/--NO--/g, i+1);
+                paginateContainer.appendChild(node);
+            }
+
+            if ("onhashchange" in window) {
+                window.onhashchange = function() {
+                    handleHashChange();
+                }
+            } else {
+                console.log("hashchange polling");
+                window.setInterval(function() {
+                    handleHashChange();
+                }, 200);
+            }
+
+            if (window.location.hash === '')
+                window.location.hash = "#1";
+
+            var currentHash = null;
+            handleHashChange();
+            function handleHashChange() {
+                if (window.location.hash === currentHash)
+                    return;
+
+                currentHash = window.location.hash;
+                if (currentHash === "")
+                    window.location.hash = "#1";
+
+                var page = parseInt(currentHash.split("#")[1]) - 1;
+                page = page * CPAGE;
+                var elements = hashes.slice(page, page + CPAGE);
+
+                if (elements.length === 0) {
+                    window.location.hash = "#1";
+                    return;
+                }
+
+                var displayHashes = {};
+                for (var i = 0; i < elements.length; i++)
+                    displayHashes[elements[i]] = 1;
+
+                parseHashes(allHashes, displayHashes);
+            }
         })();
     </script>
 </div>
