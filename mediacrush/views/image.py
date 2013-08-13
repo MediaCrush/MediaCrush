@@ -62,5 +62,5 @@ class ImageView(FlaskView):
             abort(401)
 
         delete_file(f)
-        return "ok" # TODO(SirCmpwn): Add a frontend thing
+        return "ok"
 
