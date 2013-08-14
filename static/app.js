@@ -96,7 +96,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
             error = 'This media format is not supported.';
         } else if (this.status == 409) {
             finish(statusUI, this.responseText);
-        } else if (this.status == 400) {
+        } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
         } else if (this.status == 200) {
             statusUI.innerHTML = '';

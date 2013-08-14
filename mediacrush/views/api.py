@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import request
 
 from ..decorators import json_output
-from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload
+from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile
 from ..database import r, _k
 from ..objects import File
 from ..network import get_ip
@@ -82,12 +82,9 @@ class APIView(FlaskView):
         return {'status': 'success'}
 
 
-    @route("/api/upload/file", methods=['POST'])
-    @json_output
-    def upload_file(self):
-        f = request.files['file']
-        
-        result = upload(f, f.filename)
+    @staticmethod
+    def _upload_f(f, filename):
+        result = upload(f, filename)
         if not isinstance(result, tuple):
             return {'hash': result}
         else:
@@ -97,4 +94,25 @@ class APIView(FlaskView):
             if status == 409:
                 resp['hash'] = info
 
-            return resp
+            return resp, status
+        
+
+    @route("/api/upload/file", methods=['POST'])
+    @json_output
+    def upload_file(self):
+        f = request.files['file']
+       
+        return APIView._upload_f(f, f.filename)
+
+    @route("/api/upload/url", methods=['POST'])
+    @json_output
+    def upload_url(self):
+        url = request.form['url']
+        f = URLFile()
+
+        try:
+            f.download(url)
+        except:
+            return {'error': 400}, 400
+
+        return APIView._upload_f(f, f.filename)

@@ -185,13 +185,54 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>true</td>
     </tr>
     <tr>
-        <td>400</td>
+        <td>420</td>
         <td>The rate limit was exceeded. Enhance your calm.</td>
         <td>false</td>
     </tr>
     <tr>
         <td>415</td>
         <td>The file extension is not acceptable.</td>
+        <td>false</td>
+    </tr>
+</table>
+
+## /api/upload/url
+
+*Parameters*: `url`, the URL from where to fetch the file to upload.
+
+*Returns*: the same as /api/upload/file.
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The file was uploaded correctly.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>The URL is invalid.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>409</td>
+        <td>The file was already uploaded.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>The file extension is not acceptable.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>420</td>
+        <td>The rate limit was exceeded. Enhance your calm.</td>
         <td>false</td>
     </tr>
 </table>
