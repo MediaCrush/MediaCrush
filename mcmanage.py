@@ -8,12 +8,14 @@ Usage:
     mcmanage.py admin delete <pwhash>
     mcmanage.py report show
     mcmanage.py report email 
+    mcmanage.py files delete <hash>
 """
 
 from docopt import docopt
 
 from mediacrush.mcmanage.database import database_clear, database_upgrade
 from mediacrush.mcmanage.report import report
+from mediacrush.mcmanage.files import delete_file
 
 from mediacrush.email import send_report
 
@@ -30,9 +32,14 @@ report_commands = {
     'email': lambda args: send_report(report())
 }
 
+files_commands = {
+    'delete': delete_file,
+}
+
 mapping = {
     'database': database_commands,
     'report': report_commands,
+    'files': files_commands,
     'admin': None,
 }
 
