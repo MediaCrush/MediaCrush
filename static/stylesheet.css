@@ -389,3 +389,7 @@ h4 {
         display: none;
     }
 }
+
+audio {
+    width: 100%;
+}

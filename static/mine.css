@@ -2,6 +2,11 @@
     max-width: 1000px;
 }
 
+audio {
+    width: 1000px;
+    padding-top: 23px;
+}
+
 #items {
     text-align: center;
 }
