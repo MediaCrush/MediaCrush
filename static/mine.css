@@ -43,3 +43,40 @@
     float: right;
     padding-right: 5px;
 }
+
+#pagination {
+    list-style: none;
+    text-align: center;
+    font-size: 14pt;
+}
+
+#pagination li {
+    display: inline;
+    border: 1px solid #ccc;
+    border-right: none;
+}
+
+#pagination li.selected a {
+    color: #000;
+}
+
+#pagination a {
+    padding: 0 5px;
+}
+
+#pagination a:hover {
+    text-decoration: none;
+}
+
+#pagination li:hover, #pagination li.selected {
+    background: #eee;
+}
+
+#pagination li:first-child {
+    border-radius: 3px 0 0 3px;
+}
+
+#pagination li:last-child {
+    border-right: 1px solid #ccc;
+    border-radius: 0 3px 3px 0;
+}
