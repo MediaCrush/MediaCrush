@@ -3,7 +3,7 @@ from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 import traceback
 
-from mediacrush.views import UploadView, HookView, APIView, ImageView, DocsView
+from mediacrush.views import HookView, APIView, ImageView, DocsView
 from mediacrush.config import _cfg
 
 app = Flask(__name__)
@@ -73,7 +73,6 @@ def serious():
 DocsView.register(app)
 APIView.register(app)
 HookView.register(app)
-UploadView.register(app)
 ImageView.register(app)
 
 if __name__ == '__main__':
