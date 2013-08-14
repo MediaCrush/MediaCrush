@@ -83,14 +83,15 @@ function uploadFile(file, hash, statusUI, progressUI) {
     };
     xhr.onload = function() {
         var error = null;
+        var responseJSON = JSON.parse(this.responseText);
+
         if (this.status == 415) {
             error = 'This media format is not supported.';
         } else if (this.status == 409) {
-            finish(statusUI, this.responseText);
+            finish(statusUI, responseJSON['hash']);
         } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
         } else if (this.status == 200) {
-            var responseJSON = JSON.parse(this.responseText);
             statusUI.innerHTML = '';
             var p = document.createElement('p');
             p.textContent = 'Processing...';
