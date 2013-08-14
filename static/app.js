@@ -259,6 +259,11 @@ function dropEnable() {
 
 function handleHistory() {
     loadHistory();
+    var statusElement = document.getElementById('historyEnabled');
+    if (historyEnabled)
+        statusElement.textContent = 'Disable local history';
+    else
+        statusElement.textContent = 'Enable local history';
     var historyElement = document.getElementById('history');
     var blurb = document.getElementById('blurb');
     if (history.length != 0) {
@@ -312,6 +317,18 @@ function createHistoryItem(data) {
     a.appendChild(preview);
     container.appendChild(a);
     return container;
+}
+
+function toggleHistory() {
+    var statusElement = document.getElementById('historyEnabled');
+    if (historyEnabled) {
+        createCookie('hist-opt-out', '1', 3650);
+        statusElement.textContent = 'Enable local history';
+    } else {
+        createCookie('hist-opt-out', '', 0);
+        statusElement.textContent = 'Disable local history';
+    }
+    historyEnabled = !historyEnabled;
 }
 
 window.onload = dropEnable;
