@@ -1,10 +1,12 @@
 from flask.ext.classy import FlaskView, route
+from flaskext.bcrypt import check_password_hash 
 from flask import request
 
 from ..decorators import json_output
-from ..files import media_url, get_mimetype, extension, processing_needed
+from ..files import media_url, get_mimetype, extension, processing_needed, delete_file
 from ..database import r, _k
 from ..objects import File
+from ..network import get_ip
 
 class APIView(FlaskView):
     route_base = '/'
@@ -66,3 +68,16 @@ class APIView(FlaskView):
                 res[i] = APIView._file_object(f)
         
         return res
+
+    @route("/api/<h>/delete")
+    @json_output
+    def delete(self, h):
+        f = File.from_hash(h) 
+        if not f.original:
+            return {'error': 404}, 404
+        if not check_password_hash(f.ip, get_ip()):
+            return {'error': 401}, 401
+
+        delete_file(f)
+        return {'status': 'success'}
+

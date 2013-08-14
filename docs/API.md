@@ -42,8 +42,6 @@ Example:
       "type": "image/gif"
     }
 
-[Source](http://www.hurl.it/hurls/ee2ef1f3c1612a21323b391f729942cf3ebbd7a1/7a4e1c9bb7235ebe01b033344b0ad07238ee8691)
-
 ## /api/info?list=&lt;hash&gt;,...
 
 *Parameters*: `list`, a comma-separated list of hashes.
@@ -93,5 +91,39 @@ Example:
       }
     }
 
-[Source](http://www.hurl.it/hurls/45f2cc3d72b2ece8ca6f0e8afaa09c49a8f261f4/e1d4361c370d2f92098ca4d7e29146b4695e7a3b)
+##/api/&lt;hash&gt;/delete
 
+*Parameters*: none.
+
+*Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "status": "success"
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the file was deleted.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no file with that hash.</td>
+        <td>false</td>
+    </tr>
+</table>
