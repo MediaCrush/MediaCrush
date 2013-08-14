@@ -8,7 +8,8 @@ import os
 class DocsView(FlaskView):
     @staticmethod
     def _get_doc(id):
-        with open(os.path.join(_cfg("docs_path"), id + ".md")) as f:
+        docfile = id.lower()
+        with open(os.path.join(_cfg("docs_path"), docfile + ".md")) as f:
             content = ''.join(f.readlines())
             return render_template("doc.html", content=content)
 
