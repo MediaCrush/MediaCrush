@@ -167,7 +167,9 @@ If the request is unsuccessful, you will get a response like:
     </tr>
     <tr>
         <td>200</td>
-        <td>The file was found. *Note*: this doesn't mean that the processing succeeded. Check the table below.</td>
+        <td>
+            <p>The file was found.</p>
+            <p><em>Note</em>: this doesn't mean that the processing succeeded. Check the table below.</td></p>
         <td>true</td>
     </tr>
     <tr>
