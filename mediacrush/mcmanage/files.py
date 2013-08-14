@@ -1,7 +1,7 @@
 from ..objects import File
 from ..files import delete_file
 
-def delete_file(arguments):
+def files_delete(arguments):
     f = File.from_hash(arguments['<hash>'])
     
     if not f.original:
