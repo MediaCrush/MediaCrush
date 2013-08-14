@@ -1,0 +1,87 @@
+.item {
+    max-width: 1000px;
+}
+
+audio {
+    width: 1000px;
+    padding-top: 23px;
+}
+
+#items {
+    text-align: center;
+}
+
+.item-wrapper div {
+    position: relative;
+    display: inline-block;
+}
+
+.item-wrapper .bar {
+    position: absolute;
+    height: 23px;
+    background: rgba(100, 100, 100, 0.75);
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.25s linear;
+}
+
+.item-wrapper div:hover .bar {
+    opacity: 1;
+}
+
+.item-wrapper .bar {
+    color: #fff;
+}
+
+.item-wrapper a{
+    color: #fff;
+}
+
+.left {
+    float: left;
+    padding-left: 5px;
+}
+
+.right {
+    float: right;
+    padding-right: 5px;
+}
+
+#pagination {
+    list-style: none;
+    text-align: center;
+    font-size: 14pt;
+}
+
+#pagination li {
+    display: inline;
+    border: 1px solid #ccc;
+    border-right: none;
+}
+
+#pagination li.selected a {
+    color: #000;
+}
+
+#pagination a {
+    padding: 0 5px;
+}
+
+#pagination a:hover {
+    text-decoration: none;
+}
+
+#pagination li:hover, #pagination li.selected {
+    background: #eee;
+}
+
+#pagination li:first-child {
+    border-radius: 3px 0 0 3px;
+}
+
+#pagination li:last-child {
+    border-right: 1px solid #ccc;
+    border-radius: 0 3px 3px 0;
+}

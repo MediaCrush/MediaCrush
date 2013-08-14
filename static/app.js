@@ -1,13 +1,3 @@
-function createCookie(name,value,days) {
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
-    }
-    else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-
 function adOptOut() {
     createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
     var gad = document.getElementById('gad');
@@ -69,6 +59,7 @@ function handleFile(file) {
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
                     uploads--;
+                    addItemToHistory(hash);
                 } else {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
@@ -168,6 +159,7 @@ function finish(statusUI, hash) {
     statusUI.appendChild(p);
     statusUI.appendChild(a);
     uploads--;
+    addItemToHistory(hash);
 }
 
 function createPreview(file, dataURI) {
@@ -261,6 +253,82 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
+
+    setTimeout(handleHistory, 50);
+}
+
+function handleHistory() {
+    loadHistory();
+    var statusElement = document.getElementById('historyEnabled');
+    if (historyEnabled)
+        statusElement.textContent = 'Disable local history';
+    else
+        statusElement.textContent = 'Enable local history';
+    var historyElement = document.getElementById('history');
+    var blurb = document.getElementById('blurb');
+    if (history.length != 0) {
+        historyElement.classList.remove('hidden');
+        blurb.classList.add('hidden');
+    }
+    var items = history.slice(history.length - 4).reverse();
+    var historyList = historyElement.querySelectorAll('ul')[0];
+    loadDetailedHistory(items, function(result) {
+        for (var i = 0; i < items.length; i++) {
+            historyList.appendChild(createHistoryItem({
+                item: result[items[i]],
+                hash: items[i]
+            }));
+        }
+    });
+}
+
+function createHistoryItem(data) {
+    var item = data.item;
+    var container = document.createElement('li');
+    var preview = null;
+    if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
+        preview = document.createElement('video');
+        preview.setAttribute('loop', 'loop');
+        for (var i = 0; i < item.files.length; i++) {
+            var source = document.createElement('source');
+            source.setAttribute('src', item.files[i].file);
+            source.setAttribute('type', item.files[i].type);
+            preview.appendChild(source);
+        }
+        preview.volume = 0;
+        preview.play();
+        preview.className = 'item-view';
+    } else if (item.type.indexOf('image/') == 0) {
+        preview = document.createElement('img');
+        preview.src = item.original;
+        preview.className = 'item-view';
+    } else if (item.type.indexOf('audio/') == 0) {
+        preview = document.createElement('audio');
+        preview.setAttribute('controls', 'controls');
+        for (var i = 0; i < item.files.length; i++) {
+            var source = document.createElement('source');
+            source.setAttribute('src', item.files[i].file);
+            source.setAttribute('type', item.files[i].type);
+            preview.appendChild(source);
+        }
+    }
+    var a = document.createElement('a');
+    a.href = '/' + data.hash;
+    a.appendChild(preview);
+    container.appendChild(a);
+    return container;
+}
+
+function toggleHistory() {
+    var statusElement = document.getElementById('historyEnabled');
+    if (historyEnabled) {
+        createCookie('hist-opt-out', '1', 3650);
+        statusElement.textContent = 'Enable local history';
+    } else {
+        createCookie('hist-opt-out', '', 0);
+        statusElement.textContent = 'Disable local history';
+    }
+    historyEnabled = !historyEnabled;
 }
 
 window.onload = dropEnable;
