@@ -9,67 +9,68 @@
         <div class="column dropcolumn">
             <div id="droparea"{% if mobile %} class="mobile"{% endif %}>
                 <div id="files">
+                </div>
+                <input type="file" id="browse" multiple />
+                <div class="controls">
                     {% if not mobile %}
+                    <div id="droptext">Drag and drop your files here, or <br />
+                    <a href="#" id="browseLink">click to browse</a> for files up to 25 MB.<br />
+                    PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
                     {% else %}
                     <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
                     {% endif %}
                 </div>
-                <input type="file" id="browse" multiple />
-                <div class="controls">
-                    <div id="droptext">Drag and drop your files here, or <br />
-                    <a href="#" id="browseLink">click to browse</a> for files up to 25 MB.<br />
-                    PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
-                </div>
             </div>
             <div class="small">
-                <a href="mailto:support@mediacru.sh">support@mediacru.sh</a> &mdash;
-                <a href="/donate">Donate to MediaCrush</a> <span class="responsiveHidden">&mdash;</span><span class="responsiveBreak"></span>
-                <a href="/serious">Terms of Use & Privacy</a> &mdash;
-                <a href="https://blog.mediacru.sh">Blog</a>
+                <a href="mailto:support@mediacru.sh">Help</a> &mdash;
+                <a href="/donate">Donate</a> <span class="responsiveHidden">&mdash;</span><span class="responsiveBreak"></span>
+                <a href="/serious">Terms & Privacy</a> &mdash;
+                <a href="https://blog.mediacru.sh">Blog</a> <span class="responsiveHidden">&mdash;</span><span class="responsiveBreak"></span>
+                <a href="/demo">Demo</a> &mdash;
+                <a href="https://github.com/MediaCrush/MediaCrush">Code</a>
             </div>
         </div>
         <div class="sidebar column">
+            <h1>
             <a class="logo" href="https://blog.mediacru.sh/2013/07/27/MediaCrush-logo.html" target="_blank">
                 <img src="/static/logo-bg.png" class="bg" alt="logo" />
                 <img src="/static/logo-fg.png" alt="logo" />
-            </a>
-            <h1>MediaCrush</h1>
-            <p>We make your media files load super fast by reducing the file size, without sacrificing quality.
-            See a demo <a href="/demo">here</a>!</p>
-            <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
-
+            </a>MediaCrush</h1>
+            <div id="blurb">
+                <p>We make your media files load super fast by reducing the file size, without sacrificing quality.
+                See a demo <a href="/demo">here</a>!</p>
+                <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
+            </div>
             <div id="histDiv" class="column hidden">
-                <h4>Your Recent Uploads</h4>
-                <a href="/mine" class="small" id="histView">View full history</a> &mdash;
-                <a href="javascript:toggleHistory();" class="small" id="histStatus">(Disable local history)</a>
-
                 <ul id="histThumb" class="home-history">
                     <li class="fader"></li>
                 </ul>
-            </div>
-
-            {% if ads and adsense_client != "CHANGEME"  %}
-            <div id="lgad">
-                <script type="text/javascript"><!--
-                google_ad_client = "{{ adsense_client }}";
-                google_ad_slot = "5280784572";
-                google_ad_width = 234;
-                google_ad_height = 60;
-                //-->
-                </script>
-                <script type="text/javascript" src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
                 <div>
-                    <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
+                    <a href="/mine" class="small pull-left" id="histView">View full history</a>
+                    <a href="javascript:toggleHistory();" class="small pull-right" id="histStatus">Disable local history</a>
                 </div>
             </div>
-            {% endif %}
         </div>
         <div id="gad" class="column">
-            {% if ads %}
+            {% if ads and adsense_client != "CHANGEME" %}
             <div>
                 {% include "ads.html" %}
             </div>
             <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
+            {% endif %}
+        </div>
+        <div id="lgad" class="column">
+            {% if ads and adsense_client != "CHANGEME" %}
+            <script type="text/javascript"><!--
+                google_ad_client = "{{ adsense_client }}";
+                /* Small vertical banner */
+                google_ad_slot = "{{ adsense_slot }}";
+                google_ad_width = 120;
+                google_ad_height = 240;
+                //-->
+            </script>
+            <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+            <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
             {% endif %}
         </div>
     </div>

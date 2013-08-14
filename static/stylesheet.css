@@ -23,6 +23,7 @@ body {
 
 .sidebar h1 {
     margin: 0;
+    margin-bottom: 10px;
 }
 
 .overlay {
@@ -76,30 +77,6 @@ body {
     display: none;
 }
 
-#lgad {
-    display: none;
-    text-align: center;
-}
-
-@media (min-width: 1000px)  {
-    .wrapper, .container {
-        margin: 0 auto;
-    }
-}
-@media (max-width: 1000px), (max-height: 700px) {
-    #gad {
-        display: none;
-    }
-    #lgad {
-        display: block;
-    }
-}
-@media (min-height: 800px) {
-    .content {
-        margin-top: -325px;
-        top: 50%;
-    }
-}
 
 #droparea {
     border-radius: 5px;
@@ -159,37 +136,10 @@ body {
     color: #ccc;
 }
 
-@media (max-height: 800px) {
-    #droparea {
-        height: 320px;
-    }
-    #droptext {
-        margin-top: 130px;
-    }
-    .mobile-browse {
-        line-height: 320px;
-    }
-}
-
-@media (max-width: 900px) {
-    #droparea, .dropcolumn {
-        width: 300px;
-        margin-right: 10px;
-    }
-    .wrapper, .content, .container {
-        width: auto;
-    }
-    .responsiveBreak {
-        display: block;
-    }
-    .responsiveHidden {
-        display: none;
-    }
-}
-
 .sidebar {
     width: 270px;
     padding: 10px;
+    padding-top: 0;
 }
 
 #gad {
@@ -344,7 +294,7 @@ a:hover {
     list-style: none;
     text-align: center;
     overflow-y: hidden;
-    height: 400px;
+    height: 575px;
     position: relative;
 }
 
@@ -368,4 +318,72 @@ a:hover {
 
 h4 {
     margin: 0;
+}
+
+.center {
+    text-align: center;
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+#lgad {
+    display: none;
+    width: 120px;
+    text-align: center;
+}
+
+@media (min-width: 1000px)  {
+    .wrapper, .container {
+        margin: 0 auto;
+    }
+}
+@media (max-width: 1000px), (max-height: 800px) {
+    #gad {
+        display: none;
+    }
+    #lgad {
+        display: block;
+    }
+    #histThumb {
+        height: 250px;
+    }
+}
+@media (min-height: 800px) {
+    .content {
+        margin-top: -325px;
+        top: 50%;
+    }
+}
+@media (max-height: 800px) {
+    #droparea {
+        height: 320px;
+    }
+    #droptext {
+        margin-top: 130px;
+    }
+    .mobile-browse {
+        line-height: 320px;
+    }
+}
+
+@media (max-width: 1040px) {
+    #droparea, .dropcolumn {
+        width: 300px;
+        margin-right: 10px;
+    }
+    .wrapper, .content, .container {
+        width: auto;
+    }
+    .responsiveBreak {
+        display: block;
+    }
+    .responsiveHidden {
+        display: none;
+    }
 }

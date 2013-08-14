@@ -247,11 +247,7 @@ function handleHistory() {
     histView = document.getElementById('histView');
     histDiv = document.getElementById('histStatus');
 
-    if (!window.localStorage) {
-        histDiv.classList.add('hidden');
-        histStatus.classList.add('hidden');
-        histView.classList.add('hidden');
-    } else if (!historyEnabled) {
+    if (!historyEnabled) {
         histView.classList.add('hidden');
         histStatus.innerHTML = "(Enable local history)";
     }
@@ -260,10 +256,12 @@ function handleHistory() {
 }
 
 function histUpdateThumbnails() {
-    var items = history.slice(history.length - 2).reverse();
+    var items = history.slice(history.length - 4).reverse();
     if (items.length != 0) {
-        histDiv = document.getElementById('histDiv');
+        var histDiv = document.getElementById('histDiv');
         histDiv.classList.remove('hidden');
+        var blurb = document.getElementById('blurb');
+        blurb.classList.add('hidden');
     }
     var hashes = items.join(',');
     if (hashes !== '')
