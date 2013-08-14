@@ -188,7 +188,8 @@ function getCurrentPage() {
         if (page == NaN) {
             page = 0;
         } else if (page >= history.length / ITEMS_PER_PAGE) {
-            page = history.length / ITEMS_PER_PAGE - 1;
+            page = Math.ceil(history.length / ITEMS_PER_PAGE - 1);
+            window.location.hash = "#" + page;
         }
     }
     return page;
