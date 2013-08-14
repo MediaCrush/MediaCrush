@@ -239,95 +239,6 @@ function dragLeave(e) {
     droparea.className = null;
 }
 
-// history entry point
-var histEnabled, histStatus, histView;
-function handleHistory() {
-    loadHistory();
-    histStatus = document.getElementById('histStatus');
-    histView = document.getElementById('histView');
-    histDiv = document.getElementById('histStatus');
-
-    if (!historyEnabled) {
-        histView.classList.add('hidden');
-        histStatus.innerHTML = "Enable local history";
-    }
-
-    histUpdateThumbnails();
-}
-
-function histUpdateThumbnails() {
-    var items = history.slice(history.length - 4).reverse();
-    if (items.length != 0) {
-        var histDiv = document.getElementById('histDiv');
-        histDiv.classList.remove('hidden');
-        var blurb = document.getElementById('blurb');
-        blurb.classList.add('hidden');
-    }
-    var hashes = items.join(',');
-    if (hashes !== '')
-        parseHashes(items, hashes);
-}
-
-var templateVideo;
-var templateImage;
-var templateAudio;
-var container;
-function parseHashes(items, hashString) {
-    templateVideo = document.getElementById('template-video').innerHTML;
-    templateAudio = document.getElementById('template-audio').innerHTML;
-    templateImage = document.getElementById('template-image').innerHTML;
-    container = document.getElementById('histThumb');
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/info?list=' + hashString);
-    xhr.onload = function() {
-        if (xhr.status != 200)
-            return;
-
-        var data = JSON.parse(this.response);
-        for (var i = 0; i < items.length; i++) {
-            addItem(items[i], data[items[i]]);
-        }
-    }
-    xhr.send();
-}
-
-function addItem(hash, data) {
-    var type = data.type.split('/')[0];
-    var template;
-
-    if (type === 'audio')
-        template = templateAudio;
-    else if (type == 'video')
-        template = templateVideo
-    else if (type == 'image') {
-        var splits = data.original.split('.');
-        template = templateImage;
-        template = template.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
-    }
-
-    template = template.replace(/--URL--/g, '/'+hash);
-
-    var temp = document.createElement('div');
-    temp.innerHTML = template;
-
-    container.appendChild(temp.firstElementChild);
-}
-
-function toggleHistory() {
-    if (historyEnabled) {
-        createCookie('hist-opt-out', '1', 3650);
-        histView.classList.add('hidden');
-        histStatus.textContent = "Enable local history";
-    } else {
-        // this will essentially delete the cookie
-        createCookie('hist-opt-out', '', 0);
-        histView.classList.remove('hidden');
-        histStatus.innerHTML = "Disable local history";
-    }
-    historyEnabled = !historyEnabled;
-}
-
 function dropEnable() {
     window.addEventListener('dragenter', dragEnter, false);
     window.addEventListener('dragleave', dragLeave, false);
@@ -344,6 +255,56 @@ function dropEnable() {
     }, false);
 
     setTimeout(handleHistory, 50);
+}
+
+function handleHistory() {
+    loadHistory();
+    var historyElement = document.getElementById('history');
+    var blurb = document.getElementById('blurb');
+    if (history.length != 0) {
+        historyElement.classList.remove('hidden');
+        blurb.classList.add('hidden');
+    }
+    var items = history.slice(history.length - 4).reverse();
+    var historyList = historyElement.querySelectorAll('ul')[0];
+    loadDetailedHistory(items, function(result) {
+        for (var i = 0; i < items.length; i++) {
+            historyList.appendChild(createHistoryItem({
+                item: result[items[i]],
+                hash: items[i]
+            }));
+        }
+    });
+}
+
+function createHistoryItem(data) {
+    var item = data.item;
+    var container = document.createElement('li');
+    var preview = null;
+    if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
+        preview = document.createElement('video');
+        preview.setAttribute('loop', 'loop');
+        for (var i = 0; i < item.files.length; i++) {
+            var source = document.createElement('source');
+            source.setAttribute('src', item.files[i].file);
+            source.setAttribute('type', item.files[i].type);
+            preview.appendChild(source);
+        }
+        preview.volume = 0;
+        preview.play();
+    } else if (item.type.indexOf('image/') == 0) {
+        preview = document.createElement('img');
+        preview.src = item.original;
+    } else if (item.type.indexOf('audio/') == 0) {
+        preview = document.createElement('img');
+        preview.src = '/static/audio.png';
+    }
+    preview.className = 'item-view';
+    var a = document.createElement('a');
+    a.href = '/' + data.hash;
+    a.appendChild(preview);
+    container.appendChild(a);
+    return container;
 }
 
 window.onload = dropEnable;

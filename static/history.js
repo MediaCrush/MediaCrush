@@ -60,3 +60,18 @@ function removeItemFromHistory(hash) {
     }
     saveHistory();
 }
+function loadDetailedHistory(items, callback) {
+    var hashes = items.join(',');
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/info?list=' + hashes);
+    xhr.onload = function() {
+        if (xhr.status != 200) {
+            var itemsElement = document.getElementById('items');
+            itemsElement.innerHTML = 'There was an error showing your history, sorry.';
+            return;
+        }
+        var result = JSON.parse(this.response);
+        if (callback) callback(result);
+    };
+    xhr.send();
+}

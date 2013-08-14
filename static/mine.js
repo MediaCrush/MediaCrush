@@ -25,7 +25,8 @@ window.onload = function() {
         link.textContent = 'enable local history';
     }
     createPagination();
-    loadItems(function() {
+    loadDetailedHistory(history, function(result) {
+        items = result;
         loadCurrentPage();
     });
     window.onhashchange = function() {
@@ -33,22 +34,6 @@ window.onload = function() {
         createPagination();
         loadCurrentPage();
     };
-}
-
-function loadItems(callback) {
-    var hashes = history.join(',');
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/info?list=' + hashes);
-    xhr.onload = function() {
-        if (xhr.status != 200) {
-            var itemsElement = document.getElementById('items');
-            itemsElement.innerHTML = 'There was an error showing your history, sorry.';
-            return;
-        }
-        items = JSON.parse(this.response);
-        if (callback) callback();
-    };
-    xhr.send();
 }
 
 function loadCurrentPage() {
