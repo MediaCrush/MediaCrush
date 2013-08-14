@@ -15,6 +15,7 @@ function clearHistoryAndReload() {
 }
 
 var items = [];
+var elements = [];
 
 window.onload = function() {
     loadHistory();
@@ -34,6 +35,45 @@ window.onload = function() {
         createPagination();
         loadCurrentPage();
     };
+    var debounce = false;
+    window.onkeydown = function(e) {
+        if (debounce)
+            return;
+        debounce = true;
+        if ([37,72,75].indexOf(e.keyCode) != -1) { // Previous item
+            var index = findCurrentElement();
+            if (index - 2 >= 0) {
+                window.scroll(0, findPos(elements[index - 2]));
+                e.preventDefault();
+            }
+        } else if ([39,74,76].indexOf(e.keyCode) != -1) { // Next item
+            var index = findCurrentElement();
+            window.scroll(0, findPos(elements[index]));
+            e.preventDefault();
+        }
+    };
+    window.onkeyup = function(e) {
+        debounce = false;
+    };
+}
+
+function findCurrentElement() {
+    for (var i = 0; i < elements.length; i++) {
+        if (findPos(elements[i]) > window.pageYOffset) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+function findPos(obj) {
+    var curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+    return [curtop];
+    }
 }
 
 function loadCurrentPage() {
@@ -41,9 +81,11 @@ function loadCurrentPage() {
     while (container.hasChildNodes()) container.removeChild(container.lastChild);
     var page = getCurrentPage();
     var reversedHistory = history.slice(0).reverse();
+    elements = [];
     for (var i = page * 10; i < page * 10 + 10 && i < history.length; i++) {
         var element = createView({ item: items[reversedHistory[i]], hash: reversedHistory[i] });
         container.appendChild(element);
+        elements.push(element);
     }
 }
 
