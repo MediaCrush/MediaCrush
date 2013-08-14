@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash 
-from flask import send_file, render_template, abort, request
+from flask import send_file, render_template, abort, request, Response
 import os
 
 from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype, delete_file
@@ -64,3 +64,8 @@ class ImageView(FlaskView):
         delete_file(f)
         return "ok"
 
+
+    @route("/<h>/embed")
+    def embed(self, h):
+        text = render_template("embed.js", hash=h)
+        return Response(text, mimetype="text/javascript") 
