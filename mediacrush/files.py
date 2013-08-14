@@ -119,7 +119,7 @@ def upload(f, filename):
     if f and allowed_file(filename):
         rate_limit_update(f)
         if rate_limit_exceeded():
-            return "ratelimit", 400
+            return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
@@ -153,6 +153,18 @@ def delete_file(f):
             delete_file_storage("%s.%s" % (f.hash, f_ext))
 
     f.delete()
+
+def processing_status(id):
+    filename = id
+    if not r.exists(_k("%s.lock" % filename)):
+        if r.exists(_k("%s.error" % filename)):
+            failure_type = r.get(_k("%s.error" % filename))
+            r.delete(_k("%s.error") % filename)
+
+            return failure_type
+
+        return "done"
+    return "processing"
 
 delete_file_storage = lambda f: os.unlink(file_storage(f)) # Abstraction: we may need it if we switch to a non-fs-based storage in the future.
 extension = lambda f: f.rsplit('.', 1)[1].lower()

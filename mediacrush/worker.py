@@ -87,7 +87,7 @@ def process_gif(filename):
     r.delete(_k("%s.lock" % filename))
     failed = False
     if statuscode != 0:
-        r.set(_k("%s.error") % filename, "status")
+        r.set(_k("%s.error") % filename, "error")
         failed = True
     if exited:
         r.set(_k("%s.error") % filename, "timeout")
