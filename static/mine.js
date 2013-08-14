@@ -16,6 +16,7 @@ function clearHistoryAndReload() {
 
 var items = [];
 var elements = [];
+var ITEMS_PER_PAGE = 10;
 
 window.onload = function() {
     loadHistory();
@@ -82,7 +83,7 @@ function loadCurrentPage() {
     var page = getCurrentPage();
     var reversedHistory = history.slice(0).reverse();
     elements = [];
-    for (var i = page * 10; i < page * 10 + 10 && i < history.length; i++) {
+    for (var i = page * ITEMS_PER_PAGE; i < page * ITEMS_PER_PAGE + ITEMS_PER_PAGE && i < history.length; i++) {
         var element = createView({ item: items[reversedHistory[i]], hash: reversedHistory[i] });
         container.appendChild(element);
         elements.push(element);
@@ -162,9 +163,9 @@ function createView(data) {
 }
 
 function createPagination() {
-    if (history.length < 10)
+    if (history.length < ITEMS_PER_PAGE)
         return;
-    var pages = history.length / 10;
+    var pages = history.length / ITEMS_PER_PAGE;
     var pagination = document.getElementById('pagination');
     while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
     var page = getCurrentPage();
