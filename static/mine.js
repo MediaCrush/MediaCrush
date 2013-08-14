@@ -52,12 +52,13 @@ function loadCurrentPage() {
     var page = getCurrentPage();
     var reversedHistory = history.slice(0).reverse();
     for (var i = page * 10; i < page * 10 + 10 && i < history.length; i++) {
-        var element = createView(items[reversedHistory[i]]);
+        var element = createView({ item: items[reversedHistory[i]], hash: reversedHistory[i] });
         container.appendChild(element);
     }
 }
 
-function createView(item) {
+function createView(data) {
+    var item = data.item;
     var container = document.createElement('div');
     var preview = null;
     if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
@@ -79,8 +80,47 @@ function createView(item) {
         preview.src = '/static/audio.png';
     }
     preview.className = 'item';
-    container.appendChild(preview);
-    return container;
+    var container2 = document.createElement('div');
+    var bar = document.createElement('div');
+    bar.className = 'bar';
+    var deleteLink = document.createElement('a');
+    deleteLink.textContent = 'Delete';
+    deleteLink.className = 'red left';
+    deleteLink.href = '/delete/' + data.hash;
+    deleteLink.onclick = function(e) {
+        e.preventDefault();
+        removeItemFromHistory(data.hash);
+        container2.parentElement.removeChild(container2);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/' + data.hash + '/delete');
+        xhr.send();
+    };
+    deleteLink.title = 'Delete this item from the MediaCrush server';
+    bar.appendChild(deleteLink);
+
+    var forgetLink = document.createElement('a');
+    forgetLink.textContent = 'Forget';
+    forgetLink.className = 'right';
+    forgetLink.href = '/forget/' + data.hash;
+    forgetLink.onclick = function(e) {
+        e.preventDefault();
+        removeItemFromHistory(data.hash);
+        container2.parentElement.removeChild(container2);
+        createPagination();
+        loadCurrentPage();
+    };
+    forgetLink.target = 'Remove this item from your history';
+    bar.appendChild(forgetLink);
+
+    var a = document.createElement('a');
+    a.href = '/' + data.hash;
+    a.appendChild(preview);
+    container.appendChild(a);
+    container.appendChild(bar);
+    container2.className = 'item-wrapper';
+    container2.appendChild(container);
+    container2.id = data.hash;
+    return container2;
 }
 
 function createPagination() {

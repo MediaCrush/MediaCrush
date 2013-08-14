@@ -5,3 +5,41 @@
 #items {
     text-align: center;
 }
+
+.item-wrapper div {
+    position: relative;
+    display: inline-block;
+}
+
+.item-wrapper .bar {
+    position: absolute;
+    height: 23px;
+    background: rgba(100, 100, 100, 0.75);
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: opacity 0.25s linear;
+}
+
+.item-wrapper div:hover .bar {
+    opacity: 1;
+}
+
+.item-wrapper .bar {
+    color: #fff;
+}
+
+.item-wrapper a{
+    color: #fff;
+}
+
+.left {
+    float: left;
+    padding-left: 5px;
+}
+
+.right {
+    float: right;
+    padding-right: 5px;
+}

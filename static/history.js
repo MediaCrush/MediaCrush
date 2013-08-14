@@ -51,7 +51,7 @@ function clearHistory() {
     history = [];
     window.localStorage.setItem('history', JSON.stringify(history));
 }
-function removeItem(hash) {
+function removeItemFromHistory(hash) {
     for (var i = 0; i < history.length; i++) {
         if (history[i] == hash) {
             history.remove(i);
