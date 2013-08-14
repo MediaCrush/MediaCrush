@@ -14,7 +14,9 @@ Example:
     
 # Methods
 
-## /api/&lt;hash&gt;
+## File information endpoints
+
+### /api/&lt;hash&gt;
 
 *Note*: this method is equivalent to `/<hash>.json`.
 
@@ -52,7 +54,7 @@ If the file is not found, you will get a dictionary like:
       "error": 404
     }
 
-## /api/info?list=&lt;hash&gt;,...
+### /api/info?list=&lt;hash&gt;,...
 
 *Parameters*: `list`, a comma-separated list of hashes.
 
@@ -101,7 +103,21 @@ If the file is not found, you will get a dictionary like:
       }
     }
 
-## /api/&lt;hash&gt;/delete
+### /api/&lt;hash&gt;/exists
+
+*Parameters*: none.
+
+*Returns*: a dictionary answering the question of whether a hash exists.
+
+    GET /api/XKacFeUrWuqm/exists
+
+    {
+      "exists": true
+    }
+
+## File manipulation endpoints
+
+### /api/&lt;hash&gt;/delete
 
 *Parameters*: none.
 
