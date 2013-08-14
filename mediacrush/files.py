@@ -154,6 +154,18 @@ def delete_file(f):
 
     f.delete()
 
+def processing_status(id):
+    filename = id
+    if not r.exists(_k("%s.lock" % filename)):
+        if r.exists(_k("%s.error" % filename)):
+            failure_type = r.get(_k("%s.error" % filename))
+            r.delete(_k("%s.error") % filename)
+
+            return failure_type
+
+        return "done"
+    return "processing"
+
 delete_file_storage = lambda f: os.unlink(file_storage(f)) # Abstraction: we may need it if we switch to a non-fs-based storage in the future.
 extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

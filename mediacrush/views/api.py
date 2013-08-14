@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import request
 
 from ..decorators import json_output
-from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile
+from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
 from ..database import r, _k
 from ..objects import File
 from ..network import get_ip
@@ -116,3 +116,12 @@ class APIView(FlaskView):
             return {'error': 400}, 400
 
         return APIView._upload_f(f, f.filename)
+
+    @route("/api/<h>/status")
+    @json_output
+    def status(self, h):
+        f = File.from_hash(h)
+        if not f.original: 
+            return {'error': 404}, 404
+
+        return {'status': processing_status(h)}

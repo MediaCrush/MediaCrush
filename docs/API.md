@@ -145,6 +145,63 @@ If the request is unsuccessful, you will get a response like:
     </tr>
 </table>
 
+## /api/&lt;hash&gt;/status
+
+*Parameters*: none.
+
+*Returns*: the processing status of the file identified by `<hash>`.
+
+    GET /api/LxqXxVPAvqqB/status
+
+    {
+      "status": "done"
+    }
+
+*Return codes*: 
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The file was found. *Note*: this doesn't mean that the processing succeeded. Check the table below.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no file with that hash.</td>
+        <td>false</td>
+    </tr>
+</table>
+
+*Possible values for `status`*:
+
+<table>
+    <tr>
+        <th>Value</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td>done</td>
+        <td>The file has been processed.</td>
+    </tr>
+    <tr>
+        <td>processing</td>
+        <td>The file is being processed or in the processing queue.</td>
+    </tr>
+    <tr>
+        <td>status</td>
+        <td>The processing step finished early with an abnormal return code.</td>
+    </tr>
+    <tr>
+        <td>timeout</td>
+        <td>The file took too long to process.</td>
+    </tr>
+</table>
+   
 ## /api/upload/file
 
 *Parameters*: `file`, the file to upload.
