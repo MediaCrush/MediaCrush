@@ -187,6 +187,8 @@ function getCurrentPage() {
         page = parseInt(window.location.hash.substr(1));
         if (page == NaN) {
             page = 0;
+        } else if (page >= history.length / ITEMS_PER_PAGE) {
+            page = history.length / ITEMS_PER_PAGE - 1;
         }
     }
     return page;
