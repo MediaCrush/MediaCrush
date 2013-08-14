@@ -92,7 +92,7 @@ function createView(data) {
         removeItemFromHistory(data.hash);
         container2.parentElement.removeChild(container2);
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/' + data.hash + '/delete');
+        xhr.open('GET', '/' + data.hash + '/delete');
         xhr.send();
     };
     deleteLink.title = 'Delete this item from the MediaCrush server';
