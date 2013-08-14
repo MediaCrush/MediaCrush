@@ -42,6 +42,14 @@ Example:
       "type": "image/gif"
     }
 
+If the file is not found, you will get a dictionary like:
+
+    GET /api/CPvuR5lRhmS0
+
+    {
+      "error": 404
+    }
+
 ## /api/info?list=&lt;hash&gt;,...
 
 *Parameters*: `list`, a comma-separated list of hashes.
@@ -103,6 +111,15 @@ Example:
       "status": "success"
     }
 
+If the request is unsuccessful, you will get a response like:
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "error": 401
+    }
+
+
 *Return codes*:
 
 <table>
@@ -124,6 +141,57 @@ Example:
     <tr>
         <td>404</td>
         <td>There is no file with that hash.</td>
+        <td>false</td>
+    </tr>
+</table>
+
+## /api/upload/file
+
+*Parameters*: `file`, the file to upload.
+
+*Returns*: a dictionary with the hash of the file in case the upload succeeded, a dictionary containing the error code if it did not succeed.
+
+    curl -F file=@/tmp/cat.gif /api/upload/file
+
+    {
+      "hash": "LxqXxVPAvqqB"
+    }
+
+In case of error, the response will contain an 'error' parameter and additional information if necessary.
+
+    curl -F file=@/tmp/cat.gif /api/upload/file
+
+    {
+      "error": 409,
+      "hash": "LxqXxVPAvqqB"
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The file was uploaded correctly.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>409</td>
+        <td>The file was already uploaded.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>The rate limit was exceeded. Enhance your calm.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>The file extension is not acceptable.</td>
         <td>false</td>
     </tr>
 </table>
