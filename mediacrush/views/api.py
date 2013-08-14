@@ -1,10 +1,12 @@
 from flask.ext.classy import FlaskView, route
+from flaskext.bcrypt import check_password_hash 
 from flask import request
 
 from ..decorators import json_output
-from ..files import media_url, get_mimetype, extension, processing_needed
+from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
 from ..database import r, _k
 from ..objects import File
+from ..network import get_ip
 
 class APIView(FlaskView):
     route_base = '/'
@@ -66,3 +68,69 @@ class APIView(FlaskView):
                 res[i] = APIView._file_object(f)
         
         return res
+
+    @route("/api/<h>/delete")
+    @json_output
+    def delete(self, h):
+        f = File.from_hash(h) 
+        if not f.original:
+            return {'error': 404}, 404
+        if not check_password_hash(f.ip, get_ip()):
+            return {'error': 401}, 401
+
+        delete_file(f)
+        return {'status': 'success'}
+
+
+    @staticmethod
+    def _upload_f(f, filename):
+        result = upload(f, filename)
+        if not isinstance(result, tuple):
+            return {'hash': result}
+        else:
+            info, status = result
+
+            resp = {'error': status} 
+            if status == 409:
+                resp['hash'] = info
+
+            return resp, status
+        
+
+    @route("/api/upload/file", methods=['POST'])
+    @json_output
+    def upload_file(self):
+        f = request.files['file']
+       
+        return APIView._upload_f(f, f.filename)
+
+    @route("/api/upload/url", methods=['POST'])
+    @json_output
+    def upload_url(self):
+        url = request.form['url']
+        f = URLFile()
+
+        try:
+            f.download(url)
+        except:
+            return {'error': 400}, 400
+
+        return APIView._upload_f(f, f.filename)
+
+    @route("/api/<h>/status")
+    @json_output
+    def status(self, h):
+        f = File.from_hash(h)
+        if not f.original: 
+            return {'error': 404}, 404
+
+        return {'status': processing_status(h)}
+
+    @route("/api/<h>/exists")
+    @json_output
+    def exists(self, h):
+        f = File.from_hash(h)
+        if not f.original:
+            return {'exists': False}, 404
+
+        return {'exists': True}

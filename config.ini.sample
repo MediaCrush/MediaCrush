@@ -36,3 +36,5 @@ coinbase_id = changeme
 mandrill_api = changeme
 admin_email = changeme@changeme.com
 from_email = admin@mediacru.sh
+
+docs_path = /home/service/webapps/MediaCrush/docs/

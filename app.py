@@ -1,13 +1,15 @@
 from flask import Flask, render_template, request, g
 from flaskext.bcrypt import Bcrypt
+from flaskext.markdown import Markdown
 import traceback
 
-from mediacrush.views import UploadView, HookView, APIView, ImageView
+from mediacrush.views import HookView, APIView, ImageView, DocsView
 from mediacrush.config import _cfg
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
 bcrypt = Bcrypt(app)
+Markdown(app)
 
 
 @app.before_request
@@ -68,9 +70,9 @@ def thanks():
 def serious():
     return render_template("serious.html")
 
+DocsView.register(app)
 APIView.register(app)
 HookView.register(app)
-UploadView.register(app)
 ImageView.register(app)
 
 if __name__ == '__main__':

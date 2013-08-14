@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container">
+    {{ content |safe|markdown }}
+</div>
+
+{% include "analytics.html" %}
+{% endblock %}

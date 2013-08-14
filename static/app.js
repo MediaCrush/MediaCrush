@@ -42,9 +42,9 @@ function handleFile(file) {
             preview.fileStatus.appendChild(error);
         } else {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/upload/exists/' + hash);
+            xhr.open('GET', '/api/' + hash + '/exists');
             xhr.onload = function() {
-                if (this.responseText == 'true') {
+                if (this.status == 200) {
                     var p = document.createElement('p');
                     p.textContent = 'Upload complete!';
                     var a = document.createElement('a');
@@ -75,7 +75,7 @@ function handleFile(file) {
 
 function uploadFile(file, hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/upload/');
+    xhr.open('POST', '/api/upload/file');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
             progressUI.style.width = (e.loaded / e.total) * 100 + '%';
@@ -87,14 +87,15 @@ function uploadFile(file, hash, statusUI, progressUI) {
             error = 'This media format is not supported.';
         } else if (this.status == 409) {
             finish(statusUI, this.responseText);
-        } else if (this.status == 400) {
+        } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
         } else if (this.status == 200) {
+            var responseJSON = JSON.parse(this.responseText);
             statusUI.innerHTML = '';
             var p = document.createElement('p');
             p.textContent = 'Processing...';
             statusUI.appendChild(p);
-            hash = this.responseText;
+            hash = responseJSON['hash'];
             progressUI.className += ' progress-green';
             progressUI.style.width = '100%';
             setTimeout(function() {
@@ -117,17 +118,18 @@ function uploadFile(file, hash, statusUI, progressUI) {
 
 function checkStatus(file, hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/upload/status/' + hash);
+    xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
-        if (this.responseText == 'done') {
+        responseJSON = JSON.parse(this.responseText);
+        if (responseJSON['status'] == 'done') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
-        } else if (this.responseText == 'timeout' || this.responseText == 'error') {
+        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
             error.className = 'error';
             statusUI.innerHTML = '';
-            if (this.responseText == 'timeout') {
+            if (responseJSON['status'] == 'timeout') {
                 error.textContent = 'This file took too long to process.';
             } else {
                 error.textContent = 'There was an error processing this file.';

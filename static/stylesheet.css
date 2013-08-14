@@ -2,6 +2,10 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+a {
+    font-weight: bold;
+}
+
 .container {
     text-align: justify;
 }
@@ -392,4 +396,28 @@ h4 {
 
 audio {
     width: 100%;
+}
+
+pre {
+    padding: 10px;
+    display: block;
+    border: 1px solid #ddd;
+    background: #f8f8f8;
+    color: #666;
+    border-radius: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+th, td {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+}
+
+tr:first-child th, tr:first-child td {
+    border-top: none;
 }
