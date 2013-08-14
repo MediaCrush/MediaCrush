@@ -1,24 +1,3 @@
-function createCookie(name,value,days) {
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
-        var expires = "; expires="+date.toGMTString();
-    }
-    else var expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-    document.cookie = name+"="+value+expires+"; path=/";
-}
-
-function readCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-
 function adOptOut() {
     createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
     var gad = document.getElementById('gad');
@@ -281,24 +260,21 @@ function handleHistory() {
 }
 
 function histUpdateThumbnails() {
-    var items = history.slice(history.length - 2);
+    var items = history.slice(history.length - 2).reverse();
     if (items.length != 0) {
         histDiv = document.getElementById('histDiv');
         histDiv.classList.remove('hidden');
     }
-    var hashString = '';
-    for (var i = 0; i < items.length; i++) {
-        hashString += items[i] + ',';
-    }
-    if (hashString !== '')
-        parseHashes(hashString);
+    var hashes = items.join(',');
+    if (hashes !== '')
+        parseHashes(items, hashes);
 }
 
 var templateVideo;
 var templateImage;
 var templateAudio;
 var container;
-function parseHashes(hashString) {
+function parseHashes(items, hashString) {
     templateVideo = document.getElementById('template-video').innerHTML;
     templateAudio = document.getElementById('template-audio').innerHTML;
     templateImage = document.getElementById('template-image').innerHTML;
@@ -311,10 +287,8 @@ function parseHashes(hashString) {
             return;
 
         var data = JSON.parse(this.response);
-        for (hash in data) {
-            if (data[hash]) {
-                addItem(hash, data[hash]);
-            }
+        for (var i = 0; i < items.length; i++) {
+            addItem(items[i], data[items[i]]);
         }
     }
     xhr.send();

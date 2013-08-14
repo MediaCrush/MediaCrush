@@ -9,6 +9,7 @@
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+        {% block styles %}{% endblock %}
     </head>
     <body>
     {% block content %}{% endblock %}
