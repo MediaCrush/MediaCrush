@@ -4,8 +4,19 @@ function createCookie(name,value,days) {
         date.setTime(date.getTime()+(days*24*60*60*1000));
         var expires = "; expires="+date.toGMTString();
     }
-    else var expires = "";
+    else var expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
     document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
 }
 
 function adOptOut() {
@@ -69,6 +80,9 @@ function handleFile(file) {
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
                     uploads--;
+
+                    if (histEnabled)
+                        addHist(hash);
                 } else {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
@@ -168,6 +182,9 @@ function finish(statusUI, hash) {
     statusUI.appendChild(p);
     statusUI.appendChild(a);
     uploads--;
+
+    if (histEnabled)
+        addHist(hash);
 }
 
 function createPreview(file, dataURI) {
@@ -247,6 +264,162 @@ function dragLeave(e) {
     droparea.className = null;
 }
 
+// history entry point
+var histEnabled, histStatus, histView;
+function handleHistory() {
+    histEnabled = readCookie('hist-opt-out') === null;
+    histStatus = document.getElementById('histStatus');
+    histView = document.getElementById('histView');
+
+    if (!window.localStorage) {
+        histStatus.classList.add('hidden');
+        histView.classList.add('hidden');
+    } else if (!histEnabled) {
+        histView.classList.add('hidden');
+        histStatus.innerHTML = "(Enable local history)";
+    }
+
+    histUpdateThumbnails();
+}
+
+function histUpdateThumbnails() {
+    var items = histGetLastN(2);
+    var hashString = '';
+    for (var i = 0; i < items.length; i++) {
+        hashString += JSON.parse(items[i]).hash + ',';
+    }
+
+    console.log(hashString);
+    if (hashString !== '')
+        parseHashes(hashString);
+}
+
+var templateVideo;
+var templateImage;
+var templateAudio;
+var container;
+function parseHashes(hashString) {
+    console.log('parse');
+    templateVideo = document.getElementById('template-video').innerHTML;
+    templateAudio = document.getElementById('template-audio').innerHTML;
+    templateImage = document.getElementById('template-image').innerHTML;
+    container = document.getElementById('histThumb');
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/info?list=' + hashString);
+    xhr.onload = function() {
+        if (xhr.status != 200)
+            return;
+
+        console.log(this.response);
+        var data = JSON.parse(this.response);
+        console.log(data);
+        for (hash in data) {
+            if (data[hash]) {
+                addItem(hash, data[hash]);
+            }
+        }
+    }
+    xhr.send();
+}
+
+function addItem(hash, data) {
+    console.log('additem');
+    var type = data.type.split('/')[0];
+    var template;
+
+    if (type === 'audio')
+        template = templateAudio;
+    else if (type == 'video')
+        template = templateVideo
+    else if (type == 'image') {
+        var splits = data.original.split('.');
+        template = templateImage;
+        template = template.replace(/--IMG-TYPE--/g, splits[splits.length-1]);
+    }
+
+    template = template.replace(/--URL--/g, '/'+hash);
+
+    var temp = document.createElement('div');
+    temp.innerHTML = template;
+
+    container.appendChild(temp.firstElementChild);
+}
+
+
+function histGetLastN(N) {
+    if (!window.localStorage)
+        return;
+
+    var index = window.localStorage.getItem('hist:index');
+    var items = []
+    var n = N;
+    for (var i = index - 1; i >= 0; i--) {
+        if (n == 0)
+            break;
+
+        var item = window.localStorage.getItem('hist:'+i);
+        if (item)
+            items.push(item);
+
+        --n;
+    }
+    return items;
+}
+
+function histToggle() {
+    if (histEnabled) {
+        createCookie('hist-opt-out', '1', 3650);
+        histView.classList.add('hidden');
+        histStatus.innerHTML = "(Enable local history)";
+        clearHist();
+    } else {
+        // this will essentially delete the cookie
+        createCookie('hist-opt-out', '', 0);
+        histView.classList.remove('hidden');
+        histStatus.innerHTML = "(Disable local history)";
+    }
+
+    histEnabled = !histEnabled;
+}
+
+function addHist(mHash) {
+    if (!window.localStorage)
+        return;
+
+    var index = window.localStorage.getItem('hist:index');
+    if (index === null)
+        index = 0;
+    else
+        index = parseInt(index);
+
+    var obj = JSON.stringify({hash: mHash});
+    // check if object is already in history
+    for (var i = 0; i < index; i++) {
+        if (window.localStorage.getItem('hist:'+i) === obj)
+            return;
+    }
+
+    window.localStorage.setItem('hist:'+index, obj);
+    window.localStorage.setItem('hist:index', ++index);
+}
+
+function clearHist() {
+    if (!window.localStorage)
+        return;
+
+    var index = window.localStorage.getItem('hist:index');
+    if (index === null)
+        return;
+    else
+        index = parseInt(index);
+
+    for (var i = 0; i < index; i++) {
+        window.localStorage.removeItem('hist:'+i);
+    }
+    window.localStorage.removeItem('hist:index');
+}
+
 function dropEnable() {
     window.addEventListener('dragenter', dragEnter, false);
     window.addEventListener('dragleave', dragLeave, false);
@@ -261,6 +434,8 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
+
+    handleHistory();
 }
 
 window.onload = dropEnable;

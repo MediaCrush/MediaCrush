@@ -68,6 +68,15 @@ body {
     float: left;
 }
 
+.hidden {
+    display: none;
+}
+
+#histDiv {
+    display: block;
+    width: 100%;
+}
+
 #lgad {
     display: none;
     text-align: center;
