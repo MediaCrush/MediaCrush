@@ -211,7 +211,7 @@ If the request is unsuccessful, you will get a response like:
         <td>The file is being processed or in the processing queue.</td>
     </tr>
     <tr>
-        <td>status</td>
+        <td>error</td>
         <td>The processing step finished early with an abnormal return code.</td>
     </tr>
     <tr>
