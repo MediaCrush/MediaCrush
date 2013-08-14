@@ -37,7 +37,7 @@ Note: you'll need libtheora enabled to output ogv files.
     mkdir /tmp/ffmpeg
     git clone --depth 1 git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
     cd /tmp/ffmpeg
-    ./configure --enable-libtheora --enable-x264 --enable-gpl
+    ./configure --enable-libtheora --enable-libx264 --enable-gpl
     make
     sudo make install
 
