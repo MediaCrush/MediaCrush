@@ -91,7 +91,7 @@ Example:
       }
     }
 
-##/api/&lt;hash&gt;/delete
+## /api/&lt;hash&gt;/delete
 
 *Parameters*: none.
 
