@@ -17,6 +17,11 @@ MediaCrush runs on the following things:
 
 This list grows as we find more cool tech to make media smaller.
 
+## Developer Docs
+
+If you aren't looking to contribute, but just want to do some cool stuff with the site, you might be interested in our
+[Developer Documentation](https://mediacru.sh/docs), which documents our API and a few other nice things.
+
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md).

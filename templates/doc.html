@@ -2,7 +2,9 @@
 
 {% block content %}
 
-{{ content |safe|markdown }}
+<div class="container">
+    {{ content |safe|markdown }}
+</div>
 
 {% include "analytics.html" %}
 {% endblock %}

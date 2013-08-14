@@ -1,6 +1,8 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter. 
+The MediaCrush API returns JSON on all methods*. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter. 
+
+\* Not quite all, and we'll change that soon.
 
 Example:    
 
