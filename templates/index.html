@@ -38,10 +38,12 @@
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
 
             <div id="histDiv" class="column">
-                <a href="/mine" class="small" id="histView">View your History</a>
+                <h4>Your Recent Uploads</h4>
+                <a href="/mine" class="small" id="histView">View full history</a> &mdash;
                 <a href="javascript:histToggle();" class="small" id="histStatus">(Disable local history)</a>
 
-                <ul id="histThumb">
+                <ul id="histThumb" class="home-history">
+                    <li class="fader"></li>
                 </ul>
             </div>
 
@@ -73,27 +75,29 @@
 
     <script type="text/template" id="template-video">
         <li>
-            <a class="hist-url" href="--URL--">--URL--</a>
-            <video controls class="item-view">
-            <video autoplay loop>
-                <source src="--URL--.mp4" type="video/mp4;" > \
-                <source src="--URL--.ogv" type='video/ogg; codecs="theory, vorbis"' >
-            </video>
+            <a class="hist-url" href="--URL--" target="_blank">
+                <video autoplay loop controls class="item-view">
+                    <source src="--URL--.mp4" type="video/mp4;" > \
+                    <source src="--URL--.ogv" type='video/ogg; codecs="theory, vorbis"' >
+                </video>
+            </a>
         </li>
     </script>
     <script type="text/template" id="template-image">
         <li>
-            <a class="hist-url" href="--URL--">--URL--</a>
-            <img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">
+            <a class="hist-url" href="--URL--" target="_blank">
+                <img src="--URL--.--IMG-TYPE--" alt="MediaQuick" class="item-view">
+            </a>
         </li>
     </script>
-    <script type="text/template" id="template-audio">
+    <script type="text/template" id="template-audio" target="_blank">
         <li>
-            <a class="hist-url" href="--URL--">--URL--</a>
-            <audio controls class="item-view">
-                <source src="--URL--.mp3" type="audio/mpeg">
-                <source src="--URL--.ogg" type="audio/ogg">
-            </audio>
+            <a class="hist-url" href="--URL--">
+                <audio controls class="item-view">
+                    <source src="--URL--.mp3" type="audio/mpeg">
+                    <source src="--URL--.ogg" type="audio/ogg">
+                </audio>
+            </a>
         </li>
     </script>
 

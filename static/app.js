@@ -270,8 +270,10 @@ function handleHistory() {
     histEnabled = readCookie('hist-opt-out') === null;
     histStatus = document.getElementById('histStatus');
     histView = document.getElementById('histView');
+    histDiv = document.getElementById('histStatus');
 
     if (!window.localStorage) {
+        histDiv.classList.add('hidden');
         histStatus.classList.add('hidden');
         histView.classList.add('hidden');
     } else if (!histEnabled) {
@@ -284,6 +286,10 @@ function handleHistory() {
 
 function histUpdateThumbnails() {
     var items = histGetLastN(2);
+    if (items.length == 0) {
+        histDiv = document.getElementById('histDiv');
+        histDiv.classList.add('hidden');
+    }
     var hashString = '';
     for (var i = 0; i < items.length; i++) {
         hashString += JSON.parse(items[i]).hash + ',';
@@ -435,7 +441,7 @@ function dropEnable() {
         browse();
     }, false);
 
-    handleHistory();
+    setTimeout(handleHistory, 50);
 }
 
 window.onload = dropEnable;

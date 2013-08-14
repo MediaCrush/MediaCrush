@@ -68,13 +68,12 @@ body {
     float: left;
 }
 
-.hidden {
-    display: none;
+#histDiv {
+    width: 100%;
 }
 
-#histDiv {
-    display: block;
-    width: 100%;
+.hidden {
+    display: none;
 }
 
 #lgad {
@@ -332,4 +331,36 @@ a:hover {
     width: 333px;
     height: 43px;
     line-height: 43px;
+}
+
+#histThumb {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+    overflow-y: hidden;
+    max-height: 400px;
+    position: relative;
+}
+
+#histThumb .fader {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0));
+}
+
+.home-history .item-view {
+    max-width: 250px;
+    max-height: 250px;
+}
+
+.home-history .item-view {
+    border: 1px solid #000;
+}
+
+h4 {
+    margin: 0;
 }
