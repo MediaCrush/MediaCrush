@@ -1,7 +1,6 @@
 function toggleHistory() {
     if (historyEnabled) {
         createCookie('hist-opt-out', '1', 3650);
-        clearHistory();
         window.location = "/mine";
     } else {
         createCookie('hist-opt-out', '', 0);
@@ -19,6 +18,12 @@ var items = [];
 
 window.onload = function() {
     loadHistory();
+    if (!historyEnabled) {
+        var disabled = document.getElementById('disabledText');
+        var link = document.getElementById('history-toggle');
+        disabled.className = '';
+        link.textContent = 'enable local history';
+    }
     createPagination();
     loadItems(function() {
         loadCurrentPage();
