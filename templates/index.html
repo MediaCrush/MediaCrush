@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='app.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='history.js') }}" type="text/javascript"></script>
 {% endblock %}
 {% block content %}
 <div class="wrapper">
@@ -37,10 +38,10 @@
             See a demo <a href="/demo">here</a>!</p>
             <p>MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">open source</a>, too!</p>
 
-            <div id="histDiv" class="column">
+            <div id="histDiv" class="column hidden">
                 <h4>Your Recent Uploads</h4>
                 <a href="/mine" class="small" id="histView">View full history</a> &mdash;
-                <a href="javascript:histToggle();" class="small" id="histStatus">(Disable local history)</a>
+                <a href="javascript:toggleHistory();" class="small" id="histStatus">(Disable local history)</a>
 
                 <ul id="histThumb" class="home-history">
                     <li class="fader"></li>

@@ -143,15 +143,20 @@ body {
     line-height: 640px;
 }
 
-.mobile-browse span {
-    padding: 20px;
+.mobile-browse span, .button {
+    padding: 5px;
     background: #428bca;
     color: #fff;
     border-radius: 5px;
 }
 
-.mobile-browse:hover {
+.mobile-browse span {
+    padding: 20px;
+}
+
+.mobile-browse:hover, .button:hover {
     text-decoration: none;
+    color: #ccc;
 }
 
 @media (max-height: 800px) {
@@ -339,7 +344,7 @@ a:hover {
     list-style: none;
     text-align: center;
     overflow-y: hidden;
-    max-height: 400px;
+    height: 400px;
     position: relative;
 }
 

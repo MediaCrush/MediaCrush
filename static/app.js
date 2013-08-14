@@ -80,9 +80,7 @@ function handleFile(file) {
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
                     uploads--;
-
-                    if (histEnabled)
-                        addHist(hash);
+                    addItemToHistory(hash);
                 } else {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
@@ -182,9 +180,7 @@ function finish(statusUI, hash) {
     statusUI.appendChild(p);
     statusUI.appendChild(a);
     uploads--;
-
-    if (histEnabled)
-        addHist(hash);
+    addItemToHistory(hash);
 }
 
 function createPreview(file, dataURI) {
@@ -267,7 +263,7 @@ function dragLeave(e) {
 // history entry point
 var histEnabled, histStatus, histView;
 function handleHistory() {
-    histEnabled = readCookie('hist-opt-out') === null;
+    loadHistory();
     histStatus = document.getElementById('histStatus');
     histView = document.getElementById('histView');
     histDiv = document.getElementById('histStatus');
@@ -276,7 +272,7 @@ function handleHistory() {
         histDiv.classList.add('hidden');
         histStatus.classList.add('hidden');
         histView.classList.add('hidden');
-    } else if (!histEnabled) {
+    } else if (!historyEnabled) {
         histView.classList.add('hidden');
         histStatus.innerHTML = "(Enable local history)";
     }
@@ -285,17 +281,15 @@ function handleHistory() {
 }
 
 function histUpdateThumbnails() {
-    var items = histGetLastN(2);
-    if (items.length == 0) {
+    var items = history.slice(history.length - 2);
+    if (items.length != 0) {
         histDiv = document.getElementById('histDiv');
-        histDiv.classList.add('hidden');
+        histDiv.classList.remove('hidden');
     }
     var hashString = '';
     for (var i = 0; i < items.length; i++) {
-        hashString += JSON.parse(items[i]).hash + ',';
+        hashString += items[i] + ',';
     }
-
-    console.log(hashString);
     if (hashString !== '')
         parseHashes(hashString);
 }
@@ -305,7 +299,6 @@ var templateImage;
 var templateAudio;
 var container;
 function parseHashes(hashString) {
-    console.log('parse');
     templateVideo = document.getElementById('template-video').innerHTML;
     templateAudio = document.getElementById('template-audio').innerHTML;
     templateImage = document.getElementById('template-image').innerHTML;
@@ -317,9 +310,7 @@ function parseHashes(hashString) {
         if (xhr.status != 200)
             return;
 
-        console.log(this.response);
         var data = JSON.parse(this.response);
-        console.log(data);
         for (hash in data) {
             if (data[hash]) {
                 addItem(hash, data[hash]);
@@ -330,7 +321,6 @@ function parseHashes(hashString) {
 }
 
 function addItem(hash, data) {
-    console.log('additem');
     var type = data.type.split('/')[0];
     var template;
 
@@ -352,78 +342,19 @@ function addItem(hash, data) {
     container.appendChild(temp.firstElementChild);
 }
 
-
-function histGetLastN(N) {
-    if (!window.localStorage)
-        return;
-
-    var index = window.localStorage.getItem('hist:index');
-    var items = []
-    var n = N;
-    for (var i = index - 1; i >= 0; i--) {
-        if (n == 0)
-            break;
-
-        var item = window.localStorage.getItem('hist:'+i);
-        if (item)
-            items.push(item);
-
-        --n;
-    }
-    return items;
-}
-
-function histToggle() {
-    if (histEnabled) {
+function toggleHistory() {
+    if (historyEnabled) {
         createCookie('hist-opt-out', '1', 3650);
         histView.classList.add('hidden');
         histStatus.innerHTML = "(Enable local history)";
-        clearHist();
+        clearHistory();
     } else {
         // this will essentially delete the cookie
         createCookie('hist-opt-out', '', 0);
         histView.classList.remove('hidden');
         histStatus.innerHTML = "(Disable local history)";
     }
-
-    histEnabled = !histEnabled;
-}
-
-function addHist(mHash) {
-    if (!window.localStorage)
-        return;
-
-    var index = window.localStorage.getItem('hist:index');
-    if (index === null)
-        index = 0;
-    else
-        index = parseInt(index);
-
-    var obj = JSON.stringify({hash: mHash});
-    // check if object is already in history
-    for (var i = 0; i < index; i++) {
-        if (window.localStorage.getItem('hist:'+i) === obj)
-            return;
-    }
-
-    window.localStorage.setItem('hist:'+index, obj);
-    window.localStorage.setItem('hist:index', ++index);
-}
-
-function clearHist() {
-    if (!window.localStorage)
-        return;
-
-    var index = window.localStorage.getItem('hist:index');
-    if (index === null)
-        return;
-    else
-        index = parseInt(index);
-
-    for (var i = 0; i < index; i++) {
-        window.localStorage.removeItem('hist:'+i);
-    }
-    window.localStorage.removeItem('hist:index');
+    historyEnabled = !historyEnabled;
 }
 
 function dropEnable() {
