@@ -270,8 +270,7 @@ In case of error, the response will contain an 'error' parameter and additional 
           }
         ], 
         "original": "/LxqXxVPAvqqB.png", 
-        "type": "image/png",
-        "hash": "LxqXxVPAvqqB"
+        "type": "image/png"
       }
     }
 
