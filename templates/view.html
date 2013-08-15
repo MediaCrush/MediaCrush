@@ -52,13 +52,22 @@
         </div>
         <script type="text/javascript">
             {% if can_delete == 'check' %}
+            Array.prototype.remove = function(from, to) {
+              var rest = this.slice((to || from) + 1 || this.length);
+              this.length = from < 0 ? this.length + from : from;
+              return this.push.apply(this, rest);
+            };
             var history = window.localStorage.getItem('history');
+            var hashIndex = null;
+            history = JSON.parse(history);
             if (history) {
-                history = JSON.parse(history);
                 var canDelete = false;
                 for (var i = 0; i < history.length; i++) {
-                    if (history[i] == '{{ filename }}')
+                    if (history[i] == '{{ filename }}') {
                         canDelete = true;
+                        hashIndex = i;
+                        break;
+                    }
                 }
                 if (canDelete) {
                     document.getElementById('deleteContainer').classList.remove('hidden');
@@ -71,6 +80,10 @@
                 xhr.open('GET', '/api/{{ filename }}/delete');
                 xhr.send();
                 document.getElementById('deleteContainer').innerHTML = ' &mdash; Deleted';
+                if (history) {
+                    history.remove(i);
+                    window.localStorage.setItem('history', JSON.stringify(history));
+                }
             };
             {% if mimetype.startswith("video") or mimetype.startswith("audio") %}
                 window.addEventListener('load', function() {
