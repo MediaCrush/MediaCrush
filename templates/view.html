@@ -81,7 +81,7 @@
                 xhr.send();
                 document.getElementById('deleteContainer').innerHTML = ' &mdash; Deleted';
                 if (history) {
-                    history.remove(i);
+                    history.remove(hashIndex);
                     window.localStorage.setItem('history', JSON.stringify(history));
                 }
             };
