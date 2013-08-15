@@ -53,6 +53,11 @@
         </div>
         {% if mimetype.startswith("audio") %}
         <script type="text/javascript" src="/static/js/mp3.js" ></script>
+        <!--[if gte IE 6]>
+            <script type="text/javascript">
+                var isIE=true;
+            </script>
+        <![endif]-->
         {% endif %}
         <script type="text/javascript">
             {% if can_delete == 'check' %}
@@ -95,6 +100,10 @@
                         }
 
                         ID3.loadTags(file, ID3callback);
+
+                        if (typeof isIE !== 'undefined') {
+                            document.getElementById('audioinfo').classList.add('hidden');
+                        }
                     {% endif %}
                 });
             {% endif %}
