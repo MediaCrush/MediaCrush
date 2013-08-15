@@ -40,7 +40,7 @@
                 <div>
                     <span class="small"><a href="#" id="report">Report</a></span>
                     <span class="small"> &mdash; <a href="/">Upload</a></span>
-                    <span class="small{% if can_delete == 'check' or if can_delete == False %} hidden{% endif %}" id="deleteContainer"> &mdash; <a class="red" id="deleteLink" href="/api/{{ filename }}/delete">Delete</a></span>
+                    <span class="small{% if can_delete == 'check' or can_delete == False %} hidden{% endif %}" id="deleteContainer"> &mdash; <a class="red" id="deleteLink" href="/api/{{ filename }}/delete">Delete</a></span>
                 </div>
                 {% if compression %}
                 <div>
