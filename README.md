@@ -22,6 +22,12 @@ This list grows as we find more cool tech to make media smaller.
 If you aren't looking to contribute, but just want to do some cool stuff with the site, you might be interested in our
 [Developer Documentation](https://mediacru.sh/docs), which documents our API and a few other nice things.
 
+## Versioning
+
+MediaCrush uses semantic versioning. In a nutshell: vMAJOR.MINOR.PATCH. Major increments for breaking changes, minor
+increments for new, backwards-compatible features, and patch increments for backwards-compatible bug fixes or refactoring.
+Check the latest git tag to see which version is the latest.
+
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md).
