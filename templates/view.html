@@ -6,7 +6,7 @@
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
-        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}</style>
+        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}.red{color:red;}a.red:hover{color:red;}.hidden{display:none;}</style>
     </head>
     <body>
         <div style="display: inline-block">
@@ -40,6 +40,7 @@
                 <div>
                     <span class="small"><a href="#" id="report">Report</a></span>
                     <span class="small"> &mdash; <a href="/">Upload</a></span>
+                    <span class="small{% if can_delete == 'check' %} hidden{% endif %}" id="deleteContainer"> &mdash; <a class="red" id="deleteLink" href="/api/{{ filename }}/delete">Delete</a></span>
                 </div>
                 {% if compression %}
                 <div>
@@ -50,6 +51,27 @@
             </div>
         </div>
         <script type="text/javascript">
+            {% if can_delete == 'check' %}
+            var history = window.localStorage.getItem('history');
+            if (history) {
+                history = JSON.parse(history);
+                var canDelete = false;
+                for (var i = 0; i < history.length; i++) {
+                    if (history[i] == '{{ filename }}')
+                        canDelete = true;
+                }
+                if (canDelete) {
+                    document.getElementById('deleteContainer').classList.remove('hidden');
+                }
+            }
+            {% endif %}
+            document.getElementById('deleteLink').onclick = function(e) {
+                e.preventDefault();
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/{{ filename }}/delete');
+                xhr.send();
+                document.getElementById('deleteContainer').innerHTML = ' &mdash; Deleted';
+            };
             {% if mimetype.startswith("video") or mimetype.startswith("audio") %}
                 window.addEventListener('load', function() {
                     var tagname = {% if mimetype.startswith("video") %}"video"{% else %}"audio"{%endif %};
