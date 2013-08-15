@@ -92,8 +92,10 @@ class APIView(FlaskView):
 
             resp = {'error': status} 
             if status == 409:
-                resp['hash'] = info
-                resp[info] = APIView._file_object(File.from_hash(info)) 
+                f = APIView._file_object(File.from_hash(info)) 
+                f['hash'] = info
+
+                resp['file'] = f
 
             return resp, status
         
