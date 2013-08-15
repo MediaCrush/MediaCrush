@@ -1,11 +1,3 @@
-(function(xhr) {
-    var open = XMLHttpRequest.prototype.open;
-    xhr.prototype.open = function() {
-        open.apply(this, arguments);
-        this.setRequestHeader('X-Requested-With','XMLHttpRequest');
-    };
-})(XMLHttpRequest);
-
 function adOptOut() {
     createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
     var gad = document.getElementById('gad');
