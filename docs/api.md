@@ -170,7 +170,26 @@ If the request is unsuccessful, you will get a response like:
     GET /api/LxqXxVPAvqqB/status
 
     {
-      "status": "done"
+      "status": "done",
+       "result": {
+          "compression": 8.93, 
+          "files": [
+            {
+              "file": "/LxqXxVPAvqqB.mp4", 
+              "type": "video/mp4"
+            }, 
+            {
+              "file": "/LxqXxVPAvqqB.ogv", 
+              "type": "video/ogg"
+            }, 
+            {
+              "file": "/LxqXxVPAvqqB.gif", 
+              "type": "image/gif"
+            }
+          ], 
+          "original": "/LxqXxVPAvqqB.gif", 
+          "type": "image/gif"
+        }
     }
 
 *Return codes*: 

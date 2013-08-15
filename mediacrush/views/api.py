@@ -127,7 +127,10 @@ class APIView(FlaskView):
         if not f.original: 
             return {'error': 404}, 404
 
-        return {'status': processing_status(h)}
+        status = processing_status(h)
+        if not status == 'done':
+            return {'status': processing_status(h)}
+        return {'status': processing_status(h), 'result': APIView._file_object(f)}
 
     @route("/api/<h>/exists")
     @json_output
