@@ -14,21 +14,21 @@ audio {
 .item-wrapper div {
     position: relative;
     display: inline-block;
+    overflow: hidden;
 }
 
 .item-wrapper .bar {
     position: absolute;
     height: 23px;
-    background: rgba(100, 100, 100, 0.75);
-    top: 0;
+    background: #646464;
+    top: -23px;
     left: 0;
     right: 0;
-    opacity: 0;
-    transition: opacity 0.25s linear;
+    transition: top 0.15s linear;
 }
 
 .item-wrapper div:hover .bar {
-    opacity: 1;
+    top: 0;
 }
 
 .item-wrapper .bar {
