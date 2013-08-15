@@ -4,6 +4,7 @@
     window.addEventListener('load', function() {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/{{ hash }}.json');
+        xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
         xhr.onload = function() {
             if (xhr.status != 200)
                 return;
