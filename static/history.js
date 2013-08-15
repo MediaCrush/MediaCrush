@@ -64,6 +64,7 @@ function loadDetailedHistory(items, callback) {
     var hashes = items.join(',');
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/info?list=' + hashes);
+    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function() {
         if (xhr.status != 200) {
             var itemsElement = document.getElementById('items');
