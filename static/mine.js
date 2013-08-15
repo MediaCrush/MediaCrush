@@ -139,7 +139,7 @@ function createView(data) {
 
     var deleteLink = document.createElement('a');
     deleteLink.textContent = 'Delete';
-    deleteLink.className = 'red right';
+    deleteLink.className = 'right';
     deleteLink.href = '/delete/' + data.hash;
     deleteLink.onclick = function(e) {
         e.preventDefault();

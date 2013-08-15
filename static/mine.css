@@ -20,7 +20,7 @@ audio {
 .item-wrapper .bar {
     position: absolute;
     height: 23px;
-    background: #999;
+    background: rgba(111,111,111,0.8);
     top: -23px;
     left: 0;
     right: 0;
@@ -40,7 +40,7 @@ audio {
 }
 
 .item-wrapper a.red {
-    color: red;
+    color: rgb(148,0,0);
 }
 
 .left {
