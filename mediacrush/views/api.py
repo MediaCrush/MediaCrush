@@ -127,7 +127,7 @@ class APIView(FlaskView):
             return {'error': 404}, 404
 
         ret = {'status': processing_status(h)}
-        if status == 'done':
+        if ret['status'] == 'done':
             ret[h] = APIView._file_object(f)
 
         return ret
