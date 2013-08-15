@@ -122,9 +122,24 @@ function createView(data) {
     var container2 = document.createElement('div');
     var bar = document.createElement('div');
     bar.className = 'bar';
+
+    var forgetLink = document.createElement('a');
+    forgetLink.textContent = 'Forget';
+    forgetLink.className = 'left';
+    forgetLink.href = '/forget/' + data.hash;
+    forgetLink.onclick = function(e) {
+        e.preventDefault();
+        removeItemFromHistory(data.hash);
+        container2.parentElement.removeChild(container2);
+        createPagination();
+        loadCurrentPage();
+    };
+    forgetLink.target = 'Remove this item from your history';
+    bar.appendChild(forgetLink);
+
     var deleteLink = document.createElement('a');
     deleteLink.textContent = 'Delete';
-    deleteLink.className = 'red left';
+    deleteLink.className = 'red right';
     deleteLink.href = '/delete/' + data.hash;
     deleteLink.onclick = function(e) {
         e.preventDefault();
@@ -136,20 +151,6 @@ function createView(data) {
     };
     deleteLink.title = 'Delete this item from the MediaCrush server';
     bar.appendChild(deleteLink);
-
-    var forgetLink = document.createElement('a');
-    forgetLink.textContent = 'Forget';
-    forgetLink.className = 'right';
-    forgetLink.href = '/forget/' + data.hash;
-    forgetLink.onclick = function(e) {
-        e.preventDefault();
-        removeItemFromHistory(data.hash);
-        container2.parentElement.removeChild(container2);
-        createPagination();
-        loadCurrentPage();
-    };
-    forgetLink.target = 'Remove this item from your history';
-    bar.appendChild(forgetLink);
 
     var a = document.createElement('a');
     a.href = '/' + data.hash;
