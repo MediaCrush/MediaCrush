@@ -171,7 +171,7 @@ If the request is unsuccessful, you will get a response like:
 
     {
       "status": "done",
-       "result": {
+      "result": {
           "compression": 8.93, 
           "files": [
             {
@@ -238,6 +238,10 @@ If the request is unsuccessful, you will get a response like:
         <td>The file took too long to process.</td>
     </tr>
 </table>
+
+*Notes:*
+
+The "result" object will only be included if the status is "done".
    
 ## /api/upload/file
 
