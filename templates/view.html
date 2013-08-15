@@ -51,6 +51,14 @@
             </div>
         </div>
         <script type="text/javascript">
+            (function(xhr) {
+                var open = XMLHttpRequest.prototype.open;
+                xhr.prototype.open = function() {
+                    open.apply(this, arguments);
+                    this.setRequestHeader('X-Requested-With','XMLHttpRequest');
+                };
+            })(XMLHttpRequest);
+
             {% if can_delete == 'check' %}
             var history = window.localStorage.getItem('history');
             if (history) {
@@ -69,7 +77,6 @@
                 e.preventDefault();
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/api/{{ filename }}/delete');
-                xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
                 xhr.send();
                 document.getElementById('deleteContainer').innerHTML = ' &mdash; Deleted';
             };
@@ -97,7 +104,6 @@
                     var report = document.getElementById('report');
                     var xhr = new XMLHttpRequest();
                     xhr.open('GET', '/report/' + location.href.split('/')[3]);
-                    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
                     xhr.send();
                     report.parentNode.innerHTML = "Reported";
                 }, false);

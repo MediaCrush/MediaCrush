@@ -1,3 +1,11 @@
+(function(xhr) {
+    var open = XMLHttpRequest.prototype.open;
+    xhr.prototype.open = function() {
+        open.apply(this, arguments);
+        this.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    };
+})(XMLHttpRequest);
+
 function adOptOut() {
     createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
     var gad = document.getElementById('gad');
@@ -43,7 +51,6 @@ function handleFile(file) {
         } else {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/' + hash + '/exists');
-            xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
             xhr.onload = function() {
                 if (this.status == 200) {
                     var p = document.createElement('p');
@@ -77,7 +84,6 @@ function handleFile(file) {
 function uploadFile(file, hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/upload/file');
-    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.upload.onprogress = function(e) {
         if (e.lengthComputable) {
             progressUI.style.width = (e.loaded / e.total) * 100 + '%';
@@ -122,7 +128,6 @@ function uploadFile(file, hash, statusUI, progressUI) {
 function checkStatus(file, hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/' + hash + '/status');
-    xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
     xhr.onload = function() {
         responseJSON = JSON.parse(this.responseText);
         if (responseJSON['status'] == 'done') {

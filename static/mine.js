@@ -1,3 +1,11 @@
+(function(xhr) {
+    var open = XMLHttpRequest.prototype.open;
+    xhr.prototype.open = function() {
+        open.apply(this, arguments);
+        this.setRequestHeader('X-Requested-With','XMLHttpRequest');
+    };
+})(XMLHttpRequest);
+
 function toggleHistory() {
     if (historyEnabled) {
         createCookie('hist-opt-out', '1', 3650);
@@ -147,7 +155,6 @@ function createView(data) {
         container2.parentElement.removeChild(container2);
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/' + data.hash + '/delete');
-        xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
         xhr.send();
     };
     deleteLink.title = 'Delete this item from the MediaCrush server';
