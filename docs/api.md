@@ -171,7 +171,7 @@ If the request is unsuccessful, you will get a response like:
 
     {
       "status": "done",
-      "file": {
+      "LxqXxVPAvqqB": {
         "compression": 8.93, 
         "files": [
           {
