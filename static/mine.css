@@ -20,7 +20,7 @@ audio {
 .item-wrapper .bar {
     position: absolute;
     height: 23px;
-    background: #888;
+    background: #999;
     top: -23px;
     left: 0;
     right: 0;
