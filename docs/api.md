@@ -239,6 +239,17 @@ In case of error, the response will contain an 'error' parameter and additional 
     {
       "error": 409,
       "hash": "LxqXxVPAvqqB"
+      "LxqXxVPAvqqB": {
+          "compression": 0.0, 
+          "files": [
+            {
+              "file": "/LxqXxVPAvqqB.png", 
+              "type": "image/png"
+            }
+          ], 
+          "original": "/LxqXxVPAvqqB.png", 
+          "type": "image/png"
+      }
     }
 
 *Return codes*:
