@@ -67,5 +67,5 @@ class ImageView(FlaskView):
 
     @route("/<h>/embed")
     def embed(self, h):
-        text = render_template("embed.js", hash=filter(str.isalnum, h))
+        text = render_template("embed.js", hash=filter(unicode.isalnum, h))
         return Response(text, mimetype="text/javascript") 
