@@ -11,8 +11,9 @@ Documentation for our API is provided [here](/docs/API).
 We use MD5 hashes* to identify a media blob, which is a collection of files that make up one "media" object.
 This hash comes from the originally uploaded file, and is base 64 encoded, with `+` replaced by `-`, and `/`
 replaced with `_`. In other words, to get the blob identifier of a file:
-`base64(md5(file)).replace('+', '-').replace('/', '_')`. This identifier is the URL at which the file appears
-when uploaded - `/identifier`.
+`base64(md5(file)).replace('+', '-').replace('/', '_')`. Finally, we take the first 12 characters and
+discard the rest of the hash. This becomes the blob identifier - which is what the file appears at when you
+visit `/identifier`.
 
 \* Before you cry "security!", realize that MD5 is fine for checksums and we aren't actually using them to
 protect sensitive information.
