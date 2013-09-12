@@ -15,10 +15,6 @@ replaced with `_`. In other words, to get the blob identifier of a file:
 discard the rest of the hash. This becomes the blob identifier - which is what the file appears at when you
 visit `/identifier`.
 
-In short, the function we use to compute the identifier is:
-
-    lambda file: base64.b64encode(md5(file))[:12].replace('/', '_').replace('+', '-')
-
 \* Before you cry "security!", realize that MD5 is fine for checksums and we aren't actually using them to
 protect sensitive information.
 
