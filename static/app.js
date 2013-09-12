@@ -13,6 +13,11 @@ function browse() {
 
 var firstUpload = true;
 var uploads = 0;
+
+function uploadUrl(url) {
+    alert(url);
+}
+
 function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
@@ -247,6 +252,7 @@ function dropEnable() {
     window.addEventListener('dragleave', dragLeave, false);
     window.addEventListener('dragover', dragNop, false);
     window.addEventListener('drop', dragDrop, false);
+    window.addEventListener('paste', handlePaste, false);
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
@@ -332,6 +338,30 @@ function toggleHistory() {
         statusElement.textContent = 'Disable local history';
     }
     historyEnabled = !historyEnabled;
+}
+
+function handlePaste(e) {
+    if (e.clipboardData) {
+        var items = e.clipboardData.items;
+        if (items) {
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image/") == 0) {
+                    var file = items[i].getAsFile();
+                    file.name = "clipboard." + items[i].type.substring(6);
+                    handleFiles([ file ]);
+                } else if (items[i].type.indexOf("text/") == 0) {
+                    var text = items[i].getAsString(function(value) {
+                        if (value) {
+                            if (value.indexOf("http://") == 0 || value.indexOf("https://") == 0)
+                                uploadUrl(value);
+                            else
+                                ; // TODO
+                        }
+                    });
+                }
+            }
+        }
+    }
 }
 
 window.onload = dropEnable;
