@@ -6,6 +6,17 @@ since we don't get any ad views from API users. We also appreciate that donation
 
 Documentation for our API is provided [here](/docs/API).
 
+## Blob Identifiers
+
+We use MD5 hashes* to identify a media blob, which is a collection of files that make up one "media" object.
+This hash comes from the originally uploaded file, and is base 64 encoded, with `+` replaced by `-`, and `/`
+replaced with `_`. In other words, to get the blob identifier of a file:
+`base64(md5(file)).replace('+', '-').replace('/', '_')`. This identifier is the URL at which the file appears
+when uploaded - `/identifier`.
+
+\* Before you cry "security!", realize that MD5 is fine for checksums and we aren't actually using them to
+protect sensitive information.
+
 ## Embedding Media
 
 It's possible to embed MediaCrush files in your own page. It's actually quite simple. For a given MediaCrush
