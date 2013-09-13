@@ -382,7 +382,7 @@ function handlePaste(e) {
             for (var i = 0; i < items.length; i++) {
                 if (items[i].type.indexOf("image/") == 0) {
                     var file = items[i].getAsFile();
-                    file.name = "clipboard." + items[i].type.substring(6);
+                    file.name = "clipboard";
                     handleFiles([ file ]);
                 } else if (items[i].type.indexOf("text/") == 0) {
                     var text = items[i].getAsString(function(value) {
