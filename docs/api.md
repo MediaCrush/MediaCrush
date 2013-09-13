@@ -261,7 +261,8 @@ In case of error, the response will contain an 'error' parameter and additional 
 
     {
       "error": 409,
-      "file": {
+      "hash": "LxqXxVPAvqqB",
+      "LxqXxVPAvqqB": {
         "compression": 0.0, 
         "files": [
           {
