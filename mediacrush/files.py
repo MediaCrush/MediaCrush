@@ -4,6 +4,7 @@ import hashlib
 import os
 import tempfile
 import requests
+import mimetypes
 
 from .config import _cfg
 from .database import r, _k
@@ -19,6 +20,7 @@ EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTEN
 
 class URLFile(object):
     filename = None
+    content_type = None
     override_methods = ["save"]
 
     def __init__(self, *args, **kwargs):
@@ -49,6 +51,8 @@ class URLFile(object):
             self.f.write(chunk)
             self.f.flush()
 
+        if "content-type" in r.headers:
+            self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
 
 processing_needed = {
@@ -116,6 +120,10 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
+    if f.content_type:
+        # Add the proper file extension if the mimetype is provided
+        filename += "." + mimetypes.guess_extension(f.content_type)
+
     if f and allowed_file(filename):
         rate_limit_update(f)
         if rate_limit_exceeded():
