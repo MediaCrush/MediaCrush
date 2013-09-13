@@ -13,6 +13,46 @@ function browse() {
 
 var firstUpload = true;
 var uploads = 0;
+
+function uploadUrl(url) {
+    var droparea = document.getElementById('droparea');
+    droparea.style.overflowY = 'scroll';
+    droparea.className = 'files';
+    if (firstUpload) {
+        document.getElementById('files').innerHTML = '';
+        firstUpload = false;
+    }
+    var preview = createPreview({ type: "image/png", name: url }, url); // Note: we only allow uploading images by URL, not AV
+    var p = document.createElement('p');
+    p.textContent = 'Uploading...';
+    preview.fileStatus.appendChild(p);
+    preview.progress.style.width = '100%';
+    uploads++;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/upload/url');
+    xhr.onload = function() {
+        var responseJSON = JSON.parse(this.responseText);
+        if (this.status == 200 || this.status == 409) {
+            p.textContent = 'Processing...';
+            preview.fileStatus.appendChild(p);
+            hash = responseJSON['hash'];
+            preview.progress.className += ' progress-green';
+            preview.progress.style.width = '100%';
+            setTimeout(function() {
+                checkStatus(hash, preview.fileStatus, preview.progress);
+            }, 1000);
+        } else {
+            var error = document.createElement('span');
+            error.className = 'error';
+            error.textContent = 'An error occured while processing this image.';
+            preview.fileStatus.appendChild(error);
+        }
+    };
+    var formData = new FormData();
+    formData.append('url', url);
+    xhr.send(formData);
+}
+
 function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
@@ -100,7 +140,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
             progressUI.className += ' progress-green';
             progressUI.style.width = '100%';
             setTimeout(function() {
-                checkStatus(file, hash, statusUI, progressUI);
+                checkStatus(hash, statusUI, progressUI);
             }, 1000);
         }
         if (error != null) {
@@ -117,7 +157,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
     xhr.send(formData);
 }
 
-function checkStatus(file, hash, statusUI, progressUI) {
+function checkStatus(hash, statusUI, progressUI) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
@@ -139,7 +179,7 @@ function checkStatus(file, hash, statusUI, progressUI) {
             uploads--;
         } else {
             setTimeout(function() {
-                checkStatus(file, hash, statusUI, progressUI);
+                checkStatus(hash, statusUI, progressUI);
             }, 1000);
         }
     };
@@ -247,6 +287,7 @@ function dropEnable() {
     window.addEventListener('dragleave', dragLeave, false);
     window.addEventListener('dragover', dragNop, false);
     window.addEventListener('drop', dragDrop, false);
+    window.addEventListener('paste', handlePaste, false);
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
@@ -332,6 +373,30 @@ function toggleHistory() {
         statusElement.textContent = 'Disable local history';
     }
     historyEnabled = !historyEnabled;
+}
+
+function handlePaste(e) {
+    if (e.clipboardData) {
+        var items = e.clipboardData.items;
+        if (items) {
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image/") == 0) {
+                    var file = items[i].getAsFile();
+                    file.name = "clipboard." + items[i].type.substring(6);
+                    handleFiles([ file ]);
+                } else if (items[i].type.indexOf("text/") == 0) {
+                    var text = items[i].getAsString(function(value) {
+                        if (value) {
+                            if (value.indexOf("http://") == 0 || value.indexOf("https://") == 0)
+                                uploadUrl(value);
+                            else
+                                ; // TODO
+                        }
+                    });
+                }
+            }
+        }
+    }
 }
 
 window.onload = dropEnable;
