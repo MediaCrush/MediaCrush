@@ -130,6 +130,7 @@ class APIView(FlaskView):
         ret = {'status': processing_status(h)}
         if ret['status'] == 'done':
             ret[h] = APIView._file_object(f)
+            ret['hash'] = h
 
         return ret
 
