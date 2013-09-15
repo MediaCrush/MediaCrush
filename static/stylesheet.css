@@ -376,6 +376,9 @@ h4 {
     .mobile-browse {
         line-height: 320px;
     }
+    #history > ul {
+        height: 250px;
+    }
 }
 
 @media (max-width: 1040px) {
@@ -391,6 +394,17 @@ h4 {
     }
     .responsiveHidden {
         display: none;
+    }
+    .image-loading {
+        height: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+    .image-loading > div:not(.image-loading), .image-loading h2 {
+        padding-left: 5px;
+    }
+    .img-wrapper {
+        float: none;
     }
 }
 
