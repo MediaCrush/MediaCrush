@@ -123,7 +123,7 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
-    if f.content_type:
+    if f.content_type and f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
         filename += mimetypes.guess_extension(f.content_type)
 
