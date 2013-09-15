@@ -80,6 +80,7 @@ function handleFile(file) {
             error.className = 'error';
             error.textContent = 'This filetype is not supported.';
             preview.fileStatus.appendChild(error);
+            uploads--;
         } else {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/' + hash + '/exists');
@@ -231,6 +232,10 @@ function createPreview(file, dataURI) {
         preview.appendChild(source);
         preview.volume = 0;
         preview.play();
+    } else if (file.type == 'application/pdf') {
+        supported = true;
+        preview = document.createElement('img');
+        preview.src = '/static/pdf.png';
     }
 
     var name = document.createElement('h2');

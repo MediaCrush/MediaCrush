@@ -45,6 +45,8 @@ class ImageView(FlaskView):
             'can_delete': can_delete if can_delete is not None else 'check'
         }
 
+        if mimetype == 'application/pdf':
+            return render_template("pdf.html", **template_params)
         return render_template("view.html", **template_params)
 
     def report(self, id):

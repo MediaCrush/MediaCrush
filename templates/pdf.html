@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset=utf-8 />
+        <meta type="robots" content="noindex,nofollow" />
+        <title>MediaCrush</title>
+        <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
+        <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="/static/pdf.css" />
+        <script type="text/javascript" src="/static/pdf.js"></script>
+        <script type="text/javascript" src="/static/compatibility.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div>
+                <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
+            </div>
+            <div>
+                <span class="small"><a href="#" id="report">Report</a></span>
+                <span class="small"> &mdash; <a href="/">Upload</a></span>
+                <span class="small{% if can_delete == 'check' or can_delete == False %} hidden{% endif %}" id="deleteContainer"> &mdash; <a class="red" id="deleteLink" href="/api/{{ filename }}/delete">Delete</a></span>
+            </div>
+            {% if compression %}
+            <div>
+                <span class="small">{{ compression }}% faster!</span>
+            </div>
+            {% endif %}
+            <br />
+        </div>
+        <div id="container">
+        </div>
+        <script type="text/javascript">
+            {% if can_delete == 'check' %}
+            Array.prototype.remove = function(from, to) {
+              var rest = this.slice((to || from) + 1 || this.length);
+              this.length = from < 0 ? this.length + from : from;
+              return this.push.apply(this, rest);
+            };
+            var history = window.localStorage.getItem('history');
+            var hashIndex = null;
+            history = JSON.parse(history);
+            if (history) {
+                var canDelete = false;
+                for (var i = 0; i < history.length; i++) {
+                    if (history[i] == '{{ filename }}') {
+                        canDelete = true;
+                        hashIndex = i;
+                        break;
+                    }
+                }
+                if (canDelete) {
+                    document.getElementById('deleteContainer').classList.remove('hidden');
+                }
+            }
+            {% endif %}
+            document.getElementById('deleteLink').onclick = function(e) {
+                e.preventDefault();
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/api/{{ filename }}/delete');
+                xhr.send();
+                document.getElementById('deleteContainer').innerHTML = ' &mdash; Deleted';
+                if (history) {
+                    history.remove(hashIndex);
+                    window.localStorage.setItem('history', JSON.stringify(history));
+                }
+            };
+        </script>
+        <script type="text/javascript">
+            var url = "/{{ filename }}.pdf";
+        </script>
+        <script type="text/javascript" src="/static/pdf-viewer.js"></script>
+    </body>
+</html>

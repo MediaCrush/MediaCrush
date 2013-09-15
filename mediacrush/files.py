@@ -14,7 +14,9 @@ from .network import secure_ip
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
-EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+DOCUMENT_EXTENSIONS = set(['pdf'])
+IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg'])
+EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS | DOCUMENT_EXTENSIONS
 
 
 class URLFile(object):
