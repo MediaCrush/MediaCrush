@@ -4,7 +4,6 @@ import hashlib
 import os
 import tempfile
 import requests
-import mimetypes
 
 from .config import _cfg
 from .database import r, _k
@@ -15,7 +14,7 @@ from .network import secure_ip
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
 AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
-EXTENSIONS = set(['png', 'jpg', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
 
 
 class URLFile(object):
@@ -43,7 +42,7 @@ class URLFile(object):
 
             f.flush()
             f.close()
-            
+
 
     def download(self, url):
         r = requests.get(url, stream=True)
@@ -69,6 +68,10 @@ processing_needed = {
         'time': 300,
     },
     'jpg': {
+        'formats': [],
+        'time': 5
+    },
+    'jpe': {
         'formats': [],
         'time': 5
     },
@@ -98,7 +101,7 @@ def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
 def compression_rate(f):
-    f_original = File.from_hash(f) 
+    f_original = File.from_hash(f)
     ext = extension(f_original.original)
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
@@ -120,9 +123,11 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
+    print mimetypes.guess_extension(f.content_type)
     if f.content_type:
         # Add the proper file extension if the mimetype is provided
-        filename += "." + mimetypes.guess_extension(f.content_type)
+        filename += mimetypes.guess_extension(f.content_type)
+    print filename
 
     if f and allowed_file(filename):
         rate_limit_update(f)
@@ -140,15 +145,15 @@ def upload(f, filename):
         f.seek(0)  # Otherwise it'll write a 0-byte file
         f.save(path)
 
-        file_object = File(hash=identifier) 
+        file_object = File(hash=identifier)
         file_object.original = filename
         file_object.ip = secure_ip()
         file_object.save()
-        
+
         r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
         r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
-        return identifier 
+        return identifier
     else:
         return "no", 415
 
