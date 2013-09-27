@@ -3,7 +3,7 @@
     var script = scripts[scripts.length - 1];
     window.addEventListener('load', function() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/{{ hash }}.json');
+        xhr.open('GET', 'https://mediacru.sh/{{ hash }}.json');
         xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
         xhr.onload = function() {
             if (xhr.status != 200)
