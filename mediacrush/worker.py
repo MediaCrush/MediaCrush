@@ -14,6 +14,8 @@ from .objects import File
 converters = {
     'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
     'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "%s.ogv" % outputpath]),
+    'mp3': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "%s.mp3" % outputpath]),
+    'oga': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "%s.oga" % outputpath])
 }
 
 processors = {
@@ -53,6 +55,7 @@ class TimeLimitedCommand(object):
 
 
 def process_gif(filename):
+    print 'Processing ' + filename
     f = File.from_hash(filename) 
     ext = extension(f.original)
     path = os.path.join(_cfg("storage_folder"), f.original)

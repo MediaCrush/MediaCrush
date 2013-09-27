@@ -13,9 +13,8 @@ from .network import secure_ip
 
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
 VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
-AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
+AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
 EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
-
 
 class URLFile(object):
     filename = None
@@ -24,7 +23,6 @@ class URLFile(object):
 
     def __init__(self, *args, **kwargs):
         self.f = tempfile.TemporaryFile()
-
 
     def __getattr__(self, name):
         target = self.f if name not in self.override_methods else self
@@ -82,6 +80,18 @@ processing_needed = {
     'svg': {
         'formats': [],
         'time': 5
+    },
+    'mp3': {
+        'formats': ['ogg'],
+        'time': 120
+    },
+    'ogg': {
+        'formats': ['oga','mp3'],
+        'time': 120
+    },
+    'oga': {
+        'formats': ['mp3'],
+        'time': 120
     }
 }
 
@@ -129,8 +139,8 @@ def upload(f, filename):
 
     if f and allowed_file(filename):
         rate_limit_update(f)
-        if rate_limit_exceeded():
-            return "ratelimit", 420
+        #if rate_limit_exceeded():
+            #return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
