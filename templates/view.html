@@ -6,7 +6,7 @@
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
-        <style type="text/css">body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}.red{color:red;}a.red:hover{color:red;}.hidden{display:none;}</style>
+        <style type="text/css">input[type="text"]{width:95%;margin:0 auto;}body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}.red{color:red;}a.red:hover{color:red;}.hidden{display:none;}</style>
     </head>
     <body>
         <div style="display: inline-block">
@@ -38,10 +38,12 @@
                     <a href="/{{ original }}" style="text-align: center; display: block;">Download original file</a>
                 </div>
                 <div>
+                    <span class="small"><a href="#" id="embed">Embed</a> &mdash;</span>
                     <span class="small"><a href="#" id="report">Report</a></span>
                     <span class="small"> &mdash; <a href="/">Upload</a></span>
                     <span class="small{% if can_delete == 'check' or can_delete == False %} hidden{% endif %}" id="deleteContainer"> &mdash; <a class="red" id="deleteLink" href="/api/{{ filename }}/delete">Delete</a></span>
                 </div>
+                <input type="text" id="embed-script" class="hidden" readonly value='&lt;script type="text/javascript" src="https://mediacru.sh/{{ filename }}/embed"&gt;&lt;/script&gt;' />
                 {% if compression %}
                 <div>
                     <span class="small">{{ compression }}% faster!</span>
@@ -111,6 +113,17 @@
                     xhr.open('GET', '/report/' + location.href.split('/')[3]);
                     xhr.send();
                     report.parentNode.innerHTML = "Reported";
+                }, false);
+                var embed = document.getElementById('embed');
+                embed.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var embedScript = document.getElementById('embed-script');
+                    if (embedScript.className == "hidden") {
+                        embedScript.className = "";
+                        embedScript.select();
+                    } else {
+                        embedScript.className = "hidden";
+                    }
                 }, false);
                 {% if mimetype.startswith("image") and mimetype != 'image/gif' %}
                 applyZoom();
