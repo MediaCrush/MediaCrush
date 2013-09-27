@@ -61,9 +61,20 @@ function handleFiles(files) {
         document.getElementById('files').innerHTML = '';
         firstUpload = false;
     }
+    var timeout = 500;
     for (var i = 0; i < files.length; i++) {
         uploads++;
-        handleFile(files[i]);
+        if (i == 0)
+            handleFile(files[i]);
+        else {
+            void function(i) {
+                setTimeout(function() { 
+                    console.log(i);
+                    handleFile(files[i]);
+                }, timeout);
+            }(i);
+            timeout += 500;
+        }
     }
 }
 
