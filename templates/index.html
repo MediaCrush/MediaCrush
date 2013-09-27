@@ -52,28 +52,26 @@
                 </ul>
             </div>
         </div>
-        <div id="gad" class="column">
-            {% if ads and adsense_client != "CHANGEME" %}
-            <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
-            <div>
-                {% include "ads.html" %}
+        {% if ads and adsense_client != "CHANGEME" %}
+            <div id="gad" class="column">
+                <a href="javascript:adOptOut();" class="small">Click here to disable ads</a>
+                <div>
+                    {% include "ads.html" %}
+                </div>
             </div>
-            {% endif %}
-        </div>
-        <div id="lgad" class="column">
-            {% if ads and adsense_client != "CHANGEME" %}
-            <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
-            <script type="text/javascript"><!--
-                google_ad_client = "{{ adsense_client }}";
-                /* Small vertical banner */
-                google_ad_slot = "{{ adsense_slot }}";
-                google_ad_width = 120;
-                google_ad_height = 240;
-                //-->
-            </script>
-            <script type="text/javascript" src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-            {% endif %}
-        </div>
+            <div id="lgad" class="column">
+                <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
+                <script type="text/javascript"><!--
+                    google_ad_client = "{{ adsense_client }}";
+                    /* Small vertical banner */
+                    google_ad_slot = "{{ adsense_slot }}";
+                    google_ad_width = 120;
+                    google_ad_height = 240;
+                    //-->
+                </script>
+                <script type="text/javascript" src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% include "analytics.html" %}
