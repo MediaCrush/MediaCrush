@@ -139,8 +139,8 @@ def upload(f, filename):
 
     if f and allowed_file(filename):
         rate_limit_update(f)
-        #if rate_limit_exceeded():
-            #return "ratelimit", 420
+        if rate_limit_exceeded():
+            return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
