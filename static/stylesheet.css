@@ -459,12 +459,13 @@ tr:first-child th, tr:first-child td {
     opacity: 0;
     transition: opacity 1s;
     top: 32px;
-    left: -135px;
     width: 300px;
     background: #222;
     color: #fff;
     border-radius: 5px;
     padding: 5px;
+    pointer-events: none;
+    left: -135px;
 }
 
 #format-list div:before {
