@@ -64,7 +64,7 @@ a {
 }
 
 .content {
-    width: 1012px;
+    width: 1022px;
     padding: 5px;
     position: absolute;
 }
@@ -148,8 +148,11 @@ a {
 
 #gad {
     width: 120px;
-    height: 620px;
+    height: 643px;
     text-align: center;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
 }
 
 #gad > div {
@@ -342,6 +345,9 @@ h4 {
     display: none;
     width: 120px;
     text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    background: #ddd;
 }
 
 @media (min-width: 1000px)  {
