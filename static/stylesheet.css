@@ -441,3 +441,9 @@ th, td {
 tr:first-child th, tr:first-child td {
     border-top: none;
 }
+
+.transparent {
+    position: absolute;
+    left: -1000px;
+    display: inline-block;
+}

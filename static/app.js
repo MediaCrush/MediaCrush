@@ -298,7 +298,9 @@ function dropEnable() {
     window.addEventListener('dragleave', dragLeave, false);
     window.addEventListener('dragover', dragNop, false);
     window.addEventListener('drop', dragDrop, false);
-    window.addEventListener('paste', handlePaste, false);
+    var pasteTarget = document.getElementById('paste-target');
+    pasteTarget.addEventListener('paste', handlePaste, false);
+    pasteTarget.focus();
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
@@ -387,27 +389,54 @@ function toggleHistory() {
 }
 
 function handlePaste(e) {
+    var target = document.getElementById('paste-target');
     if (e.clipboardData) {
-        var items = e.clipboardData.items;
-        if (items) {
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf("image/") == 0) {
-                    var file = items[i].getAsFile();
-                    file.name = "clipboard";
-                    handleFiles([ file ]);
-                } else if (items[i].type.indexOf("text/") == 0) {
-                    var text = items[i].getAsString(function(value) {
-                        if (value) {
-                            if (value.indexOf("http://") == 0 || value.indexOf("https://") == 0)
-                                uploadUrl(value);
-                            else
-                                ; // TODO
-                        }
-                    });
+        var text = e.clipboardData.getData('text/plain');
+        if (text) {
+            if (text.indexOf('http://') == 0 || text.indexOf('https://') == 0)
+                uploadUrl(text);
+            else
+                ; // TODO: Pastebin
+            target.innerHTML = '';
+        } else {
+            if (e.clipboardData.items) { // webkit
+                for (var i = 0; i < e.clipboardData.items.length; i++) {
+                    if (e.clipboardData.items[i].type.indexOf('image/') == 0) {
+                        var file = e.clipboardData.items[i].getAsFile();
+                        file.name = 'clipboard';
+                        handleFiles([ file ]);
+                    }
                 }
+                target.innerHTML = '';
+            } else { // not webkit
+                var check = function() {
+                    if (target.innerHTML != '') {
+                        var img = target.firstChild.src; // data URL
+                        if (img.indexOf('data:image/png;base64,' == 0)) {
+                            var blob = dataURItoBlob(img);
+                            blob.name = 'clipboard';
+                            handleFiles([ blob ]);
+                        }
+                        target.innerHTML = '';
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
             }
         }
     }
+}
+
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab],{type:'image/png'});
 }
 
 window.onload = dropEnable;
