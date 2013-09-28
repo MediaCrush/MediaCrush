@@ -199,11 +199,34 @@ function checkStatus(hash, statusUI, progressUI) {
 
 function finish(statusUI, hash) {
     var p = document.createElement('p');
-    p.textContent = 'Upload complete!';
+    p.textContent = 'Upload complete! ';
     var a = document.createElement('a');
     a.setAttribute('target', '_blank');
     a.textContent = window.location.origin + '/' + hash;
     a.href = '/' + hash;
+    var deleteLink = document.createElement('a');
+    deleteLink.textContent = 'Delete';
+    deleteLink.href = '/api/' + hash + '/delete';
+    deleteLink.className = 'delete';
+    deleteLink.onclick = function(e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/' + hash + '/delete');
+        xhr.send();
+        var container = statusUI.parentElement;
+        container.parentElement.removeChild(container);
+        var hashIndex = -1;
+        for (var i = 0; i < history.length; i++) {
+            if (history[i] == hash) {
+                hashIndex = i;
+                break;
+            }
+        }
+        if (history) {
+            history.remove(hashIndex);
+            window.localStorage.setItem('history', JSON.stringify(history));
+        }
+    };
     var a2 = document.createElement('a');
     a2.setAttribute('target', '_blank');
     a2.href = '/' + hash;
@@ -211,6 +234,7 @@ function finish(statusUI, hash) {
     statusUI.innerHTML = '';
     statusUI.appendChild(a2);
     statusUI.appendChild(p);
+    statusUI.appendChild(deleteLink);
     statusUI.appendChild(a);
     uploads--;
     addItemToHistory(hash);
