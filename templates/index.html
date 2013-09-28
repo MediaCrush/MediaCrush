@@ -16,9 +16,22 @@
                 <div class="controls">
                     {% if not mobile %}
                     <div id="droptext">Drag and drop your files here, or <br />
-                    <a href="#" id="browseLink">click to upload</a> files up to 25 MB,<br />
-                    or press Ctrl+V to paste images or URLs.<br />
-                    PNG, JPG, SVG, GIF, MP4, OGV, MP3</div>
+                    <a href="#" id="browseLink">click to upload</a>
+                    <span id="format-list">files<div>
+                        <span class="format-column">
+                            <h3>Image</h3>
+                            PNG JPG GIF SVG
+                        </span>
+                        <span class="format-column">
+                            <h3>Video</h3>
+                            MP4 OGV
+                        </span>
+                        <span class="format-column">
+                            <h3>Audio</h3>
+                            MP3 OGG
+                        </span>
+                    </div></span> up to 25 MB,<br />
+                    or press Ctrl+V to paste images or URLs.</div>
                     {% else %}
                     <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
                     {% endif %}
