@@ -12,6 +12,10 @@ from ..network import get_ip
 class ImageView(FlaskView):
     route_base = '/'
 
+    @route("/download/<id>")
+    def download(self, id):
+        return self.get(id)
+
     def get(self, id):
         if ".." in id or id.startswith("/"):
             abort(403)
