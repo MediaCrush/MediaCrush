@@ -14,8 +14,8 @@
     <p>If you see illegal content, please press "report" on the page the content appears on.</p>
     <h2>Privacy</h2>
     <p>There is only one metric we gather about you that you are not able to turn off, which is your hashed IP address. When you upload
-    an image, we run your IP address through a hashing function and store it in our database. It is mathematically impossible to reverse
-    the hashing process, so your IP address is safe, even if our database is compromised. We couldn't share it even if we wanted to.</p>
+    an image, we run your IP address through a hashing function and store it in our database. Once hashed, it is infeasible to recover
+    the IP address, so your IP address is safe, even if our database is compromised. We couldn't share it even if we wanted to.</p>
     <p>This means that if for some reason our database were stolen or we were pressured by anyone to release information about you, we
     are unable to. However, it allows us to ban malicous users from using the site. What we can do is determine if a hash matches a given
     IP address, so we can use it as a basis for banning an anonymous user. For the technically savvy, we run IPs through bcrypt with 12
@@ -49,6 +49,9 @@
     <p>In other situations, however, we will not remove content. You may contact us for more serious concerns on a case-by-case basis,
     but do not expect us to remove any content on our site that is not in violation of our terms. Though we will not often excercise
     this right, we reserve the right remove any content, at any time, without explanation.</p>
+    <p>That being said, you are able to delete files from the same computer you uploaded them on. We don't store your IP, but given your
+    IP again later, we can tell if a file belongs to you. Head to the page your media is on, and click "Delete" on the bottom of
+    the page.</p>
     <h2>Contacting Us Securely</h2>
     <p>If you wish to encrypt your emails to us, use our public key and email <a href="mailto:secure@mediacru.sh">secure@mediacru.sh</a>:</p>
     <pre>

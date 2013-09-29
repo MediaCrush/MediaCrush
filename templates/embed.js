@@ -3,7 +3,8 @@
     var script = scripts[scripts.length - 1];
     window.addEventListener('load', function() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/{{ hash }}.json');
+        var root = "https://mediacru.sh/";
+        xhr.open('GET', root + '{{ hash }}.json');
         xhr.setRequestHeader('X-Requested-With','XMLHttpRequest');
         xhr.onload = function() {
             if (xhr.status != 200)
@@ -14,7 +15,7 @@
                 preview = document.createElement('video');
                 for (var i = 0; i < data.files.length; i++) {
                     var source = document.createElement('source');
-                    source.setAttribute('src', data.files[i].file);
+                    source.setAttribute('src', root + data.files[i].file);
                     source.setAttribute('type', data.files[i].type);
                     preview.appendChild(source);
                 }
@@ -26,12 +27,12 @@
                 }
             } else if (data.type.indexOf('image/') == 0) {
                 preview = document.createElement('img');
-                preview.src = data.files[0].file;
+                preview.src = root + data.files[0].file;
             } else if (data.type.indexOf('audio/') == 0) {
                 preview = document.createElement('audio');
                 for (var i = 0; i < data.files.length; i++) {
                     var source = document.createElement('source');
-                    source.setAttribute('src', data.files[i].file);
+                    source.setAttribute('src', root + data.files[i].file);
                     source.setAttribute('type', data.files[i].type);
                     preview.appendChild(source);
                 }

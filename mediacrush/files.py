@@ -12,12 +12,11 @@ from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
 CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
-VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
-AUDIO_EXTENSIONS = set(['mp3', 'ogg'])
-DOCUMENT_EXTENSIONS = set(['pdf'])
 IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg'])
-EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS | DOCUMENT_EXTENSIONS
-
+AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
+VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
+DOCUMENT_EXTENSIONS = set(['pdf'])
+EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS | DOCUMENT_EXTENSIONS
 
 class URLFile(object):
     filename = None
@@ -26,7 +25,6 @@ class URLFile(object):
 
     def __init__(self, *args, **kwargs):
         self.f = tempfile.TemporaryFile()
-
 
     def __getattr__(self, name):
         target = self.f if name not in self.override_methods else self
@@ -84,6 +82,18 @@ processing_needed = {
     'svg': {
         'formats': [],
         'time': 5
+    },
+    'mp3': {
+        'formats': ['ogg'],
+        'time': 120
+    },
+    'ogg': {
+        'formats': ['oga','mp3'],
+        'time': 120
+    },
+    'oga': {
+        'formats': ['mp3'],
+        'time': 120
     }
 }
 
@@ -125,11 +135,9 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
-    print mimetypes.guess_extension(f.content_type)
-    if f.content_type:
+    if f.content_type and f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
         filename += mimetypes.guess_extension(f.content_type)
-    print filename
 
     if f and allowed_file(filename):
         rate_limit_update(f)

@@ -88,14 +88,14 @@ class APIView(FlaskView):
         if not isinstance(result, tuple):
             return {'hash': result}
         else:
-            info, status = result
+            h, status = result
 
             resp = {'error': status} 
             if status == 409:
-                f = APIView._file_object(File.from_hash(info)) 
+                f = APIView._file_object(File.from_hash(h)) 
 
-                resp[f.hash] = f
-                resp['hash'] = f.hash
+                resp[h] = f
+                resp['hash'] = h 
 
             return resp, status
         

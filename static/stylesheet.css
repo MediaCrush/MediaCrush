@@ -6,6 +6,14 @@ a {
     font-weight: bold;
 }
 
+.image-loading a.delete {
+    font-size: 10pt;
+    color: red;
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+}
+
 .container {
     text-align: justify;
 }
@@ -64,7 +72,7 @@ a {
 }
 
 .content {
-    width: 1012px;
+    width: 1022px;
     padding: 5px;
     position: absolute;
 }
@@ -148,8 +156,11 @@ a {
 
 #gad {
     width: 120px;
-    height: 620px;
+    height: 643px;
     text-align: center;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
 }
 
 #gad > div {
@@ -342,6 +353,9 @@ h4 {
     display: none;
     width: 120px;
     text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    background: #ddd;
 }
 
 @media (min-width: 1000px)  {
@@ -376,6 +390,9 @@ h4 {
     .mobile-browse {
         line-height: 320px;
     }
+    #history > ul {
+        height: 250px;
+    }
 }
 
 @media (max-width: 1040px) {
@@ -391,6 +408,17 @@ h4 {
     }
     .responsiveHidden {
         display: none;
+    }
+    .image-loading {
+        height: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+    .image-loading > div:not(.image-loading), .image-loading h2 {
+        padding-left: 5px;
+    }
+    .img-wrapper {
+        float: none;
     }
 }
 
@@ -420,4 +448,67 @@ th, td {
 
 tr:first-child th, tr:first-child td {
     border-top: none;
+}
+
+.transparent {
+    position: absolute;
+    left: -1000px;
+    display: inline-block;
+}
+
+#format-list {
+    border-bottom: 1px dotted #000;
+    position: relative;
+    cursor: help;
+}
+
+#format-list div {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s;
+    top: 32px;
+    width: 300px;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    pointer-events: none;
+    left: -135px;
+}
+
+#format-list div:before {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #222;
+    position: absolute;
+    top: -10px;
+    left: 140px;
+    content: '';
+}
+
+#format-list:hover div {
+    opacity: 0.9;
+}
+
+#format-list div .format-column {
+    float: left;
+    width: 100px;
+}
+
+#format-list div .format-column h3 {
+    text-align: center;
+    margin: 0;
+}
+
+#format-list div .format-column ul {
+    margin: 0;
+    list-style: none;
+    padding-left: 3px;
+}
+
+#format-list div .format-column ul li {
+    float: left;
+    padding-right: 5px;
 }
