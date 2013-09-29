@@ -153,11 +153,11 @@ function uploadFile(file, hash, statusUI, progressUI) {
                 checkStatus(hash, statusUI, progressUI);
             }, 1000);
         }
-        if (error != null) {
+        if (error) {
             progressUI.parentElement.removeChild(progressUI);
             var errorText = document.createElement('p');
             errorText.className = 'error';
-            errorText.innerText = error;
+            errorText.textContent = error;
             statusUI.appendChild(errorText);
             progressUI.style.width = 0;
         }
