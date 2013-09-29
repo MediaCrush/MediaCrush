@@ -105,7 +105,7 @@
                 });
             {% endif %}
             {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
-            var zoomedOut = true;
+            var zoomedOut = true, titleSet = false;
             {% endif %}
             window.addEventListener('load', function() {
                 var report = document.getElementById('report');
@@ -141,6 +141,10 @@
             {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
             function applyZoom() {
                 var image = document.getElementById('image');
+                if (!titleSet) {
+                    titleSet = true;
+                    window.document.title = 'MediaCrush (' + image.width + ' x ' + image.height + ')';
+                }
                 if (zoomedOut) {
                     var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
                     image.style.maxWidth = x + "px";
