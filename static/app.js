@@ -84,8 +84,7 @@ function handleFile(file) {
     reader.onloadend = function(e) {
         var data = e.target.result;
         var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
-        var dataURI = 'data:' + file.type + ';base64,' + btoa(data);
-        var preview = createPreview(file, dataURI);
+        var preview = createPreview(file);
         if (!preview.supported) {
             var error = document.createElement('span');
             error.className = 'error';
@@ -216,18 +215,19 @@ function finish(statusUI, hash) {
     addItemToHistory(hash);
 }
 
-function createPreview(file, dataURI) {
+function createPreview(file) {
     var supported = false;
     var container = document.createElement('div');
     container.className = 'image-loading';
     var wrapper = document.createElement('div');
     wrapper.className = 'img-wrapper';
+    var uri = URL.createObjectURL(file);
 
     var preview = null;
     if (file.type.indexOf('image/') == 0) {
         supported = true;
         preview = document.createElement('img');
-        preview.src = dataURI;
+        preview.src = uri;
     } else if (file.type.indexOf('audio/') == 0) {
         supported = true;
         preview = document.createElement('img');
@@ -237,7 +237,7 @@ function createPreview(file, dataURI) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         var source = document.createElement('source');
-        source.setAttribute('src', dataURI);
+        source.setAttribute('src', uri);
         source.setAttribute('type', file.type);
         preview.appendChild(source);
         preview.volume = 0;
