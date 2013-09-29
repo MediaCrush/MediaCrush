@@ -6,6 +6,14 @@ a {
     font-weight: bold;
 }
 
+.image-loading a.delete {
+    font-size: 10pt;
+    color: red;
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+}
+
 .container {
     text-align: justify;
 }
