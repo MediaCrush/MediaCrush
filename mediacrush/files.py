@@ -5,6 +5,8 @@ import os
 import tempfile
 import requests
 
+from flask import current_app
+
 from .config import _cfg
 from .database import r, _k
 from .objects import File
