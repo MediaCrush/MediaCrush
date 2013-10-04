@@ -541,3 +541,12 @@ tr:first-child th, tr:first-child td {
     float: left;
     padding-right: 5px;
 }
+
+a[href^="https://twitter.com"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/twitter.png') no-repeat;
+    position: relative;
+    top: 3px;
+}
