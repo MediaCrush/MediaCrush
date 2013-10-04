@@ -293,19 +293,19 @@ a:hover {
 
 @-webkit-keyframes progressbar {
     from {
-        background-position-x: 0px;
+        background-position: 0px 0px;
     }
     to {
-        background-position-x: 39px;
+        background-position: 39px 0px;
     }
 }
 
 @keyframes progressbar {
     from {
-        background-position-x: 0px;
+        background-position: 0px 0px;
     }
     to {
-        background-position-x: 39px;
+        background-position: 39px 0px;
     }
 }
 
