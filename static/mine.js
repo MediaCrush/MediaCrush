@@ -17,6 +17,7 @@ function clearHistoryAndReload() {
 var items = [];
 var elements = [];
 var ITEMS_PER_PAGE = 10;
+var MAX_PAGES_DISPLAYED = 6;
 
 window.onload = function() {
     loadHistory();
@@ -166,19 +167,61 @@ function createView(data) {
 function createPagination() {
     if (history.length < ITEMS_PER_PAGE)
         return;
-    var pages = history.length / ITEMS_PER_PAGE;
-    var pagination = document.getElementById('pagination');
+
+    // clear existing pages
+    var pagination = document.getElementById("pagination");
     while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
+
+    var pages = Math.ceil(history.length / ITEMS_PER_PAGE);
     var page = getCurrentPage();
-    for (var i = 0; i < pages; i++) {
-        var li = document.createElement('li');
-        var a = document.createElement('a');
-        a.href = '#' + i;
-        a.textContent = (i + 1);
-        if (page == i)
-            li.className = 'selected';
+
+    var createButton = function(href, text, classes) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = href;
+        a.textContent = text;
         li.appendChild(a);
         pagination.appendChild(li);
+        if (classes) li.className = classes;
+        return a;
+    }
+    var expandPages = function(e) {
+        e.preventDefault();
+        pagination.className = "unwrapped";
+    }
+
+    if (page > 0) {
+        createButton("#" + (page - 1), "‹ Prev");
+    }
+
+    var adjacent = Math.floor(MAX_PAGES_DISPLAYED / 2);
+
+    for (var i = 0; i < pages; i++) {
+        var wrapped = false;
+
+        if (pages > MAX_PAGES_DISPLAYED && i >= adjacent && i <= pages - adjacent - 1 && i != page - 1 && i != page && i != page + 1) {
+            wrapped = true;
+        }
+
+        if (page == i) {
+            createButton("#" + i, i + 1, "selected");
+        } else {
+            createButton("#" + i, i + 1, wrapped ? "wrapped" : null);
+        }
+
+        if (wrapped && i == adjacent && page >= adjacent) {
+            var a = createButton("#", "...", "smart-pagination");
+            a.addEventListener("click", expandPages);
+        }
+
+        if (wrapped && i == pages - adjacent - 1 && page < pages - adjacent) {
+            var a = createButton("#", "...", "smart-pagination");
+            a.addEventListener("click", expandPages);
+        }
+    }
+
+    if (page < Math.floor(history.length / ITEMS_PER_PAGE)) {
+        createButton("#" + (page + 1), "Next ›");
     }
 }
 

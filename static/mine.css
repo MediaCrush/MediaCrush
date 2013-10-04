@@ -89,3 +89,15 @@ audio {
     border-right: 1px solid #ccc;
     border-radius: 0 3px 3px 0;
 }
+
+#pagination .wrapped {
+    display: none;
+}
+
+#pagination.unwrapped .wrapped {
+    display: inline;
+}
+
+#pagination.unwrapped .smart-pagination {
+    display: none;
+}
