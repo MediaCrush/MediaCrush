@@ -138,9 +138,10 @@ def upload(f, filename):
         filename += mimetypes.guess_extension(f.content_type)
 
     if f and allowed_file(filename):
-        rate_limit_update(f)
-        if rate_limit_exceeded():
-            return "ratelimit", 420
+        if not current_app.debug:
+            rate_limit_update(f)
+            if rate_limit_exceeded():
+                return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
