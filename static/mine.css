@@ -53,51 +53,57 @@ audio {
     padding-right: 5px;
 }
 
-#pagination {
+.pagination {
     list-style: none;
     text-align: center;
     font-size: 14pt;
 }
 
-#pagination li {
-    display: inline;
+.pagination li {
+    display: inline-block;
     border: 1px solid #ccc;
     border-right: none;
+    min-width: 34px;
 }
 
-#pagination li.selected a {
+.pagination li.selected a {
     color: #000;
 }
 
-#pagination a {
+.pagination a, span {
     padding: 0 5px;
+    font-weight: bold;
 }
 
-#pagination a:hover {
+.pagination a:hover {
     text-decoration: none;
 }
 
-#pagination li:hover, #pagination li.selected {
+.pagination li:hover, .pagination li.selected {
     background: #eee;
 }
 
-#pagination li:first-child {
+.pagination li.smart-pagination:hover {
+    background: #fff;
+}
+
+.pagination li:first-child {
     border-radius: 3px 0 0 3px;
 }
 
-#pagination li:last-child {
+.pagination li:last-child {
     border-right: 1px solid #ccc;
     border-radius: 0 3px 3px 0;
 }
 
-#pagination .wrapped {
+.pagination .wrapped {
     display: none;
 }
 
-#pagination.unwrapped .wrapped {
+.pagination.unwrapped .wrapped {
     display: inline;
 }
 
-#pagination.unwrapped .smart-pagination {
+.pagination.unwrapped .smart-pagination {
     display: none;
 }

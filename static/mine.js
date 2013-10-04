@@ -74,7 +74,7 @@ function findPos(obj) {
         do {
             curtop += obj.offsetTop;
         } while (obj = obj.offsetParent);
-    return [curtop];
+        return [curtop];
     }
 }
 
@@ -168,60 +168,62 @@ function createPagination() {
     if (history.length < ITEMS_PER_PAGE)
         return;
 
-    // clear existing pages
-    var pagination = document.getElementById("pagination");
-    while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
+    var paginationElements = document.querySelectorAll(".pagination");
+    for (var i = 0; i < paginationElements.length; i++) {
+        var pagination = paginationElements[i];
+        // clear existing pages
+        while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
 
-    var pages = Math.ceil(history.length / ITEMS_PER_PAGE);
-    var page = getCurrentPage();
+        var pages = Math.ceil(history.length / ITEMS_PER_PAGE);
+        var page = getCurrentPage();
 
-    var createButton = function(href, text, classes) {
-        var li = document.createElement("li");
-        var a = document.createElement("a");
-        a.href = href;
-        a.textContent = text;
-        li.appendChild(a);
-        pagination.appendChild(li);
-        if (classes) li.className = classes;
-        return a;
-    }
-    var expandPages = function(e) {
-        e.preventDefault();
-        pagination.className = "unwrapped";
-    }
-
-    if (page > 0) {
-        createButton("#" + (page - 1), "‹ Prev");
-    }
-
-    var adjacent = Math.floor(MAX_PAGES_DISPLAYED / 2);
-
-    for (var i = 0; i < pages; i++) {
-        var wrapped = false;
-
-        if (pages > MAX_PAGES_DISPLAYED && i >= adjacent && i <= pages - adjacent - 1 && i != page - 1 && i != page && i != page + 1) {
-            wrapped = true;
+        var createButton = function(href, text, classes) {
+            var li = document.createElement("li");
+            var content;
+            if (href) {
+                content = document.createElement("a");
+                content.href = href;
+            } else {
+                content = document.createElement('span');
+            }
+            content.textContent = text;
+            li.appendChild(content);
+            pagination.appendChild(li);
+            if (classes) li.className = classes;
+            return content;
         }
 
-        if (page == i) {
-            createButton("#" + i, i + 1, "selected");
-        } else {
-            createButton("#" + i, i + 1, wrapped ? "wrapped" : null);
+        if (page > 0) {
+            createButton("#" + (page - 1), "‹ Prev");
         }
 
-        if (wrapped && i == adjacent && page >= adjacent) {
-            var a = createButton("#", "...", "smart-pagination");
-            a.addEventListener("click", expandPages);
+        var adjacent = Math.floor(MAX_PAGES_DISPLAYED / 2);
+
+        for (var j = 0; j < pages; j++) {
+            var wrapped = false;
+
+            if (pages > MAX_PAGES_DISPLAYED && j >= adjacent && j <= pages - adjacent - 1 && j != page - 1 && j != page && j != page + 1) {
+                wrapped = true;
+            }
+
+            if (page == j) {
+                createButton(null, j + 1, "selected");
+            } else {
+                createButton("#" + j, j + 1, wrapped ? "wrapped" : null);
+            }
+
+            if (wrapped && j == adjacent && page >= adjacent) {
+                createButton(null, "...", "smart-pagination");
+            }
+
+            if (wrapped && j == pages - adjacent - 1 && page < pages - adjacent) {
+                createButton(null, "...", "smart-pagination");
+            }
         }
 
-        if (wrapped && i == pages - adjacent - 1 && page < pages - adjacent) {
-            var a = createButton("#", "...", "smart-pagination");
-            a.addEventListener("click", expandPages);
+        if (page < Math.floor(history.length / ITEMS_PER_PAGE)) {
+            createButton("#" + (page + 1), "Next ›");
         }
-    }
-
-    if (page < Math.floor(history.length / ITEMS_PER_PAGE)) {
-        createButton("#" + (page + 1), "Next ›");
     }
 }
 
