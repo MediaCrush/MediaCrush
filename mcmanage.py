@@ -21,7 +21,7 @@ from mediacrush.mcmanage.files import files_delete
 from mediacrush.email import send_report
 
 def show_report(args):
-    print report()
+    print(report())
 
 database_commands = {
     'clear': database_clear,

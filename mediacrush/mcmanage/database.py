@@ -4,11 +4,11 @@ from ..files import compression_rate
 
 def database_clear(arguments):
     keys = r.keys(_k("*"))
-    print "Deleting", len(keys), "keys"
+    print("Deleting %i keys" % (len(keys)))
     if keys:
         r.delete(*keys)
 
-    print "Done."
+    print("Done.")
 
 def database_upgrade(arguments):
     """This function upgrades the old, key-based DB scheme to a hash-based one."""
@@ -22,6 +22,6 @@ def database_upgrade(arguments):
         try:
             f.compression = compression_rate(hash)
             f.save()
-        except:
+        except Exception:
             pass # The compression rate does not apply in some cases
         r.delete(key)

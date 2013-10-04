@@ -44,19 +44,19 @@ class TimeLimitedCommand(object):
         thread.join(timeout)
 
         if thread.is_alive():
-            print "Terminating process"
+            print("Terminating process")
             self.process.terminate()
             thread.join()
             exited = True
-    
+
         if self.process == None:
             return 0, exited
         return self.process.returncode, exited
 
 
 def process_gif(filename):
-    print 'Processing ' + filename
-    f = File.from_hash(filename) 
+    print('Processing ' + filename)
+    f = File.from_hash(filename)
     ext = extension(f.original)
     path = os.path.join(_cfg("storage_folder"), f.original)
 
@@ -107,4 +107,4 @@ def process_gif(filename):
     f.save()
 
     end = datetime.now()
-    print "Processed", filename, end - start
+    print("Processed %s %s" % (filename, end - start))

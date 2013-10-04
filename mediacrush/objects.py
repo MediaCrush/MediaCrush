@@ -8,20 +8,20 @@ class RedisObject(object):
     def __init__(self, **kw):
         for k, v in kw.items():
             setattr(self, k, v)
-   
+
     def __get_vars(self):
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
         names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
         return dict(names)
-    
-    def __get_key(self):
-        return self.__class__.get_key(self.hash)  
 
-    @classmethod 
+    def __get_key(self):
+        return self.__class__.get_key(self.hash)
+
+    @classmethod
     def get_key(cls, hash):
         classname = cls.__name__
         return _k("%s.%s" % (classname.lower(), hash))
-    
+
     @classmethod
     def from_hash(cls, hash):
         obj = r.hgetall(cls.get_key(hash))
@@ -59,4 +59,4 @@ if __name__ == '__main__':
     a.save()
 
     b = File.from_hash("aasdf")
-    print vars(b)
+    print(vars(b))
