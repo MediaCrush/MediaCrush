@@ -254,6 +254,7 @@ a {
     float: left;
     width: 200px;
     margin-right: 10px;
+    min-height: 113px;
 }
 
 .image-loading .img-wrapper img {
