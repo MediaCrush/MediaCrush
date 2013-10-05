@@ -1,0 +1,88 @@
+#import-url {
+    display: block;
+    font-size: 14pt;
+    width: 100%;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+#import-url-text {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #444;
+}
+
+.heading {
+    border-bottom: 1px solid #ddd;
+}
+
+.relative {
+    position: relative;
+}
+
+.youtube iframe {
+    float: left;
+    margin-right: 20px;
+}
+
+#import-video .input-group {
+    display: block;
+}
+
+input.import {
+    padding: 5px;
+    background: #428bca;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+}
+
+input.import:hover {
+    background-color: #005580;
+}
+
+.full-height {
+    height: 300px;
+    overflow: hidden;
+}
+
+.input-group label {
+    width: 100px;
+    display: inline-block;
+}
+
+.input-group.checkboxes label {
+    width: 125px;
+}
+
+.input-group input[type="text"] {
+    border: 1px solid #000;
+    border-radius: 0;
+    font-size: 14pt;
+}
+
+.input-group {
+    margin: 5px 0;
+}
+
+.light {
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+.collapsable {
+    display: none;
+}
+
+input.collapse-trigger[type="checkbox"]:checked ~ .collapsable {
+    display: block;
+    padding-bottom: 2px;
+    margin-left: 5px;
+}

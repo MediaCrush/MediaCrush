@@ -49,6 +49,11 @@ def index():
     opted_out = "ad-opt-out" in request.cookies
     return render_template("index.html", ads=not opted_out)
 
+@app.route("/import")
+def importMedia():
+    opted_out = "ad-opt-out" in request.cookies
+    return render_template("import.html", ads=not opted_out)
+
 @app.route("/mine")
 def mine():
     return render_template("mine.html")

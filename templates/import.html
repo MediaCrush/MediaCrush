@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='import.css') }}">
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='import.js') }}" type="text/javascript"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="pull-right">Import Media</h2>
+    <h1><a class="logo" href="https://blog.mediacru.sh/2013/07/27/MediaCrush-logo.html" target="_blank">
+        <img src="/static/logo-bg.png" class="bg" alt="logo" />
+        <img src="/static/logo-fg.png" alt="logo" />
+    </a>MediaCrush</h1>
+    <p>Use this page to import media from other sites. Paste a URL here:</p>
+    <input type="text" id="import-url" placeholder="http://youtube.com/..." />
+    <div class="hidden" id="import-url-text"></div>
+
+    <div class="hidden relative" id="import-video">
+        <h2 class="heading">Import Video</h2>
+        <div id="video-embed"></div>
+        <div class="full-height">
+            <h3 class="name">Video Title</h3>
+            <div class="input-group">
+                <label for="video-startTime">Start Time</label>
+                <input id="video-startTime" type="text" value="0:00" />
+            </div>
+            <div class="input-group">
+                <label for="video-startTime">End Time</label>
+                <input id="video-endTime" type="text" />
+            </div>
+            <div class="input-group checkboxes">
+                <label for="video-importAudio">
+                    <input id="video-importAudio" type="checkbox" checked />
+                    Import Audio
+                </label>
+                <label for="video-importVideo">
+                    <input id="video-importVideo" type="checkbox" checked />
+                    Import Video
+                </label>
+            </div>
+            <div class="input-group.checkboxes light">
+                <input id="video-resize" class="collapse-trigger" type="checkbox" />
+                <label for="video-resize">Resize Video</label>
+                <div class="collapsable">
+                    <div class="input-group">
+                        <label for="video-width">Width</label>
+                        <input id="video-width" />
+                    </div>
+                    <div class="input-group">
+                        <label for="video-height">Height</label>
+                        <input id="video-height" />
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="import" value="Import" />
+        </div>
+    </div>
+</div>
+{% include "analytics.html" %}
+{% endblock %}
