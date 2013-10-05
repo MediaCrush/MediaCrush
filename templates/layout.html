@@ -4,11 +4,16 @@
         <meta charset="utf-8" />
         <meta name="description" content="A website for serving media super fast">
         <meta name="keywords" content="gif,png,fast,mp4,ogv,image,host">
+        {% if mobile %}
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        {% endif %}
         <title>MediaCrush</title>
         {% block scripts %}{% endblock %}
         <link href='//fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
+        {% if not mobile %}
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+        {% endif %}
         {% block styles %}{% endblock %}
     </head>
     <body>

@@ -1,66 +1,12 @@
-function adOptOut() {
-    createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
-    var gad = document.getElementById('gad');
-    var lgad = document.getElementById('lgad');
-    gad.parentElement.removeChild(gad);
-    lgad.parentElement.removeChild(lgad);
-}
-
+var uploads = 0;
 function browse() {
     var file = document.getElementById('browse');
     file.click();
 }
 
-var firstUpload = true;
-var uploads = 0;
-
-function uploadUrl(url) {
-    var droparea = document.getElementById('droparea');
-    droparea.style.overflowY = 'scroll';
-    droparea.className = 'files';
-    if (firstUpload) {
-        document.getElementById('files').innerHTML = '';
-        firstUpload = false;
-    }
-    var preview = createPreview({ type: "image/png", name: url }, url); // Note: we only allow uploading images by URL, not AV
-    var p = document.createElement('p');
-    p.textContent = 'Uploading...';
-    preview.fileStatus.appendChild(p);
-    preview.progress.style.width = '100%';
-    uploads++;
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/api/upload/url');
-    xhr.onload = function() {
-        var responseJSON = JSON.parse(this.responseText);
-        if (this.status == 200 || this.status == 409) {
-            p.textContent = 'Processing...';
-            preview.fileStatus.appendChild(p);
-            hash = responseJSON['hash'];
-            preview.progress.className += ' progress-green';
-            preview.progress.style.width = '100%';
-            setTimeout(function() {
-                checkStatus(hash, preview.fileStatus, preview.progress);
-            }, 1000);
-        } else {
-            var error = document.createElement('span');
-            error.className = 'error';
-            error.textContent = 'An error occured while processing this image.';
-            preview.fileStatus.appendChild(error);
-        }
-    };
-    var formData = new FormData();
-    formData.append('url', url);
-    xhr.send(formData);
-}
-
 function handleFiles(files) {
-    var droparea = document.getElementById('droparea');
-    droparea.style.overflowY = 'scroll';
-    droparea.className = 'files';
-    if (firstUpload) {
-        document.getElementById('files').innerHTML = '';
-        firstUpload = false;
-    }
+    var area = document.getElementById('files');
+    area.className = '';
     var timeout = 500;
     for (var i = 0; i < files.length; i++) {
         uploads++;
@@ -68,7 +14,7 @@ function handleFiles(files) {
             handleFile(files[i]);
         else {
             void function(i) {
-                setTimeout(function() { 
+                setTimeout(function() {
                     handleFile(files[i]);
                 }, timeout);
             }(i);
@@ -79,7 +25,6 @@ function handleFiles(files) {
 
 function handleFile(file) {
     var reader = new FileReader();
-    var droparea = document.getElementById('droparea');
     reader.onloadend = function(e) {
         var data = e.target.result;
         var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
@@ -94,23 +39,18 @@ function handleFile(file) {
             xhr.open('GET', '/api/' + hash + '/exists');
             xhr.onload = function() {
                 if (this.status == 200) {
-                    var p = document.createElement('p');
+                    var p = document.createElement('h3');
                     p.textContent = 'Upload complete!';
                     var a = document.createElement('a');
                     a.setAttribute('target', '_blank');
-                    a.textContent = window.location.origin + '/' + hash;
                     a.href = '/' + hash;
-                    var a2 = document.createElement('a');
-                    a2.setAttribute('target', '_blank');
-                    a2.href = '/' + hash;
-                    a2.className = 'full-size';
-                    preview.fileStatus.appendChild(a2);
-                    preview.fileStatus.appendChild(p);
+                    a.className = 'full-size';
                     preview.fileStatus.appendChild(a);
+                    preview.fileStatus.appendChild(p);
                     uploads--;
                     addItemToHistory(hash);
                 } else {
-                    var p = document.createElement('p');
+                    var p = document.createElement('h3');
                     p.textContent = 'Uploading...';
                     preview.fileStatus.appendChild(p);
                     uploadFile(file, hash, preview.fileStatus, preview.progress);
@@ -142,7 +82,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
             error = 'You have consumed your hourly quota. Try again later.';
         } else if (this.status == 200) {
             statusUI.innerHTML = '';
-            var p = document.createElement('p');
+            var p = document.createElement('h3');
             p.textContent = 'Processing...';
             statusUI.appendChild(p);
             hash = responseJSON['hash'];
@@ -196,35 +136,8 @@ function checkStatus(hash, statusUI, progressUI) {
 }
 
 function finish(statusUI, hash) {
-    var p = document.createElement('p');
+    var p = document.createElement('h3');
     p.textContent = 'Upload complete! ';
-    var a = document.createElement('a');
-    a.setAttribute('target', '_blank');
-    a.textContent = window.location.origin + '/' + hash;
-    a.href = '/' + hash;
-    var deleteLink = document.createElement('a');
-    deleteLink.textContent = 'Delete';
-    deleteLink.href = '/api/' + hash + '/delete';
-    deleteLink.className = 'delete';
-    deleteLink.onclick = function(e) {
-        e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/' + hash + '/delete');
-        xhr.send();
-        var container = statusUI.parentElement;
-        container.parentElement.removeChild(container);
-        var hashIndex = -1;
-        for (var i = 0; i < history.length; i++) {
-            if (history[i] == hash) {
-                hashIndex = i;
-                break;
-            }
-        }
-        if (history) {
-            history.remove(hashIndex);
-            window.localStorage.setItem('history', JSON.stringify(history));
-        }
-    };
     var a2 = document.createElement('a');
     a2.setAttribute('target', '_blank');
     a2.href = '/' + hash;
@@ -232,8 +145,6 @@ function finish(statusUI, hash) {
     statusUI.innerHTML = '';
     statusUI.appendChild(a2);
     statusUI.appendChild(p);
-    statusUI.appendChild(deleteLink);
-    statusUI.appendChild(a);
     uploads--;
     addItemToHistory(hash);
 }
@@ -267,8 +178,6 @@ function createPreview(file) {
         preview.play();
     }
 
-    var name = document.createElement('h2');
-    name.textContent = file.name;
     var fileStatus = document.createElement('div');
     var progress = document.createElement('div');
     progress.className = 'progress';
@@ -278,7 +187,6 @@ function createPreview(file) {
         wrapper.appendChild(preview);
     }
     container.appendChild(wrapper);
-    container.appendChild(name);
     container.appendChild(fileStatus);
     container.appendChild(progress);
     var fileList = document.getElementById('files');
@@ -287,74 +195,29 @@ function createPreview(file) {
     return { supported: supported, fileStatus: fileStatus, progress: progress };
 }
 
-function dragNop(e) {
-    e.stopPropagation();
-    e.preventDefault();
-}
-
-function dragDrop(e) {
-    dragNop(e);
-    var droparea = document.getElementById('droparea');
-    droparea.className = null;
-    var files = e.dataTransfer.files;
-    var count = files.length;
-
-    if (count > 0) {
-        handleFiles(files);
-    }
-}
-
-function dragEnter(e) {
-    dragNop(e);
-    var droparea = document.getElementById('droparea');
-    droparea.className = 'hover';
-}
-
-function dragLeave(e) {
-    dragNop(e);
-    var droparea = document.getElementById('droparea');
-    droparea.className = null;
-}
-
-function dropEnable() {
-    window.addEventListener('dragenter', dragEnter, false);
-    window.addEventListener('dragleave', dragLeave, false);
-    window.addEventListener('dragover', dragNop, false);
-    window.addEventListener('drop', dragDrop, false);
-    var pasteTarget = document.getElementById('paste-target');
-    pasteTarget.addEventListener('paste', handlePaste, false);
-    pasteTarget.focus();
+function pageLoad() {
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
     }, false);
-    var link = document.getElementById('browseLink');
+    var link = document.getElementById('upload');
     link.addEventListener('click', function(e) {
         e.preventDefault();
         browse();
     }, false);
-
     setTimeout(handleHistory, 50);
 }
 
 function handleHistory() {
     loadHistory();
-    var statusElement = document.getElementById('historyEnabled');
-    if (historyEnabled)
-        statusElement.textContent = 'Disable local history';
-    else
-        statusElement.textContent = 'Enable local history';
     var historyElement = document.getElementById('history');
-    var blurb = document.getElementById('blurb');
     if (history.length != 0) {
-        historyElement.classList.remove('hidden');
-        blurb.classList.add('hidden');
+        historyElement.className = '';
     }
     var items = history.slice(history.length - 4).reverse();
-    var historyList = historyElement.querySelectorAll('ul')[0];
     loadDetailedHistory(items, function(result) {
         for (var i = 0; i < items.length; i++) {
-            historyList.appendChild(createHistoryItem({
+            historyElement.appendChild(createHistoryItem({
                 item: result[items[i]],
                 hash: items[i]
             }));
@@ -364,7 +227,8 @@ function handleHistory() {
 
 function createHistoryItem(data) {
     var item = data.item;
-    var container = document.createElement('li');
+    var container = document.createElement('div');
+    container.className = 'history-item';
     var preview = null;
     if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
         preview = document.createElement('video');
@@ -399,57 +263,12 @@ function createHistoryItem(data) {
     return container;
 }
 
-function toggleHistory() {
-    var statusElement = document.getElementById('historyEnabled');
-    if (historyEnabled) {
-        createCookie('hist-opt-out', '1', 3650);
-        statusElement.textContent = 'Enable local history';
-    } else {
-        createCookie('hist-opt-out', '', 0);
-        statusElement.textContent = 'Disable local history';
+window.onload = pageLoad;
+window.onbeforeunload = function() {
+    if (uploads != 0) {
+        return "If you leave the page, these uploads will be cancelled.";
     }
-    historyEnabled = !historyEnabled;
-}
-
-function handlePaste(e) {
-    var target = document.getElementById('paste-target');
-    if (e.clipboardData) {
-        var text = e.clipboardData.getData('text/plain');
-        if (text) {
-            if (text.indexOf('http://') == 0 || text.indexOf('https://') == 0)
-                uploadUrl(text);
-            else
-                ; // TODO: Pastebin
-            target.innerHTML = '';
-        } else {
-            if (e.clipboardData.items) { // webkit
-                for (var i = 0; i < e.clipboardData.items.length; i++) {
-                    if (e.clipboardData.items[i].type.indexOf('image/') == 0) {
-                        var file = e.clipboardData.items[i].getAsFile();
-                        file.name = 'clipboard';
-                        handleFiles([ file ]);
-                    }
-                }
-                target.innerHTML = '';
-            } else { // not webkit
-                var check = function() {
-                    if (target.innerHTML != '') {
-                        var img = target.firstChild.src; // data URL
-                        if (img.indexOf('data:image/png;base64,' == 0)) {
-                            var blob = dataURItoBlob(img);
-                            blob.name = 'clipboard';
-                            handleFiles([ blob ]);
-                        }
-                        target.innerHTML = '';
-                    } else {
-                        setTimeout(check, 100);
-                    }
-                };
-                check();
-            }
-        }
-    }
-}
+};
 
 function dataURItoBlob(dataURI) {
     var byteString = atob(dataURI.split(',')[1]);
@@ -461,13 +280,6 @@ function dataURItoBlob(dataURI) {
     }
     return new Blob([ab],{type:'image/png'});
 }
-
-window.onload = dropEnable;
-window.onbeforeunload = function() {
-    if (uploads != 0) {
-        return "If you leave the page, these uploads will be cancelled.";
-    }
-};
 
 /* Slightly modified version of https://github.com/blueimp/JavaScript-MD5 */
 function h(a,g){var c=(a&65535)+(g&65535);return(a>>16)+(g>>16)+(c>>16)<<16|c&65535}function k(a,g,c,l,q,r,b){return h(h(h(a,g&c|~g&l),h(q,b))<<r|h(h(a,g&c|~g&l),h(q,b))>>>32-r,g)}function m(a,g,c,l,q,r,b){return h(h(h(a,g&l|c&~l),h(q,b))<<r|h(h(a,g&l|c&~l),h(q,b))>>>32-r,g)}function n(a,g,c,l,q,r,b){return h(h(h(a,g^c^l),h(q,b))<<r|h(h(a,g^c^l),h(q,b))>>>32-r,g)}function p(a,g,c,l,q,r,b){return h(h(h(a,c^(g|~l)),h(q,b))<<r|h(h(a,c^(g|~l)),h(q,b))>>>32-r,g)}

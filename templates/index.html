@@ -9,13 +9,12 @@
 <div class="wrapper">
     <div class="content">
         <div class="column dropcolumn">
-            <div id="droparea"{% if mobile %} class="mobile"{% endif %}>
+            <div id="droparea">
                 <div id="files">
                     <div class="beta"><span>Beta</span></div>
                 </div>
                 <input type="file" id="browse" multiple />
                 <div class="controls">
-                    {% if not mobile %}
                     <div id="droptext">Drag and drop your files here, or <br />
                     <a href="#" id="browseLink">click to upload</a>
                     <span id="format-list">files<div>
@@ -33,9 +32,6 @@
                         </span>
                     </div></span> up to 25 MB,<br />
                     or press Ctrl+V to paste images or URLs.</div>
-                    {% else %}
-                    <a href="#" id="browseLink" class="mobile-browse"><span>Tap to Upload</span></a>
-                    {% endif %}
                 </div>
             </div>
             <div class="small">

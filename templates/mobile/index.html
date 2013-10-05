@@ -1,3 +1,33 @@
-<!-- TODO: SirCmpwn -->
-
-Hello, mobile world!
+{% extends "layout.html" %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='lib.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='history.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='app-mobile.js') }}" type="text/javascript"></script>
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+{% endblock %}
+{% block content %}
+<div class="padded">
+    <h1><a class="logo" href="https://blog.mediacru.sh/2013/07/27/MediaCrush-logo.html" target="_blank">
+        <img src="/static/logo-bg.png" class="bg" alt="logo" />
+        <img src="/static/logo-fg.png" alt="logo" />
+    </a>MediaCrush</h1>
+    <div class="beta"><span>Beta</span></div>
+</div>
+<div class="upload-ui">
+    <div class="padded">
+        <a href="#" class="button" id="upload">Tap to Upload</a>
+    </div>
+    <div id="files" class="hidden">
+        <h2 class="list">Files</h2>
+    </div>
+    <form class="hidden">
+        <input type="file" id="browse" />
+    </form>
+</div>
+<div class="hidden" id="history">
+    <h2>Recent Uploads</h2>
+</div>
+{% include "analytics.html" %}
+{% endblock %}
