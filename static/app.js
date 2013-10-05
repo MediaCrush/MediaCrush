@@ -68,7 +68,7 @@ function handleFiles(files) {
             handleFile(files[i]);
         else {
             void function(i) {
-                setTimeout(function() { 
+                setTimeout(function() {
                     console.log(i);
                     handleFile(files[i]);
                 }, timeout);
@@ -355,10 +355,12 @@ function handleHistory() {
     var historyList = historyElement.querySelectorAll('ul')[0];
     loadDetailedHistory(items, function(result) {
         for (var i = 0; i < items.length; i++) {
-            historyList.appendChild(createHistoryItem({
-                item: result[items[i]],
-                hash: items[i]
-            }));
+            if (result[items[i]]) {
+                historyList.appendChild(createHistoryItem({
+                    item: result[items[i]],
+                    hash: items[i]
+                }));
+            }
         }
     });
 }
