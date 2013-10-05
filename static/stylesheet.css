@@ -36,6 +36,33 @@ a {
 .sidebar h1 {
     margin: 0;
     margin-bottom: 10px;
+    position: relative;
+}
+
+.beta {
+  background-color: #a00;
+  overflow: hidden;
+  position: absolute;
+  left: -29px;
+  top: 17px;
+  -moz-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  -moz-box-shadow: 0 0 1em #888;
+  -webkit-box-shadow: 0 0 1em #888;
+  box-shadow: 0 0 1em #888;
+}
+
+.beta span {
+  border: 1px solid #faa;
+  color: #fff;
+  display: block;
+  font: bold 81.25% 'Helvetiva Neue', Helvetica, Arial, sans-serif;
+  margin: 0.05em 0 0.075em 0;
+  padding: 0.5em 3.5em;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 0 0.5em #444;
 }
 
 .overlay {
@@ -91,6 +118,7 @@ a {
 
 
 #droparea {
+    overflow: hidden;
     border-radius: 5px;
     border: 1px solid #888;
     height: 640px;
@@ -226,6 +254,7 @@ a {
     float: left;
     width: 200px;
     margin-right: 10px;
+    min-height: 113px;
 }
 
 .image-loading .img-wrapper img {

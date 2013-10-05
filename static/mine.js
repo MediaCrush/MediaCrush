@@ -17,6 +17,7 @@ function clearHistoryAndReload() {
 var items = [];
 var elements = [];
 var ITEMS_PER_PAGE = 10;
+var MAX_PAGES_DISPLAYED = 6;
 
 window.onload = function() {
     loadHistory();
@@ -73,7 +74,7 @@ function findPos(obj) {
         do {
             curtop += obj.offsetTop;
         } while (obj = obj.offsetParent);
-    return [curtop];
+        return [curtop];
     }
 }
 
@@ -166,19 +167,63 @@ function createView(data) {
 function createPagination() {
     if (history.length < ITEMS_PER_PAGE)
         return;
-    var pages = history.length / ITEMS_PER_PAGE;
-    var pagination = document.getElementById('pagination');
-    while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
-    var page = getCurrentPage();
-    for (var i = 0; i < pages; i++) {
-        var li = document.createElement('li');
-        var a = document.createElement('a');
-        a.href = '#' + i;
-        a.textContent = (i + 1);
-        if (page == i)
-            li.className = 'selected';
-        li.appendChild(a);
-        pagination.appendChild(li);
+
+    var paginationElements = document.querySelectorAll(".pagination");
+    for (var i = 0; i < paginationElements.length; i++) {
+        var pagination = paginationElements[i];
+        // clear existing pages
+        while (pagination.hasChildNodes()) pagination.removeChild(pagination.lastChild);
+
+        var pages = Math.ceil(history.length / ITEMS_PER_PAGE);
+        var page = getCurrentPage();
+
+        var createButton = function(href, text, classes) {
+            var li = document.createElement("li");
+            var content;
+            if (href) {
+                content = document.createElement("a");
+                content.href = href;
+            } else {
+                content = document.createElement('span');
+            }
+            content.textContent = text;
+            li.appendChild(content);
+            pagination.appendChild(li);
+            if (classes) li.className = classes;
+            return content;
+        }
+
+        if (page > 0) {
+            createButton("#" + (page - 1), "‹ Prev");
+        }
+
+        var adjacent = Math.floor(MAX_PAGES_DISPLAYED / 2);
+
+        for (var j = 0; j < pages; j++) {
+            var wrapped = false;
+
+            if (pages > MAX_PAGES_DISPLAYED && j >= adjacent && j <= pages - adjacent - 1 && j != page - 1 && j != page && j != page + 1) {
+                wrapped = true;
+            }
+
+            if (page == j) {
+                createButton(null, j + 1, "selected");
+            } else {
+                createButton("#" + j, j + 1, wrapped ? "wrapped" : null);
+            }
+
+            if (wrapped && j == adjacent && page >= adjacent) {
+                createButton(null, "...", "smart-pagination");
+            }
+
+            if (wrapped && j == pages - adjacent - 1 && page < pages - adjacent) {
+                createButton(null, "...", "smart-pagination");
+            }
+        }
+
+        if (page < Math.floor(history.length / ITEMS_PER_PAGE)) {
+            createButton("#" + (page + 1), "Next ›");
+        }
     }
 }
 

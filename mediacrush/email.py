@@ -27,4 +27,4 @@ def send_report(text):
     return _email_admins("MediaCrush report", text)
 
 if __name__ == '__main__':
-    print report('bruasdf')
+    print(report('bruasdf'))

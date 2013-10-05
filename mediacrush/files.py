@@ -5,6 +5,8 @@ import os
 import tempfile
 import requests
 
+from flask import current_app
+
 from .config import _cfg
 from .database import r, _k
 from .objects import File
@@ -138,9 +140,10 @@ def upload(f, filename):
         filename += mimetypes.guess_extension(f.content_type)
 
     if f and allowed_file(filename):
-        rate_limit_update(f)
-        if rate_limit_exceeded():
-            return "ratelimit", 420
+        if not current_app.debug:
+            rate_limit_update(f)
+            if rate_limit_exceeded():
+                return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
