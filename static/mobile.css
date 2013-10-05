@@ -82,11 +82,6 @@ h2 {
     padding-left: 10px;
 }
 
-h2.list {
-    border: none;
-    margin-bottom: 0;
-}
-
 .hidden {
     display: none;
 }
