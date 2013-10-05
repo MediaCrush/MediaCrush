@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, CONTROLS_EXTENSIONS, get_mimetype, delete_file
+from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -43,7 +43,8 @@ class ImageView(FlaskView):
             'filename': f.hash,
             'original': f.original,
             'video': ext in VIDEO_EXTENSIONS,
-            'controls': ext in CONTROLS_EXTENSIONS,
+            'loop': ext in LOOP_EXTENSIONS,
+            'autoplay': ext in AUTOPLAY_EXTENSIONS,
             'compression': compression,
             'mimetype': mimetype,
             'can_delete': can_delete if can_delete is not None else 'check'

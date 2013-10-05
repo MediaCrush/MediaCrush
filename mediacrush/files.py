@@ -13,10 +13,11 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
-VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
+VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
 AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
 EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+LOOP_EXTENSIONS = set(['gif'])
+AUTOPLAY_EXTENSIONS = set(['gif'])
 
 class URLFile(object):
     filename = None
