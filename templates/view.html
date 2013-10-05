@@ -15,16 +15,8 @@
         <div style="display: inline-block">
             {% if mimetype == "image/gif" and mobile %}
                 <img src="/{{ original }}">
-            {% elif mimetype.startswith("video") or (mimetype == "image/gif" and not mobile) %}
-                {% if controls %}
-                <video controls>
-                {% else %}
-                    {% if not mobile %}
-                        <video autoplay loop>
-                    {% else %}
-                        <video controls loop>
-                    {% endif %}
-                {% endif %}
+            {% elif video %}
+                <video controls {% if loop %}loop{% endif %} {% if autoplay %}autoplay{% endif %}>
                     <source src="/{{ filename }}.mp4" type='video/mp4;'>
                     <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
                 </video>
