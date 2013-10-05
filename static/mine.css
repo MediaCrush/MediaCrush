@@ -11,6 +11,14 @@ audio {
     text-align: center;
 }
 
+.missing-item {
+    width: 500px;
+    height: 150px;
+    background: url('/static/placeholder.png') no-repeat;
+    margin: 10px auto;
+    padding-top: 150px;
+}
+
 .item-wrapper div {
     position: relative;
     display: inline-block;
