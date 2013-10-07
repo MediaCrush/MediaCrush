@@ -245,7 +245,12 @@ function createPreview(file) {
     container.className = 'image-loading';
     var wrapper = document.createElement('div');
     wrapper.className = 'img-wrapper';
-    var uri = URL.createObjectURL(file);
+    var uri;
+    if (file instanceof File) {
+        uri = URL.createObjectURL(file);
+    } else {
+        uri = file.name;
+    }
 
     var preview = null;
     if (file.type.indexOf('image/') == 0) {
@@ -324,7 +329,7 @@ function dropEnable() {
     window.addEventListener('drop', dragDrop, false);
     var pasteTarget = document.getElementById('paste-target');
     pasteTarget.addEventListener('paste', handlePaste, false);
-    pasteTarget.focus();
+    forceFocus();
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
@@ -336,6 +341,12 @@ function dropEnable() {
     }, false);
 
     setTimeout(handleHistory, 50);
+}
+
+function forceFocus() {
+    var pasteTarget = document.getElementById('paste-target');
+    pasteTarget.focus();
+    setTimeout(forceFocus, 250);
 }
 
 function handleHistory() {
