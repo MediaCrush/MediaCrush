@@ -6,6 +6,10 @@
         <meta property="og:type" content="{{ mimetype }}" />
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
         <meta property="og:site_name" content="MediaCrush" />
+        {% if mimetype.startswith("image") %}
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+        {% endif %}
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
