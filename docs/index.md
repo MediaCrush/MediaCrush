@@ -6,6 +6,11 @@ since we don't get any ad views from API users. We also appreciate that donation
 
 Documentation for our API is provided [here](/docs/API).
 
+## Open Source
+
+MediaCrush is completely open source. If you want to learn more about how something works, or improve
+something, feel free to head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and hack away.
+
 ## Blob Identifiers
 
 We use MD5 hashes* to identify a media blob, which is a collection of files that make up one "media" object.
