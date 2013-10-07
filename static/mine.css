@@ -23,6 +23,7 @@ audio {
     position: relative;
     display: inline-block;
     overflow: hidden;
+    min-width: 100px;
 }
 
 .item-wrapper .bar {
