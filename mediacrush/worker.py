@@ -21,6 +21,7 @@ converters = {
 processors = {
     'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
     'jpeg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
+    'png': lambda path: TimeLimitedCommand(["optipng", "-o5", path]),
     'svg': lambda path: TimeLimitedCommand(["tidy", "-asxml", "-xml", "--hide-comments", "1", "--wrap", "0", "--quiet", "--write-back", "1", path])
 }
 
