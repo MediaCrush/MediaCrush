@@ -2,6 +2,9 @@
 environment = dev
 
 [dev]
+debug-host = 0.0.0.0
+debug-port = 5000
+
 storage_folder = storage
 max_processing_time = 60
 
