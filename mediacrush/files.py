@@ -80,6 +80,10 @@ processing_needed = {
         'formats': [],
         'time': 5
     },
+    'png': {
+        'formats': [],
+        'time': 30
+    },
     'svg': {
         'formats': [],
         'time': 5

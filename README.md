@@ -14,6 +14,7 @@ MediaCrush runs on the following things:
 * tidy
 * redis
 * flask-classy
+* optipng
 
 This list grows as we find more cool tech to make media smaller.
 
@@ -39,7 +40,7 @@ in) dev chatter. It's #mediacrush on irc.freenode.net, if you already have a cli
 
 Install the requirements:
 
-    sudo apt-get install redis-server jhead tidy
+    sudo apt-get install redis-server jhead tidy optipng
 
 Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
 
