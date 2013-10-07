@@ -14,6 +14,7 @@ MediaCrush runs on the following things:
 * tidy
 * redis
 * flask-classy
+* optipng
 
 This list grows as we find more cool tech to make media smaller.
 
