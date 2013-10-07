@@ -550,3 +550,12 @@ a[href^="https://twitter.com"] {
     position: relative;
     top: 3px;
 }
+
+a[href^="https://pay.reddit.com"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/reddit.png') no-repeat;
+    position: relative;
+    top: 3px;
+}
