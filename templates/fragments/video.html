@@ -1,0 +1,12 @@
+{% if controls %}
+<video controls>
+{% else %}
+  {% if not mobile %}
+      <video autoplay loop>
+  {% else %}
+      <video controls loop>
+  {% endif %}
+{% endif %}
+  <source src="/{{ filename }}.mp4" type='video/mp4;'>
+  <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+</video>

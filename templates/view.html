@@ -18,19 +18,13 @@
     <body>
         <div style="display: inline-block">
             {% if mimetype == "image/gif" and mobile %}
-                <img src="/{{ original }}">
-            {% elif video %}
-                <video controls {% if loop %}loop{% endif %} {% if autoplay %}autoplay{% endif %}>
-                    <source src="/{{ filename }}.mp4" type='video/mp4;'>
-                    <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
-                </video>
+                {% include "fragments/image.html" %}
+            {% elif mimetype.startswith("video") or (mimetype == "image/gif" and not mobile) %}
+                {% include "fragments/video.html" %}
             {% elif mimetype.startswith("image") %}
-            <img src="/{{ original }}" alt="MediaQuick" id="image" />
+                {% include "fragments/image.html" %}
             {% elif mimetype.startswith("audio") %}
-            <audio controls>
-                <source src="/{{ filename }}.mp3" type='audio/mpeg'>
-                <source src="/{{ filename }}.oga" type='audio/ogg'>
-            </audio>
+                {% include "fragments/audio.html" %}
             {% endif %}
             <div class="row">
                 <div>
