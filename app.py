@@ -4,7 +4,7 @@ from flaskext.markdown import Markdown
 import traceback
 
 from mediacrush.views import HookView, APIView, ImageView, DocsView
-from mediacrush.config import _cfg
+from mediacrush.config import _cfg, _cfgi
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
@@ -76,4 +76,4 @@ HookView.register(app)
 ImageView.register(app)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host=_cfg("debug-host"), port=_cfgi('debug-port'), debug=True)
