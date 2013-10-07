@@ -11,6 +11,7 @@ from mediacrush.config import _cfg
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
+app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 
@@ -29,8 +30,10 @@ def jinja_template_loader():
     if mobile:
         app.jinja_loader = ChoiceLoader([
             FileSystemLoader(os.path.join("templates", "mobile")),
-            app.jinja_loader
+            FileSystemLoader("templates"),
         ])
+    else:
+        app.jinja_loader = FileSystemLoader("templates")
 
 @app.errorhandler(404)
 def not_found(e):
