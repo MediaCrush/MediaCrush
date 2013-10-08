@@ -1,0 +1,22 @@
+.row .left {
+    float: left;
+}
+
+.row .right {
+    float: right;
+    text-align: right;
+}
+
+.row .middle {
+    float: left;
+    margin-left: 40px;
+    margin-top: 150px;
+    text-align: center;
+}
+
+.row .item {
+    float: left;
+    width: 333px;
+    height: 43px;
+    line-height: 43px;
+}

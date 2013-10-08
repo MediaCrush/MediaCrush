@@ -69,7 +69,6 @@ function handleFiles(files) {
         else {
             void function(i) {
                 setTimeout(function() {
-                    console.log(i);
                     handleFile(files[i]);
                 }, timeout);
             }(i);
