@@ -17,35 +17,33 @@
 </script>
 {% endblock %}
 {% block content %}
-<div class="wrapper">
-    <div class="content">
-        <h1>Support MediaCrush</h1>
-        <p>MediaCrush is a free service, and we're really glad you'd like to support us. There are a
-        number of simple ways to help.
-        {% if not ads %}
-        Since it looks like you've disabled ads, the easiest way to support us is to 
-        <a href="javascript:adOptIn()">opt back in</a> for advertisements. Otherwise, 
-        there's these other ways you can help:
-        {% endif %}
-        </p>
-        <div class="row">
-            <div class="item">
-                {% include "bitcoin.html" %}
-            </div>
-            <div class="item">
-                {% include "dwolla.html" %}
-            </div>
-            <div class="item">
-                {% include "flattr.html" %}
-            </div>
+<div class="container">
+    <h1>Support MediaCrush</h1>
+    <p>MediaCrush is a free service, and we're really glad you'd like to support us. There are a
+    number of simple ways to help.
+    {% if not ads %}
+    Since it looks like you've disabled ads, the easiest way to support us is to 
+    <a href="javascript:adOptIn()">opt back in</a> for advertisements. Otherwise, 
+    there's these other ways you can help:
+    {% endif %}
+    </p>
+    <div class="fixedgrid">
+        <div class="column">
+            {% include "bitcoin.html" %}
         </div>
-        <p class="clearfix">If you'd like to know where your donation is going, we publish monthly reports detailing our
-        server costs, advertising reports, and a breakdown of how much donation money we receive and from which service.
-        You can find these reports on our <a href="/transparency">transparency</a> page.</p>
-        <p>You can also contribute to our <a href="https://github.com/MediaCrush/MediaCrush">source code</a> if you'd
-        rather not donate money. We're always open to new changes.</p>
-        <p><a href="/">Back to the home page</a></p>
+        <div class="column">
+            {% include "dwolla.html" %}
+        </div>
+        <div class="column">
+            {% include "flattr.html" %}
+        </div>
     </div>
+    <p class="clearfix">If you'd like to know where your donation is going, we publish monthly reports detailing our
+    server costs, advertising reports, and a breakdown of how much donation money we receive and from which service.
+    You can find these reports on our <a href="/transparency">transparency</a> page.</p>
+    <p>You can also contribute to our <a href="https://github.com/MediaCrush/MediaCrush">source code</a> if you'd
+    rather not donate money. We're always open to new changes.</p>
+    <p><a href="/">Back to the home page</a></p>
 </div>
 {% include "analytics.html" %}
 {% endblock %}
