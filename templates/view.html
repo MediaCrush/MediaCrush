@@ -101,15 +101,6 @@
                         embedScript.className = "hidden";
                     }
                 }, false);
-                {% if mimetype.startswith("image") and mimetype != 'image/gif' %}
-                applyZoom();
-                window.onresize = applyZoom;
-                var image = document.getElementById('image');
-                image.addEventListener('click', function(e) {
-                    zoomedOut = !zoomedOut;
-                    applyZoom();
-                }, false);
-                {% endif %}
             }, false);
         </script>
     </body>
