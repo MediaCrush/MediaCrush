@@ -80,23 +80,6 @@
                     window.localStorage.setItem('history', JSON.stringify(history));
                 }
             };
-            {% if mimetype.startswith("video") or mimetype.startswith("audio") %}
-                window.addEventListener('load', function() {
-                    var tagname = {% if mimetype.startswith("video") %}"video"{% else %}"audio"{%endif %};
-                    var player = document.getElementsByTagName(tagname)[0];
-                    if (window.localStorage && localStorage.volume) 
-                        player.volume = parseFloat(localStorage.volume);
-
-                    if (window.localStorage) {
-                        player.addEventListener('volumechange', function() {
-                            localStorage.volume = player.volume;
-                        });
-                    }
-                });
-            {% endif %}
-            {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
-            var zoomedOut = true, titleSet = false;
-            {% endif %}
             window.addEventListener('load', function() {
                 var report = document.getElementById('report');
                 report.addEventListener('click', function(e) {
@@ -128,25 +111,6 @@
                 }, false);
                 {% endif %}
             }, false);
-            {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
-            function applyZoom() {
-                var image = document.getElementById('image');
-                if (!titleSet) {
-                    titleSet = true;
-                    window.document.title = 'MediaCrush (' + image.width + ' x ' + image.height + ')';
-                }
-                if (zoomedOut) {
-                    var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
-                    image.style.maxWidth = x + "px";
-                    image.style.maxHeight = y + "px";
-                    image.className = 'zout';
-                } else {
-                    image.style.maxWidth = null;
-                    image.style.maxHeight = null;
-                    image.className = 'zin';
-                }
-            }
-            {% endif %}
         </script>
     </body>
     {% include "analytics.html" %}
