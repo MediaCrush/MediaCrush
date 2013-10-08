@@ -89,7 +89,7 @@ processing_needed = {
         'time': 5
     },
     'mp3': {
-        'formats': ['ogg'],
+        'formats': ['oga'],
         'time': 120
     },
     'ogg': {
@@ -142,7 +142,14 @@ def compression_rate(f):
 def upload(f, filename):
     if f.content_type and f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
-        filename += mimetypes.guess_extension(f.content_type)
+        ext = mimetypes.guess_extension(f.content_type)
+        if not ext:
+            # Specified mimetype is not in /etc/mime.types.
+            # At this point, our best guess is to assume the extension
+            # is the last part of the mimetype.
+            ext = "." + f.content_type.split("/")[1]
+
+        filename += ext
 
     if f and allowed_file(filename):
         if not current_app.debug:
