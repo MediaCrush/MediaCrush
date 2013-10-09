@@ -20,19 +20,7 @@
     </head>
     <body>
         <div style="display: inline-block">
-            {% if mimetype == "image/gif" and mobile %}
-                {% include "fragments/image.html" %}
-            {% elif mimetype.startswith("video") or (mimetype == "image/gif" and not mobile) %}
-                {% if mobile %}
-                    {% include "fragments/mobilevideo.html" %}
-                {% else %}
-                    {% include "fragments/video.html" %}
-                {% endif %}
-            {% elif mimetype.startswith("image") %}
-                {% include "fragments/image.html" %}
-            {% elif mimetype.startswith("audio") %}
-                {% include "fragments/audio.html" %}
-            {% endif %}
+            {% include fragment %}
             <div class="row">
                 <div>
                     <a href="/download/{{ original }}" style="text-align: center; display: inline-block;">Download original file</a>

@@ -6,7 +6,7 @@ from jinja2 import FileSystemLoader, ChoiceLoader
 import os
 import traceback
 
-from mediacrush.views import HookView, APIView, ImageView, DocsView
+from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
 
 app = Flask(__name__)
@@ -27,6 +27,7 @@ def find_dnt():
 @app.before_request
 def jinja_template_loader():
     mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
+    g.mobile = mobile
     if mobile:
         app.jinja_loader = ChoiceLoader([
             FileSystemLoader(os.path.join("templates", "mobile")),
@@ -46,9 +47,8 @@ def exception_catch_all(e):
 
 @app.context_processor
 def inject():
-    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
     return {
-        'mobile': mobile,
+        'mobile': g.mobile,
         'analytics_id': _cfg("google_analytics_id"),
         'analytics_domain': _cfg("google_analytics_domain"),
         'dwolla_id': _cfg("dwolla_id"),
@@ -87,7 +87,7 @@ def serious():
 DocsView.register(app)
 APIView.register(app)
 HookView.register(app)
-ImageView.register(app)
+MediaView.register(app)
 
 if __name__ == '__main__':
     app.run(host=_cfg("debug-host"), port=_cfgi('debug-port'), debug=True)
