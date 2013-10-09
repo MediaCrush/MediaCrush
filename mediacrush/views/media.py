@@ -35,7 +35,7 @@ class MediaView(FlaskView):
 
         fragment = {
             'image': (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
-            'video': mimetype == 'image/gif' and not g.mobile,
+            'video': (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
             'mobilevideo': mimetype.startswith('video') and g.mobile,
             'audio': mimetype.startswith('audio')
         }
