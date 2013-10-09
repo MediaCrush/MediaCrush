@@ -305,7 +305,7 @@ h1.brand {
             container = e.target.parentElement;
         if (container.className.indexOf('action') == -1)
             return;
-        var video = document.getElementById(container.dataset.video);
+        var video = document.getElementById(container.getAttribute('data-video'));
         var amount = e.layerX / container.clientWidth;
         video.volume = amount;
         window.localStorage.volume = amount;
@@ -314,7 +314,7 @@ h1.brand {
     function handleSeek(e) {
         e.preventDefault();
         var container = e.target.parentElement;
-        var video = document.getElementById(container.dataset.video);
+        var video = document.getElementById(container.getAttribute('data-video'));
         var seek = video.duration * (e.layerX / container.clientWidth);
         console.log(seek);
         video.currentTime = seek;
@@ -339,7 +339,7 @@ h1.brand {
         var target = e.target;
         if (!target.className)
             target = target.parentElement;
-        var video = document.getElementById(target.dataset.video);
+        var video = document.getElementById(target.getAttribute('data-video'));
         if (target.className.indexOf('play') != -1) {
             play(video);
             if (target.className.indexOf('large') != -1)
