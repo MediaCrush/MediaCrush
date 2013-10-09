@@ -119,7 +119,11 @@ function updateVideo(e) {
     var progress = document.querySelectorAll('.seek[data-video="' + video.id + '"] .progress')[0];
     var indicator = document.querySelectorAll('.seek[data-video="' + video.id + '"] .indicator')[0];
     var time = document.querySelectorAll('.time[data-video="' + video.id + '"]')[0];
-    var bufferWidth = video.buffered.end(video.buffered.length - 1) / video.duration * 100;
+    var bufferWidth;
+    if (video.buffered.length == 0)
+        bufferWidth = 100;
+    else
+        bufferWidth = video.buffered.end(video.buffered.length - 1) / video.duration * 100;
     if (bufferWidth > 100)
         bufferWidth = 100;
     buffer.style.width = bufferWidth + '%';
