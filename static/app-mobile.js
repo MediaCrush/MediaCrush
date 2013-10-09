@@ -7,6 +7,8 @@ function browse() {
 function handleFiles(files) {
     var area = document.getElementById('files');
     area.className = '';
+    var blurb = document.getElementById('blurb');
+    blurb.className = 'hidden';
     var timeout = 500;
     for (var i = 0; i < files.length; i++) {
         uploads++;
