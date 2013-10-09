@@ -1,6 +1,7 @@
 <img src="/{{ original }}" alt="MediaQuick" id="image" />
 {% if titledimensions is not defined %}
 {% set titledimensions = True %}
+{% if not mobile %}
 <script>
     {% if mimetype.startswith('image') and mimetype != 'image/gif' %}
     window.addEventListener('load', function() {
@@ -32,4 +33,5 @@
     }
     {% endif %}
 </script>
+{% endif %}
 {% endif %}
