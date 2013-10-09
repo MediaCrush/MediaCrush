@@ -20,7 +20,11 @@
             {% if mimetype == "image/gif" and mobile %}
                 {% include "fragments/image.html" %}
             {% elif mimetype.startswith("video") or (mimetype == "image/gif" and not mobile) %}
-                {% include "fragments/video.html" %}
+                {% if mobile %}
+                    {% include "fragments/mobilevideo.html" %}
+                {% else %}
+                    {% include "fragments/video.html" %}
+                {% endif %}
             {% elif mimetype.startswith("image") %}
                 {% include "fragments/image.html" %}
             {% elif mimetype.startswith("audio") %}
