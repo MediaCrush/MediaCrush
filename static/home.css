@@ -165,7 +165,7 @@
     left: -29px;
     top: 17px;
     -moz-transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg) translate3d(0,0,0);
     transform: rotate(-45deg);
     -moz-box-shadow: 0 0 1em #888;
     -webkit-box-shadow: 0 0 1em #888;
