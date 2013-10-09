@@ -83,6 +83,10 @@
 .video:hover .hover {
     opacity: 1;
 }
+.video:hover .hover.disabled {
+    opacity: 0;
+    cursor: none;
+}
 .video .controls {
     position: absolute;
     bottom: 5px;
@@ -293,15 +297,34 @@ h1.brand {
             if (e.keyCode == 27 && fullscreenElement) // esc
                 exitFullscreen();
         }, false);
+        window.addEventListener('mousemove', windowMouseMove, false);
     }, false);
+    var debounce = false;
+    function windowMouseMove() {
+        if (fullscreenElement && fullscreenElement != null) {
+            var hover = fullscreenElement.querySelector('.hover');
+            if (hover.className.indexOf('disabled') != -1) {
+                hover.classList.remove('disabled');
+                debounce = false;
+            }
+            setTimeout(function() {
+                if (debounce) {
+                    return;
+                }
+                debounce = true;
+                hover.classList.add('disabled');
+            }, 3000);
+        }
+    }
     function exitFullscreen() {
         if (fullscreenElement.cancelFullscreen)
             fullscreenElement.cancelFullscreen();
         else if (fullscreenElement.mozCancelFullScreen)
             fullscreenElement.mozCancelFullScreen();
-        else if (fullscreenElement.webkitCancelFullscreen)
-            fullscreenElement.webkitCancelFullscreen();
+        else if (fullscreenElement.webkitCancelFullScreen)
+            fullscreenElement.webkitCancelFullScreen();
         fullscreenElement.classList.remove('fullscreen');
+        fullscreenElement.querySelector('.hover').classList.remove('disabled');
         var target = fullscreenElement.querySelector('.window');
         target.classList.remove('window');
         target.classList.add('full');
@@ -400,15 +423,7 @@ h1.brand {
             else if (fullscreenElement.webkitRequestFullscreen)
                 fullscreenElement.webkitRequestFullscreen();
         } else if (target.className.indexOf('window') != -1) {
-            video.parentElement.classList.remove('fullscreen');
-            target.classList.remove('window');
-            target.classList.add('full');
-            if (fullscreenElement.cancelFullscreen)
-                fullscreenElement.cancelFullscreen();
-            else if (fullscreenElement.mozCancelFullScreen())
-                fullscreenElement.mozCancelFullScreen();
-            else if (fullscreenElement.webkitCancelFullscreen())
-                fullscreenElement.webkitCancelFullscreen();
+            exitFullscreen();
         }
     }
     function play(video) {
