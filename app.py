@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, Response
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
 from jinja2 import FileSystemLoader, ChoiceLoader
 import os
 import traceback
+import subprocess
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
@@ -79,6 +80,11 @@ def donate():
 @app.route("/thanks")
 def thanks():
     return render_template("thanks.html")
+
+@app.route("/version")
+def version():
+    v = subprocess.check_output(["git", "log", "-1"])
+    return Response(v, mimetype="text/plain")
 
 @app.route("/serious")
 def serious():
