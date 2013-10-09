@@ -293,6 +293,11 @@ h1.brand {
                 exitFullscreen();
             }
         }, false);
+        document.addEventListener('webkitfullscreenchange', function() {
+            if (document.mozFullScreenElement === null) {
+                exitFullscreen();
+            }
+        }, false);
         window.addEventListener('keyup', function(e) {
             if (e.keyCode == 27 && fullscreenElement) // esc
                 exitFullscreen();
