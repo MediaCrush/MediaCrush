@@ -6,6 +6,9 @@
         <meta property="og:type" content="{{ mimetype }}" />
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
         <meta property="og:site_name" content="MediaCrush" />
+        {% if mobile %}
+        <meta name="viewport" content="width=device-width" />
+        {% endif %}
         {% if mimetype.startswith("image") %}
         <meta name="twitter:card" content="photo">
         <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">

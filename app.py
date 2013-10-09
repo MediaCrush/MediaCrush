@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, g
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
+
+from jinja2 import FileSystemLoader, ChoiceLoader
+import os
 import traceback
 
 from mediacrush.views import HookView, APIView, ImageView, DocsView
@@ -8,9 +11,9 @@ from mediacrush.config import _cfg, _cfgi
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
+app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
-
 
 @app.before_request
 def find_dnt():
@@ -20,6 +23,17 @@ def find_dnt():
         do_not_track = True if request.headers[field] == "1" else False
 
     g.do_not_track = do_not_track
+
+@app.before_request
+def jinja_template_loader():
+    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
+    if mobile:
+        app.jinja_loader = ChoiceLoader([
+            FileSystemLoader(os.path.join("templates", "mobile")),
+            FileSystemLoader("templates"),
+        ])
+    else:
+        app.jinja_loader = FileSystemLoader("templates")
 
 @app.errorhandler(404)
 def not_found(e):
