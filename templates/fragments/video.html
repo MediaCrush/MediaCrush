@@ -265,9 +265,8 @@ h1.brand {
                     pause(e.target);
                 }
             }, true);
-            void function(i) {
-                setTimeout(function() { updateVideo(videos[i]) }, 100);
-            }(i);
+            videos[i].addEventListener('progress', updateVideo, false);
+            videos[i].addEventListener('timeUpdate', updateVideo, false);
         }
         var buffers = document.querySelectorAll('.seek .buffering, .seek .progress, .seek .unbuffered');
         for (var i = 0; i < buffers.length; i++) {
@@ -275,7 +274,9 @@ h1.brand {
         }
         var volumes = document.querySelectorAll('.volume, .volume .amount');
         for (var i = 0; i < volumes.length; i++) {
-            volumes[i].querySelector('.amount').style.width = (window.localStorage.volume * 100) + '%';
+            var amount = volumes[i].querySelector('.amount');
+            if (amount)
+                amount.style.width = (window.localStorage.volume * 100) + '%';
             volumes[i].addEventListener('mousedown', beginAdjustVolume, false);
             volumes[i].addEventListener('mousemove', adjustVolume, false);
             volumes[i].addEventListener('mouseup', endAdjustVolume, false);
@@ -283,6 +284,7 @@ h1.brand {
         }
     }, false);
     function beginAdjustVolume(e) {
+        e.preventDefault();
         var container = e.target;
         if (e.target.className.indexOf('volume') == -1)
             container = e.target.parentElement;
@@ -295,6 +297,7 @@ h1.brand {
         container.classList.remove('action');
     }
     function adjustVolume(e) {
+        e.preventDefault();
         var container = e.target;
         if (e.target.className.indexOf('volume') == -1)
             container = e.target.parentElement;
@@ -307,19 +310,21 @@ h1.brand {
         container.querySelector('.amount').style.width = (amount * 100) + '%';
     }
     function handleSeek(e) {
+        e.preventDefault();
         var container = e.target.parentElement;
         var video = document.getElementById(container.dataset.video);
         var seek = video.duration * (e.layerX / container.clientWidth);
+        console.log(seek);
         video.currentTime = seek;
     }
-    function updateVideo(video) {
+    function updateVideo(e) {
+        var video = e.target;
         var buffer = document.querySelectorAll('.seek[data-video="' + video.id + '"] .buffering')[0];
         var progress = document.querySelectorAll('.seek[data-video="' + video.id + '"] .progress')[0];
         var indicator = document.querySelectorAll('.seek[data-video="' + video.id + '"] .indicator')[0];
         var time = document.querySelectorAll('.time[data-video="' + video.id + '"]')[0];
         buffer.style.width = video.buffered.end(video.buffered.length - 1) / video.duration * 100 + '%';
         progress.style.width = indicator.style.left = video.currentTime / video.duration * 100 + '%';
-        setTimeout(function() { updateVideo(video) }, 100);
         var minutes = Math.floor(video.currentTime / 60);
         var seconds = Math.floor(video.currentTime % 60);
         if (seconds < 10)
