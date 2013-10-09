@@ -92,6 +92,7 @@ class MediaView(FlaskView):
     @route("/<h>/embed/content")
     def embed_content(self, h):
         template_params = self._template_params(h)
+        template_params['embedded'] = True
         text = render_template(template_params['fragment'], **template_params)
 
         return Response(text, mimetype="text/plain")
