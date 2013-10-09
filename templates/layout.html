@@ -16,7 +16,7 @@
         {% endif %}
         {% block styles %}{% endblock %}
     </head>
-    <body>
+    <body class="{% if not ads %}noads{% endif %}">
     {% block content %}{% endblock %}
     </body>
 </html>

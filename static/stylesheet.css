@@ -1,24 +1,63 @@
+/*
+ * Grid
+ */
+.grid .column {
+    float: left;
+}
+
+.fixedgrid .column {
+    float: left;
+    width: 333px;
+}
+
+/*
+ * Element styles and UI components
+ */
 body {
     font-family: 'Open Sans', sans-serif;
 }
 
-a {
-    font-weight: bold;
-}
-
-.image-loading a.delete {
-    font-size: 10pt;
-    color: red;
-    position: absolute;
-    bottom: 3px;
-    right: 3px;
-}
-
 .container {
+    width: 1000px;
+    margin: 0 auto;
     text-align: justify;
 }
 
-.logo {
+a {
+    font-weight: bold;
+    color: #08c;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005580;
+    text-decoration: underline;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.small {
+    font-size: 10pt;
+}
+
+.error {
+    color: red;
+    font-size: 10pt;
+}
+
+.hidden {
+    display: none;
+}
+
+h1.brand {
+    margin: 0;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.brand a {
     float: left;
     position: relative;
     margin-top: 8px;
@@ -27,176 +66,12 @@ a {
     height: 32px;
 }
 
-.logo img {
+.brand a img {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.sidebar h1 {
-    margin: 0;
-    margin-bottom: 10px;
-    position: relative;
-}
-
-.beta {
-  background-color: #a00;
-  overflow: hidden;
-  position: absolute;
-  left: -29px;
-  top: 17px;
-  -moz-transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-  -moz-box-shadow: 0 0 1em #888;
-  -webkit-box-shadow: 0 0 1em #888;
-  box-shadow: 0 0 1em #888;
-}
-
-.beta span {
-  border: 1px solid #faa;
-  color: #fff;
-  display: block;
-  font: bold 81.25% 'Helvetiva Neue', Helvetica, Arial, sans-serif;
-  margin: 0.05em 0 0.075em 0;
-  padding: 0.5em 3.5em;
-  text-align: center;
-  text-decoration: none;
-  text-shadow: 0 0 0.5em #444;
-}
-
-.overlay {
-    background: #000;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    opacity: 0.6;
-}
-
-.overlay img {
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    bottom: 5px;
-    right: 130px;
-}
-
-.overlay span {
-    position: absolute;
-    font-size: 14pt;
-    color: #fff;
-    right: 5px;
-    bottom: 10px;
-}
-
-.wrapper {
-    width: 1012px;
-}
-
-.container {
-    width: 1012px;
-    padding: 5px;
-}
-
-.content {
-    width: 1022px;
-    padding: 5px;
-    position: absolute;
-}
-
-.content .column {
-    float: left;
-}
-
-#history {
-    width: 100%;
-}
-
-.hidden {
-    display: none;
-}
-
-
-#droparea {
-    overflow: hidden;
-    border-radius: 5px;
-    border: 1px solid #888;
-    height: 640px;
-    width: 590px;
-    background: #fff;
-    box-shadow: 0 0 10px 1px #999 inset;
-    padding: 5px;
-    -webkit-transition: box-shadow 0.25s linear;
-    -moz-transition: box-shadow 0.25s linear;
-    transition: box-shadow 0.25s linear;
-    position: relative;
-}
-
-#droparea.hover {
-    box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
-}
-
-#droptext {
-    width: 100%;
-    margin-top: 290px;
-    text-align: center;
-}
-
-#droparea input {
-    display: none;
-}
-
-#droparea.files #droptext {
-    margin-top: 5px;
-}
-
-.mobile-browse {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    text-align: center;
-    line-height: 640px;
-}
-
-.mobile-browse span, .button {
-    padding: 5px;
-    background: #428bca;
-    color: #fff;
-    border-radius: 5px;
-}
-
-.mobile-browse span {
-    padding: 20px;
-}
-
-.mobile-browse:hover, .button:hover {
-    text-decoration: none;
-    color: #ccc;
-}
-
-.sidebar {
-    width: 270px;
-    padding: 10px;
-    padding-top: 0;
-}
-
-#gad {
-    width: 120px;
-    height: 643px;
-    text-align: center;
-    padding: 5px;
-    background-color: #ddd;
-    border-radius: 5px;
-}
-
-#gad > div {
-    width: 120px;
-    height: 600px;
-}
-
-/* Mostly stolen from Twitter bootstrap */
 .progress {
     height: 8px;
     width: 50%;
@@ -215,151 +90,22 @@ a {
     background-color: #5eb95e;
 }
 
-.image-loading {
-    clear: both;
-    margin-bottom: 5px;
-    border: 1px solid #888;
-    background: white;
-    border-radius: 5px;
-    height: 112px;
-    overflow: hidden;
-    position: relative;
-}
-
-.image-loading:last-child {
-    margin-bottom: 0;
-}
-
-.image-loading h2, .image-loading p {
-    margin: 0;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.image-loading a {
-    position: relative;
-    z-index: 1;
-}
-
-.image-loading a.full-size {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-}
-
-.img-wrapper {
-    float: left;
-    width: 200px;
-    margin-right: 10px;
-    min-height: 113px;
-}
-
-.image-loading .img-wrapper img {
-    max-width: 200px;
-    max-height: 113px;
-}
-
-.image-loading .img-wrapper video {
-    max-width: 200px;
-    max-height: 113px;
-}
-
-.clearfix {
-    clear: both;
-}
-
-a {
-    color: #08c;
-    text-decoration: none;
-
-}
-
-a:hover {
-    color: #005580;
-    text-decoration: underline;
-}
-
-.small {
-    font-size: 10pt;
-}
-
-.error {
-    color: red;
-    font-size: 10pt;
-}
-
 @-webkit-keyframes progressbar {
     from {
-        background-position-x: 0px;
+        background-position: 0px 0px;
     }
     to {
-        background-position-x: 39px;
+        background-position: 39px 0px;
     }
 }
 
 @keyframes progressbar {
     from {
-        background-position-x: 0px;
+        background-position: 0px 0px;
     }
     to {
-        background-position-x: 39px;
+        background-position: 39px 0px;
     }
-}
-
-.row .left {
-    float: left;
-}
-
-.row .right {
-    float: right;
-    text-align: right;
-}
-
-.row .middle {
-    float: left;
-    margin-left: 40px;
-    margin-top: 150px;
-    text-align: center;
-}
-
-.row .item {
-    float: left;
-    width: 333px;
-    height: 43px;
-    line-height: 43px;
-}
-
-#history ul {
-    margin: 0;
-    padding: 0;
-    padding-top: 5px;
-    clear: both;
-    list-style: none;
-    text-align: center;
-    overflow-y: hidden;
-    height: 575px;
-    position: relative;
-}
-
-#history ul .fader {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 50px;
-    background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0));
-}
-
-#history ul .item-view {
-    max-width: 250px;
-    max-height: 250px;
-}
-
-#history ul .item-view {
-    border: 1px solid #000;
 }
 
 h4 {
@@ -376,79 +122,6 @@ h4 {
 
 .pull-right {
     float: right;
-}
-
-#lgad {
-    display: none;
-    width: 120px;
-    text-align: center;
-    padding: 5px;
-    border-radius: 5px;
-    background: #ddd;
-}
-
-@media (min-width: 1000px)  {
-    .wrapper, .container {
-        margin: 0 auto;
-    }
-}
-@media (max-width: 1000px), (max-height: 800px) {
-    #gad {
-        display: none;
-    }
-    #lgad {
-        display: block;
-    }
-    #histThumb {
-        height: 250px;
-    }
-}
-@media (min-height: 800px) {
-    .content {
-        margin-top: -325px;
-        top: 50%;
-    }
-}
-@media (max-height: 800px) {
-    #droparea {
-        height: 320px;
-    }
-    #droptext {
-        margin-top: 130px;
-    }
-    .mobile-browse {
-        line-height: 320px;
-    }
-    #history > ul {
-        height: 250px;
-    }
-}
-
-@media (max-width: 1040px) {
-    #droparea, .dropcolumn {
-        width: 300px;
-        margin-right: 10px;
-    }
-    .wrapper, .content, .container {
-        width: auto;
-    }
-    .responsiveBreak {
-        display: block;
-    }
-    .responsiveHidden {
-        display: none;
-    }
-    .image-loading {
-        height: auto;
-        white-space: nowrap;
-        padding-bottom: 5px;
-    }
-    .image-loading > div:not(.image-loading), .image-loading h2 {
-        padding-left: 5px;
-    }
-    .img-wrapper {
-        float: none;
-    }
 }
 
 audio {
@@ -479,65 +152,8 @@ tr:first-child th, tr:first-child td {
     border-top: none;
 }
 
-.transparent {
+.psuedohidden {
     position: absolute;
     left: -1000px;
     display: inline-block;
-}
-
-#format-list {
-    border-bottom: 1px dotted #000;
-    position: relative;
-    cursor: help;
-}
-
-#format-list div {
-    position: absolute;
-    opacity: 0;
-    transition: opacity 1s;
-    top: 32px;
-    width: 300px;
-    background: #222;
-    color: #fff;
-    border-radius: 5px;
-    padding: 5px;
-    pointer-events: none;
-    left: -135px;
-}
-
-#format-list div:before {
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-bottom: 20px solid #222;
-    position: absolute;
-    top: -10px;
-    left: 140px;
-    content: '';
-}
-
-#format-list:hover div {
-    opacity: 0.9;
-}
-
-#format-list div .format-column {
-    float: left;
-    width: 100px;
-}
-
-#format-list div .format-column h3 {
-    text-align: center;
-    margin: 0;
-}
-
-#format-list div .format-column ul {
-    margin: 0;
-    list-style: none;
-    padding-left: 3px;
-}
-
-#format-list div .format-column ul li {
-    float: left;
-    padding-right: 5px;
 }

@@ -94,6 +94,26 @@ function loadCurrentPage() {
 function createView(data) {
     var item = data.item;
     var container = document.createElement('div');
+    if (!item) {
+        container.id = data.hash;
+        container.className = 'missing-item';
+        var text = document.createElement('div');
+        text.textContent = 'This item no longer exists.';
+        container.appendChild(text);
+        var forget = document.createElement('a');
+        forget.textContent = 'Remove from history';
+        forget.href = '#';
+        forget.href = '/forget/' + data.hash;
+        forget.onclick = function(e) {
+            e.preventDefault();
+            removeItemFromHistory(data.hash);
+            container.parentElement.removeChild(container);
+            createPagination();
+            loadCurrentPage();
+        };
+        container.appendChild(forget);
+        return container;
+    }
     var preview = null;
     if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
         preview = document.createElement('video');
@@ -135,7 +155,7 @@ function createView(data) {
         createPagination();
         loadCurrentPage();
     };
-    forgetLink.target = 'Remove this item from your history';
+    forgetLink.title = 'Remove this item from your history';
     bar.appendChild(forgetLink);
 
     var deleteLink = document.createElement('a');

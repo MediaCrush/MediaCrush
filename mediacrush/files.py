@@ -13,10 +13,11 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-CONTROLS_EXTENSIONS = set(['ogv', 'mp4'])
-VIDEO_EXTENSIONS = set(['gif']) | CONTROLS_EXTENSIONS
+VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
 AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
 EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
+LOOP_EXTENSIONS = set(['gif'])
+AUTOPLAY_EXTENSIONS = set(['gif'])
 
 class URLFile(object):
     filename = None
@@ -79,12 +80,16 @@ processing_needed = {
         'formats': [],
         'time': 5
     },
+    'png': {
+        'formats': [],
+        'time': 30
+    },
     'svg': {
         'formats': [],
         'time': 5
     },
     'mp3': {
-        'formats': ['ogg'],
+        'formats': ['oga'],
         'time': 120
     },
     'ogg': {
@@ -137,7 +142,14 @@ def compression_rate(f):
 def upload(f, filename):
     if f.content_type and f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
-        filename += mimetypes.guess_extension(f.content_type)
+        ext = mimetypes.guess_extension(f.content_type)
+        if not ext:
+            # Specified mimetype is not in /etc/mime.types.
+            # At this point, our best guess is to assume the extension
+            # is the last part of the mimetype.
+            ext = "." + f.content_type.split("/")[1]
+
+        filename += ext
 
     if f and allowed_file(filename):
         if not current_app.debug:

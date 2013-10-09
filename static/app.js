@@ -68,7 +68,7 @@ function handleFiles(files) {
             handleFile(files[i]);
         else {
             void function(i) {
-                setTimeout(function() { 
+                setTimeout(function() {
                     handleFile(files[i]);
                 }, timeout);
             }(i);
@@ -244,7 +244,12 @@ function createPreview(file) {
     container.className = 'image-loading';
     var wrapper = document.createElement('div');
     wrapper.className = 'img-wrapper';
-    var uri = URL.createObjectURL(file);
+    var uri;
+    if (file instanceof File) {
+        uri = URL.createObjectURL(file);
+    } else {
+        uri = file.name;
+    }
 
     var preview = null;
     if (file.type.indexOf('image/') == 0) {
@@ -323,7 +328,7 @@ function dropEnable() {
     window.addEventListener('drop', dragDrop, false);
     var pasteTarget = document.getElementById('paste-target');
     pasteTarget.addEventListener('paste', handlePaste, false);
-    pasteTarget.focus();
+    forceFocus();
     var file = document.getElementById('browse');
     file.addEventListener('change', function() {
         handleFiles(file.files);
@@ -335,6 +340,12 @@ function dropEnable() {
     }, false);
 
     setTimeout(handleHistory, 50);
+}
+
+function forceFocus() {
+    var pasteTarget = document.getElementById('paste-target');
+    pasteTarget.focus();
+    setTimeout(forceFocus, 250);
 }
 
 function handleHistory() {
@@ -354,10 +365,12 @@ function handleHistory() {
     var historyList = historyElement.querySelectorAll('ul')[0];
     loadDetailedHistory(items, function(result) {
         for (var i = 0; i < items.length; i++) {
-            historyList.appendChild(createHistoryItem({
-                item: result[items[i]],
-                hash: items[i]
-            }));
+            if (result[items[i]]) {
+                historyList.appendChild(createHistoryItem({
+                    item: result[items[i]],
+                    hash: items[i]
+                }));
+            }
         }
     });
 }

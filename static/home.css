@@ -1,0 +1,312 @@
+/*
+ * Layout
+ */
+.vertical-center {
+    width: 995px;
+    margin: 0 auto;
+}
+
+.grid {
+    height: 680px;
+    position: absolute;
+    top: 50%;
+    margin-top: -340px;
+}
+
+.content {
+    padding: 10px;
+    width: 270px;
+}
+
+#droparea {
+    overflow: hidden;
+    border-radius: 5px;
+    border: 1px solid #888;
+    height: 640px;
+    width: 590px;
+    background: #fff;
+    box-shadow: 0 0 10px 1px #999 inset;
+    padding: 5px;
+    -webkit-transition: box-shadow 0.25s linear;
+    -moz-transition: box-shadow 0.25s linear;
+    transition: box-shadow 0.25s linear;
+    position: relative;
+}
+
+#droparea.hover {
+    box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
+}
+
+#droptext {
+    width: 100%;
+    margin-top: 290px;
+    text-align: center;
+}
+
+#droparea.files #droptext {
+    margin-top: 5px;
+}
+
+#gad {
+    width: 120px;
+    height: 643px;
+    text-align: center;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+#gad > div {
+    width: 120px;
+    height: 600px;
+}
+
+#lgad {
+    display: none;
+    width: 120px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    background: #ddd;
+}
+
+#history ul {
+    margin: 0;
+    padding: 0;
+    padding-top: 5px;
+    clear: both;
+    list-style: none;
+    text-align: center;
+    overflow-y: hidden;
+    height: 575px;
+    position: relative;
+}
+
+#history ul .fader {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0));
+}
+
+#history ul .item-view {
+    max-width: 250px;
+    max-height: 250px;
+}
+
+#history ul .item-view {
+    border: 1px solid #000;
+}
+
+/*
+ * Responsive
+ */
+@media (max-height: 700px) {
+    .grid {
+        height: 340px;
+        margin-top: -190px;
+    }
+    #droparea {
+        height: 320px;
+    }
+    #droptext {
+        margin-top: 145px;
+    }
+    #gad {
+        display: none;
+    }
+    #lgad {
+        display: block;
+    }
+    #history ul {
+        height: 250px;
+    }
+}
+@media (max-width: 1048px) {
+    .vertical-center {
+        width: 705px;
+    }
+    #droparea {
+        width: 300px !important;
+    }
+    .responsive-hidden {
+        display: none;
+    }
+    .responsive-break {
+        display: block;
+    }
+}
+@media (max-width: 765px) {
+    .vertical-center {
+        width: 575px;
+    }
+    #gad, #lgad {
+        display: none;
+    }
+}
+
+/*
+ * Components
+ */
+.image-loading a.delete {
+    font-size: 10pt;
+    color: red;
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+}
+
+.beta {
+    background-color: #a00;
+    overflow: hidden;
+    position: absolute;
+    left: -29px;
+    top: 17px;
+    -moz-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg) translate3d(0,0,0);
+    transform: rotate(-45deg);
+    -moz-box-shadow: 0 0 1em #888;
+    -webkit-box-shadow: 0 0 1em #888;
+    box-shadow: 0 0 1em #888;
+}
+
+.beta span {
+    border: 1px solid #faa;
+    color: #fff;
+    display: block;
+    font: bold 81.25% 'Helvetiva Neue', Helvetica, Arial, sans-serif;
+    margin: 0.05em 0 0.075em 0;
+    padding: 0.5em 3.5em;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 0 0.5em #444;
+}
+
+.image-loading {
+    clear: both;
+    margin-bottom: 5px;
+    border: 1px solid #888;
+    background: white;
+    border-radius: 5px;
+    height: 112px;
+    overflow: hidden;
+    position: relative;
+}
+
+.image-loading:last-child {
+    margin-bottom: 0;
+}
+
+.image-loading h2, .image-loading p {
+    margin: 0;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.image-loading a {
+    position: relative;
+    z-index: 1;
+}
+
+.image-loading a.full-size {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.img-wrapper {
+    float: left;
+    width: 200px;
+    margin-right: 10px;
+    min-height: 113px;
+}
+
+.image-loading .img-wrapper img {
+    max-width: 200px;
+    max-height: 113px;
+}
+
+.image-loading .img-wrapper video {
+    max-width: 200px;
+    max-height: 113px;
+}
+
+#format-list {
+    border-bottom: 1px dotted #000;
+    position: relative;
+    cursor: help;
+}
+
+#format-list div {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s;
+    top: 32px;
+    width: 300px;
+    background: #222;
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    pointer-events: none;
+    left: -135px;
+}
+
+#format-list div:before {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #222;
+    position: absolute;
+    top: -10px;
+    left: 140px;
+    content: '';
+}
+
+#format-list:hover div {
+    opacity: 0.9;
+}
+
+#format-list div .format-column {
+    float: left;
+    width: 100px;
+}
+
+#format-list div .format-column h3 {
+    text-align: center;
+    margin: 0;
+}
+
+#format-list div .format-column ul {
+    margin: 0;
+    list-style: none;
+    padding-left: 3px;
+}
+
+#format-list div .format-column ul li {
+    float: left;
+    padding-right: 5px;
+}
+
+a[href^="https://twitter.com"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/twitter.png') no-repeat;
+    position: relative;
+    top: 3px;
+}
+
+a[href^="https://pay.reddit.com"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/reddit.png') no-repeat;
+    position: relative;
+    top: 3px;
+}

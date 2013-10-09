@@ -33,11 +33,12 @@ class APIView(FlaskView):
         if f.compression:
             ret['compression'] = float(f.compression)
              
+        ret['files'].append(APIView._file_entry(f.original))
+
         if ext in processing_needed:
             for f_ext in processing_needed[ext]['formats']:
                 ret['files'].append(APIView._file_entry("%s.%s" % (f.hash, f_ext)))
 
-        ret['files'].append(APIView._file_entry(f.original))
         return ret
 
     @route("/api/<id>")
