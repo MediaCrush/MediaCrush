@@ -202,6 +202,7 @@
 .volume .amount {
     background: #fff;
     height: 100%;
+    pointer-events: none;
 }
 .control.play.large {
     background: none;
@@ -289,6 +290,7 @@ h1.brand {
         if (e.target.className.indexOf('volume') == -1)
             container = e.target.parentElement;
         container.classList.add('action');
+        adjustVolume(e);
     }
     function endAdjustVolume(e) {
         var container = e.target;
