@@ -15,7 +15,10 @@ window.addEventListener('load', function() {
             }
         }, true);
         videos[i].addEventListener('progress', updateVideo, false);
-        videos[i].addEventListener('timeUpdate', updateVideo, false);
+        if (videos[i].readyState > 0) {
+            updateVideo({ target: videos[i] });
+        }
+        videos[i].addEventListener('timeupdate', updateVideo, false);
     }
     var buffers = document.querySelectorAll('.seek .buffering, .seek .progress, .seek .unbuffered');
     for (var i = 0; i < buffers.length; i++) {

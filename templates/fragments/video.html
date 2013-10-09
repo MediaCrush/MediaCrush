@@ -1,5 +1,5 @@
 <div class="video">
-    <video id="video-{{ filename }}" preload {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
+    <video id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
         <source src="/{{ filename }}.mp4" type='video/mp4;'>
         <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
     </video>
