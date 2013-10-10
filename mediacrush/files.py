@@ -51,9 +51,14 @@ class URLFile(object):
             self.f.write(chunk)
             self.f.flush()
 
+        if r.status_code == 404:
+            return False
+
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
+
+        return True
 
 processing_needed = {
     'gif': {

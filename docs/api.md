@@ -331,6 +331,11 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>false</td>
     </tr>
     <tr>
+        <td>404</td>
+        <td>The requested file does not exist.</td>
+        <td>false</td>
+    </tr>
+    <tr>
         <td>409</td>
         <td>The file was already uploaded.</td>
         <td>true</td>
