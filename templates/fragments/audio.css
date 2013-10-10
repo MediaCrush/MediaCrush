@@ -12,7 +12,7 @@
 }
 .controls .pull-right {
     float: right;
-    width: 125px;
+    width: 160px;
 }
 .audio .controls {
     height: 32px;
@@ -28,7 +28,7 @@
 }
 .audio .seek {
     margin-left: 80px;
-    margin-right: 125px;
+    margin-right: 160px;
     margin-top: 8px;
     position: relative;
     height: 16px;
@@ -79,11 +79,12 @@
 .control.unmute {
     background-position: -96px 0;
 }
-.control.full {
-    background-position: -160px 0;
+.control.loop {
+    background: url('/static/repeat-dim.png') 0 0 transparent no-repeat;
+    margin-left: 5px;
 }
-.control.window {
-    background-position: -128px 0;
+.control.loop.enabled {
+    background: url('/static/repeat.png') 0 0 transparent no-repeat;
 }
 .volume {
     display: inline-block;

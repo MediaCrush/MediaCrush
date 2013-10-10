@@ -18,11 +18,12 @@
             <span class="time" data-audio="audio-{{ filename }}">0:00</span>
         </div>
         <div class="pull-right">
-            {# Volume and full screen #}
+            {# Volume and loop #}
             <a href="#" class="control mute" data-audio="audio-{{ filename }}"></a>
             <div class="volume" data-audio="audio-{{ filename }}">
                 <div class="amount" style="width: 100%;"></div>
             </div>
+            <a href="#" class="control loop" data-audio="audio-{{ filename }}"></a>
         </div>
         <div class="seek" data-audio="audio-{{ filename }}">
             {# Seeking
