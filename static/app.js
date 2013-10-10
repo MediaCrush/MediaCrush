@@ -143,7 +143,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
         } else if (this.status == 200) {
             statusUI.innerHTML = '';
             var p = document.createElement('p');
-            p.textContent = 'Processing...';
+            p.textContent = 'Processing... (this may take a while)';
             statusUI.appendChild(p);
             hash = responseJSON['hash'];
             progressUI.className += ' progress-green';
