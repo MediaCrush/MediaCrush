@@ -29,6 +29,10 @@ h1 {
     left: 0;
 }
 
+#blurb {
+    margin: 0 5px;
+}
+
 .beta {
     background-color: #a00;
     overflow: hidden;
