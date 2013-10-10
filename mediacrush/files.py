@@ -89,7 +89,7 @@ processing_needed = {
         'time': 5
     },
     'mp3': {
-        'formats': ['oga'],
+        'formats': ['ogg'],
         'time': 120
     },
     'ogg': {
