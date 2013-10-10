@@ -11,24 +11,20 @@
             </span>
         MediaCrush</a>
     </h1>
-    <div class="side">
-        <a href="#" class="control loop {% if loop %}enabled{% endif %}" data-video="video-{{ filename }}">Loop</a>
-    </div>
     <div class="controls">
         <div class="pull-left">
             {# Play/pause and current time #}
-            <a href="#" class="control {% if autoplay %}pause{% else %}play{% endif %}" data-video="video-{{ filename }}"></a>
-            <span class="time" data-video="video-{{ filename }}">0:00</span>
+            <a href="#" class="control {% if autoplay %}pause{% else %}play{% endif %}" data-audio="audio-{{ filename }}"></a>
+            <span class="time" data-audio="audio-{{ filename }}">0:00</span>
         </div>
         <div class="pull-right">
             {# Volume and full screen #}
-            <a href="#" class="control mute" data-video="video-{{ filename }}"></a>
-            <div class="volume" data-video="video-{{ filename }}">
+            <a href="#" class="control mute" data-audio="audio-{{ filename }}"></a>
+            <div class="volume" data-audio="audio-{{ filename }}">
                 <div class="amount" style="width: 100%;"></div>
             </div>
-            <a href="#" class="control full" data-video="video-{{ filename }}"></a>
         </div>
-        <div class="seek" data-video="video-{{ filename }}">
+        <div class="seek" data-audio="audio-{{ filename }}">
             {# Seeking
                "unbuffered" is a 100% wide thing that's just there to seek with
                "buffered" is as wide as the video has buffered
@@ -49,3 +45,4 @@
 <script type="text/javascript">
 {% include "fragments/audio.js" %}
 </script>
+{% endif %}

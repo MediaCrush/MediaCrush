@@ -1,53 +1,10 @@
-.video a {
+.audio a {
     outline: none;
 }
-.video {
-    position: relative;
-}
-.fullscreen.video {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1000;
-}
-.fullscreen.video video {
-    width: 100%;
-    height: 100%;
-}
-.fullscreen ~ .row {
-    display: none;
-}
-.video .hover {
-    opacity: 0;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    transition: opacity 0.3s linear;
-    padding: 10px;
-}
-.video:hover .hover {
-    opacity: 1;
-}
-.video:hover .hover.disabled {
-    opacity: 0;
-    cursor: none;
-}
-.video .controls {
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
+.audio {
+    width: 700px;
+    height: 42px;
     background: rgba(50, 50, 50, 0.8);
-    height: 32px;
-    line-height: 32px;
-    padding: 5px;
-}
-.fullscreen.video .controls {
-    bottom: 0;
 }
 .controls .pull-left {
     float: left;
@@ -55,7 +12,13 @@
 }
 .controls .pull-right {
     float: right;
-    width: 155px;
+    width: 125px;
+}
+.audio .controls {
+    height: 32px;
+    line-height: 32px;
+    padding: 5px;
+    margin-left: 170px;
 }
 .controls .time {
     position: relative;
@@ -63,36 +26,36 @@
     font-weight: bold;
     color: #fff;
 }
-.video .seek {
+.audio .seek {
     margin-left: 80px;
-    margin-right: 155px;
+    margin-right: 125px;
     margin-top: 8px;
     position: relative;
     height: 16px;
 }
-.video .seek .bar {
+.audio .seek .bar {
     position: absolute;
     top: 0;
     left: 0;
     width: 0;
     cursor: pointer;
 }
-.video .seek .unbuffered {
+.audio .seek .unbuffered {
     width: 100%;
     height: 50%;
     top: 25%;
     background: transparent;
 }
-.video .seek .buffering {
+.audio .seek .buffering {
     background: #888;
     height: 50%;
     top: 25%;
 }
-.video .seek .progress {
+.audio .seek .progress {
     background: #fff;
     height: 100%;
 }
-.video .seek .indicator {
+.audio .seek .indicator {
     width: 2px;
     height: 150%;
     background: #fff;
@@ -100,27 +63,6 @@
     position: absolute;
     top: -25%;
     margin-left: -1px;
-}
-.video .side {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-}
-.video .side .loop {
-    display: block;
-    width: 64px;
-    height: 64px;
-    text-align: center;
-    color: #888;
-    opacity: 0.8;
-    border-radius: 10px;
-    text-decoration: none;
-    background: url('/static/repeat.png') no-repeat 16px 24px #333;
-    transition: box-shadow 0.3s linear;
-}
-.video .side .loop.enabled {
-    box-shadow: 0 0 5px 5px #fff;
-    color: #fff;
 }
 .control {
     width: 32px;
@@ -157,31 +99,14 @@
     height: 100%;
     pointer-events: none;
 }
-.control.play.large {
-    background: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-}
-.control.play.large img {
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -48px;
-    margin-left: -48px;
-}
 h1.brand {
     position: relative;
     text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
     font-size: 16pt;
     line-height: 45px;
-    margin-top: -5px;
-    margin-bottom: 10px;
+    margin-top: -2px;
+    margin-left: 5px;
+    float: left;
 }
 .brand a {
     color: #fff;
