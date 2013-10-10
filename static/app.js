@@ -33,7 +33,7 @@ function uploadUrl(url) {
     xhr.onload = function() {
         var responseJSON = JSON.parse(this.responseText);
         if (this.status == 200 || this.status == 409) {
-            p.textContent = 'Processing...';
+            p.textContent = 'Processing... (this may take a while)';
             preview.fileStatus.appendChild(p);
             hash = responseJSON['hash'];
             preview.progress.className += ' progress-green';
