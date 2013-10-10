@@ -111,6 +111,7 @@ def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
 
 def get_hash(f):
+    f.seek(0)
     return hashlib.md5(f.read()).digest()
 
 def get_mimetype(url):
