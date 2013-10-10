@@ -113,7 +113,6 @@ function handleSeek(e) {
     var container = e.target.parentElement;
     var video = document.getElementById(container.getAttribute('data-video'));
     var seek = video.duration * (e.layerX / container.clientWidth);
-    console.log(seek);
     video.currentTime = seek;
 }
 function updateVideo(e) {
