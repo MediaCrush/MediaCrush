@@ -150,6 +150,14 @@
 /*
  * Components
  */
+#switch-theme {
+    font-size: 10pt;
+    height: 0;
+    display: block;
+    position: relative;
+    top: -20px;
+}
+
 .image-loading a.delete {
     font-size: 10pt;
     color: red;
