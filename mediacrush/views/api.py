@@ -115,9 +115,12 @@ class APIView(FlaskView):
         f = URLFile()
 
         try:
-            f.download(url)
+            success = f.download(url)
         except:
             return {'error': 400}, 400
+
+        if not success:
+            return {'error': 404}, 404
 
         return APIView._upload_f(f, f.filename)
 

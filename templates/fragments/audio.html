@@ -1,7 +1,7 @@
 <div class="audio">
     <audio id="audio-{{ filename }}">
         <source src="/{{ filename }}.mp3" type='audio/mpeg'>
-        <source src="/{{ filename }}.oga" type='audio/ogg'>
+        <source src="/{{ filename }}.ogg" type='audio/ogg'>
     </audio>
     <h1 class="brand">
         <a href="/" target="_blank">
@@ -49,4 +49,3 @@
 <script type="text/javascript">
 {% include "fragments/audio.js" %}
 </script>
-{% endif %}

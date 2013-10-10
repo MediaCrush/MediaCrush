@@ -51,9 +51,14 @@ class URLFile(object):
             self.f.write(chunk)
             self.f.flush()
 
+        if r.status_code == 404:
+            return False
+
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
+
+        return True
 
 processing_needed = {
     'gif': {
@@ -89,7 +94,7 @@ processing_needed = {
         'time': 5
     },
     'mp3': {
-        'formats': ['oga'],
+        'formats': ['ogg'],
         'time': 120
     },
     'ogg': {
@@ -106,6 +111,7 @@ def allowed_file(filename):
     return '.' in filename and extension(filename) in EXTENSIONS
 
 def get_hash(f):
+    f.seek(0)
     return hashlib.md5(f.read()).digest()
 
 def get_mimetype(url):
