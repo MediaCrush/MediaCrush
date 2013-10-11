@@ -6,6 +6,14 @@ function adOptOut() {
     lgad.parentElement.removeChild(lgad);
 }
 
+function switchTheme() {
+    if (readCookie('dark_theme'))
+        createCookie('dark_theme', '', -1);
+    else
+        createCookie('dark_theme', '1', 3650);
+    window.location.href = window.location.href;
+}
+
 function browse() {
     var file = document.getElementById('browse');
     file.click();
@@ -22,7 +30,7 @@ function uploadUrl(url) {
         document.getElementById('files').innerHTML = '';
         firstUpload = false;
     }
-    var preview = createPreview({ type: "image/png", name: url }, url); // Note: we only allow uploading images by URL, not AV
+    var preview = createPreview({ type: 'image/png', name: url }, url); // Note: we only allow uploading images by URL, not AV
     var p = document.createElement('p');
     p.textContent = 'Uploading...';
     preview.fileStatus.appendChild(p);
