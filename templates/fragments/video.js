@@ -68,12 +68,14 @@ function windowMouseMove() {
     }
 }
 function exitFullscreen() {
-    if (fullscreenElement.cancelFullscreen)
-        fullscreenElement.cancelFullscreen();
+    if (fullscreenElement.cancelFullScreen)
+        fullscreenElement.cancelFullScreen();
     else if (fullscreenElement.mozCancelFullScreen)
         fullscreenElement.mozCancelFullScreen();
     else if (fullscreenElement.webkitCancelFullScreen)
         fullscreenElement.webkitCancelFullScreen();
+    else if (document.webkitCancelFullScreen)
+        document.webkitCancelFullScreen();
     fullscreenElement.classList.remove('fullscreen');
     fullscreenElement.querySelector('.hover').classList.remove('disabled');
     var target = fullscreenElement.querySelector('.window');
