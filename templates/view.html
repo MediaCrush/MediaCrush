@@ -48,6 +48,9 @@
             };
             var history = window.localStorage.getItem('history');
             history = JSON.parse(history);
+            if (history == null) {
+                history = [];
+            }
             {% if can_delete == 'check' %}
             var hashIndex = null;
             if (history) {
