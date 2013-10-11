@@ -1,0 +1,38 @@
+body {
+    background: #333;
+    color: #fff;
+}
+
+#droparea {
+    background: #555;
+}
+
+#history ul li.fader {
+    background: linear-gradient(to top, rgb(50, 50, 50), rgba(50, 50, 50, 0)) repeat scroll 0% 0% transparent;
+}
+
+.image-loading {
+    background: #333;
+}
+
+a:hover {
+    color: #00bfff;
+}
+
+#gad, #lgad {
+    background: #555;
+}
+
+pre {
+    background: #555;
+    color: #fff;
+    border: none;
+}
+
+a[href="https://twitter.com/mediacru_sh"] {
+    background: url('/static/twitter-inverted.png') no-repeat;
+}
+
+a[href="https://pay.reddit.com/r/mediacrush"] {
+    background: url('/static/reddit-inverted.png') no-repeat;
+}
