@@ -41,15 +41,15 @@
             </div>
         </div>
         <script type="text/javascript">
-            {% if can_delete == 'check' %}
             Array.prototype.remove = function(from, to) {
               var rest = this.slice((to || from) + 1 || this.length);
               this.length = from < 0 ? this.length + from : from;
               return this.push.apply(this, rest);
             };
             var history = window.localStorage.getItem('history');
-            var hashIndex = null;
             history = JSON.parse(history);
+            {% if can_delete == 'check' %}
+            var hashIndex = null;
             if (history) {
                 var canDelete = false;
                 for (var i = 0; i < history.length; i++) {
