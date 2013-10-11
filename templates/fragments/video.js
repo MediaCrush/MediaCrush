@@ -68,8 +68,14 @@ function windowMouseMove() {
     }
 }
 function exitFullscreen() {
-    if (fullscreenElement.cancelFullscreen)
-        fullscreenElement.cancelFullscreen();
+    if (document.cancelFullScreen)
+        document.cancelFullScreen();
+    else if (document.webkitCancelFullScreen)
+        document.webkitCancelFullScreen();
+    else if (document.mozCancelFullScreen)
+        document.mozCancelFullScreen();
+    else if (fullscreenElement.cancelFullScreen)
+        fullscreenElement.cancelFullScreen();
     else if (fullscreenElement.mozCancelFullScreen)
         fullscreenElement.mozCancelFullScreen();
     else if (fullscreenElement.webkitCancelFullScreen)
@@ -113,7 +119,6 @@ function handleSeek(e) {
     var container = e.target.parentElement;
     var video = document.getElementById(container.getAttribute('data-video'));
     var seek = video.duration * (e.layerX / container.clientWidth);
-    console.log(seek);
     video.currentTime = seek;
 }
 function updateVideo(e) {
