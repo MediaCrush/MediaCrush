@@ -68,6 +68,10 @@ def index():
 def mine():
     return render_template("mine.html")
 
+@app.route("/test")
+def test():
+    return render_template("test.html")
+
 @app.route("/demo")
 def demo():
     return render_template("demo.html")

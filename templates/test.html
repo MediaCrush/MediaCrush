@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='mediacrush.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+window.addEventListener('load', function() {
+    MediaCrush.render(document.getElementById('M8M0B_8i6QSz'));
+}, false);
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <p>Test page for mediacrush.js, don't let me leave this here when we merge in the branch</p>
+    <div class="mediacrush" data-media="M8M0B_8i6QSz" id="M8M0B_8i6QSz"></div>
+</div>
+{% endblock %}
