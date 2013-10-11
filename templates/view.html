@@ -76,6 +76,10 @@
                 }
             };
             window.addEventListener('load', function() {
+                var hash = window.location.hash;
+                if (hash.length > 1) {
+                    handleHash(hash);
+                }
                 var report = document.getElementById('report');
                 report.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -97,6 +101,20 @@
                     }
                 }, false);
             }, false);
+            function handleHash(hash) {
+                if (hash == '#fromExtension') {
+                    var handled = false;
+                    for (var i = 0; i < history.length; i++) {
+                        if (history[i] === '{{ filename }}')
+                            handled = true;
+                    }
+                    if (!handled) {
+                        history.push('{{ filename }}');
+                        window.localStorage.setItem('history', JSON.stringify(history));
+                    }
+                    window.location = window.location.href.substr(0, window.location.href.indexOf('#'));
+                }
+            }
         </script>
     </body>
     {% include "analytics.html" %}
