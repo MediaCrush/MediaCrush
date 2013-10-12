@@ -129,8 +129,8 @@ def compression_rate(f):
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
-    original_size = os.path.getsize(file_storage(f_original.original))
-    minsize = original_size
+    original_size = f_original.compression 
+    minsize = min(minsize, os.path.getsize(file_storage(f_original.original)))
     for f_ext in processing_needed[ext]['formats']:
         convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
         minsize = min(minsize, convsize)
@@ -166,7 +166,7 @@ def upload(f, filename):
         h = get_hash(f)
         identifier = to_id(h)
         filename = "%s.%s" % (identifier, extension(filename))
-        path = os.path.join(_cfg("storage_folder"), filename)
+        path = file_storage(filename) 
 
         if os.path.exists(path):
             return identifier, 200
@@ -175,6 +175,7 @@ def upload(f, filename):
         f.save(path)
 
         file_object = File(hash=identifier)
+        file_object.compression = os.path.getsize(path)
         file_object.original = filename
         file_object.ip = secure_ip()
         file_object.save()
