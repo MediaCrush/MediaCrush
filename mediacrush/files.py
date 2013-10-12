@@ -169,7 +169,7 @@ def upload(f, filename):
         path = os.path.join(_cfg("storage_folder"), filename)
 
         if os.path.exists(path):
-            return identifier, 200
+            return identifier, 409
 
         f.seek(0)  # Otherwise it'll write a 0-byte file
         f.save(path)
@@ -182,7 +182,7 @@ def upload(f, filename):
         r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
         r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
-        return identifier, 202
+        return identifier
     else:
         return "no", 415
 

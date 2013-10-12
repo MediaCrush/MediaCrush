@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash
+from flaskext.bcrypt import check_password_hash 
 from flask import request
 
 from ..decorators import json_output
@@ -32,7 +32,7 @@ class APIView(FlaskView):
         }
         if f.compression:
             ret['compression'] = float(f.compression)
-
+             
         ret['files'].append(APIView._file_entry(f.original))
 
         if ext in processing_needed:
@@ -45,7 +45,7 @@ class APIView(FlaskView):
     @route("/<id>.json")
     @json_output
     def get(self, id):
-        f = File.from_hash(id)
+        f = File.from_hash(id) 
 
         if not f.original:
             return {'error': 404}, 404
@@ -62,18 +62,18 @@ class APIView(FlaskView):
         res = {}
         for i in items:
             f = File.from_hash(i)
-
+            
             if not f.original:
                 res[i] = None
             else:
                 res[i] = APIView._file_object(f)
-
+        
         return res
 
     @route("/api/<h>/delete")
     @json_output
     def delete(self, h):
-        f = File.from_hash(h)
+        f = File.from_hash(h) 
         if not f.original:
             return {'error': 404}, 404
         if not check_password_hash(f.ip, get_ip()):
@@ -86,25 +86,26 @@ class APIView(FlaskView):
     @staticmethod
     def _upload_f(f, filename):
         result = upload(f, filename)
-        h, status = result
-        if status == 202:
-            return {'hash': h}, status
+        if not isinstance(result, tuple):
+            return {'hash': result}
         else:
-            resp = {'error': status}
-            if status == 200:
-                f = APIView._file_object(File.from_hash(h))
+            h, status = result
+
+            resp = {'error': status} 
+            if status == 409:
+                f = APIView._file_object(File.from_hash(h)) 
 
                 resp[h] = f
-                resp['hash'] = h
+                resp['hash'] = h 
 
             return resp, status
-
+        
 
     @route("/api/upload/file", methods=['POST'])
     @json_output
     def upload_file(self):
         f = request.files['file']
-
+       
         return APIView._upload_f(f, f.filename)
 
     @route("/api/upload/url", methods=['POST'])
@@ -127,7 +128,7 @@ class APIView(FlaskView):
     @json_output
     def status(self, h):
         f = File.from_hash(h)
-        if not f.original:
+        if not f.original: 
             return {'error': 404}, 404
 
         ret = {'status': processing_status(h)}
