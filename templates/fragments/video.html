@@ -42,7 +42,9 @@
             </div>
         </div>
     </div>
-    <a href="#" class="control play large {% if autoplay %}hidden{% endif %}" data-video="video-{{ filename }}"><img src="/static/play-large.png" /></a>
+    {% if not autoplay %}
+    <a href="#" class="control play large" data-video="video-{{ filename }}"><img src="/static/play-large.png" /></a>
+    {% endif %}
 </div>
 {% if videologic is not defined %}
 {% set videologic = True %}

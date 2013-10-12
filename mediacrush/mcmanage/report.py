@@ -13,8 +13,6 @@ import random
 TEMPLATE = """
 This is the report for %s.
 
-There are %d media blobs.
-
 File usage:
 %s
 
@@ -64,11 +62,8 @@ def report():
     if len(reports) == 0:
         reportinfo += "    No reports today. Good job!"
 
-    blobs = len(r.keys("mediacrush.file.*"))
-
     report = TEMPLATE % (
         datetime.now().strftime("%d/%m/%Y"),
-        blobs,
         fileinfo,
         diskinfo,
         reportinfo,

@@ -167,9 +167,6 @@
     width: 100%;
     height: 100%;
 }
-.control.play.large.hidden {
-    display: none;
-}
 .control.play.large img {
     display: block;
     position: absolute;
