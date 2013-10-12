@@ -16,6 +16,13 @@ window.MediaCrush = (function() {
     /*
      * Private methods/properties
      */
+    var createRequest = function(method, url) {
+        var xhr = new XMLHttpRequest();
+        xhr.setRequestHeader('X-CORS-Status', 'true');
+        xhr.open(method, self.domain + url);
+        return xhr;
+    };
+
     var createMediaObject = function(blob) {
         blob.status = null;
         blob.url = self.domain + '/' + blob.hash;
@@ -65,11 +72,11 @@ window.MediaCrush = (function() {
      * Retrieves information for the specified hashes.
      */
     self.get = function(hashes, callback) {
-        var xhr = new XMLHttpRequest();
+        var xhr;
         if (hashes instanceof Array) {
-            xhr.open('GET', self.domain + '/api/info?list=' + hashes.join(','));
+            xhr = createRequest('GET', '/api/info?list=' + hashes.join(','));
         } else {
-            xhr.open('GET', self.domain + '/api/' + hashes);
+            xhr = createRequest('GET', '/api/' + hashes);
         }
         xhr.onload = function() {
             if (callback) {
@@ -103,8 +110,7 @@ window.MediaCrush = (function() {
      * Checks if the specified hash exists on MediaCrush.
      */
     self.exists = function(hash, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', self.domain + '/api/' + hash + '/exists');
+        var xhr = createRequest('GET', '/api/' + hash + '/exists');
         xhr.onload = function() {
             if (callback)
                 callback(JSON.parse(this.responseText).exists);
@@ -116,11 +122,11 @@ window.MediaCrush = (function() {
      * Deletes the specified media blob from MediaCrush, if the user is allowed to.
      */
     self.delete = function(hash, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', self.domain + '/api/' + hash + '/delete');
+        var xhr = createRequest('GET', '/api/' + hash + '/delete');
         xhr.onload = function() {
+            var result = JSON.parse(this.responseText);
             if (callback)
-                callback(true);
+                callback(result['x-status'] == 200);
         };
         xhr.onerror = function() {
             if (callback)
@@ -133,12 +139,11 @@ window.MediaCrush = (function() {
      * Checks the processing status of the specified hash.
      */
     self.checkStatus = function(hash, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', self.domain + '/api/' + hash + '/status');
+        var xhr = createRequest('GET', '/api/' + hash + '/status');
         xhr.onload = function() {
             var result = JSON.parse(this.responseText);
             if (callback)
-                callback(result['status'], result);
+                callback(result['x-status'], result);
         };
         xhr.send();
     };
@@ -147,13 +152,13 @@ window.MediaCrush = (function() {
      * Uploads a file or URL to MediaCrush.
      */
     self.upload = function(file, callback, onprogress) {
-        var xhr = new XMLHttpRequest();
+        var xhr;
         var formData = new FormData();
         if (file instanceof File) {
-            xhr.open('POST', self.domain + '/api/upload/file');
+            xhr = createRequest('POST', '/api/upload/file');
             formData.append('file', file);
         } else {
-            xhr.open('POST', self.domain + '/api/upload/url');
+            xhr = createRequest('POST', '/api/upload/url');
             formData.append('url', file);
         }
         xhr.onprogress = onprogress;
