@@ -132,8 +132,12 @@ def compression_rate(f):
     original_size = os.path.getsize(file_storage(f_original.original))
     minsize = original_size
     for f_ext in processing_needed[ext]['formats']:
-        convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
-        minsize = min(minsize, convsize)
+        try:
+            convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
+            minsize = min(minsize, convsize)
+        except OSError:
+            continue # One of the target files wasn't processed.
+                     # This will fail later in the processing workflow.
 
     # Cross-multiplication:
     # Original size   1
