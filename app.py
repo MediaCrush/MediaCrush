@@ -3,18 +3,36 @@ from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
 from jinja2 import FileSystemLoader, ChoiceLoader
+from scss import Scss
 import os
 import traceback
 import subprocess
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
+from mediacrush.files import extension
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
 app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
+
+@app.before_first_request
+def prepare():
+    d = os.walk(app.static_folder)
+    for f in list(d)[0][2]:
+        if extension(f) == "scss":
+            with open(os.path.join(app.static_folder, f)) as r:
+                compiler = Scss()
+                output = compiler.compile(r.read())
+          
+            parts = f.rsplit('.')
+            css = '.'.join(parts[:-1]) + ".css"
+
+            with open(os.path.join(app.static_folder, css), "w") as w:
+                w.write(output)
+                w.flush()
 
 @app.before_request
 def find_dnt():
