@@ -1,15 +1,15 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter.
+The MediaCrush API returns JSON on all methods. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter. 
 
-Example:
+Example:    
 
     GET /api/tVWMM_ziA3nm?callback=demo
 
     demo({
         ...
     });
-
+    
 # Methods
 
 ## File information endpoints
@@ -20,27 +20,27 @@ Example:
 
 *Parameters*: none.
 
-*Returns*: information about the file whose hash is `<hash>`.
+*Returns*: information about the file whose hash is `<hash>`. 
 
     GET /api/CPvuR5lRhmS0
 
     {
-      "compression": 8.93,
+      "compression": 8.93, 
       "files": [
         {
-          "file": "/CPvuR5lRhmS0.mp4",
+          "file": "/CPvuR5lRhmS0.mp4", 
           "type": "video/mp4"
-        },
+        }, 
         {
-          "file": "/CPvuR5lRhmS0.ogv",
+          "file": "/CPvuR5lRhmS0.ogv", 
           "type": "video/ogg"
-        },
+        }, 
         {
-          "file": "/CPvuR5lRhmS0.gif",
+          "file": "/CPvuR5lRhmS0.gif", 
           "type": "image/gif"
         }
-      ],
-      "original": "/CPvuR5lRhmS0.gif",
+      ], 
+      "original": "/CPvuR5lRhmS0.gif", 
       "type": "image/gif"
     }
 
@@ -62,41 +62,41 @@ If the file is not found, you will get a dictionary like:
 
     {
       "CPvuR5lRhmS0": {
-        "compression": 8.93,
+        "compression": 8.93, 
         "files": [
           {
-            "file": "/CPvuR5lRhmS0.mp4",
+            "file": "/CPvuR5lRhmS0.mp4", 
             "type": "video/mp4"
-          },
+          }, 
           {
-            "file": "/CPvuR5lRhmS0.ogv",
+            "file": "/CPvuR5lRhmS0.ogv", 
             "type": "video/ogg"
-          },
+          }, 
           {
-            "file": "/CPvuR5lRhmS0.gif",
+            "file": "/CPvuR5lRhmS0.gif", 
             "type": "image/gif"
           }
-        ],
-        "original": "/CPvuR5lRhmS0.gif",
+        ], 
+        "original": "/CPvuR5lRhmS0.gif", 
         "type": "image/gif"
-      },
+      }, 
       "tVWMM_ziA3nm": {
-        "compression": 17.99,
+        "compression": 17.99, 
         "files": [
           {
-            "file": "/tVWMM_ziA3nm.mp4",
+            "file": "/tVWMM_ziA3nm.mp4", 
             "type": "video/mp4"
-          },
+          }, 
           {
-            "file": "/tVWMM_ziA3nm.ogv",
+            "file": "/tVWMM_ziA3nm.ogv", 
             "type": "video/ogg"
-          },
+          }, 
           {
-            "file": "/tVWMM_ziA3nm.gif",
+            "file": "/tVWMM_ziA3nm.gif", 
             "type": "image/gif"
           }
-        ],
-        "original": "/tVWMM_ziA3nm.gif",
+        ], 
+        "original": "/tVWMM_ziA3nm.gif", 
         "type": "image/gif"
       }
     }
@@ -173,27 +173,27 @@ If the request is unsuccessful, you will get a response like:
       "status": "done",
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 8.93,
+        "compression": 8.93, 
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.mp4",
+            "file": "/LxqXxVPAvqqB.mp4", 
             "type": "video/mp4"
-          },
+          }, 
           {
-            "file": "/LxqXxVPAvqqB.ogv",
+            "file": "/LxqXxVPAvqqB.ogv", 
             "type": "video/ogg"
-          },
+          }, 
           {
-            "file": "/LxqXxVPAvqqB.gif",
+            "file": "/LxqXxVPAvqqB.gif", 
             "type": "image/gif"
           }
-        ],
-        "original": "/LxqXxVPAvqqB.gif",
+        ], 
+        "original": "/LxqXxVPAvqqB.gif", 
         "type": "image/gif"
       }
     }
 
-*Return codes*:
+*Return codes*: 
 
 <table>
     <tr>
@@ -243,7 +243,7 @@ If the request is unsuccessful, you will get a response like:
 *Notes:*
 
 The "result" object will only be included if the status is "done".
-
+   
 ## /api/upload/file
 
 *Parameters*: `file`, the file to upload.
@@ -264,14 +264,14 @@ In case of error, the response will contain an 'error' parameter and additional 
       "error": 409,
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 0.0,
+        "compression": 0.0, 
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.png",
+            "file": "/LxqXxVPAvqqB.png", 
             "type": "image/png"
           }
-        ],
-        "original": "/LxqXxVPAvqqB.png",
+        ], 
+        "original": "/LxqXxVPAvqqB.png", 
         "type": "image/png"
       }
     }
@@ -286,12 +286,12 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
     <tr>
         <td>200</td>
-        <td>The file was already uploaded and is now ready.</td>
+        <td>The file was uploaded correctly.</td>
         <td>true</td>
     </tr>
     <tr>
-        <td>202</td>
-        <td>The file was uploaded correctly and is now processing.</td>
+        <td>409</td>
+        <td>The file was already uploaded.</td>
         <td>true</td>
     </tr>
     <tr>
@@ -322,12 +322,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
     <tr>
         <td>200</td>
-        <td>The file was already uploaded and is now ready.</td>
-        <td>true</td>
-    </tr>
-    <tr>
-        <td>202</td>
-        <td>The file was uploaded correctly and is now processing.</td>
+        <td>The file was uploaded correctly.</td>
         <td>true</td>
     </tr>
     <tr>
@@ -339,6 +334,11 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>404</td>
         <td>The requested file does not exist.</td>
         <td>false</td>
+    </tr>
+    <tr>
+        <td>409</td>
+        <td>The file was already uploaded.</td>
+        <td>true</td>
     </tr>
     <tr>
         <td>415</td>

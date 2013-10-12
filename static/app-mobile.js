@@ -78,11 +78,11 @@ function uploadFile(file, hash, statusUI, progressUI) {
 
         if (this.status == 415) {
             error = 'This media format is not supported.';
-        } else if (this.status == 200) {
+        } else if (this.status == 409) {
             finish(statusUI, responseJSON['hash']);
         } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
-        } else if (this.status == 202) {
+        } else if (this.status == 200) {
             statusUI.innerHTML = '';
             var p = document.createElement('h3');
             p.textContent = 'Processing...';
