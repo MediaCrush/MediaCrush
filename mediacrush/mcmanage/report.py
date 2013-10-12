@@ -57,6 +57,8 @@ def report():
     reportinfo = ""
     for report in reports:
         f = File.from_hash(report)
+        if not f.original:
+            continue
         reportinfo += "    https://mediacru.sh/%s (%s reports)\n" % (report, f.reports) 
 
     if len(reports) == 0:
