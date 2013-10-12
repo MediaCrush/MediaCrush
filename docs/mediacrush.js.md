@@ -25,6 +25,42 @@ Regarding the iframe sizing - mediacrush.js will insert the iframe into the page
 and communicate with it to receive details on the resolution of the media within. It will then
 size the iframe correctly and remove the `display: none`, then call the callback (if applicable).
 
+## Examples
+
+**Embed media**
+
+If you have inserted the page into your markup on the server side, just add something like this and
+it'll render on `window.onload`:
+
+    <div class="mediacrush" data-media="tG6dvDt2jNcr"></div>
+
+If you add a div like this into the page at runtime, you can use something like this:
+
+    MediaCrush.render(document.getElementById('...')); // One item
+    MediaCrush.renderAll(); // Re-discovers and renders all items on the page
+
+**Upload a file**
+
+Say you have this in your page somewhere:
+
+    <input type="file" id="fileToUpload" />
+
+You can do this to upload it to MediaCrush:
+
+    var file = document.getElementById('fileToUpload').files[0];
+    MediaCrush.upload(file, function(media) {
+        console.log('Processing...');
+        media.wait(function() { // Wait for it to finish processing
+            console.log(media.url);
+        });
+    };
+
+**Get file information**
+
+    MediaCrush.get('tG6dvDt2jNcr', function(media) {
+        console.log(media.type);
+    });
+
 ## MediaCrush
 
 The MediaCrush object provides access to the MediaCrush API, with several methods and properties.
@@ -36,6 +72,15 @@ This defaults to `https://mediacru.sh`. You may modify it to use alternate Media
 ### MediaCrush.version
 
 Returns the current version (integer) of the API and the mediacrush.js script.
+
+### MediaCrush.checkStatus(hash, callback)
+
+Checks the status of a processing media blob and calls back with the status, and the result. You should usually
+just use the `Media.update` function from MediaCrush.upload.
+
+### MediaCrush.exists(hash, callback)
+
+Checks if the specified hash exists on MediaCrush. Calls back with a boolean.
 
 ### MediaCrush.get(hash, callback)
 
@@ -54,29 +99,6 @@ Retrieves information about several hashes at once and calls back with an array,
         // Or dict['hash'] to get a specific one
     });
 
-### MediaCrush.exists(hash, callback)
-
-Checks if the specified hash exists on MediaCrush. Calls back with a boolean.
-
-### MediaCrush.checkStatus(hash, callback)
-
-Checks the status of a processing media blob and calls back with the status, and the result. You should usually
-just use the `Media.update` function from MediaCrush.upload.
-
-### MediaCrush.upload(file, callback, progress)
-
-Uploads the given [File](https://developer.mozilla.org/en-US/docs/Web/API/File?redirectlocale=en-US&redirectslug=DOM%2FFile)
-to MediaCrush and calls back with a `Media` object. In some cases, this object will immediately finish processing and
-will have its status set to 'done'. In most cases, you'll have to use the `update` function on the returned object.
-
-If set, `progress` will be given to the XHR request's `onprogress` property.
-
-### MediaCrush.upload(url, callback, progress)
-
-Uploads the specified url to MediaCrush and calls back with a `Media` object. In some cases, this object will immediately
-finish processing and will have its status set to 'done'. In most cases, you'll have to use the `update` function on the
-returned object.
-
 ### MediaCrush.render(element)
 
 Renders a specific MediaCrush DOM element. The element should look like this:
@@ -92,18 +114,72 @@ Discovers and renders all MediaCrush DOM elements. They should look like this:
 This is preferred to using `MediaCrush.render` several times, since this will look them all up at once with a single
 HTTP request.
 
+### MediaCrush.upload(file, callback, progress)
+
+Uploads the given [File](https://developer.mozilla.org/en-US/docs/Web/API/File?redirectlocale=en-US&redirectslug=DOM%2FFile)
+to MediaCrush and calls back with a `Media` object. In some cases, this object will immediately finish processing and
+will have its status set to 'done'. In most cases, you'll have to use the `update` function on the returned object.
+
+If set, `progress` will be given to the XHR request's `onprogress` property.
+
+### MediaCrush.upload(url, callback, progress)
+
+Uploads the specified url to MediaCrush and calls back with a `Media` object. In some cases, this object will immediately
+finish processing and will have its status set to 'done'. In most cases, you'll have to use the `update` function on the
+returned object.
+
 ## Media
 
 The `Media` object is returned by several functions, notably the upload function.
 
-### Media.update(callback)
+### Media.compression
 
-Checks the status of the Media object and calls the callback with itself when it's done.
+If MediaCrush was able to compress this file a bit (losslessly), this will the the compression rate (or zero otherwise).
+
+### Media.files
+
+An array of the files associated with this media (different video formats, etc). Each one looks like this:
+
+    {
+        file: '/path-to-file',
+        type: 'mimetype'
+    }
+
+The path is relative, so you'll have to add `https://mediacru.sh/` if you want it in a page.
+
+### Media.original
+
+The URL to the originally uploaded file.
+
+The URL is relative, so you'll have to add `https://mediacru.sh/` if you want it in a page.
+
+### Media.status
+
+One of these values:
+
+* 'done': When it's done processing and is ready to use
+* 'processing': Still processing on MediaCrush
+* 'error': Something went wrong while processing
+* 'timeout': Took too long to process
+
+Use `Media.update` to refresh this value.
+
+### Media.type
+
+The mimetype of the originally uploaded media.
+
+### Media.url
+
+The URL of this media on MediaCrush, when it's done processing.
 
 ### Media.delete(callback)
 
 Deletes the Media object from the MediaCrush servers. You can only do this if your IP matches the bcrypted IP stored in
 the MediaCrush database. Calls back with a boolean indicating success.
+
+### Media.update(callback)
+
+Checks the status of the Media object and calls the callback with itself when it's done.
 
 ### Media.wait(callback)
 
