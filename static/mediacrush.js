@@ -38,7 +38,7 @@ window.MediaCrush = (function() {
             });
         };
         blob.wait = function(callback) {
-            if (blob.status == 'done') {
+            if (blob.status != 'processing') {
                 if (callback)
                     callback(blob);
             } else {
@@ -186,7 +186,7 @@ window.MediaCrush = (function() {
     };
 
     self.renderAll = function() {
-        var elements = document.querySelectorAll('.mediacrush');
+        var elements = document.querySelectorAll('div.mediacrush');
         var hashes = [];
         for (var i = 0; i < elements.length; i++) {
             var hash = elements[i].getAttribute('data-media');
