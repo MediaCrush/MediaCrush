@@ -165,7 +165,7 @@ window.MediaCrush = (function() {
         xhr.onload = function() {
             var json = JSON.parse(this.responseText);
             var blob = { hash: json.hash };
-            if (this.status == 200) {
+            if (json['x-status'] == 409) {
                 blob.status = 'done';
             } else {
                 blob.status = 'processing';
