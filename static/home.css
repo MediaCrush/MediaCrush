@@ -150,6 +150,14 @@
 /*
  * Components
  */
+#switch-theme {
+    font-size: 10pt;
+    height: 0;
+    display: block;
+    position: relative;
+    top: -20px;
+}
+
 .image-loading a.delete {
     font-size: 10pt;
     color: red;
@@ -307,6 +315,24 @@ a[href^="https://pay.reddit.com"] {
     width: 16px;
     height: 16px;
     background: url('/static/reddit.png') no-repeat;
+    position: relative;
+    top: 3px;
+}
+
+a[href^="https://chrome.google.com"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/chrome.png') no-repeat;
+    position: relative;
+    top: 3px;
+}
+
+a[href^="https://addons.mozilla.org"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url('/static/firefox.png') no-repeat;
     position: relative;
     top: 3px;
 }

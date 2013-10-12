@@ -68,8 +68,14 @@ function windowMouseMove() {
     }
 }
 function exitFullscreen() {
-    if (fullscreenElement.cancelFullscreen)
-        fullscreenElement.cancelFullscreen();
+    if (document.cancelFullScreen)
+        document.cancelFullScreen();
+    else if (document.webkitCancelFullScreen)
+        document.webkitCancelFullScreen();
+    else if (document.mozCancelFullScreen)
+        document.mozCancelFullScreen();
+    else if (fullscreenElement.cancelFullScreen)
+        fullscreenElement.cancelFullScreen();
     else if (fullscreenElement.mozCancelFullScreen)
         fullscreenElement.mozCancelFullScreen();
     else if (fullscreenElement.webkitCancelFullScreen)

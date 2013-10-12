@@ -44,7 +44,7 @@ def not_found(e):
 @app.errorhandler(Exception)
 def exception_catch_all(e):
     traceback.print_exc()
-    return render_template("error.html", error=repr(e)), 500 
+    return render_template("error.html", error=repr(e)), 500
 
 @app.context_processor
 def inject():
@@ -56,7 +56,8 @@ def inject():
         'coinbase_id': _cfg("coinbase_id"),
         'flattr_id': _cfg("flattr_id"),
         'adsense_client': _cfg("adsense_client"),
-        'adsense_slot': _cfg("adsense_slot")
+        'adsense_slot': _cfg("adsense_slot"),
+        'dark_theme': "dark_theme" in request.cookies
     }
 
 @app.route("/")
