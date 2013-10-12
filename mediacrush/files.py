@@ -130,7 +130,7 @@ def compression_rate(f):
     if len(processing_needed[ext]['formats']) == 0: return 0
 
     original_size = f_original.compression 
-    minsize = min(minsize, os.path.getsize(file_storage(f_original.original)))
+    minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
     for f_ext in processing_needed[ext]['formats']:
         convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
         minsize = min(minsize, convsize)
