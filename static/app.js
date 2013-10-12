@@ -40,7 +40,7 @@ function uploadUrl(url) {
     xhr.open('POST', '/api/upload/url');
     xhr.onload = function() {
         var responseJSON = JSON.parse(this.responseText);
-        if (this.status == 200 || this.status == 409) {
+        if (this.status == 200 || this.status == 202) {
             p.textContent = 'Processing... (this may take a while)';
             preview.fileStatus.appendChild(p);
             hash = responseJSON['hash'];
@@ -144,11 +144,11 @@ function uploadFile(file, hash, statusUI, progressUI) {
 
         if (this.status == 415) {
             error = 'This media format is not supported.';
-        } else if (this.status == 409) {
+        } else if (this.status == 200) {
             finish(statusUI, responseJSON['hash']);
         } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
-        } else if (this.status == 200) {
+        } else if (this.status == 202) {
             statusUI.innerHTML = '';
             var p = document.createElement('p');
             p.textContent = 'Processing... (this may take a while)';
