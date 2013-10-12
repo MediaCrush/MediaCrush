@@ -52,5 +52,5 @@ form of JSON blobs), and then generate markup yourself based on the results.
 
 * [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request.
 
-We're working on a C# API wrappers of our own, but they are not ready yet. If you make a cool one, feel
+We're working on a C# API wrapper of our own, but they are not ready yet. If you make a cool one, feel
 free to shoot us an [email](mailto:admin@mediacru.sh) and we'll mention it here.
