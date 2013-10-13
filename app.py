@@ -3,7 +3,8 @@ from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
 from jinja2 import FileSystemLoader, ChoiceLoader
-from scss import Scss
+from shutil import copyfile, rmtree
+import scss
 import os
 import traceback
 import subprocess
@@ -17,22 +18,36 @@ app.secret_key = _cfg("secret_key")
 app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
+scss.config.LOAD_PATHS = [
+    './styles/'
+];
 
 @app.before_first_request
 def prepare():
-    d = os.walk(app.static_folder)
+    if os.path.exists(app.static_folder):
+        rmtree(app.static_folder)
+    os.makedirs(app.static_folder)
+    d = os.walk('styles')
+    compiler = scss.Scss(scss_opts = {
+        'style': 'compressed'
+    })
+    # Compile styles (scss)
     for f in list(d)[0][2]:
         if extension(f) == "scss":
-            with open(os.path.join(app.static_folder, f)) as r:
-                compiler = Scss()
+            with open(os.path.join('styles', f)) as r:
                 output = compiler.compile(r.read())
-          
+
             parts = f.rsplit('.')
             css = '.'.join(parts[:-1]) + ".css"
 
             with open(os.path.join(app.static_folder, css), "w") as w:
                 w.write(output)
                 w.flush()
+    # Simple copy for the rest of the files
+    for f in list(os.walk('images'))[0][2]:
+        copyfile(os.path.join('images', f), os.path.join(app.static_folder, os.path.basename(f)))
+    for f in list(os.walk('scripts'))[0][2]:
+        copyfile(os.path.join('scripts', f), os.path.join(app.static_folder, os.path.basename(f)))
 
 @app.before_request
 def find_dnt():
