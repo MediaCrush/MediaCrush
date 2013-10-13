@@ -242,10 +242,13 @@ function mediaHashHandler(hash) {
             video.loop = false;
             loopControl.classList.remove('enabled');
         } else if (parts[i] == 'autoplay') {
-            play(video);
+            if (!mobile)
+                play(video);
         } else if (parts[i] == 'noautoplay') {
-            largePlayControl.classList.remove('hidden');
-            pause(video);
+            if (!mobile) {
+                largePlayControl.classList.remove('hidden');
+                pause(video);
+            }
         } else if (parts[i] == 'mute') {
             video.muted = true;
             muteControl.classList.add('unmute');

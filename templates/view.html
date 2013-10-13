@@ -44,6 +44,11 @@
             </div>
         </div>
         <script type="text/javascript">
+            {% if mobile %}
+            window.mobile = true;
+            {% else %}
+            window.mobile = false;
+            {% endif %}
             Array.prototype.remove = function(from, to) {
               var rest = this.slice((to || from) + 1 || this.length);
               this.length = from < 0 ? this.length + from : from;
