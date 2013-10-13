@@ -26,6 +26,7 @@ processors = {
 }
 
 class TimeLimitedCommand(object):
+    crashed = False
 
     def __init__(self, *args):
         self.args = args
@@ -33,9 +34,13 @@ class TimeLimitedCommand(object):
 
     def _target(self):
         with open(os.devnull, "w") as devnull:
-            self.process = subprocess.Popen(
-                *self.args, stdout=devnull, stderr=devnull)
-            self.process.communicate()
+            try:
+                self.process = subprocess.Popen(
+                    *self.args, stdout=devnull, stderr=devnull)
+                self.process.communicate()
+            except:
+                self.crashed = True
+                return
 
     def run(self, timeout=_cfgi("max_processing_time")):
         exited = False
@@ -51,7 +56,7 @@ class TimeLimitedCommand(object):
             exited = True
 
         if self.process == None:
-            return 0, exited
+            return 0 if not self.crashed else 1, exited
         return self.process.returncode, exited
 
 
@@ -70,19 +75,22 @@ def process_gif(filename):
         r.delete(_k("%s.lock" % filename))
         return
 
-    config = processing_needed[ext]
-    # Do processing
-    if ext in processors:
-        code, exit = processors[ext](path).run(timeout=config['time'])
-        statuscode += code
-        exited |= exit
+    try:
+        config = processing_needed[ext]
+        # Do processing
+        if ext in processors:
+            code, exit = processors[ext](path).run(timeout=config['time'])
+            statuscode += code
+            exited |= exit
 
-    # Do conversions
-    outputpath = os.path.join(_cfg("storage_folder"), filename)
-    for conversion in config['formats']:
-        code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
-        statuscode += code
-        exited |= exit
+        # Do conversions
+        outputpath = os.path.join(_cfg("storage_folder"), filename)
+        for conversion in config['formats']:
+            code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
+            statuscode += code
+            exited |= exit
+    except:
+        statuscode += 1
 
     # Set the compression rate
     f.compression = compression_rate(filename)

@@ -129,11 +129,15 @@ def compression_rate(f):
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
-    original_size = os.path.getsize(file_storage(f_original.original))
-    minsize = original_size
+    original_size = f_original.compression 
+    minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
     for f_ext in processing_needed[ext]['formats']:
-        convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
-        minsize = min(minsize, convsize)
+        try:
+            convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
+            minsize = min(minsize, convsize)
+        except OSError:
+            continue # One of the target files wasn't processed.
+                     # This will fail later in the processing workflow.
 
     # Cross-multiplication:
     # Original size   1
@@ -166,15 +170,16 @@ def upload(f, filename):
         h = get_hash(f)
         identifier = to_id(h)
         filename = "%s.%s" % (identifier, extension(filename))
-        path = os.path.join(_cfg("storage_folder"), filename)
+        path = file_storage(filename) 
 
         if os.path.exists(path):
-            return identifier, 200
+            return identifier, 409
 
         f.seek(0)  # Otherwise it'll write a 0-byte file
         f.save(path)
 
         file_object = File(hash=identifier)
+        file_object.compression = os.path.getsize(path)
         file_object.original = filename
         file_object.ip = secure_ip()
         file_object.save()
@@ -182,7 +187,7 @@ def upload(f, filename):
         r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
         r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
-        return identifier, 202
+        return identifier
     else:
         return "no", 415
 
