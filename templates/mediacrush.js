@@ -7,7 +7,7 @@
 window.MediaCrush = (function() {
     var self = this;
     self.version = 1;
-    self.domain = window.location.protocol + "//" + window.location.host; 
+    self.domain = "//{{ host }}"; 
     self.settings = {
         basicVideo: false,
         basicAudio: false,
