@@ -3,18 +3,61 @@ from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
 from jinja2 import FileSystemLoader, ChoiceLoader
+from shutil import copyfile, rmtree
+import scss
 import os
 import traceback
 import subprocess
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
+from mediacrush.files import extension
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
 app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
+scss.config.LOAD_PATHS = [
+    './styles/'
+];
+
+def prepare():
+    if os.path.exists(app.static_folder):
+        rmtree(app.static_folder)
+    os.makedirs(app.static_folder)
+    compiler = scss.Scss(scss_opts = {
+        'style': 'compressed'
+    })
+
+    # Compile styles (scss)
+    d = os.walk('styles')
+    for f in list(d)[0][2]:
+        if extension(f) == "scss":
+            with open(os.path.join('styles', f)) as r:
+                output = compiler.compile(r.read())
+
+            parts = f.rsplit('.')
+            css = '.'.join(parts[:-1]) + ".css"
+
+            with open(os.path.join(app.static_folder, css), "w") as w:
+                w.write(output)
+                w.flush()
+
+    copy = ['images', 'scripts']
+    # Simple copy for the rest of the files
+    for folder in copy:
+        for f in list(os.walk(folder))[0][2]:
+            copyfile(os.path.join(folder, f), os.path.join(app.static_folder, os.path.basename(f)))
+
+@app.before_first_request
+def compile_first():
+    prepare()
+
+@app.before_request
+def compile_if_debug():
+    if app.debug:
+        prepare()
 
 @app.before_request
 def find_dnt():
