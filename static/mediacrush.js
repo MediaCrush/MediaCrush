@@ -7,7 +7,7 @@
 window.MediaCrush = (function() {
     var self = this;
     self.version = 1;
-    self.domain = 'http://localhost:5000'; // TODO
+    self.domain = 'https://mediacru.sh'; // TODO
     self.settings = {
         basicVideo: false,
         basicAudio: false,
@@ -18,8 +18,8 @@ window.MediaCrush = (function() {
      */
     var createRequest = function(method, url) {
         var xhr = new XMLHttpRequest();
-        xhr.setRequestHeader('X-CORS-Status', 'true');
         xhr.open(method, self.domain + url);
+        xhr.setRequestHeader('X-CORS-Status', 'true');
         return xhr;
     };
 
@@ -199,6 +199,8 @@ window.MediaCrush = (function() {
                 hashes.push(hash);
             }
         }
+        if (hashes.length == 0)
+            return;
         self.get(hashes, function(array, result) {
             for (var i = 0; i < elements.length; i++) {
                 var hash = elements[i].getAttribute('data-media');
