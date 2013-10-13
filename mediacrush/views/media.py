@@ -33,17 +33,17 @@ class MediaView(FlaskView):
         ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
-        fragment = {
-            'image': (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
-            'video': (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
-            'mobilevideo': mimetype.startswith('video') and g.mobile,
-            'audio': mimetype.startswith('audio')
-        }
+        fragments = ['mobilevideo', 'image', 'audio', 'video']
+        fragment_check = [ 
+            mimetype.startswith('video') and g.mobile,
+            (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
+            mimetype.startswith('audio'),
+            (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
+        ] 
 
-        for key, truth in fragment.items():
+        for i, truth in enumerate(fragment_check):
             if truth:
-                fragment = key 
-                break
+                fragment = fragments[i] 
 
         return {
             'filename': f.hash,
