@@ -36,3 +36,19 @@ a[href="https://twitter.com/mediacru_sh"] {
 a[href="https://pay.reddit.com/r/mediacrush"] {
     background: url('/static/reddit-inverted.png') no-repeat;
 }
+
+.pagination li:hover, .pagination li.selected {
+    background: #555;
+}
+
+.pagination li.smart-pagination:hover {
+    background: #333;
+}
+
+.pagination li.selected a {
+    color: #fff;
+}
+
+.audio {
+    background: #555 !important;
+}
