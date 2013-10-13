@@ -43,6 +43,7 @@ class MediaView(FlaskView):
         for key, truth in fragment.items():
             if truth:
                 fragment = key 
+                break
 
         return {
             'filename': f.hash,
