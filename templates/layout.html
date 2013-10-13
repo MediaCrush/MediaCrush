@@ -20,6 +20,23 @@
         {% endif %}
     </head>
     <body class="{% if not ads %}noads{% endif %}">
-    {% block content %}{% endblock %}
+        <div class="container">
+            <div class="navigation">
+                <h1 class="brand">
+                    <a href="/">
+                    <img src="/static/mediacrush_logo.svg" alt="logo" width=24 height=24 />
+                    MediaCrush</a>
+                </h1>
+                <ul>
+                    <li><a href="/">Upload</a></li>
+                    <li><a href="/donate">Donate</a></li>
+                    <li><a href="//blog.mediacru.sh">Blog</a></li>
+                    <li><a href="/demo">About</a></li>
+                </ul>
+            </div>
+            <div class="content">
+                {% block content %}{% endblock %}
+        </div>
+        </div>
     </body>
 </html>

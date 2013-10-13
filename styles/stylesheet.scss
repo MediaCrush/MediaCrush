@@ -5,6 +5,49 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
+.navigation {
+    font-size: 12pt;
+
+    .brand {
+        display: inline;
+        float: left;
+    }
+
+    ul {
+        display: inline;
+        float: left;
+        list-style: none;
+        margin: 7px 0 0 0;
+        padding-left: 10px;
+
+        li {
+            display: inline;
+            float: left;
+            margin: 0 10px;
+        }
+    }
+}
+
+ul.inline {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+        display: inline;
+        padding: 0 5px;
+    }
+}
+
+.content {
+    clear: both;
+}
+
+.narrow {
+    width: 270px;
+    padding: 0 25px;
+}
+
 a {
     font-weight: bold;
     color: #08c;
@@ -66,6 +109,10 @@ table {
     font-size: 10pt;
 }
 
+.red {
+    color: red;
+}
+
 .error {
     color: red;
     font-size: 10pt;
@@ -81,30 +128,32 @@ table {
     left: -1000px;
 }
 
-h1.brand {
+.brand {
     margin: 0 0 10px;
     position: relative;
-}
+    font-size: 18pt;
 
-.brand a {
-    float: left;
-    margin: 8px 5px 0 0;
-    position: relative;
-    height: 32px;
-    width: 32px;
+    a {
+        color: #000;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
 
     img {
-        position: absolute;
-        left: 0;
-        top: 0;
+        float: left;
+        margin: 5px 3px 0 0;
     }
 }
 
 /**
  * Grid
  */
-.grid .column {
-    float: left;
+.grid {
+    .column {
+        float: left;
+    }
 }
 
 .fixedgrid .column {
