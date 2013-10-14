@@ -114,9 +114,15 @@ def index():
 def mine():
     return render_template("mine.html")
 
+<<<<<<< HEAD
 @app.route("/apps")
 def apps():
     return render_template("apps.html")
+=======
+@app.route("/test")
+def test():
+    return render_template("test.html")
+>>>>>>> 8bbf20afee8b91f0f9653dc9d7adfa4a516ca23e
 
 @app.route("/demo")
 def demo():
@@ -139,6 +145,11 @@ def version():
 @app.route("/serious")
 def serious():
     return render_template("serious.html")
+
+@app.route("/mediacrush.js")
+def mediacrushjs():
+    v = render_template("mediacrush.js", host=_cfg("domain"))
+    return Response(v, mimetype="application/javascript")
 
 DocsView.register(app)
 APIView.register(app)
