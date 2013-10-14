@@ -3,48 +3,39 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='demo.css') }}" />
 {% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="brand">
-        <a href="https://blog.mediacru.sh/2013/07/27/MediaCrush-logo.html" target="_blank">
-        <img src="/static/logo-bg.png" class="bg" alt="logo" />
-        <img src="/static/logo-fg.png" alt="logo" />
-        </a>MediaCrush
-    </h1>
-    <p>We make gifs load super fast. In fact, generally our gifs load about 10 times faster than
-    any other image hosting site. Why? Because we convert gifs to videos when you upload them.
-    You see, the gif <a href="https://en.wikipedia.org/wiki/GIF">file format</a> is actually
-    pretty ill-suited to animations. There have been huge advances in video compression since 
-    gif was first created. Specifically, we uses h.264 and theora to encode gifs as videos,
-    with dramatic results:</p>
-    <div class="row">
-        <div class="left">
-            <h3>GIF</h3>
-            <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
-            <p>Filesize: 1965 kB (~2.0 MB)</p>
-        </div>
-        <div class="middle">
-            Result:<br />
-            <strong>1600% compression</strong><br />
-            <a href="/">Try it yourself!</a>
-        </div>
-        <div class="right">
-            <h3>Video</h3>
-            {% if mobile %}
-                <video controls loop>
-            {% else %}
-                <video autoplay loop>
-            {% endif %}
-                <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
-                <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
-            </video>
-            <p>Filesize: 118 kB (~0.118 MB)</p>
-        </div>
+<p>We make media load super fast. We have a whole bunch of tricks up our sleeves to make your files smaller without
+sacrificing quality. When you upload a picture, we run it through lossless compression tools - they find the best
+way to make the file smaller, without reducing the quality of the file. And we have epsecially good tools for GIF
+files. If you upload a GIF to MediaCrush, we'll convert it into a video before we save it. You see, the GIF file
+format is quite old and quite bad. In the years since it came about, computers have become a lot better at compressing
+files. No, seriously - this example got 1600% faster when we converted it to a video:</p>
+<div class="row">
+    <div class="left">
+        <h3>GIF</h3>
+        <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
+        <p>Filesize: 1965 kB (~2.0 MB)</p>
     </div>
-    <p class="clearfix">Note: On some web browsers (like Chrome), this demo looks a bit silly, since Chrome will load
-    the gif entirely before it'll even start on the video. Which is stupid. Silly Chrome. Anyway, 
-    <a href="/">try it for yourself!</a> If you want to see how it all works, you can also
-    <a href="https://github.com/MediaCrush/MediaCrush" target="_blank">browse the source code</a>
-    - we're open source.</p>
+    <div class="middle">
+        Result:<br />
+        <strong>1600% compression</strong><br />
+        <a href="/">Try it yourself!</a>
+    </div>
+    <div class="right">
+        <h3>Video</h3>
+        {% if mobile %}
+            <video controls loop>
+        {% else %}
+            <video autoplay loop>
+        {% endif %}
+            <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
+            <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
+        </video>
+        <p>Filesize: 118 kB (~0.118 MB)</p>
+    </div>
 </div>
+<p class="clearfix">We usually see 110-200% improvements on images, too. Not nearly as good as GIFs, but it means they
+load twice as fast. If you're interested to see how all of this works, have a look at our
+<a href="https://github.com/MediaCrush/MediaCrush">source code</a> - maybe you can help make it even better!</p>
+<p><a href="/">Back to the home page</a></p>
 {% include "analytics.html" %}
 {% endblock %}

@@ -7,21 +7,19 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mine.css') }}" />
 {% endblock %}
 {% block content %}
-<div class="container">
-    <div class="header">
-        <h2>Your Content</h2>
-        <p>
-            This history is stored on your computer, not ours. <span id="disabledText" class="hidden">
-            You have disabled this feature on this computer.</span> You can
-            <a href="javascript:toggleHistory();" id="history-toggle">disable local history</a> anyway, or
-            <a href="javascript:clearHistoryAndReload();">forget everything</a>.
-        </p>
-        <p><a href="/">Back to the home page</a></p>
-    </div>
-    <ul class="pagination"></ul>
-    <div id="items"></div>
-    <ul class="pagination"></ul>
-    <script src="/static/mine.js" type="text/javascript"></script>
+<div class="header">
+    <h2>Your Content</h2>
+    <p>
+        This history is stored on your computer, not ours. <span id="disabledText" class="hidden">
+        You have disabled this feature on this computer.</span> You can
+        <a href="javascript:toggleHistory();" id="history-toggle">disable local history</a> anyway, or
+        <a href="javascript:clearHistoryAndReload();">forget everything</a>.
+    </p>
+    <p><a href="/">Back to the home page</a></p>
 </div>
+<ul class="pagination"></ul>
+<div id="items"></div>
+<ul class="pagination"></ul>
+<script src="/static/mine.js" type="text/javascript"></script>
 {% include "analytics.html" %}
 {% endblock %}
