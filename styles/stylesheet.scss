@@ -11,6 +11,22 @@ body {
     .brand {
         display: inline;
         float: left;
+        margin: 0 0 10px;
+        position: relative;
+        font-size: 18pt;
+
+        a {
+            color: #000;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+
+        img {
+            float: left;
+            margin: 5px 3px 0 0;
+        }
     }
 
     ul {
@@ -59,6 +75,14 @@ a {
 
     &:hover {
         color: #005580;
+    }
+
+    &.red {
+        color: red;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
@@ -112,10 +136,6 @@ table {
     font-size: 10pt;
 }
 
-.red {
-    color: red;
-}
-
 .error {
     color: red;
     font-size: 10pt;
@@ -129,25 +149,6 @@ table {
     display: inline-block;
     position: absolute;
     left: -1000px;
-}
-
-.brand {
-    margin: 0 0 10px;
-    position: relative;
-    font-size: 18pt;
-
-    a {
-        color: #000;
-
-        &:hover {
-            text-decoration: none;
-        }
-    }
-
-    img {
-        float: left;
-        margin: 5px 3px 0 0;
-    }
 }
 
 /**

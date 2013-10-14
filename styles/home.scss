@@ -24,7 +24,7 @@
         background: none;
 
         #droptext {
-            margin-top: 3px;
+            margin-top: 10px;
         }
     }
 
@@ -35,6 +35,7 @@
         a {
             font-size: 18pt;
             color: #005483;
+            line-height: 10px;
 
             &:hover {
                 text-decoration: none;
