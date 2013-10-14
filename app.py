@@ -102,7 +102,8 @@ def inject():
         'adsense_client': _cfg("adsense_client"),
         'adsense_slot': _cfg("adsense_slot"),
         'dark_theme': "dark_theme" in request.cookies,
-        'ads': not "ad-opt-out" in request.cookies
+        'ads': not "ad-opt-out" in request.cookies,
+        'share': share,
     }
 
 @app.route("/")

@@ -36,15 +36,15 @@ window.filename = '{{ filename }}';
 <div class="hidden" id="share">
     <dl>
         <dt>Link</dt>
-        <dd><input type="text" value="https://mediacru.sh/{{ filename }}" class="selectall" /></dd>
+        <dd><input type="text" value="{{ share('link', filename) }}" class="selectall" /></dd>
         <dt>Direct Link</dt>
-        <dd><input type="text" value="https://mediacru.sh/{{ filename }}/direct" class="selectall" /></dd>
+        <dd><input type="text" value="{{ share('directlink', filename) }}" class="selectall" /></dd>
         <dt>Markdown</dt>
-        <dd><input type="text" value="[MediaCrush](https://mediacru.sh/{{ filename }})" class="selectall" /></dd>
+        <dd><input type="text" value="{{ share('markdown', filename) }}" class="selectall" /></dd>
         <dt>HTML</dt>
-        <dd><input type="text" value='<a href="https://mediacru.sh/{{ filename }}">MediaCrush</a>' class="selectall" /></dd>
+        <dd><input type="text" value='{{ share('html', filename) }}' class="selectall" /></dd>
         <dt>BBCode</dt>
-        <dd><input type="text" value='[url=https://mediacru.sh/{{ filename }}"]MediaCrush[/url]' class="selectall" /></dd>
+        <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
 {% if ads and adsense_client != "CHANGEME" %}
