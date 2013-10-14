@@ -11,9 +11,6 @@
         {% block scripts %}{% endblock %}
         <link href='//fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
-        {% if not mobile %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-        {% endif %}
         {% block styles %}{% endblock %}
         {% if dark_theme %}
         <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
@@ -33,6 +30,7 @@
                     <li><a href="//blog.mediacru.sh">Blog</a></li>
                     <li><a href="/demo">About</a></li>
                 </ul>
+                <a href="javascript:switchTheme();" class="pull-right small">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
             </div>
             <div class="content">
                 {% block content %}{% endblock %}
