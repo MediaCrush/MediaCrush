@@ -66,6 +66,10 @@ ul.inline {
 .narrow {
     width: 270px;
     padding: 0 25px;
+
+    .noads & {
+        padding: 0 5px;
+    }
 }
 
 a {

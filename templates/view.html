@@ -46,4 +46,20 @@ window.filename = '{{ filename }}';
         <dd><input type="text" value='[url=https://mediacru.sh/{{ filename }}"]MediaCrush[/url]' class="selectall" /></dd>
     </dl>
 </div>
+{% if ads and adsense_client != "CHANGEME" %}
+<div id="gad">
+    <script type="text/javascript"><!--
+    google_ad_client = "ca-pub-9370614603146400";
+    /* View page horizontal */
+    google_ad_slot = "5779334179";
+    google_ad_width = 970;
+    google_ad_height = 90;
+    //-->
+    </script>
+    <script type="text/javascript"
+    src="//pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+    <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
+</div>
+{% endif %}
 {% endblock %}

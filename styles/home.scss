@@ -16,6 +16,12 @@
     width: 535px;
     background: url('/static/upload.png') transparent no-repeat 140px 220px;
 
+    .noads & {
+        width: 700px;
+        margin-left: 6px;
+        background-position: 230px 220px;
+    }
+
     &.hover {
         box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
     }
@@ -47,6 +53,10 @@
         position: absolute;
         left: 30px;
         bottom: 80px;
+
+        .noads & {
+            left: 119px;
+        }
 
         li {
             margin: 0 39px;
@@ -190,38 +200,6 @@
 /*
  * Components
  */
-#switch-theme {
-    font-size: 10pt;
-    height: 0;
-    display: block;
-    position: relative;
-    top: -20px;
-}
-
-.beta {
-    background-color: #a00;
-    overflow: hidden;
-    position: absolute;
-    left: -29px;
-    top: 17px;
-    -moz-transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg) translate3d(0,0,0);
-    transform: rotate(-45deg);
-    box-shadow: 0 0 1em #888;
-
-    span {
-        border: 1px solid #faa;
-        color: #fff;
-        display: block;
-        font: bold 81.25% 'Helvetiva Neue', Helvetica, Arial, sans-serif;
-        margin: 0.05em 0 0.075em 0;
-        padding: 0.5em 3.5em;
-        text-align: center;
-        text-decoration: none;
-        text-shadow: 0 0 0.5em #444;
-    }
-}
-
 .image-loading {
     a.delete {
         font-size: 10pt;
@@ -279,63 +257,6 @@
         video {
             max-height: 113px;
             max-width: 200px;
-        }
-    }
-}
-
-#format-list {
-    border-bottom: 1px dotted #000;
-    position: relative;
-    cursor: help;
-
-    &:hover div {
-        opacity: 0.9;
-    }
-
-    div {
-        border-radius: 5px;
-        background: #222;
-        color: #fff;
-        left: -135px;
-        opacity: 0;
-        padding: 5px;
-        position: absolute;
-        top: 32px;
-        transition: opacity 1s;
-        pointer-events: none;
-        width: 300px;
-
-        &:before {
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 20px solid #222;
-            content: "";
-            height: 0;
-            width: 0;
-            position: absolute;
-            top: -10px;
-            left: 140px;
-        }
-
-        .format-column {
-            float: left;
-            width: 100px;
-
-            h3 {
-                text-align: center;
-                margin: 0;
-            }
-
-            ul {
-                margin: 0;
-                list-style: none;
-                padding-left: 3px;
-
-                li {
-                    float: left;
-                    padding-right: 5px;
-                }
-            }
         }
     }
 }
