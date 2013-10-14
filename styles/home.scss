@@ -201,7 +201,6 @@
  * Components
  */
 #beta {
-    text-shadow: 0 0 1px #073045;
     background: #1692d0;
     padding: 0 12px;
     color: #fff;
@@ -211,10 +210,11 @@
     -webkit-transform: rotate(-45deg) translate3d(0,0,0);
     transform: rotate(-45deg) translate3d(0,0,0);
     position: absolute;
-    top: 52px;
+    top: 53px;
     left: -10px;
     z-index: 100;
     border-radius: 2px 2px 0 0;
+    text-transform: uppercase;
 
     &::before {
         content: '';
