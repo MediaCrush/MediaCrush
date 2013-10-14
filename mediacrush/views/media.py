@@ -102,10 +102,13 @@ class MediaView(FlaskView):
         text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
         return Response(text, mimetype="text/javascript") 
 
-    @route("/<h>/embed/content")
-    def embed_content(self, h):
+    @route("/<h>/direct")
+    def hash_direct(self, h):
+        template_params = self._template_params(h)
+        return render_template("direct.html", **template_params)
+
+    @route("/<h>/frame")
+    def frame(self, h):
         template_params = self._template_params(h)
         template_params['embedded'] = True
-        text = render_template(template_params['fragment'], **template_params)
-
-        return Response(text, mimetype="text/plain")
+        return render_template("direct.html", **template_params)

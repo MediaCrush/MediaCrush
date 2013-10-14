@@ -12,6 +12,7 @@ import subprocess
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
+from mediacrush.share import share
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
