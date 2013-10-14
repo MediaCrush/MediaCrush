@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response, g
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file
+from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -23,7 +23,7 @@ class MediaView(FlaskView):
 
         if f.compression:
             compression = int(float(f.compression) * 100)
-        if compression == 100:
+        if compression == 100 or processing_status(f.hash) != "done":
             compression = None
 
         can_delete = None
