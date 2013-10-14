@@ -112,6 +112,10 @@ def index():
 def mine():
     return render_template("mine.html")
 
+@app.route("/apps")
+def apps():
+    return render_template("apps.html")
+
 @app.route("/demo")
 def demo():
     return render_template("demo.html")
