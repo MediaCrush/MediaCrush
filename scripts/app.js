@@ -381,8 +381,13 @@ function createHistoryItem(data) {
             preview.appendChild(source);
         }
         preview.volume = 0;
-        preview.play();
         preview.className = 'item-view';
+        preview.onmouseenter = function(e) {
+            e.target.play();
+        };
+        preview.onmouseleave = function(e) {
+            e.target.pause();
+        };
     } else if (item.type.indexOf('image/') == 0) {
         preview = document.createElement('img');
         preview.src = item.original;
