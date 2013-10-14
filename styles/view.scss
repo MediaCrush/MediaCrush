@@ -59,8 +59,13 @@ dl {
     margin-top: 20px;
     background-color: #ddd;
     border-radius: 5px;
-    height: 115px;
+    height: 108px;
     padding: 5px;
     text-align: center;
     color: red;
+
+    .small {
+        position: relative;
+        top: -5px;
+    }
 }
