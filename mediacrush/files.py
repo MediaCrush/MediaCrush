@@ -109,6 +109,9 @@ class URLFile(object):
 def allowed_format(mimetype):
     return mimetype in EXTENSIONS
 
+def clean_extension(path, mimetype):
+    return "%s.%s" % (os.path.splitext(path)[0], EXTENSIONS[mimetype])
+
 def get_hash(f):
     return hashlib.md5(f.read()).digest()
 
