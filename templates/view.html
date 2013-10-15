@@ -20,7 +20,7 @@ window.filename = '{{ filename }}';
         <li><a href="#" id="share-link">Share</a></li>
         <li><a href="/{{ filename }}/download">Download</a></li>
         <li><a href="#" id="report">Report</a></li>
-        <li><a href="#" class="red">Delete</a></li>
+        <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>
     {% if compression %}
     {{ compression }}% faster on MediaCrush!
@@ -47,6 +47,40 @@ window.filename = '{{ filename }}';
         <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
+<script>
+var history = window.localStorage.getItem('history');
+history = JSON.parse(history);
+if (history == null) {
+    history = [];
+}
+{% if can_delete == 'check' %}
+var hashIndex = null;
+if (history) {
+    var canDelete = false;
+    for (var i = 0; i < history.length; i++) {
+        if (history[i] == '{{ filename }}') {
+            canDelete = true;
+            hashIndex = i;
+            break;
+        }
+    }
+    if (canDelete) {
+        document.getElementById('delete').parentElement.classList.remove('hidden');
+    }
+}
+document.getElementById('delete').addEventListener('click', function(e) {
+    e.preventDefault();
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/api/{{ filename }}/delete');
+    xhr.send();
+    document.getElementById('delete').parentElement.innerHTML = 'Deleted';
+    if (history) {
+        history.remove(hashIndex);
+        window.localStorage.setItem('history', JSON.stringify(history));
+    }
+}, false);
+{% endif %}
+</script>
 {% if ads and adsense_client != "CHANGEME" %}
 <div id="gad">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

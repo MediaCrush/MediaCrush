@@ -147,7 +147,7 @@ table {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .psuedohidden {
