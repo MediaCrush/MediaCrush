@@ -27,6 +27,7 @@ EXTENSIONS = {
     "audio/ogg": "oga",
     "image/gif": "gif",
     "image/jpeg": "jpg",
+    "image/png": "png",
     "image/svg+xml": "svg",
     # "text/plain": "txt",
     "video/mp4": "mp4",
@@ -151,42 +152,36 @@ def upload(f, filename):
     if not f.content_type:
         f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-    if f.content_type != "application/octet-stream":
-        # Add the proper file extension if the mimetype is provided
-        ext = EXTENSIONS.get(f.content_type)
-        if not ext:
-            # Should not happen.
-            return "no", 415
-        filename += "." + ext
-
-    if f and allowed_format(filename):
-        if not current_app.debug:
-            rate_limit_update(f)
-            if rate_limit_exceeded():
-                return "ratelimit", 420
-
-        h = get_hash(f)
-        identifier = to_id(h)
-        filename = "%s.%s" % (identifier, extension(filename))
-        path = os.path.join(_cfg("storage_folder"), filename)
-
-        if os.path.exists(path):
-            return identifier, 409
-
-        f.seek(0)  # Otherwise it'll write a 0-byte file
-        f.save(path)
-
-        file_object = File(hash=identifier)
-        file_object.original = filename
-        file_object.ip = secure_ip()
-        file_object.save()
-
-        r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
-        r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
-
-        return identifier
-    else:
+    if not allowed_format(f.content_type):
         return "no", 415
+
+    filename = clean_extension(filename, f.content_type)
+
+    if not current_app.debug:
+        rate_limit_update(f)
+        if rate_limit_exceeded():
+            return "ratelimit", 420
+
+    h = get_hash(f)
+    identifier = to_id(h)
+    filename = "%s.%s" % (identifier, extension(filename))
+    path = os.path.join(_cfg("storage_folder"), filename)
+
+    if os.path.exists(path):
+        return identifier, 409
+
+    f.seek(0)  # Otherwise it'll write a 0-byte file
+    f.save(path)
+
+    file_object = File(hash=identifier)
+    file_object.original = filename
+    file_object.ip = secure_ip()
+    file_object.save()
+
+    r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+    r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
+
+    return identifier
 
 def delete_file(f):
     ext = extension(f.original)
