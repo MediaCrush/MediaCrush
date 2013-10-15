@@ -8,18 +8,85 @@
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         {% endif %}
         <title>MediaCrush</title>
-        {% block scripts %}{% endblock %}
+        <script type="text/javascript">
+            {% if mobile %}
+            window.mobile = true;
+            {% else %}
+            window.mobile = false;
+            {% endif %}
+            Array.prototype.remove = function(from, to) {
+              var rest = this.slice((to || from) + 1 || this.length);
+              this.length = from < 0 ? this.length + from : from;
+              return this.push.apply(this, rest);
+            };
+            function readCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++) {
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+            function createCookie(name,value,days) {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime()+(days*24*60*60*1000));
+                    var expires = "; expires="+date.toGMTString();
+                }
+                else var expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+                document.cookie = name+"="+value+expires+"; path=/";
+            }
+            function adOptOut() {
+                createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
+                var gad = document.getElementById('gad');
+                var lgad = document.getElementById('lgad');
+                if (gad) {
+                    gad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
+                }
+                if (lgad) {
+                    lgad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
+                }
+            }
+
+            function switchTheme() {
+                if (readCookie('dark_theme'))
+                    createCookie('dark_theme', '', -1);
+                else
+                    createCookie('dark_theme', '1', 3650);
+                window.location.href = window.location.href;
+            }
+        </script>
+        {% block scripts %}
+        {% endblock %}
         <link href='//fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
         <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
-        {% if not mobile %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-        {% endif %}
         {% block styles %}{% endblock %}
         {% if dark_theme %}
         <link rel="stylesheet" href="{{ url_for('static', filename='dark.css') }}">
         {% endif %}
     </head>
     <body class="{% if not ads %}noads{% endif %}">
-    {% block content %}{% endblock %}
+        <div class="container">
+            <div class="navigation">
+                <h1 class="brand">
+                    <a href="/">
+                    <img src="/static/mediacrush_logo.svg" alt="logo" width=24 height=24 />
+                    MediaCrush</a>
+                </h1>
+                <ul>
+                    <li><a href="/">Upload</a></li>
+                    <li><a href="/apps">Apps</a></li>
+                    <li><a href="/donate">Donate</a></li>
+                    <li><a href="//blog.mediacru.sh">Blog</a></li>
+                    <li><a href="/demo">About</a></li>
+                </ul>
+                <a href="javascript:switchTheme();" class="pull-right small">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
+            </div>
+            <div class="content">
+                {% block content %}{% endblock %}
+        </div>
+        </div>
     </body>
 </html>

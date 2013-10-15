@@ -1,19 +1,3 @@
-function adOptOut() {
-    createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
-    var gad = document.getElementById('gad');
-    var lgad = document.getElementById('lgad');
-    gad.parentElement.removeChild(gad);
-    lgad.parentElement.removeChild(lgad);
-}
-
-function switchTheme() {
-    if (readCookie('dark_theme'))
-        createCookie('dark_theme', '', -1);
-    else
-        createCookie('dark_theme', '1', 3650);
-    window.location.href = window.location.href;
-}
-
 function browse() {
     var file = document.getElementById('browse');
     file.click();
@@ -397,8 +381,13 @@ function createHistoryItem(data) {
             preview.appendChild(source);
         }
         preview.volume = 0;
-        preview.play();
         preview.className = 'item-view';
+        preview.onmouseenter = function(e) {
+            e.target.play();
+        };
+        preview.onmouseleave = function(e) {
+            e.target.pause();
+        };
     } else if (item.type.indexOf('image/') == 0) {
         preview = document.createElement('img');
         preview.src = item.original;

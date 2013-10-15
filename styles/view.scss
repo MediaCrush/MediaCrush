@@ -1,0 +1,78 @@
+@import 'stylesheet.scss'
+
+.media-wrapper {
+    right: 50%;
+    position: relative;
+    float: right;
+
+    .media {
+        float: right;
+        right: -50%;
+        position: relative;
+
+        display: inline-block;
+
+        img, video {
+            max-width: 1000px;
+        }
+    }
+}
+
+.fullscreen video {
+    max-width: none !important;
+}
+
+.inline {
+    font-weight: bold;
+}
+
+#embed {
+    input {
+        display: block;
+        width: 100%;
+    }
+}
+
+dl {
+    width: 400px;
+    margin: 10px auto 0 auto;
+
+    dt {
+        float: left;
+        margin-right: 10px;
+        margin-top: 1px;
+        width: 100px;
+        text-align: right;
+    }
+
+    dd {
+        margin-bottom: 10px;
+        display: inline-block;
+        width: 290px;
+        margin-left: 0;
+
+        input {
+            display: block;
+            width: 100%;
+            border: 1px solid #888;
+            padding: 3px;
+            border-radius: 3px;
+            transition: border-color 0.5s linear;
+        }
+   }
+}
+
+#gad {
+    margin-top: 20px;
+    background-color: #ddd;
+    border-radius: 5px;
+    height: 108px;
+    padding: 5px;
+    text-align: center;
+
+    .small {
+        position: relative;
+        top: -5px;
+        color: red;
+    }
+}

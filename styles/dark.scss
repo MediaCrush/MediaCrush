@@ -3,8 +3,38 @@ body {
     color: #fff;
 }
 
+.navigation {
+    .brand a {
+        color: #fff;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
 #droparea {
-    background: #555;
+    background: url('/static/upload-dark.png') #666 no-repeat 140px 220px;
+
+    #droptext a {
+        color: #ccc;
+    }
+
+    #files ul {
+        li {
+            &.images {
+                background: url('/static/home-photo-dark.png') no-repeat 22px 0;
+            }
+
+            &.videos {
+                background: url('/static/home-video-dark.png') no-repeat 12px 0;
+            }
+
+            &.audio {
+                background: url('/static/home-audio-dark.png') no-repeat 18px 0;
+            }
+        }
+    }
 }
 
 #history ul li.fader {
@@ -49,6 +79,6 @@ a[href="https://pay.reddit.com/r/mediacrush"] {
     color: #fff;
 }
 
-.audio {
+.view .audio {
     background: #555 !important;
 }

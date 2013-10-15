@@ -1,3 +1,5 @@
+@import 'stylesheet.scss'
+
 .left {
     float: left;
     padding-left: 5px;
@@ -31,7 +33,11 @@ audio {
 
 .item-wrapper {
     a {
-        color: white;
+        color: #fff;
+
+        &:hover {
+            text-decoration: underline;
+        }
 
         &.red {
             color: #940000;
@@ -47,7 +53,7 @@ audio {
 
     .bar {
         background: rgba(111, 111, 111, 0.8);
-        color: white;
+        color: #fff;
         height: 23px;
         position: absolute;
         left: 0;
