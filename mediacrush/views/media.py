@@ -33,12 +33,12 @@ class MediaView(FlaskView):
         ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
-        fragments = ['mobilevideo', 'image', 'audio', 'video']
+        fragments = ['video', 'mobilevideo', 'image', 'audio']
         fragment_check = [ 
+            (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
             mimetype.startswith('video') and g.mobile,
             (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
             mimetype.startswith('audio'),
-            (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
         ] 
 
         for i, truth in enumerate(fragment_check):
