@@ -55,6 +55,19 @@ class URLFile(object):
             self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
 
+# mimetypes.guess_type is terrible. Use this instead.
+supported_types = {
+    # "application/pdf": "pdf",
+    "audio/mpeg": "mp3",
+    "audio/ogg": "oga",
+    "image/gif": "gif",
+    "image/jpeg": "jpg",
+    "image/svg+xml": "svg",
+    # "text/plain": "txt",
+    "video/mp4": "mp4",
+    "video/ogg": "ogv",
+}
+
 processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv'],
@@ -121,7 +134,7 @@ def compression_rate(f):
     f_original = File.from_hash(f)
     ext = extension(f_original.original).lower()
     if ext not in processing_needed: return 0
-    if len(processing_needed[ext]['formats']) == 0: return 0
+    if not processing_needed[ext]["formats"]: return 0
 
     original_size = os.path.getsize(file_storage(f_original.original))
     minsize = original_size
@@ -142,13 +155,10 @@ def compression_rate(f):
 def upload(f, filename):
     if f.content_type and f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
-        ext = mimetypes.guess_extension(f.content_type)
+        ext = supported_types.get(f.content_type)
         if not ext:
-            # Specified mimetype is not in /etc/mime.types.
-            # At this point, our best guess is to assume the extension
-            # is the last part of the mimetype.
-            ext = "." + f.content_type.split("/")[1]
-
+            # Should never happen.
+            return "no", 415
         filename += ext
 
     if f and allowed_file(filename):
