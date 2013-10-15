@@ -209,12 +209,16 @@
     display: inline-block;
     -webkit-transform: rotate(-45deg) translate3d(0,0,0);
     transform: rotate(-45deg) translate3d(0,0,0);
-    position: absolute;
-    top: 53px;
-    left: -10px;
     z-index: 100;
     border-radius: 2px 2px 0 0;
     text-transform: uppercase;
+    position: absolute;
+    top: 53px;
+    left: -10px;
+
+    .noads & {
+        left: -5px;
+    }
 
     &::before {
         content: '';
