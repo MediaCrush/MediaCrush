@@ -20,7 +20,7 @@ FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AU
 LOOP_FORMATS = set(["image/gif"])
 AUTOPLAY_FORMATS = set(["image/gif"])
 
-# mimetypes.guess_type is terrible. Use this instead.
+# mimetypes.guess_extension is terrible. Use this instead.
 EXTENSIONS = {
     # "application/pdf": "pdf",
     "audio/mpeg": "mp3",
@@ -31,6 +31,41 @@ EXTENSIONS = {
     # "text/plain": "txt",
     "video/mp4": "mp4",
     "video/ogg": "ogv",
+}
+
+processing_needed = {
+    "image/gif": {
+        "formats": ["video/mp4", "video/ogv"],
+        "time": 120,
+    },
+    "image/jpeg": {
+        "formats": [],
+        "time": 5
+    },
+    "image/png": {
+        "formats": [],
+        "time": 30
+    },
+    "image/svg+xml": {
+        "formats": [],
+        "time": 5
+    },
+    "audio/mp3": {
+        "formats": ["audio/ogg"],
+        "time": 120
+    },
+    "audio/ogg": {
+        "formats": ["audio/mp3"],
+        "time": 120
+    },
+    "video/mp4": {
+        "formats": ["video/ogg"],
+        "time": 300,
+    },
+    "video/ogg": {
+        "formats": ["video/mp4"],
+        "time": 300,
+    },
 }
 
 
@@ -71,53 +106,6 @@ class URLFile(object):
         self.filename = list(reversed(url.split("/")))[0]
 
 
-processing_needed = {
-    'gif': {
-        'formats': ['mp4', 'ogv'],
-        'time': 120,
-    },
-    'mp4': {
-        'formats': ['ogv'],
-        'time': 300,
-    },
-    'ogv': {
-        'formats': ['mp4'],
-        'time': 300,
-    },
-    'jpg': {
-        'formats': [],
-        'time': 5
-    },
-    'jpe': {
-        'formats': [],
-        'time': 5
-    },
-    'jpeg': {
-        'formats': [],
-        'time': 5
-    },
-    'png': {
-        'formats': [],
-        'time': 30
-    },
-    'svg': {
-        'formats': [],
-        'time': 5
-    },
-    'mp3': {
-        'formats': ['oga'],
-        'time': 120
-    },
-    'ogg': {
-        'formats': ['oga','mp3'],
-        'time': 120
-    },
-    'oga': {
-        'formats': ['mp3'],
-        'time': 120
-    }
-}
-
 def allowed_format(mimetype):
     return mimetype in EXTENSIONS
 
@@ -134,15 +122,16 @@ def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
 def compression_rate(f):
-    f_original = File.from_hash(f)
-    ext = extension(f_original.original).lower()
-    if ext not in processing_needed: return 0
-    if not processing_needed[ext]["formats"]: return 0
+    f_original = File.from_hash(f).original
+    mimetype = get_mimetype(f_original)
 
-    original_size = os.path.getsize(file_storage(f_original.original))
+    if mimetype not in processing_needed:
+        return 0
+
+    original_size = os.path.getsize(file_storage(f_original))
     minsize = original_size
-    for f_ext in processing_needed[ext]['formats']:
-        convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
+    for format in processing_needed[mimetype]["formats"]:
+        convsize = os.path.getsize(file_storage("%s.%s" % (f, EXTENSIONS[format])))
         minsize = min(minsize, convsize)
 
     # Cross-multiplication:
@@ -157,7 +146,7 @@ def compression_rate(f):
 
 def upload(f, filename):
     if not f.content_type:
-        f.content_type = mimetypes.guess_type(filename) or "application/octet-stream"
+        f.content_type = get_mimetype(filename) or "application/octet-stream"
 
     if f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
@@ -165,7 +154,7 @@ def upload(f, filename):
         if not ext:
             # Should not happen.
             return "no", 415
-        filename += ext
+        filename += "." + ext
 
     if f and allowed_format(filename):
         if not current_app.debug:

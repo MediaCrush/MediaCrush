@@ -8,7 +8,7 @@ from datetime import datetime
 
 from .config import _cfg, _cfgi
 from .database import r, _k
-from .files import processing_needed, extension, compression_rate
+from .files import compression_rate, processing_needed, get_mimetype, EXTENSIONS
 from .objects import File
 
 converters = {
@@ -58,7 +58,7 @@ class TimeLimitedCommand(object):
 def process_gif(filename):
     print('Processing ' + filename)
     f = File.from_hash(filename)
-    ext = extension(f.original)
+    mimetype = get_mimetype(f.original)
     path = os.path.join(_cfg("storage_folder"), f.original)
 
     statuscode = 0
@@ -66,14 +66,14 @@ def process_gif(filename):
     start = datetime.now()
 
     # Check if we know how to treat this file
-    if ext not in processing_needed:
+    if mimetype not in processing_needed:
         r.delete(_k("%s.lock" % filename))
         return
 
-    config = processing_needed[ext]
+    config = processing_needed[mimetype]
     # Do processing
-    if ext in processors:
-        code, exit = processors[ext](path).run(timeout=config['time'])
+    if mimetype in processors:
+        code, exit = processors[EXTENSIONS[mimetype]](path).run(timeout=config['time'])
         statuscode += code
         exited |= exit
 
