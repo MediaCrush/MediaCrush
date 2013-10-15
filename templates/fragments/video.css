@@ -3,6 +3,11 @@
 }
 .video {
     position: relative;
+    min-width: 250px;
+    min-height: 150px;
+}
+.video video {
+    max-width: 1000px;
 }
 .fullscreen.video {
     position: fixed;
@@ -178,21 +183,21 @@
     margin-top: -48px;
     margin-left: -48px;
 }
-h1.brand {
+.video h1.brand {
     position: relative;
     text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
-    font-size: 16pt;
+    font-size: 18pt;
     line-height: 45px;
     margin-top: -5px;
     margin-bottom: 10px;
 }
-.brand a {
+.video .brand a {
     color: #fff;
 }
-.brand a:hover {
+.video .brand a:hover {
     text-decoration: none;
 }
-.brand a span {
+.video .brand a span {
     float: left;
     position: relative;
     margin-top: 8px;
@@ -200,7 +205,7 @@ h1.brand {
     width: 32px;
     height: 32px;
 }
-.brand a span img {
+.video .brand a span img {
     position: absolute;
     top: 0;
     left: 0;

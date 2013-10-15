@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
+{% endblock %}
 {% block content %}
-<div class="wrapper">
-    <div class="content">
-        <h1>Thanks!</h1>
-        <p>Your support is very much appreciated. <a href="/">Click here to return to the home page</a>.</p>
-    </div>
+<div class="container">
+    <h1>Thanks!</h1>
+    <p>We're glad to have your support. <a href="/">Click here to return to the home page</a>.</p>
 </div>
 {% endblock %}

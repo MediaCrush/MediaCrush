@@ -17,3 +17,4 @@ env = config.get('meta', 'environment')
 
 _cfg = lambda k: config.get(env, k)
 _cfgi = lambda k: int(_cfg(k))
+domain_url = lambda path: "%s://%s/%s" % (_cfg("protocol"), _cfg("domain"), path)

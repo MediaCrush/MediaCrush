@@ -12,6 +12,7 @@ import subprocess
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
+from mediacrush.share import share
 
 app = Flask(__name__)
 app.secret_key = _cfg("secret_key")
@@ -100,17 +101,22 @@ def inject():
         'flattr_id': _cfg("flattr_id"),
         'adsense_client': _cfg("adsense_client"),
         'adsense_slot': _cfg("adsense_slot"),
-        'dark_theme': "dark_theme" in request.cookies
+        'dark_theme': "dark_theme" in request.cookies,
+        'ads': not "ad-opt-out" in request.cookies,
+        'share': share,
     }
 
 @app.route("/")
 def index():
-    opted_out = "ad-opt-out" in request.cookies
-    return render_template("index.html", ads=not opted_out)
+    return render_template("index.html")
 
 @app.route("/mine")
 def mine():
     return render_template("mine.html")
+
+@app.route("/apps")
+def apps():
+    return render_template("apps.html")
 
 @app.route("/demo")
 def demo():
@@ -133,6 +139,11 @@ def version():
 @app.route("/serious")
 def serious():
     return render_template("serious.html")
+
+@app.route("/mediacrush.js")
+def mediacrushjs():
+    v = render_template("mediacrush.js", host=_cfg("domain"))
+    return Response(v, mimetype="application/javascript")
 
 DocsView.register(app)
 APIView.register(app)

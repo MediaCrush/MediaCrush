@@ -5,6 +5,73 @@ body {
     font-family: "Open Sans", sans-serif;
 }
 
+.navigation {
+    font-size: 12pt;
+
+    .brand {
+        display: inline;
+        float: left;
+        margin: 0 0 10px;
+        position: relative;
+        font-size: 18pt;
+
+        a {
+            color: #000;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+
+        img {
+            float: left;
+            margin: 5px 3px 0 0;
+        }
+    }
+
+    ul {
+        display: inline;
+        float: left;
+        list-style: none;
+        margin: 7px 0 0 0;
+        padding-left: 10px;
+
+        li {
+            display: inline;
+            float: left;
+            margin: 0 10px;
+        }
+    }
+
+    .small {
+        margin-top: 5px;
+    }
+}
+
+ul.inline {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+        display: inline;
+        padding: 0 5px;
+    }
+}
+
+.content {
+    clear: both;
+}
+
+.narrow {
+    width: 270px;
+    padding: 0 25px;
+
+    .noads & {
+        padding: 0 5px;
+    }
+}
+
 a {
     font-weight: bold;
     color: #08c;
@@ -12,7 +79,14 @@ a {
 
     &:hover {
         color: #005580;
-        text-decoration: underline;
+    }
+
+    &.red {
+        color: red;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
@@ -52,6 +126,7 @@ table {
     width: 1000px;
     margin: 0 auto;
     text-align: justify;
+    position: relative;
 }
 
 .clearfix {
@@ -72,7 +147,7 @@ table {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .psuedohidden {
@@ -81,30 +156,13 @@ table {
     left: -1000px;
 }
 
-h1.brand {
-    margin: 0 0 10px;
-    position: relative;
-}
-
-.brand a {
-    float: left;
-    margin: 8px 5px 0 0;
-    position: relative;
-    height: 32px;
-    width: 32px;
-
-    img {
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-}
-
 /**
  * Grid
  */
-.grid .column {
-    float: left;
+.grid {
+    .column {
+        float: left;
+    }
 }
 
 .fixedgrid .column {

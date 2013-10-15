@@ -100,7 +100,7 @@
     height: 100%;
     pointer-events: none;
 }
-h1.brand {
+.audio h1.brand {
     position: relative;
     text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
     font-size: 16pt;
@@ -109,13 +109,13 @@ h1.brand {
     margin-left: 5px;
     float: left;
 }
-.brand a {
+.audio .brand a {
     color: #fff;
 }
-.brand a:hover {
+.audio .brand a:hover {
     text-decoration: none;
 }
-.brand a span {
+.audio .brand a span {
     float: left;
     position: relative;
     margin-top: 8px;
@@ -123,7 +123,7 @@ h1.brand {
     width: 32px;
     height: 32px;
 }
-.brand a span img {
+.audio .brand a span img {
     position: absolute;
     top: 0;
     left: 0;

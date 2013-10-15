@@ -1,4 +1,8 @@
-row {
+@import 'stylesheet.scss'
+
+.row {
+    margin-top: -20px;
+
     .left {
         float: left;
     }

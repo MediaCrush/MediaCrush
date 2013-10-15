@@ -67,11 +67,23 @@ class MediaView(FlaskView):
                 return send_file(path, as_attachment=True)
     
         return render_template("view.html", **self._template_params(id))
-
+    
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()
         return "ok"
+
+    @route("/<id>/direct")
+    def direct(self, id):
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id: 
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
+    
+        return render_template("direct.html", **self._template_params(id))
     
     @route("/<h>/delete")
     def delete(self, h):
@@ -90,10 +102,13 @@ class MediaView(FlaskView):
         text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
         return Response(text, mimetype="text/javascript") 
 
-    @route("/<h>/embed/content")
-    def embed_content(self, h):
+    @route("/<h>/direct")
+    def hash_direct(self, h):
+        template_params = self._template_params(h)
+        return render_template("direct.html", **template_params)
+
+    @route("/<h>/frame")
+    def frame(self, h):
         template_params = self._template_params(h)
         template_params['embedded'] = True
-        text = render_template(template_params['fragment'], **template_params)
-
-        return Response(text, mimetype="text/plain")
+        return render_template("direct.html", **template_params)
