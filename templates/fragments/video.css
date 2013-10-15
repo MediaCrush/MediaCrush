@@ -3,6 +3,8 @@
 }
 .video {
     position: relative;
+    min-width: 250px;
+    min-height: 150px;
 }
 .video video {
     max-width: 1000px;
