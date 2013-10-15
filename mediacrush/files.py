@@ -36,7 +36,7 @@ EXTENSIONS = {
 
 processing_needed = {
     "image/gif": {
-        "formats": ["video/mp4", "video/ogv"],
+        "formats": ["video/mp4", "video/ogg"],
         "time": 120,
     },
     "image/jpeg": {

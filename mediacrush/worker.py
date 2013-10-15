@@ -12,7 +12,7 @@ from .files import compression_rate, processing_needed, clean_extension, get_mim
 from .objects import File
 
 converters = {
-    "audio/mp4": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", outputpath]),
+    "video/mp4": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", outputpath]),
     "video/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", outputpath]),
     "audio/mpeg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, outputpath]),
     "audio/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, outputpath])
