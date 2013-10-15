@@ -94,7 +94,7 @@ class APIView(FlaskView):
         delete_file(f)
         return {'status': 'success'}
 
-    @route("/api/upload/file", methods=['POST', 'GET'])
+    @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
         f = request.files['file']
        
