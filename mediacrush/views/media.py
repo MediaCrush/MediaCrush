@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response, g
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file
+from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -23,7 +23,7 @@ class MediaView(FlaskView):
 
         if f.compression:
             compression = int(float(f.compression) * 100)
-        if compression == 100:
+        if compression == 100 or processing_status(f.hash) != "done":
             compression = None
 
         can_delete = None
@@ -33,17 +33,17 @@ class MediaView(FlaskView):
         ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
-        fragment = {
-            'image': (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
-            'video': (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
-            'mobilevideo': mimetype.startswith('video') and g.mobile,
-            'audio': mimetype.startswith('audio')
-        }
+        fragments = ['video', 'mobilevideo', 'image', 'audio']
+        fragment_check = [ 
+            (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
+            mimetype.startswith('video') and g.mobile,
+            (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
+            mimetype.startswith('audio'),
+        ] 
 
-        for key, truth in fragment.items():
+        for i, truth in enumerate(fragment_check):
             if truth:
-                fragment = key 
-                break
+                fragment = fragments[i] 
 
         return {
             'filename': f.hash,
