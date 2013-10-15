@@ -119,7 +119,7 @@ def file_storage(f):
 
 def compression_rate(f):
     f_original = File.from_hash(f)
-    ext = extension(f_original.original)
+    ext = extension(f_original.original).lower()
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
