@@ -1,9 +1,9 @@
 from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash 
+from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response
 import os
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file
+from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -20,12 +20,12 @@ class ImageView(FlaskView):
         if ".." in id or id.startswith("/"):
             abort(403)
 
-        if "." in id: 
+        if "." in id:
             if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
-    
-        f = File.from_hash(id) 
+
+        f = File.from_hash(id)
         if not f.original:
             abort(404)
 
@@ -36,15 +36,14 @@ class ImageView(FlaskView):
         if request.cookies.get('hist-opt-out', '0') == '1':
             can_delete = check_password_hash(f.ip, get_ip())
 
-        ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
         template_params = {
             'filename': f.hash,
             'original': f.original,
-            'video': ext in VIDEO_EXTENSIONS,
-            'loop': ext in LOOP_EXTENSIONS,
-            'autoplay': ext in AUTOPLAY_EXTENSIONS,
+            'video': mimetype in VIDEO_FORMATS,
+            'loop': mimetype in LOOP_FORMATS,
+            'autoplay': mimetype in AUTOPLAY_FORMATS,
             'compression': compression,
             'mimetype': mimetype,
             'can_delete': can_delete if can_delete is not None else 'check'
@@ -56,7 +55,7 @@ class ImageView(FlaskView):
         f = File.from_hash(id)
         f.add_report()
         return "ok"
-    
+
     @route("/<h>/delete")
     def delete(self, h):
         f = File.from_hash(h)
@@ -73,4 +72,4 @@ class ImageView(FlaskView):
     @route("/<h>/embed")
     def embed(self, h):
         text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
-        return Response(text, mimetype="text/javascript") 
+        return Response(text, mimetype="text/javascript")

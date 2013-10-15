@@ -13,11 +13,26 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
-AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
-EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
-LOOP_EXTENSIONS = set(['gif'])
-AUTOPLAY_EXTENSIONS = set(['gif'])
+
+VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
+AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
+FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AUDIO_FORMATS
+LOOP_FORMATS = set(["image/gif"])
+AUTOPLAY_FORMATS = set(["image/gif"])
+
+# mimetypes.guess_type is terrible. Use this instead.
+EXTENSIONS = {
+    # "application/pdf": "pdf",
+    "audio/mpeg": "mp3",
+    "audio/ogg": "oga",
+    "image/gif": "gif",
+    "image/jpeg": "jpg",
+    "image/svg+xml": "svg",
+    # "text/plain": "txt",
+    "video/mp4": "mp4",
+    "video/ogg": "ogv",
+}
+
 
 class URLFile(object):
     filename = None
@@ -55,18 +70,6 @@ class URLFile(object):
             self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
 
-# mimetypes.guess_type is terrible. Use this instead.
-supported_types = {
-    # "application/pdf": "pdf",
-    "audio/mpeg": "mp3",
-    "audio/ogg": "oga",
-    "image/gif": "gif",
-    "image/jpeg": "jpg",
-    "image/svg+xml": "svg",
-    # "text/plain": "txt",
-    "video/mp4": "mp4",
-    "video/ogg": "ogv",
-}
 
 processing_needed = {
     'gif': {
@@ -115,8 +118,8 @@ processing_needed = {
     }
 }
 
-def allowed_file(filename):
-    return '.' in filename and extension(filename) in EXTENSIONS
+def allowed_format(mimetype):
+    return mimetype in EXTENSIONS
 
 def get_hash(f):
     return hashlib.md5(f.read()).digest()
@@ -153,15 +156,18 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
-    if f.content_type and f.content_type != "application/octet-stream":
+    if not f.content_type:
+        f.content_type = mimetypes.guess_type(filename) or "application/octet-stream"
+
+    if f.content_type != "application/octet-stream":
         # Add the proper file extension if the mimetype is provided
-        ext = supported_types.get(f.content_type)
+        ext = EXTENSIONS.get(f.content_type)
         if not ext:
-            # Should never happen.
+            # Should not happen.
             return "no", 415
         filename += ext
 
-    if f and allowed_file(filename):
+    if f and allowed_format(filename):
         if not current_app.debug:
             rate_limit_update(f)
             if rate_limit_exceeded():
