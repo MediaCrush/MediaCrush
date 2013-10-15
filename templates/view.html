@@ -5,6 +5,7 @@
 {% block scripts %}
 <script type="text/javascript">
 window.filename = '{{ filename }}';
+window.can_delete = '{{ can_delete }}';
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
 {% endblock %}
@@ -47,40 +48,6 @@ window.filename = '{{ filename }}';
         <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
-<script>
-var history = window.localStorage.getItem('history');
-history = JSON.parse(history);
-if (history == null) {
-    history = [];
-}
-{% if can_delete == 'check' %}
-var hashIndex = null;
-if (history) {
-    var canDelete = false;
-    for (var i = 0; i < history.length; i++) {
-        if (history[i] == '{{ filename }}') {
-            canDelete = true;
-            hashIndex = i;
-            break;
-        }
-    }
-    if (canDelete) {
-        document.getElementById('delete').parentElement.classList.remove('hidden');
-    }
-}
-document.getElementById('delete').addEventListener('click', function(e) {
-    e.preventDefault();
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/api/{{ filename }}/delete');
-    xhr.send();
-    document.getElementById('delete').parentElement.innerHTML = 'Deleted';
-    if (history) {
-        history.remove(hashIndex);
-        window.localStorage.setItem('history', JSON.stringify(history));
-    }
-}, false);
-{% endif %}
-</script>
 {% if ads and adsense_client != "CHANGEME" %}
 <div id="gad">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
