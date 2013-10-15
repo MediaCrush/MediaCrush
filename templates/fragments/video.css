@@ -4,6 +4,9 @@
 .video {
     position: relative;
 }
+.video video {
+    max-width: 1000px;
+}
 .fullscreen.video {
     position: fixed;
     left: 0;
