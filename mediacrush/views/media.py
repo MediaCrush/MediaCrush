@@ -91,7 +91,7 @@ class MediaView(FlaskView):
 
     @route("/<id>/direct")
     def direct(self, id):
-        template_params = self._template_params(h)
+        template_params = self._template_params(id)
         return render_template("direct.html", **template_params)
 
     @route("/<h>/frame")
