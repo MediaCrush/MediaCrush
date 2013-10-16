@@ -12,8 +12,12 @@ from ..network import get_ip
 class MediaView(FlaskView):
     route_base = '/'
 
-    @route("/download/<id>")
+    @route("/<id>/download")
     def download(self, id):
+        f = File.from_hash(id)
+        if os.path.exists(os.path.join(_cfg("storage_folder"), f.original)):
+           path = os.path.join(_cfg("storage_folder"), f.original)
+           return send_file(path, as_attachment=True)
         return self.get(id)
 
     def _template_params(self, id): 
@@ -101,11 +105,6 @@ class MediaView(FlaskView):
     def embed(self, h):
         text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
         return Response(text, mimetype="text/javascript") 
-
-    @route("/<h>/direct")
-    def hash_direct(self, h):
-        template_params = self._template_params(h)
-        return render_template("direct.html", **template_params)
 
     @route("/<h>/frame")
     def frame(self, h):
