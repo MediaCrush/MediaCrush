@@ -14,11 +14,11 @@ class Share(object):
     def __call__(self, method, h):
         original = _still_image(h)
         if original:
+            arg = original if method is not "link" else h
             method += "_still"
-            arg = original
         else:
-            method += "_other"
             arg = h
+            method += "_other"
 
         return getattr(self, method)(arg)
 
