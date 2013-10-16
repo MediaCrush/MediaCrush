@@ -77,18 +77,6 @@ class MediaView(FlaskView):
         f.add_report()
         return "ok"
 
-    @route("/<id>/direct")
-    def direct(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(403)
-
-        if "." in id: 
-            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
-                path = os.path.join(_cfg("storage_folder"), id)
-                return send_file(path, as_attachment=True)
-    
-        return render_template("direct.html", **self._template_params(id))
-    
     @route("/<h>/delete")
     def delete(self, h):
         f = File.from_hash(h)
@@ -101,10 +89,10 @@ class MediaView(FlaskView):
         delete_file(f)
         return "ok"
 
-    @route("/<h>/embed")
-    def embed(self, h):
-        text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
-        return Response(text, mimetype="text/javascript") 
+    @route("/<id>/direct")
+    def direct(self, id):
+        template_params = self._template_params(h)
+        return render_template("direct.html", **template_params)
 
     @route("/<h>/frame")
     def frame(self, h):
