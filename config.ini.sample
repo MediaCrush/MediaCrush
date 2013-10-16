@@ -24,8 +24,6 @@ restart_command = supervisorctl reload
 redis-ip = 127.0.0.1
 redis-port = 6379
 
-secret_key = !!CHANGEME!!
-
 bytes_per_hour = 250000000
 
 google_analytics_id = UA-00000000-0
