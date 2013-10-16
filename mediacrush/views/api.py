@@ -2,57 +2,73 @@ from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
 from flask import request
 
-from ..decorators import json_output
+from ..decorators import json_output, cors
 from ..files import media_url, get_mimetype, processing_needed, delete_file, upload, URLFile, processing_status, EXTENSIONS
 from ..database import r, _k
 from ..objects import File
 from ..network import get_ip
 
+
+def _file_object(f):
+    if not f.original:
+        return {'error': 404}, 404
+
+    mimetype = get_mimetype(f.original)
+
+    ret = {
+        'original': media_url(f.original),
+        'type': mimetype,
+        'files': [],
+    }
+
+    if f.compression:
+        ret['compression'] = float(f.compression)
+
+    ret['files'].append(_file_entry(f.original))
+
+    if mimetype in processing_needed:
+        for format in processing_needed[mimetype]["formats"]:
+            ret["files"].append(_file_entry("%s.%s" % (f.hash, EXTENSIONS[format])))
+
+    return ret
+
+def _file_entry(f):
+    return {
+        'type': get_mimetype(f),
+        'file': media_url(f),
+    }
+
+def _upload_f(f, filename):
+    result = upload(f, filename)
+    if not isinstance(result, tuple):
+        return {'hash': result}
+    else:
+        h, status = result
+
+        resp = {'error': status}
+        if status == 409:
+            f = _file_object(File.from_hash(h))
+
+            resp[h] = f
+            resp['hash'] = h
+
+        return resp, status
+
 class APIView(FlaskView):
+    decorators = [json_output, cors]
     route_base = '/'
-
-    @staticmethod
-    def _file_entry(f):
-        return {
-            'type': get_mimetype(f),
-            'file': media_url(f),
-        }
-
-    @staticmethod
-    def _file_object(f):
-        if not f.original:
-            return {'error': 404}, 404
-
-        mimetype = get_mimetype(f.original)
-
-        ret = {
-            'original': media_url(f.original),
-            'type': mimetype,
-            'files': [],
-        }
-        if f.compression:
-            ret['compression'] = float(f.compression)
-
-        if mimetype in processing_needed:
-            for format in processing_needed[mimetype]["formats"]:
-                ret["files"].append(APIView._file_entry("%s.%s" % (f.hash, EXTENSIONS[format])))
-
-        ret['files'].append(APIView._file_entry(f.original))
-        return ret
 
     @route("/api/<id>")
     @route("/<id>.json")
-    @json_output
     def get(self, id):
         f = File.from_hash(id)
 
         if not f.original:
             return {'error': 404}, 404
 
-        return APIView._file_object(f)
+        return _file_object(f)
 
     @route("/api/info")
-    @json_output
     def info(self):
         if not "list" in request.args:
             return {'error': 400}, 400
@@ -65,12 +81,11 @@ class APIView(FlaskView):
             if not f.original:
                 res[i] = None
             else:
-                res[i] = APIView._file_object(f)
+                res[i] = _file_object(f)
 
         return res
 
     @route("/api/<h>/delete")
-    @json_output
     def delete(self, h):
         f = File.from_hash(h)
         if not f.original:
@@ -80,7 +95,6 @@ class APIView(FlaskView):
 
         delete_file(f)
         return {'status': 'success'}
-
 
     @staticmethod
     def _upload_f(f, filename):
@@ -99,29 +113,28 @@ class APIView(FlaskView):
 
             return resp, status
 
-
     @route("/api/upload/file", methods=['POST'])
-    @json_output
     def upload_file(self):
         f = request.files['file']
 
-        return APIView._upload_f(f, f.filename)
+        return _upload_f(f, f.filename)
 
     @route("/api/upload/url", methods=['POST'])
-    @json_output
     def upload_url(self):
         url = request.form['url']
         f = URLFile()
 
         try:
-            f.download(url)
+            success = f.download(url)
         except:
             return {'error': 400}, 400
 
-        return APIView._upload_f(f, f.filename)
+        if not success:
+            return {'error': 404}, 404
+
+        return _upload_f(f, f.filename)
 
     @route("/api/<h>/status")
-    @json_output
     def status(self, h):
         f = File.from_hash(h)
         if not f.original:
@@ -129,13 +142,12 @@ class APIView(FlaskView):
 
         ret = {'status': processing_status(h)}
         if ret['status'] == 'done':
-            ret[h] = APIView._file_object(f)
+            ret[h] = _file_object(f)
             ret['hash'] = h
 
         return ret
 
     @route("/api/<h>/exists")
-    @json_output
     def exists(self, h):
         f = File.from_hash(h)
         if not f.original:

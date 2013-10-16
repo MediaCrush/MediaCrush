@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset=utf-8 />
+        <meta type="robots" content="noindex,nofollow" />
+        <meta property="og:type" content="{{ mimetype }}" />
+        <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+        <meta property="og:site_name" content="MediaCrush" />
+        {% if mobile %}
+        <meta name="viewport" content="width=device-width" />
+        {% endif %}
+        {% if mimetype.startswith("image") %}
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+        {% endif %}
+        <title>MediaCrush</title>
+        <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link rel="icon" type="image/vnd.microsoft.icon" href="/static/favicon.ico" />
+        <style type="text/css">input[type="text"]{width:95%;margin:0 auto;}body{margin:0;font-family:'Open Sans',sans-serif;padding:0;}.small{font-size:8pt;}a{color:#08c;text-decoration:none;}a:hover{color:#005580;text-decoration:underline;}.row{clear:both;text-align:center;}.zout{cursor:-webkit-zoom-in;cursor:-moz-zoom-in;cursor:zoom-in;}.zin{cursor:-webkit-zoom-out;cursor:-moz-zoom-out;cursor:zoom-out;}.red{color:red;}a.red:hover{color:red;}.hidden{display:none;}</style>
+        {% if dark_theme %}
+        <link rel="stylesheet" type="text/css" href="/static/dark.css" />
+        {% endif %}
+    </head>
+    <body class="view">
+        <div style="display: inline-block">
+            {% include fragment %}
+        </div>
+        <script type="text/javascript">
+            window.addEventListener('load', function() {
+                var hash = window.location.hash;
+                if (hash.length > 1) {
+                    handleHash(hash);
+                }
+            }, false);
+            function handleHash(hash) {
+                if (mediaHashHandler)
+                    mediaHashHandler(hash.substr(1));
+            }
+        </script>
+    </body>
+    {% include "analytics.html" %}
+</html>

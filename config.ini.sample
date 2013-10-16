@@ -2,6 +2,9 @@
 environment = dev
 
 [dev]
+protocol = https
+domain = mediacru.sh
+
 debug-host = 0.0.0.0
 debug-port = 5000
 
@@ -40,4 +43,4 @@ mandrill_api = changeme
 admin_email = changeme@changeme.com
 from_email = admin@mediacru.sh
 
-docs_path = /home/service/webapps/MediaCrush/docs/
+docs_path = docs

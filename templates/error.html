@@ -1,10 +1,9 @@
 {% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
+{% endblock %}
 {% block content %}
-<div class="wrapper">
-    <div class="content">
-        <h1>Error - {{ error }}</h1>
-        <p>Something went wrong. You can go <a href="/">to the home page</a> or you can
-        <a href="mailto:support@mediacru.sh">email us</a> if the problem persists.</p>
-    </div>
-</div>
+<h1>Error - {{ error }}</h1>
+<p>Something went wrong. You can go <a href="/">to the home page</a> or you can
+<a href="mailto:support@mediacru.sh">email us</a> if the problem persists.</p>
 {% endblock %}

@@ -1,0 +1,84 @@
+body {
+    background: #333;
+    color: #fff;
+}
+
+.navigation {
+    .brand a {
+        color: #fff;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+#droparea {
+    background: url('/static/upload-dark.png') #666 no-repeat 140px 220px;
+
+    #droptext a {
+        color: #ccc;
+    }
+
+    #files ul {
+        li {
+            &.images {
+                background: url('/static/home-photo-dark.png') no-repeat 22px 0;
+            }
+
+            &.videos {
+                background: url('/static/home-video-dark.png') no-repeat 12px 0;
+            }
+
+            &.audio {
+                background: url('/static/home-audio-dark.png') no-repeat 18px 0;
+            }
+        }
+    }
+}
+
+#history ul li.fader {
+    background: linear-gradient(to top, rgb(50, 50, 50), rgba(50, 50, 50, 0)) repeat scroll 0% 0% transparent;
+}
+
+.image-loading {
+    background: #333;
+}
+
+a:hover {
+    color: #00bfff;
+}
+
+#gad, #lgad {
+    background: #555;
+}
+
+pre {
+    background: #555;
+    color: #fff;
+    border: none;
+}
+
+a[href="https://twitter.com/mediacru_sh"] {
+    background: url('/static/twitter-inverted.png') no-repeat;
+}
+
+a[href="https://pay.reddit.com/r/mediacrush"] {
+    background: url('/static/reddit-inverted.png') no-repeat;
+}
+
+.pagination li:hover, .pagination li.selected {
+    background: #555;
+}
+
+.pagination li.smart-pagination:hover {
+    background: #333;
+}
+
+.pagination li.selected a {
+    color: #fff;
+}
+
+.view .audio {
+    background: #555 !important;
+}

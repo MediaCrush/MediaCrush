@@ -1,0 +1,219 @@
+/*
+ * Element styles and UI components
+ */
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
+.navigation {
+    font-size: 12pt;
+
+    .brand {
+        display: inline;
+        float: left;
+        margin: 0 0 10px;
+        position: relative;
+        font-size: 18pt;
+
+        a {
+            color: #000;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+
+        img {
+            float: left;
+            margin: 5px 3px 0 0;
+        }
+    }
+
+    ul {
+        display: inline;
+        float: left;
+        list-style: none;
+        margin: 7px 0 0 0;
+        padding-left: 10px;
+
+        li {
+            display: inline;
+            float: left;
+            margin: 0 10px;
+        }
+    }
+
+    .small {
+        margin-top: 5px;
+    }
+}
+
+ul.inline {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+        display: inline;
+        padding: 0 5px;
+    }
+}
+
+.content {
+    clear: both;
+}
+
+.narrow {
+    width: 270px;
+    padding: 0 25px;
+
+    .noads & {
+        padding: 0 5px;
+    }
+}
+
+a {
+    font-weight: bold;
+    color: #08c;
+    text-decoration: none;
+
+    &:hover {
+        color: #005580;
+    }
+
+    &.red {
+        color: red;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+h4 {
+    margin: 0;
+}
+
+audio {
+    width: 100%;
+}
+
+pre {
+    padding: 10px;
+    display: block;
+    border: 1px solid #ddd;
+    background: #f8f8f8;
+    color: #666;
+    border-radius: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+
+    tr:first-child th, tr:first-child td {
+        border-top: none;
+    }
+
+    th, td {
+        border-top: 1px solid #ddd;
+        padding: 8px;
+    }
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+    text-align: justify;
+    position: relative;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.center {
+    text-align: center;
+}
+
+.small {
+    font-size: 10pt;
+}
+
+.error {
+    color: red;
+    font-size: 10pt;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.psuedohidden {
+    display: inline-block;
+    position: absolute;
+    left: -1000px;
+}
+
+/**
+ * Grid
+ */
+.grid {
+    .column {
+        float: left;
+    }
+}
+
+.fixedgrid .column {
+    float: left;
+    width: 333px;
+}
+
+/**
+ * Progress bars
+ */
+
+.progress {
+    -webkit-animation: progressbar 1s linear infinite;
+    animation: progressbar 1s linear infinite;
+    background-color: #149bdf;
+    background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+    bottom: 0;
+    position: absolute;
+    height: 8px;
+    width: 50%;
+}
+
+.progress-green {
+    background-color: #5eb95e;
+}
+
+@-webkit-keyframes progressbar {
+    from {
+        background-position: 0px 0px;
+    }
+    to {
+        background-position: 39px 0px;
+    }
+}
+
+@keyframes progressbar {
+    from {
+        background-position: 0px 0px;
+    }
+    to {
+        background-position: 39px 0px;
+    }
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}

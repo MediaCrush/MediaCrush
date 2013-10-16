@@ -13,9 +13,9 @@ from .objects import File
 
 converters = {
     "video/mp4": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", outputpath]),
-    "video/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", outputpath]),
+    "video/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "-acodec", "libvorbis", outputpath]),
     "audio/mpeg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, outputpath]),
-    "audio/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, outputpath])
+    "audio/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", "-acodec", "libvorbis", path, outputpath])
 }
 
 processors = {
@@ -25,6 +25,7 @@ processors = {
 }
 
 class TimeLimitedCommand(object):
+    crashed = False
 
     def __init__(self, *args):
         self.args = args
@@ -32,9 +33,13 @@ class TimeLimitedCommand(object):
 
     def _target(self):
         with open(os.devnull, "w") as devnull:
-            self.process = subprocess.Popen(
-                *self.args, stdout=devnull, stderr=devnull)
-            self.process.communicate()
+            try:
+                self.process = subprocess.Popen(
+                    *self.args, stdout=devnull, stderr=devnull)
+                self.process.communicate()
+            except:
+                self.crashed = True
+                return
 
     def run(self, timeout=_cfgi("max_processing_time")):
         exited = False
@@ -50,7 +55,7 @@ class TimeLimitedCommand(object):
             exited = True
 
         if self.process == None:
-            return 0, exited
+            return 0 if not self.crashed else 1, exited
         return self.process.returncode, exited
 
 
@@ -69,20 +74,23 @@ def process_gif(filename):
         r.delete(_k("%s.lock" % filename))
         return
 
-    config = processing_needed[mimetype]
-    # Do processing
-    if mimetype in processors:
-        code, exit = processors[mimetype](path).run(timeout=config['time'])
-        statuscode += code
-        exited |= exit
+    try:
+        config = processing_needed[mimetype]
+        # Do processing
+        if mimetype in processors:
+            code, exit = processors[mimetype](path).run(timeout=config['time'])
+            statuscode += code
+            exited |= exit
 
-    # Do conversions
-    basepath = os.path.join(_cfg("storage_folder"), filename)
-    for format in config["formats"]:
-        outputpath = clean_extension(basepath, format)
-        code, exit = converters[format](path, outputpath).run(timeout=config['time'])
-        statuscode += code
-        exited |= exit
+        # Do conversions
+        basepath = os.path.join(_cfg("storage_folder"), filename)
+        for format in config["formats"]:
+            outputpath = clean_extension(basepath, format)
+            code, exit = converters[format](path, outputpath).run(timeout=config['time'])
+            statuscode += code
+            exited |= exit
+    except Exception:
+        statuscode += 1
 
     # Set the compression rate
     f.compression = compression_rate(filename)

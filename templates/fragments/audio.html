@@ -1,0 +1,49 @@
+<div class="audio">
+    <audio id="audio-{{ filename }}">
+        <source src="/{{ filename }}.mp3" type='audio/mpeg'>
+        <source src="/{{ filename }}.ogg" type='audio/ogg'>
+    </audio>
+    <h1 class="brand">
+        <a href="/" target="_blank">
+            <span>
+                <img src="/static/logo-bg.png" class="bg" alt="logo" />
+                <img src="/static/logo-fg.png" alt="logo" />
+            </span>
+        MediaCrush</a>
+    </h1>
+    <div class="controls">
+        <div class="pull-left">
+            {# Play/pause and current time #}
+            <a href="#" class="control {% if autoplay %}pause{% else %}play{% endif %}" data-audio="audio-{{ filename }}"></a>
+            <span class="time" data-audio="audio-{{ filename }}">0:00</span>
+        </div>
+        <div class="pull-right">
+            {# Volume and loop #}
+            <a href="#" class="control mute" data-audio="audio-{{ filename }}"></a>
+            <div class="volume" data-audio="audio-{{ filename }}">
+                <div class="amount" style="width: 100%;"></div>
+            </div>
+            <a href="#" class="control loop" data-audio="audio-{{ filename }}"></a>
+        </div>
+        <div class="seek" data-audio="audio-{{ filename }}">
+            {# Seeking
+               "unbuffered" is a 100% wide thing that's just there to seek with
+               "buffered" is as wide as the video has buffered
+               "progress" is as wide as the video has played
+               "indicator" is as left as the video has played #}
+            <div class="bar unbuffered"></div>
+            <div class="bar buffering"></div>
+            <div class="bar progress" style="width: 0%;"></div>
+            <div class="indicator" style="left: 0%;"></div>
+        </div>
+    </div>
+</div>
+{% if videologic is not defined %}
+{% set videologic = True %}
+<style>
+{% include "fragments/audio.css" %}
+</style>
+<script type="text/javascript">
+{% include "fragments/audio.js" %}
+</script>
+{% endif %}

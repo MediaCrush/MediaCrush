@@ -1,0 +1,6 @@
+<video controls {% if loop %}loop {% endif %}>
+  <source src="/{{ filename }}.mp4" type='video/mp4;'>
+  <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+</video>
+<p>Watching video on a mobile device might not work so well - try to download the
+video and play it on your system player if this doesn't work.</p>

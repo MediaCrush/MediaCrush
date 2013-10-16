@@ -1,0 +1,212 @@
+.video a {
+    outline: none;
+}
+.video {
+    position: relative;
+    min-width: 250px;
+    min-height: 150px;
+}
+.video video {
+    max-width: 1000px;
+}
+.fullscreen.video {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+}
+.fullscreen.video video {
+    width: 100%;
+    height: 100%;
+}
+.fullscreen ~ .row {
+    display: none;
+}
+.video .hover {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transition: opacity 0.3s linear;
+    padding: 10px;
+}
+.video:hover .hover {
+    opacity: 1;
+}
+.video:hover .hover.disabled {
+    opacity: 0;
+    cursor: none;
+}
+.video .controls {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    background: rgba(50, 50, 50, 0.8);
+    height: 32px;
+    line-height: 32px;
+    padding: 5px;
+}
+.fullscreen.video .controls {
+    bottom: 0;
+}
+.controls .pull-left {
+    float: left;
+    width: 80px;
+}
+.controls .pull-right {
+    float: right;
+    width: 155px;
+}
+.controls .time {
+    position: relative;
+    top: -9px;
+    font-weight: bold;
+    color: #fff;
+}
+.video .seek {
+    margin-left: 80px;
+    margin-right: 155px;
+    margin-top: 8px;
+    position: relative;
+    height: 16px;
+}
+.video .seek .bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    cursor: pointer;
+}
+.video .seek .unbuffered {
+    width: 100%;
+    height: 50%;
+    top: 25%;
+    background: transparent;
+}
+.video .seek .buffering {
+    background: #888;
+    height: 50%;
+    top: 25%;
+}
+.video .seek .progress {
+    background: #fff;
+    height: 100%;
+}
+.video .seek .indicator {
+    width: 2px;
+    height: 150%;
+    background: #fff;
+    box-shadow: 0 0 2px 2px rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: -25%;
+    margin-left: -1px;
+}
+.video .side {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.video .side .loop {
+    display: block;
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    color: #888;
+    opacity: 0.8;
+    border-radius: 10px;
+    text-decoration: none;
+    background: url('/static/repeat.png') no-repeat 16px 24px #333;
+    transition: box-shadow 0.3s linear;
+}
+.video .side .loop.enabled {
+    box-shadow: 0 0 5px 5px #fff;
+    color: #fff;
+}
+.control {
+    width: 32px;
+    height: 32px;
+    background: url('/static/controls.png') 0 0 transparent no-repeat;
+    display: inline-block;
+}
+.control.pause {
+    background-position: -32px 0;
+}
+.control.mute {
+    background-position: -64px 0;
+}
+.control.unmute {
+    background-position: -96px 0;
+}
+.control.full {
+    background-position: -160px 0;
+}
+.control.window {
+    background-position: -128px 0;
+}
+.volume {
+    display: inline-block;
+    width: 80px;
+    height: 16px;
+    position: relative;
+    top: -8px;
+    background: #444;
+    cursor: pointer;
+}
+.volume .amount {
+    background: #fff;
+    height: 100%;
+    pointer-events: none;
+}
+.control.play.large {
+    background: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+.control.play.large.hidden {
+    display: none;
+}
+.control.play.large img {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -48px;
+    margin-left: -48px;
+}
+.video h1.brand {
+    position: relative;
+    text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
+    font-size: 18pt;
+    line-height: 45px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+.video .brand a {
+    color: #fff;
+}
+.video .brand a:hover {
+    text-decoration: none;
+}
+.video .brand a span {
+    float: left;
+    position: relative;
+    margin-top: 8px;
+    margin-right: 5px;
+    width: 32px;
+    height: 32px;
+}
+.video .brand a span img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
