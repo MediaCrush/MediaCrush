@@ -15,7 +15,6 @@ from mediacrush.files import extension
 from mediacrush.share import share
 
 app = Flask(__name__)
-app.secret_key = _cfg("secret_key")
 app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
