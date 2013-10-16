@@ -1,3 +1,8 @@
+var history = window.localStorage.getItem('history');
+history = JSON.parse(history);
+if (history == null) {
+    history = [];
+}
 window.addEventListener('load', function() {
     var inputs = document.querySelectorAll('input.selectall');
     for (var i = 0; i < inputs.length; i++) {
@@ -30,11 +35,6 @@ window.addEventListener('load', function() {
             embed.className = 'hidden';
         }
     });
-    var history = window.localStorage.getItem('history');
-    history = JSON.parse(history);
-    if (history == null) {
-        history = [];
-    }
     if (window.can_delete == 'check') {
         var hashIndex = null;
         if (history) {
