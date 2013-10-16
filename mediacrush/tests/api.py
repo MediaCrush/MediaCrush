@@ -9,6 +9,14 @@ class APITestCase(TestMixin):
             'file': (open('test_data/%s' % f), f)
         }, environ_base={'REMOTE_ADDR': ip})
 
+    def _get_hash(self, f):
+        return json.loads(self._upload(f).data)['hash']
+
+    def test_jsonp_callbacks(self):
+        response = self.client.get('/api/dummy?callback=function123')
+
+        self.assertTrue(response.data.startswith("function123({"))
+
     def test_bad_hash(self):
         response = self.client.get('/api/asdfasdfasdf')
         
@@ -41,7 +49,7 @@ class APITestCase(TestMixin):
         self.assertEqual(response.status_code, 415)
 
     def test_delete(self):
-        h = json.loads(self._upload('cat.png').data)['hash']
+        h = self._get_hash('cat.png')
         response = self.client.get('/api/%s/delete' % h, environ_base={
             'REMOTE_ADDR': '127.0.0.1'
         })
@@ -49,10 +57,25 @@ class APITestCase(TestMixin):
         self.assertEqual(response.status_code, 200)
 
     def test_delete_bad_ip(self):
-        h = json.loads(self._upload('cat.png').data)['hash']
+        h = self._get_hash('cat.png') 
         response = self.client.get('/api/%s/delete' % h, environ_base={
             'REMOTE_ADDR': '127.0.0.2'
         })
 
         self.assertEqual(response.status_code, 401)
 
+    def test_delete_bad_hash(self):
+        response = self.client.get('/api/asdfasgdfs/delete')
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_list(self):
+        h = [
+           self._get_hash('cat.png'),
+           self._get_hash('cat2.jpg')
+        ]
+
+        response = self.client.get('/api/info?list=x8bQs1NSiTm0,HM-nQeR0oJ7p')
+
+        self.assertIn(u'x8bQs1NSiTm0', response.data)
+        self.assertIn(u'HM-nQeR0oJ7p', response.data)
