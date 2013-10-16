@@ -39,7 +39,7 @@ This script will insert the following markup after the script tag:
 
 Note that `data-type` is the original type of the uploaded image. Embedded gifs will be embedded as HTML5
 video, but still show `data-type="image/gif"`. Additionally, other media may actually contain several files
-of different types - for example, videos will include `video/mp4` and `video/ogv` files, regardless of the
+of different types - for example, videos will include `video/mp4` and `video/ogg` files, regardless of the
 original file type.
 
 You can also manually embed media by just taking the generated markup and dropping it into your page, which

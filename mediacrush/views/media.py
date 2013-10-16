@@ -1,9 +1,9 @@
-from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash 
-from flask import send_file, render_template, abort, request, Response, g
 import os
+from flask.ext.classy import FlaskView, route
+from flaskext.bcrypt import check_password_hash
+from flask import send_file, render_template, abort, request, Response, g
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status
+from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file, processing_status
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -20,8 +20,19 @@ class MediaView(FlaskView):
            return send_file(path, as_attachment=True)
         return self.get(id)
 
-    def _template_params(self, id): 
-        f = File.from_hash(id) 
+    def get(self, id):
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id:
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
+
+        return render_template("view.html", **self._template_params(id))
+
+    def _template_params(self, id):
+        f = File.from_hash(id)
         if not f.original:
             abort(404)
 
@@ -34,27 +45,26 @@ class MediaView(FlaskView):
         if request.cookies.get('hist-opt-out', '0') == '1':
             can_delete = check_password_hash(f.ip, get_ip())
 
-        ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
         fragments = ['video', 'mobilevideo', 'image', 'audio']
-        fragment_check = [ 
+        fragment_check = [
             (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
             mimetype.startswith('video') and g.mobile,
             (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
             mimetype.startswith('audio'),
-        ] 
+        ]
 
         for i, truth in enumerate(fragment_check):
             if truth:
-                fragment = fragments[i] 
+                fragment = fragments[i]
 
         return {
             'filename': f.hash,
             'original': f.original,
-            'video': ext in VIDEO_EXTENSIONS,
-            'loop': ext in LOOP_EXTENSIONS,
-            'autoplay': ext in AUTOPLAY_EXTENSIONS,
+            'video': mimetype in VIDEO_FORMATS,
+            'loop': mimetype in LOOP_FORMATS,
+            'autoplay': mimetype in AUTOPLAY_FORMATS,
             'compression': compression,
             'mimetype': mimetype,
             'can_delete': can_delete if can_delete is not None else 'check',
@@ -65,13 +75,13 @@ class MediaView(FlaskView):
         if ".." in id or id.startswith("/"):
             abort(403)
 
-        if "." in id: 
+        if "." in id:
             if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
-    
+
         return render_template("view.html", **self._template_params(id))
-    
+
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()
@@ -82,13 +92,13 @@ class MediaView(FlaskView):
         if ".." in id or id.startswith("/"):
             abort(403)
 
-        if "." in id: 
+        if "." in id:
             if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
-    
+
         return render_template("direct.html", **self._template_params(id))
-    
+
     @route("/<h>/delete")
     def delete(self, h):
         f = File.from_hash(h)
@@ -104,7 +114,7 @@ class MediaView(FlaskView):
     @route("/<h>/embed")
     def embed(self, h):
         text = render_template("embed.js", hash=filter(lambda c: unicode.isalnum(c) or c in ['-', '_'], h))
-        return Response(text, mimetype="text/javascript") 
+        return Response(text, mimetype="text/javascript")
 
     @route("/<h>/frame")
     def frame(self, h):

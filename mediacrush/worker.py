@@ -8,21 +8,20 @@ from datetime import datetime
 
 from .config import _cfg, _cfgi
 from .database import r, _k
-from .files import processing_needed, extension, compression_rate
+from .files import compression_rate, processing_needed, clean_extension, get_mimetype
 from .objects import File
 
 converters = {
-    'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
-    'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "-acodec", "libvorbis", "%s.ogv" % outputpath]),
-    'mp3': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "%s.mp3" % outputpath]),
-    'ogg': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-acodec", "libvorbis", "%s.ogg" % outputpath])
+    "video/mp4": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", outputpath]),
+    "video/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "-acodec", "libvorbis", outputpath]),
+    "audio/mpeg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, outputpath]),
+    "audio/ogg": lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", "-acodec", "libvorbis", path, outputpath])
 }
 
 processors = {
-    'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
-    'jpeg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
-    'png': lambda path: TimeLimitedCommand(["optipng", "-o5", path]),
-    'svg': lambda path: TimeLimitedCommand(["tidy", "-asxml", "-xml", "--hide-comments", "1", "--wrap", "0", "--quiet", "--write-back", "1", path])
+    "image/jpg": lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
+    "image/png": lambda path: TimeLimitedCommand(["optipng", "-o5", path]),
+    "image/svg+xml": lambda path: TimeLimitedCommand(["tidy", "-asxml", "-xml", "--hide-comments", "1", "--wrap", "0", "--quiet", "--write-back", "1", path])
 }
 
 class TimeLimitedCommand(object):
@@ -63,7 +62,7 @@ class TimeLimitedCommand(object):
 def process_gif(filename):
     print('Processing ' + filename)
     f = File.from_hash(filename)
-    ext = extension(f.original)
+    mimetype = get_mimetype(f.original)
     path = os.path.join(_cfg("storage_folder"), f.original)
 
     statuscode = 0
@@ -71,25 +70,26 @@ def process_gif(filename):
     start = datetime.now()
 
     # Check if we know how to treat this file
-    if ext not in processing_needed:
+    if mimetype not in processing_needed:
         r.delete(_k("%s.lock" % filename))
         return
 
     try:
-        config = processing_needed[ext]
+        config = processing_needed[mimetype]
         # Do processing
-        if ext in processors:
-            code, exit = processors[ext](path).run(timeout=config['time'])
+        if mimetype in processors:
+            code, exit = processors[mimetype](path).run(timeout=config['time'])
             statuscode += code
             exited |= exit
 
         # Do conversions
-        outputpath = os.path.join(_cfg("storage_folder"), filename)
-        for conversion in config['formats']:
-            code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
+        basepath = os.path.join(_cfg("storage_folder"), filename)
+        for format in config["formats"]:
+            outputpath = clean_extension(basepath, format)
+            code, exit = converters[format](path, outputpath).run(timeout=config['time'])
             statuscode += code
             exited |= exit
-    except:
+    except Exception:
         statuscode += 1
 
     # Set the compression rate
@@ -107,10 +107,10 @@ def process_gif(filename):
 
     # Remove artifacts if the conversion fails
     if failed:
-        for artifact_ext in config['formats']:
-            path = outputpath + "." + artifact_ext
-            if os.path.exists(path):
-                os.unlink(path)
+        for format in config["formats"]:
+            outputpath = clean_extension(basepath, format)
+            if os.path.exists(outputpath):
+                os.unlink(outputpath)
 
     # Save the file
     f.save()

@@ -13,11 +13,62 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
-AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
-EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
-LOOP_EXTENSIONS = set(['gif'])
-AUTOPLAY_EXTENSIONS = set(['gif'])
+
+VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
+AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
+FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AUDIO_FORMATS
+LOOP_FORMATS = set(["image/gif"])
+AUTOPLAY_FORMATS = set(["image/gif"])
+
+# mimetypes.guess_extension is terrible. Use this instead.
+EXTENSIONS = {
+    # "application/pdf": "pdf",
+    "audio/mpeg": "mp3",
+    "audio/ogg": "oga",
+    "image/gif": "gif",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/svg+xml": "svg",
+    # "text/plain": "txt",
+    "video/mp4": "mp4",
+    "video/ogg": "ogv",
+}
+
+processing_needed = {
+    "image/gif": {
+        "formats": ["video/mp4", "video/ogg"],
+        "time": 120,
+    },
+    "image/jpeg": {
+        "formats": [],
+        "time": 5
+    },
+    "image/png": {
+        "formats": [],
+        "time": 30
+    },
+    "image/svg+xml": {
+        "formats": [],
+        "time": 5
+    },
+    "audio/mp3": {
+        "formats": ["audio/ogg"],
+        "time": 120
+    },
+    "audio/ogg": {
+        "formats": ["audio/mp3"],
+        "time": 120
+    },
+    "video/mp4": {
+        "formats": ["video/ogg"],
+        "time": 300,
+    },
+    "video/ogg": {
+        "formats": ["video/mp4"],
+        "time": 300,
+    },
+}
+
 
 class URLFile(object):
     filename = None
@@ -51,67 +102,18 @@ class URLFile(object):
             self.f.write(chunk)
             self.f.flush()
 
-        if r.status_code == 404:
-            return False
-
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
         self.filename = list(reversed(url.split("/")))[0]
 
-        return True
 
-processing_needed = {
-    'gif': {
-        'formats': ['mp4', 'ogv'],
-        'time': 120,
-    },
-    'mp4': {
-        'formats': ['ogv'],
-        'time': 300,
-    },
-    'ogv': {
-        'formats': ['mp4'],
-        'time': 300,
-    },
-    'jpg': {
-        'formats': [],
-        'time': 5
-    },
-    'jpe': {
-        'formats': [],
-        'time': 5
-    },
-    'jpeg': {
-        'formats': [],
-        'time': 5
-    },
-    'png': {
-        'formats': [],
-        'time': 60
-    },
-    'svg': {
-        'formats': [],
-        'time': 5
-    },
-    'mp3': {
-        'formats': ['ogg'],
-        'time': 120
-    },
-    'ogg': {
-        'formats': ['oga','mp3'],
-        'time': 120
-    },
-    'oga': {
-        'formats': ['mp3'],
-        'time': 120
-    }
-}
+def allowed_format(mimetype):
+    return mimetype in EXTENSIONS
 
-def allowed_file(filename):
-    return '.' in filename and extension(filename) in EXTENSIONS
+def clean_extension(path, mimetype):
+    return "%s.%s" % (os.path.splitext(path)[0], EXTENSIONS[mimetype])
 
 def get_hash(f):
-    f.seek(0)
     return hashlib.md5(f.read()).digest()
 
 def get_mimetype(url):
@@ -124,20 +126,17 @@ def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
 def compression_rate(f):
-    f_original = File.from_hash(f)
-    ext = extension(f_original.original)
-    if ext not in processing_needed: return 0
-    if len(processing_needed[ext]['formats']) == 0: return 0
+    f_original = File.from_hash(f).original
+    mimetype = get_mimetype(f_original)
 
-    original_size = f_original.compression 
-    minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
-    for f_ext in processing_needed[ext]['formats']:
-        try:
-            convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
-            minsize = min(minsize, convsize)
-        except OSError:
-            continue # One of the target files wasn't processed.
-                     # This will fail later in the processing workflow.
+    if mimetype not in processing_needed:
+        return 0
+
+    original_size = os.path.getsize(file_storage(f_original))
+    minsize = original_size
+    for format in processing_needed[mimetype]["formats"]:
+        convsize = os.path.getsize(file_storage("%s.%s" % (f, EXTENSIONS[format])))
+        minsize = min(minsize, convsize)
 
     # Cross-multiplication:
     # Original size   1
@@ -150,46 +149,39 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
-    if f.content_type and f.content_type != "application/octet-stream":
-        # Add the proper file extension if the mimetype is provided
-        ext = mimetypes.guess_extension(f.content_type)
-        if not ext:
-            # Specified mimetype is not in /etc/mime.types.
-            # At this point, our best guess is to assume the extension
-            # is the last part of the mimetype.
-            ext = "." + f.content_type.split("/")[1]
+    if not f.content_type:
+        f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-        filename += ext
-
-    if f and allowed_file(filename):
-        if not current_app.debug:
-            rate_limit_update(f)
-            if rate_limit_exceeded():
-                return "ratelimit", 420
-
-        h = get_hash(f)
-        identifier = to_id(h)
-        filename = "%s.%s" % (identifier, extension(filename))
-        path = file_storage(filename) 
-
-        if os.path.exists(path):
-            return identifier, 409
-
-        f.seek(0)  # Otherwise it'll write a 0-byte file
-        f.save(path)
-
-        file_object = File(hash=identifier)
-        file_object.compression = os.path.getsize(path)
-        file_object.original = filename
-        file_object.ip = secure_ip()
-        file_object.save()
-
-        r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
-        r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
-
-        return identifier
-    else:
+    if not allowed_format(f.content_type):
         return "no", 415
+
+    filename = clean_extension(filename, f.content_type)
+
+    if not current_app.debug:
+        rate_limit_update(f)
+        if rate_limit_exceeded():
+            return "ratelimit", 420
+
+    h = get_hash(f)
+    identifier = to_id(h)
+    filename = "%s.%s" % (identifier, extension(filename))
+    path = os.path.join(_cfg("storage_folder"), filename)
+
+    if os.path.exists(path):
+        return identifier, 409
+
+    f.seek(0)  # Otherwise it'll write a 0-byte file
+    f.save(path)
+
+    file_object = File(hash=identifier)
+    file_object.original = filename
+    file_object.ip = secure_ip()
+    file_object.save()
+
+    r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+    r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
+
+    return identifier
 
 def delete_file(f):
     ext = extension(f.original)
