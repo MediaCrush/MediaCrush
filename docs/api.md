@@ -39,10 +39,17 @@ Example:
           "file": "/CPvuR5lRhmS0.gif", 
           "type": "image/gif"
         }
-      ], 
+      ],
+      "extras": [
+      ],
       "original": "/CPvuR5lRhmS0.gif", 
       "type": "image/gif"
     }
+
+When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
+files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
+will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
+file in the extras.
 
 If the file is not found, you will get a dictionary like:
 
@@ -77,6 +84,8 @@ If the file is not found, you will get a dictionary like:
             "type": "image/gif"
           }
         ], 
+        "extras": [
+        ],
         "original": "/CPvuR5lRhmS0.gif", 
         "type": "image/gif"
       }, 
@@ -96,6 +105,8 @@ If the file is not found, you will get a dictionary like:
             "type": "image/gif"
           }
         ], 
+        "extras": [
+        ],
         "original": "/tVWMM_ziA3nm.gif", 
         "type": "image/gif"
       }
@@ -188,6 +199,8 @@ If the request is unsuccessful, you will get a response like:
             "type": "image/gif"
           }
         ], 
+        "extras": [
+        ],
         "original": "/LxqXxVPAvqqB.gif", 
         "type": "image/gif"
       }
@@ -271,6 +284,8 @@ In case of error, the response will contain an 'error' parameter and additional 
             "type": "image/png"
           }
         ], 
+        "extras": [
+        ],
         "original": "/LxqXxVPAvqqB.png", 
         "type": "image/png"
       }

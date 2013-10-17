@@ -57,7 +57,8 @@ converters = {
     'mp4': Invocation("ffmpeg -i {0} -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4"),
     'ogv': Invocation("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis {1}.ogv"),
     'mp3': Invocation("ffmpeg -i {0} {1}.mp3"),
-    'ogg': Invocation("ffmpeg -i {0} -acodec libvorbis {1}.ogg")
+    'ogg': Invocation("ffmpeg -i {0} -acodec libvorbis {1}.ogg"),
+    'png': Invocation("ffmpeg -i {0} -vframes 1 {1}.png")
 }
 
 processors = {
@@ -92,7 +93,7 @@ def process_gif(filename):
 
         # Do conversions
         outputpath = os.path.join(_cfg("storage_folder"), filename)
-        for conversion in config['formats']:
+        for conversion in config['formats'] + config.get('extras', []):
             code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
             statuscode += code
             exited |= exit
