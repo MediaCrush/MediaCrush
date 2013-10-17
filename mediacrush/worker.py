@@ -56,7 +56,7 @@ class Invocation(object):
 converters = {
     'mp4': Invocation("ffmpeg -i {0} -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4"),
     'ogv': Invocation("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis {1}.ogv"),
-    'mp3': Invocation("ffmpeg -i {0] {1}.mp3"),
+    'mp3': Invocation("ffmpeg -i {0} {1}.mp3"),
     'ogg': Invocation("ffmpeg -i {0} -acodec libvorbis {1}.ogg")
 }
 
