@@ -140,99 +140,6 @@
 }
 
 /*
- * Responsive
- */
-@media (max-height: 700px) {
-    .grid {
-        height: 340px;
-        margin-top: -190px;
-    }
-
-    #droparea {
-        height: 320px;
-        background: transparent;
-
-        #files ul {
-            display: none;
-        }
-    }
-
-    #droptext {
-        margin-top: 145px;
-    }
-
-    #gad {
-        display: none;
-    }
-
-    #lgad {
-        display: block;
-    }
-
-    #history ul {
-        height: 318px;
-    }
-}
-
-@media (max-width: 1048px) {
-    .vertical-center {
-        width: 705px;
-    }
-
-    #droparea {
-        width: 300px;
-        background: transparent;
-
-        .noads & {
-            width: 464px;
-            background: url('/static/upload.png') transparent no-repeat 100px 220px;
-        }
-
-        #files ul {
-            left: 75px;
-
-            .noads & {
-                left: 20px;
-
-                li {
-                    margin-right: 10px;
-                }
-            }
-
-            li {
-                margin-bottom: 10px;
-            }
-        }
-    }
-
-    .responsive-hidden {
-        display: none;
-    }
-
-    .responsive-break {
-        display: block;
-    }
-
-    .container {
-        width: 764px;
-    }
-}
-
-@media (max-width: 771px) {
-    .vertical-center {
-        width: 575px;
-    }
-
-    #gad, #lgad {
-        display: none;
-    }
-
-    .container {
-        width: 634px;
-    }
-}
-
-/*
  * Components
  */
 #beta {
@@ -344,6 +251,14 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+
+    h2, div {
+        position: relative;
+    }
+
+    .responsive-fade {
+        display: none;
+    }
 }
 
 .img-wrapper {
@@ -400,3 +315,5 @@ a[href^="https://addons.mozilla.org"] {
     position: relative;
     top: 3px;
 }
+
+@import 'home-responsive.scss'
