@@ -3,30 +3,35 @@ body {
     margin: 0;
 }
 
+.navigation {
+    font-size: 12pt;
+
+    .brand {
+        display: inline;
+        float: left;
+        margin: 0 0 10px;
+        padding-left: 10px;
+        position: relative;
+        font-size: 18pt;
+
+        a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        img {
+            float: left;
+            margin: 5px 3px 0 0;
+        }
+    }
+}
+
+.content {
+    clear: both;
+}
+
 .padded {
     margin: 0 5px;
-}
-
-h1 {
-    margin: 0;
-    margin-bottom: 10px;
-    position: relative;
-    font-weight: normal;
-}
-
-.logo {
-    float: left;
-    position: relative;
-    margin-top: 4px;
-    margin-right: 5px;
-    width: 32px;
-    height: 32px;
-}
-
-.logo img {
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 #blurb {

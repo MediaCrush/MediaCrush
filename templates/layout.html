@@ -4,9 +4,11 @@
         <meta charset="utf-8" />
         <meta name="description" content="A website for serving media super fast">
         <meta name="keywords" content="gif,png,fast,mp4,ogv,image,host">
+        {% block mobile_responsive %}
         {% if mobile %}
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         {% endif %}
+        {% endblock %}
         {% block meta %}{% endblock %} 
         <title>MediaCrush</title>
         <script type="text/javascript">
@@ -76,6 +78,7 @@
                     <img src="/static/mediacrush_logo.svg" alt="logo" width=24 height=24 />
                     MediaCrush</a>
                 </h1>
+                {% if not mobile %}
                 <ul>
                     <li><a href="/">Upload</a></li>
                     <li><a href="/apps">Apps</a></li>
@@ -84,6 +87,7 @@
                     <li><a href="/demo">About</a></li>
                 </ul>
                 <a href="javascript:switchTheme();" class="pull-right small">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
+                {% endif %}
             </div>
             <div class="content">
                 {% block content %}{% endblock %}

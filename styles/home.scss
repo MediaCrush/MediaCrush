@@ -150,6 +150,11 @@
 
     #droparea {
         height: 320px;
+        background: transparent;
+
+        #files ul {
+            display: none;
+        }
     }
 
     #droptext {
@@ -165,7 +170,7 @@
     }
 
     #history ul {
-        height: 250px;
+        height: 318px;
     }
 }
 
@@ -175,7 +180,29 @@
     }
 
     #droparea {
-        width: 300px !important;
+        width: 300px;
+        background: transparent;
+
+        .noads & {
+            width: 464px;
+            background: url('/static/upload.png') transparent no-repeat 100px 220px;
+        }
+
+        #files ul {
+            left: 75px;
+
+            .noads & {
+                left: 20px;
+
+                li {
+                    margin-right: 10px;
+                }
+            }
+
+            li {
+                margin-bottom: 10px;
+            }
+        }
     }
 
     .responsive-hidden {
@@ -185,15 +212,23 @@
     .responsive-break {
         display: block;
     }
+
+    .container {
+        width: 764px;
+    }
 }
 
-@media (max-width: 765px) {
+@media (max-width: 771px) {
     .vertical-center {
         width: 575px;
     }
 
     #gad, #lgad {
         display: none;
+    }
+
+    .container {
+        width: 634px;
     }
 }
 
