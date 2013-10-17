@@ -28,7 +28,7 @@ def _file_object(f):
     if ext in processing_needed:
         for f_ext in processing_needed[ext]['formats']:
             ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
-        for f_ext in processing_needed[ext]['extras']:
+        for f_ext in processing_needed[ext].get('extras', []):
             ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
     return ret
