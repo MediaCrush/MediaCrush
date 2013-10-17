@@ -353,7 +353,10 @@ function handleHistory() {
         historyElement.classList.remove('hidden');
         blurb.classList.add('hidden');
     }
-    var items = history.slice(history.length - 4).reverse();
+    var slice = history.length - 4;
+    if (slice < 0)
+        slice = 0;
+    var items = history.slice(slice).reverse();
     var historyList = historyElement.querySelectorAll('ul')[0];
     loadDetailedHistory(items, function(result) {
         for (var i = 0; i < items.length; i++) {
