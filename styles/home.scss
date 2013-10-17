@@ -218,6 +218,10 @@
         position: absolute;
         bottom: 3px;
         right: 3px;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     border: 1px solid #888;
@@ -252,7 +256,7 @@
         white-space: nowrap;
     }
 
-    h2, div {
+    h2, div.status {
         position: relative;
     }
 

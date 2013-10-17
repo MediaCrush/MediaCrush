@@ -96,9 +96,9 @@ function handleFile(file) {
                     a2.setAttribute('target', '_blank');
                     a2.href = '/' + hash;
                     a2.className = 'full-size';
-                    preview.fileStatus.appendChild(a2);
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
+                    preview.fileStatus.parentElement.appendChild(a2);
                     uploads--;
                     addItemToHistory(hash);
                 } else {
@@ -222,10 +222,10 @@ function finish(statusUI, hash) {
     a2.href = '/' + hash;
     a2.className = 'full-size';
     statusUI.innerHTML = '';
-    statusUI.appendChild(a2);
     statusUI.appendChild(p);
-    statusUI.appendChild(deleteLink);
     statusUI.appendChild(a);
+    statusUI.parentElement.appendChild(a2);
+    statusUI.parentElement.appendChild(deleteLink);
     uploads--;
     addItemToHistory(hash);
 }
@@ -267,6 +267,7 @@ function createPreview(file) {
     var name = document.createElement('h2');
     name.textContent = file.name;
     var fileStatus = document.createElement('div');
+    fileStatus.className = 'status';
     var progress = document.createElement('div');
     progress.className = 'progress';
     progress.style.width = 0;
