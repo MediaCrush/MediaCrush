@@ -66,11 +66,11 @@ processing_needed = {
         'time': 120,
     },
     'mp4': {
-        'formats': ['ogv'],
+        'formats': ['ogv', 'png'],
         'time': 300,
     },
     'ogv': {
-        'formats': ['mp4'],
+        'formats': ['mp4', 'png'],
         'time': 300,
     },
     'jpg': {

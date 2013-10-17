@@ -1,13 +1,25 @@
 {% extends "layout.html" %}
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript">
-window.filename = '{{ filename }}';
-window.can_delete = '{{ can_delete }}';
-</script>
-<script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+    <script type="text/javascript">
+        window.filename = '{{ filename }}';
+        window.can_delete = '{{ can_delete }}';
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+{% endblock %}
+{% block meta %}
+    <meta property="og:type" content="{{ mimetype }}" />
+    <meta property="og:site_name" content="MediaCrush" />
+    {% if mimetype.startswith("video") %}
+        {# Generated thumbnail #}
+        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+    {% elif mimetype.startswith("audio") %}
+        <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+    {% else %}
+        <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+    {% endif %}
 {% endblock %}
 {% block content %}
 <div class="media-wrapper">

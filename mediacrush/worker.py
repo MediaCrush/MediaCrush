@@ -15,7 +15,8 @@ converters = {
     'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
     'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "-acodec", "libvorbis", "%s.ogv" % outputpath]),
     'mp3': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "%s.mp3" % outputpath]),
-    'ogg': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-acodec", "libvorbis", "%s.ogg" % outputpath])
+    'ogg': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-acodec", "libvorbis", "%s.ogg" % outputpath]),
+    'png': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-vframes", "1", "%s.png" % outputpath])
 }
 
 processors = {
