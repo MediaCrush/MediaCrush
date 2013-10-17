@@ -270,11 +270,14 @@ function createPreview(file) {
     var progress = document.createElement('div');
     progress.className = 'progress';
     progress.style.width = 0;
+    var responsiveFade = document.createElement('div');
+    responsiveFade.className = 'responsive-fade';
 
     if (preview !== null) {
         wrapper.appendChild(preview);
     }
     container.appendChild(wrapper);
+    container.appendChild(responsiveFade);
     container.appendChild(name);
     container.appendChild(fileStatus);
     container.appendChild(progress);
