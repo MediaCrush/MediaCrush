@@ -150,6 +150,10 @@
 
     #droparea {
         height: 320px;
+
+        #files ul {
+            display: none;
+        }
     }
 
     #droptext {
@@ -165,7 +169,7 @@
     }
 
     #history ul {
-        height: 250px;
+        height: 318px;
     }
 }
 
@@ -176,6 +180,15 @@
 
     #droparea {
         width: 300px !important;
+        background: transparent;
+
+        #files ul {
+            left: 75px;
+
+            li {
+                margin-bottom: 10px;
+            }
+        }
     }
 
     .responsive-hidden {
@@ -185,15 +198,23 @@
     .responsive-break {
         display: block;
     }
+
+    .container {
+        width: 764px;
+    }
 }
 
-@media (max-width: 765px) {
+@media (max-width: 771px) {
     .vertical-center {
         width: 575px;
     }
 
     #gad, #lgad {
         display: none;
+    }
+
+    .container {
+        width: 634px;
     }
 }
 
