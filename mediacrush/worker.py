@@ -93,10 +93,15 @@ def process_gif(filename):
 
         # Do conversions
         outputpath = os.path.join(_cfg("storage_folder"), filename)
-        for conversion in config['formats'] + config.get('extras', []):
+        for conversion in config['formats']:
             code, exit = converters[conversion](path, outputpath).run(timeout=config['time'])
             statuscode += code
             exited |= exit
+
+        for conversion in config.get('extras', []):
+            # Don't fail for extra conversions
+            converters[conversion](path, outputpath).run(timeout=config['time'])
+    e
     except:
         statuscode += 1
 
