@@ -18,6 +18,7 @@ def _file_object(f):
         'original': media_url(f.original),
         'type': get_mimetype(f.original),
         'files': [],
+        'extras': []
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -27,6 +28,8 @@ def _file_object(f):
     if ext in processing_needed:
         for f_ext in processing_needed[ext]['formats']:
             ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+        for f_ext in processing_needed[ext]['extras']:
+            ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
     return ret
 
