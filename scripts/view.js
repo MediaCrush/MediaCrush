@@ -50,18 +50,18 @@ window.addEventListener('load', function() {
                 document.getElementById('delete').parentElement.classList.remove('hidden');
             }
         }
-        document.getElementById('delete').addEventListener('click', function(e) {
-            e.preventDefault();
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/api/{{ filename }}/delete');
-            xhr.send();
-            document.getElementById('delete').parentElement.innerHTML = 'Deleted';
-            if (history) {
-                history.remove(hashIndex);
-                window.localStorage.setItem('history', JSON.stringify(history));
-            }
-        }, false);
     }
+    document.getElementById('delete').addEventListener('click', function(e) {
+        e.preventDefault();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/' + window.filename + '/delete');
+        xhr.send();
+        document.getElementById('delete').parentElement.innerHTML = 'Deleted';
+        if (history) {
+            history.remove(hashIndex);
+            window.localStorage.setItem('history', JSON.stringify(history));
+        }
+    }, false);
     var hash = window.location.hash;
     if (hash.length > 1) {
         handleHash(hash);
