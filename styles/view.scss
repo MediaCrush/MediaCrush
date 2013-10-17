@@ -9,11 +9,21 @@
         float: right;
         right: -50%;
         position: relative;
-
+        margin-bottom: 10px;
+        box-shadow: 0 0 3px 3px #666;
         display: inline-block;
 
         img, video {
             max-width: 1000px;
+        }
+
+        & > a, img, video, .video {
+            display: block;
+        }
+
+        .controls {
+            // Reposition the video controls, since everything was made block
+            bottom: 0;
         }
     }
 }
