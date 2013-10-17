@@ -63,46 +63,57 @@ class URLFile(object):
 processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv'],
+        'extras': [],
         'time': 120,
     },
     'mp4': {
-        'formats': ['ogv', 'png'],
+        'formats': ['ogv'],
+        'extras': ['png'],
         'time': 300,
     },
     'ogv': {
-        'formats': ['mp4', 'png'],
+        'formats': ['mp4'],
+        'extras': ['png'],
         'time': 300,
     },
     'jpg': {
         'formats': [],
+        'extras': [],
         'time': 5
     },
     'jpe': {
         'formats': [],
+        'extras': [],
         'time': 5
     },
     'jpeg': {
         'formats': [],
+        'extras': [],
         'time': 5
     },
     'png': {
         'formats': [],
+        'extras': [],
         'time': 60
     },
     'svg': {
         'formats': [],
+        'extras': [],
         'time': 5
     },
     'mp3': {
         'formats': ['ogg'],
+        'extras': [],
         'time': 120
     },
     'ogg': {
         'formats': ['oga','mp3'],
+        'extras': [],
         'time': 120
     },
     'oga': {
         'formats': ['mp3'],
+        'extras': [],
         'time': 120
     }
 }
