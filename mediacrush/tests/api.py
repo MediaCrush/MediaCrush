@@ -75,7 +75,7 @@ class APITestCase(TestMixin):
            self._get_hash('cat2.jpg')
         ]
 
-        response = self.client.get('/api/info?list=x8bQs1NSiTm0,HM-nQeR0oJ7p')
+        response = self.client.get('/api/info?list=' + ','.join(h))
 
         self.assertIn(u'x8bQs1NSiTm0', response.data)
         self.assertIn(u'HM-nQeR0oJ7p', response.data)
