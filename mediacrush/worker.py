@@ -101,7 +101,6 @@ def process_gif(filename):
         for conversion in config.get('extras', []):
             # Don't fail for extra conversions
             converters[conversion](path, outputpath).run(timeout=config['time'])
-    e
     except:
         statuscode += 1
 
