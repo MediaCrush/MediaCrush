@@ -11,21 +11,6 @@ from .database import r, _k
 from .files import processing_needed, extension, compression_rate
 from .objects import File
 
-converters = {
-    'mp4': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-pix_fmt", "yuv420p", "-vf", "scale=trunc(in_w/2)*2:trunc(in_h/2)*2", "%s.mp4" % outputpath]),
-    'ogv': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-q", "5", "-pix_fmt", "yuv420p", "-acodec", "libvorbis", "%s.ogv" % outputpath]),
-    'mp3': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "%s.mp3" % outputpath]),
-    'ogg': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-acodec", "libvorbis", "%s.ogg" % outputpath]),
-    'png': lambda path, outputpath: TimeLimitedCommand(["ffmpeg", "-i", path, "-vframes", "1", "%s.png" % outputpath])
-}
-
-processors = {
-    'jpg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
-    'jpeg': lambda path: TimeLimitedCommand(["jhead", "-purejpg", path, path]),
-    'png': lambda path: TimeLimitedCommand(["optipng", "-o5", path]),
-    'svg': lambda path: TimeLimitedCommand(["tidy", "-asxml", "-xml", "--hide-comments", "1", "--wrap", "0", "--quiet", "--write-back", "1", path])
-}
-
 class TimeLimitedCommand(object):
     crashed = False
 
@@ -60,6 +45,28 @@ class TimeLimitedCommand(object):
             return 0 if not self.crashed else 1, exited
         return self.process.returncode, exited
 
+class Invocation(object):
+    def __init__(self, command):
+        self.command = command
+
+    def __call__(self, *args):
+        args = self.command.format(*args).split()
+        return TimeLimitedCommand(args)
+
+converters = {
+    'mp4': Invocation("ffmpeg -i {0} -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4"),
+    'ogv': Invocation("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis {1}.ogv"),
+    'mp3': Invocation("ffmpeg -i {0} {1}.mp3"),
+    'ogg': Invocation("ffmpeg -i {0} -acodec libvorbis {1}.ogg"),
+    'png': Invocation("ffmpeg -i {0} -vframes 1 {1}.png")
+}
+
+processors = {
+    'jpg': Invocation("jhead -purejpg {0} {0}"),
+    'jpeg': Invocation("jhead -purejpg {0} {0}"),
+    'png': Invocation("optipng -o5 {0}"),
+    'svg': Invocation("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
+}
 
 def process_gif(filename):
     print('Processing ' + filename)
