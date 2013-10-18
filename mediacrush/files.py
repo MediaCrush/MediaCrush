@@ -13,7 +13,7 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
+VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4', 'webm'])
 AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
 EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
 LOOP_EXTENSIONS = set(['gif'])
@@ -62,16 +62,21 @@ class URLFile(object):
 
 processing_needed = {
     'gif': {
-        'formats': ['mp4', 'ogv'],
+        'formats': ['mp4', 'ogv', 'webm'],
         'time': 120,
     },
     'mp4': {
-        'formats': ['ogv'],
+        'formats': ['webm', 'ogv'],
+        'extras': ['png'],
+        'time': 300,
+    },
+    'webm': {
+        'formats': ['mp4', 'ogv'],
         'extras': ['png'],
         'time': 300,
     },
     'ogv': {
-        'formats': ['mp4'],
+        'formats': ['mp4', 'webm'],
         'extras': ['png'],
         'time': 300,
     },
