@@ -80,11 +80,11 @@ function handleHash(hash) {
     if (hash == '#fromExtension') {
         var handled = false;
         for (var i = 0; i < history.length; i++) {
-            if (history[i] === '{{ filename }}')
+            if (history[i] === window.filename)
                 handled = true;
         }
         if (!handled) {
-            history.push('{{ filename }}');
+            history.push(window.filename);
             window.localStorage.setItem('history', JSON.stringify(history));
         }
         window.location = window.location.href.substr(0, window.location.href.indexOf('#'));
