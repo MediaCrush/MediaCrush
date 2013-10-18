@@ -63,22 +63,22 @@ class URLFile(object):
 processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv', 'webm'],
-        'time': 120,
+        'time': 300,
     },
     'mp4': {
         'formats': ['webm', 'ogv'],
         'extras': ['png'],
-        'time': 300,
+        'time': 600,
     },
     'webm': {
         'formats': ['mp4', 'ogv'],
         'extras': ['png'],
-        'time': 300,
+        'time': 600,
     },
     'ogv': {
         'formats': ['mp4', 'webm'],
         'extras': ['png'],
-        'time': 300,
+        'time': 600,
     },
     'jpg': {
         'formats': [],
