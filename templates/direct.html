@@ -9,9 +9,15 @@
         {% if mobile %}
         <meta name="viewport" content="width=device-width" />
         {% endif %}
-        {% if mimetype.startswith("image") %}
-        <meta name="twitter:card" content="photo">
-        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+        <meta property="og:type" content="{{ mimetype }}" />
+        <meta property="og:site_name" content="MediaCrush" />
+        {% if mimetype.startswith("video") %}
+            {# Generated thumbnail #}
+            <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        {% elif mimetype.startswith("audio") %}
+            <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+        {% else %}
+            <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
         {% endif %}
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
