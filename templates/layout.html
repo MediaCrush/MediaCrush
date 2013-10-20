@@ -93,6 +93,8 @@
                 {% block content %}{% endblock %}
             </div>
         </div>
+        {% block analytics %}
         {% include "analytics.html" %}
+        {% endblock %}
     </body>
 </html>
