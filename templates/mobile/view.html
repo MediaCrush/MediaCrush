@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block mobile_responsive %}
+{% if mimetype.startswith('image/') %}
+<meta name="viewport" content="width=device-width, user-scalable=yes" />
+{% else %}
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+{% endif %}
+{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view-mobile.css') }}?version=2" />
+{% endblock %}
+{% block content %}
+<div class="media-wrapper">
+    <div class="media">
+        {% include fragment %}
+    </div>
+</div>
+{% endblock %}
