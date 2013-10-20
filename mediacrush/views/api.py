@@ -91,7 +91,10 @@ class APIView(FlaskView):
         f = File.from_hash(h) 
         if not f.original:
             return {'error': 404}, 404
-        if not check_password_hash(f.ip, get_ip()):
+        try:
+            if not check_password_hash(f.ip, get_ip()):
+                return {'error': 401}, 401
+        except:
             return {'error': 401}, 401
 
         delete_file(f)
