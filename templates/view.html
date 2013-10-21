@@ -20,6 +20,8 @@
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
     {% endif %}
 {% endblock %}
 {% block content %}
