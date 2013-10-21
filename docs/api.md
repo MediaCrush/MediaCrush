@@ -10,7 +10,7 @@ Example:
     {
         ...
         "x-status": 404
-    };
+    }
     
 # Methods
 
