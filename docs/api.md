@@ -1,14 +1,16 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter. 
+The MediaCrush API returns JSON on all methods. It also supports CORS. However, since some methods return non-2xx status codes and CORS does not like that, we have to accept a `X-CORS-Status` header which includes a `x-status` property in the resulting dictionary.
 
 Example:    
 
-    GET /api/tVWMM_ziA3nm?callback=demo
+    GET /api/tVWMM_ziA3nm
+    X-CORS-Status: 1
 
-    demo({
+    {
         ...
-    });
+        "x-status": 404
+    };
     
 # Methods
 
