@@ -1,15 +1,28 @@
 # Developer Documentation
 
+If you have any questions about using our service from a development standpoint, please feel free to join
+[#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4) to get help.
+
+## Open Source
+
+MediaCrush is completely open source. If you want to learn more about how something works, or improve
+something, head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and hack away.
+
+## Public API
+
 MediaCrush offers a free API to developers that allows you to upload media and retrieve information on files
 on our servers. This API is completely free, but we appriciate a [donation](/donate) if you plan to use it,
 since we don't get any ad views from API users. We also appreciate that donation if you hotlink to us often.
 
 Documentation for our API is provided [here](/docs/API).
 
-## Open Source
+## API Wrappers
 
-MediaCrush is completely open source. If you want to learn more about how something works, or improve
-something, feel free to head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and hack away.
+Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support@mediacru.sh) and we'll mention it here.
+
+### Python
+
+* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request.
 
 ## Blob Identifiers
 
@@ -45,11 +58,3 @@ original file type.
 You can also manually embed media by just taking the generated markup and dropping it into your page, which
 avoids the need to load our script. It's also possible to get information about media through the API (in the
 form of JSON blobs), and then generate markup yourself based on the results.
-
-## API Wrappers
-
-Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support@mediacru.sh) and we'll mention it here.
-
-### Python
-
-* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request.
