@@ -44,12 +44,12 @@ Install the requirements:
 
 Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
 
-Note: you'll need libtheora enabled to output ogv files.
+Note: you'll need libtheora enabled to output ogv files and libvpx for webm.
 
     mkdir /tmp/ffmpeg
     git clone --depth 1 git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
     cd /tmp/ffmpeg
-    ./configure --enable-libtheora --enable-libx264 --enable-gpl
+    ./configure --enable-libtheora --enable-libx264 --enable-libvpx --enable-gpl
     make
     sudo make install
 
