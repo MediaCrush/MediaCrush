@@ -1,8 +1,13 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods. It also supports CORS. However, since some methods return non-2xx status codes and CORS does not like that, we have to accept a `X-CORS-Status` header which includes a `x-status` property in the resulting dictionary.
+The MediaCrush API returns JSON on all methods.
 
-Example:    
+MediaCrush also supports CORS for cross-origin requests. If you intend to use the MediaCrush API from browser JavaScript,
+you will want to set the `X-CORS-Status` header to `1`. This is because browsers will errornously handle any request that
+returns a non-2xx status code (which the MediaCrush API frequently does). If you set this header, each JSON response will
+include the `x-status` property with the real status code.
+
+Example:
 
     GET /api/tVWMM_ziA3nm
     X-CORS-Status: 1
@@ -11,7 +16,7 @@ Example:
         ...
         "x-status": 404
     }
-    
+
 # Methods
 
 ## File information endpoints
@@ -22,29 +27,29 @@ Example:
 
 *Parameters*: none.
 
-*Returns*: information about the file whose hash is `<hash>`. 
+*Returns*: information about the file whose hash is `<hash>`.
 
     GET /api/CPvuR5lRhmS0
 
     {
-      "compression": 8.93, 
+      "compression": 8.93,
       "files": [
         {
-          "file": "/CPvuR5lRhmS0.mp4", 
+          "file": "/CPvuR5lRhmS0.mp4",
           "type": "video/mp4"
-        }, 
+        },
         {
-          "file": "/CPvuR5lRhmS0.ogv", 
+          "file": "/CPvuR5lRhmS0.ogv",
           "type": "video/ogg"
-        }, 
+        },
         {
-          "file": "/CPvuR5lRhmS0.gif", 
+          "file": "/CPvuR5lRhmS0.gif",
           "type": "image/gif"
         }
       ],
       "extras": [
       ],
-      "original": "/CPvuR5lRhmS0.gif", 
+      "original": "/CPvuR5lRhmS0.gif",
       "type": "image/gif"
     }
 
@@ -71,45 +76,45 @@ If the file is not found, you will get a dictionary like:
 
     {
       "CPvuR5lRhmS0": {
-        "compression": 8.93, 
+        "compression": 8.93,
         "files": [
           {
-            "file": "/CPvuR5lRhmS0.mp4", 
+            "file": "/CPvuR5lRhmS0.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/CPvuR5lRhmS0.ogv", 
+            "file": "/CPvuR5lRhmS0.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/CPvuR5lRhmS0.gif", 
+            "file": "/CPvuR5lRhmS0.gif",
             "type": "image/gif"
           }
-        ], 
+        ],
         "extras": [
         ],
-        "original": "/CPvuR5lRhmS0.gif", 
+        "original": "/CPvuR5lRhmS0.gif",
         "type": "image/gif"
-      }, 
+      },
       "tVWMM_ziA3nm": {
-        "compression": 17.99, 
+        "compression": 17.99,
         "files": [
           {
-            "file": "/tVWMM_ziA3nm.mp4", 
+            "file": "/tVWMM_ziA3nm.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/tVWMM_ziA3nm.ogv", 
+            "file": "/tVWMM_ziA3nm.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/tVWMM_ziA3nm.gif", 
+            "file": "/tVWMM_ziA3nm.gif",
             "type": "image/gif"
           }
-        ], 
+        ],
         "extras": [
         ],
-        "original": "/tVWMM_ziA3nm.gif", 
+        "original": "/tVWMM_ziA3nm.gif",
         "type": "image/gif"
       }
     }
@@ -139,29 +144,29 @@ If the file is not found, you will get a dictionary like:
       "status": "done",
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 8.93, 
+        "compression": 8.93,
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.mp4", 
+            "file": "/LxqXxVPAvqqB.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/LxqXxVPAvqqB.ogv", 
+            "file": "/LxqXxVPAvqqB.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/LxqXxVPAvqqB.gif", 
+            "file": "/LxqXxVPAvqqB.gif",
             "type": "image/gif"
           }
-        ], 
+        ],
         "extras": [
         ],
-        "original": "/LxqXxVPAvqqB.gif", 
+        "original": "/LxqXxVPAvqqB.gif",
         "type": "image/gif"
       }
     }
 
-*Return codes*: 
+*Return codes*:
 
 <table>
     <tr>
@@ -259,7 +264,7 @@ If the request is unsuccessful, you will get a response like:
         <td>false</td>
     </tr>
 </table>
-   
+
 ### /api/upload/file
 
 *Parameters*: `file`, the file to upload.
@@ -280,16 +285,16 @@ In case of error, the response will contain an 'error' parameter and additional 
       "error": 409,
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 0.0, 
+        "compression": 0.0,
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.png", 
+            "file": "/LxqXxVPAvqqB.png",
             "type": "image/png"
           }
-        ], 
+        ],
         "extras": [
         ],
-        "original": "/LxqXxVPAvqqB.png", 
+        "original": "/LxqXxVPAvqqB.png",
         "type": "image/png"
       }
     }
