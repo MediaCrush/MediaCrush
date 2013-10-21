@@ -109,7 +109,11 @@ function adjustVolume(e) {
     if (container.className.indexOf('action') == -1)
         return;
     var video = document.getElementById(container.getAttribute('data-video'));
-    var amount = e.layerX / container.clientWidth;
+    var amount;
+    if (e.offsetX)
+        amount = e.offsetX / container.clientWidth;
+    else
+        amount = e.layerX / container.clientWidth;
     video.volume = amount;
     window.localStorage.volume = amount;
     container.querySelector('.amount').style.width = (amount * 100) + '%';

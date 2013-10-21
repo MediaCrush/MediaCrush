@@ -56,7 +56,11 @@ function adjustVolume(e) {
     if (container.className.indexOf('action') == -1)
         return;
     var audio = document.getElementById(container.getAttribute('data-audio'));
-    var amount = e.layerX / container.clientWidth;
+    var amount;
+    if (e.offsetX)
+        amount = e.offsetX / container.clientWidth;
+    else
+        amount = e.layerX / container.clientWidth;
     audio.volume = amount;
     window.localStorage.volume = amount;
     container.querySelector('.amount').style.width = (amount * 100) + '%';
