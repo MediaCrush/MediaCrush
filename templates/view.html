@@ -13,13 +13,23 @@
 {% block meta %}
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
-    {% if mimetype.startswith("video") %}
+    {% if mimetype.startswith("video") or mimetype == "image/gif" %}
         {# Generated thumbnail #}
         <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        <meta property="twitter:card" content="player" />
+        <meta property="twitter:title" content="MediaCrush" />
+        <meta property="twitter:description" content="A video shared with MediaCrush." />
+        <meta property="twitter:player" content="{{ share('frame', filename) }}" />
+        <meta property="twitter:player:width" content="640" />
+        <meta property="twitter:player:height" content="360" />
+        <meta property="twitter:image" content="https://mediacru.sh/{{ filename }}.png">
+
     {% elif mimetype.startswith("audio") %}
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
     {% endif %}
 {% endblock %}
 {% block content %}

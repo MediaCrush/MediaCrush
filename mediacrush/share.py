@@ -33,6 +33,11 @@ class Share(object):
     def directlink_other(self, h):
         return self.link_other(h) + "/direct"
 
+    frame_still = directlink_still
+
+    def frame_other(self, h):
+        return self.link_other(h) + "/frame"
+
     def markdown_still(self, h):
         return "![](%s)" % domain_url(h)
 

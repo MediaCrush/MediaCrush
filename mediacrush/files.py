@@ -63,6 +63,7 @@ class URLFile(object):
 processing_needed = {
     'gif': {
         'formats': ['mp4', 'ogv', 'webm'],
+        'extras': ['png'],
         'time': 300,
     },
     'mp4': {
