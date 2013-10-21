@@ -124,55 +124,8 @@ If the file is not found, you will get a dictionary like:
       "exists": true
     }
 
-## File manipulation endpoints
 
-### /api/&lt;hash&gt;/delete
-
-*Parameters*: none.
-
-*Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
-
-    GET /api/CPvuR5lRhmS0/delete
-
-    {
-      "status": "success"
-    }
-
-If the request is unsuccessful, you will get a response like:
-
-    GET /api/CPvuR5lRhmS0/delete
-
-    {
-      "error": 401
-    }
-
-
-*Return codes*:
-
-<table>
-    <tr>
-        <th>HTTP code</th>
-        <th>Meaning</th>
-        <th>Success</th>
-    </tr>
-    <tr>
-        <td>200</td>
-        <td>The IP matches the stored hash and the file was deleted.</td>
-        <td>true</td>
-    </tr>
-    <tr>
-        <td>401</td>
-        <td>The IP does not match the stored hash.</td>
-        <td>false</td>
-    </tr>
-    <tr>
-        <td>404</td>
-        <td>There is no file with that hash.</td>
-        <td>false</td>
-    </tr>
-</table>
-
-## /api/&lt;hash&gt;/status
+### /api/&lt;hash&gt;/status
 
 *Parameters*: none.
 
@@ -256,8 +209,56 @@ If the request is unsuccessful, you will get a response like:
 *Notes:*
 
 The "result" object will only be included if the status is "done".
+
+## File manipulation endpoints
+
+### /api/&lt;hash&gt;/delete
+
+*Parameters*: none.
+
+*Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "status": "success"
+    }
+
+If the request is unsuccessful, you will get a response like:
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "error": 401
+    }
+
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the file was deleted.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no file with that hash.</td>
+        <td>false</td>
+    </tr>
+</table>
    
-## /api/upload/file
+### /api/upload/file
 
 *Parameters*: `file`, the file to upload.
 
@@ -321,7 +322,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
 </table>
 
-## /api/upload/url
+### /api/upload/url
 
 *Parameters*: `url`, the URL from where to fetch the file to upload.
 
