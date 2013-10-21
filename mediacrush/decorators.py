@@ -15,6 +15,7 @@ def json_output(f):
             jsonification = jsonify(obj)
             if callback:
                 jsonification.data = "%s(%s);\n%s" % (callback, jsonification.data, jsonp_notice) # Alter the response
+                jsonification.mimetype = "text/javascript"
 
             return jsonification
 
