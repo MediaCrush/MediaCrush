@@ -27,8 +27,8 @@ files. No, seriously - this example got 1600% faster when we converted it to a v
         {% else %}
             <video autoplay loop>
         {% endif %}
-            <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'></source>
-            <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'></source>
+            <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'>
+            <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'>
         </video>
         <p>Filesize: 118 kB (~0.118 MB)</p>
     </div>
