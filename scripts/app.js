@@ -347,6 +347,8 @@ function dropEnable() {
     feedbackSend.addEventListener('click', function(e) {
         e.preventDefault();
         // TODO
+        var feedback = document.getElementById('feedback').querySelector('div');
+        feedback.innerHTML = "<p>Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.</p>";
     }, false);
 
     setTimeout(handleHistory, 50);
