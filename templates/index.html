@@ -29,6 +29,11 @@
                             MP3 OGG
                         </li>
                     </ul>
+                    {% if notice_enabled %}
+                    <div id="notice">
+                        <div>{{ notice_text }}</div>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="hint">
                     <div id="droptext">
