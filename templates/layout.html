@@ -12,54 +12,7 @@
         {% block meta %}{% endblock %} 
         <title>MediaCrush</title>
         <script type="text/javascript">
-            {% if mobile %}
-            window.mobile = true;
-            {% else %}
-            window.mobile = false;
-            {% endif %}
-            Array.prototype.remove = function(from, to) {
-              var rest = this.slice((to || from) + 1 || this.length);
-              this.length = from < 0 ? this.length + from : from;
-              return this.push.apply(this, rest);
-            };
-            function readCookie(name) {
-                var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
-                for(var i=0;i < ca.length;i++) {
-                    var c = ca[i];
-                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-                }
-                return null;
-            }
-            function createCookie(name,value,days) {
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime()+(days*24*60*60*1000));
-                    var expires = "; expires="+date.toGMTString();
-                }
-                else var expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT";
-                document.cookie = name+"="+value+expires+"; path=/";
-            }
-            function adOptOut() {
-                createCookie('ad-opt-out', '1', 3650); // 3650 days is 10 years, which isn't forever, but is close enough
-                var gad = document.getElementById('gad');
-                var lgad = document.getElementById('lgad');
-                if (gad) {
-                    gad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
-                }
-                if (lgad) {
-                    lgad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
-                }
-            }
-
-            function switchTheme() {
-                if (readCookie('dark_theme'))
-                    createCookie('dark_theme', '', -1);
-                else
-                    createCookie('dark_theme', '1', 3650);
-                window.location.href = window.location.href;
-            }
+            {% include 'global.js' %}
         </script>
         {% block scripts %}
         {% endblock %}
@@ -93,6 +46,16 @@
                 {% block content %}{% endblock %}
             </div>
         </div>
+        {% block feedback %}
+        <div id="feedback">
+            <a href="#" id="toggle-feedback">Feedback</a>
+            <div>
+                <p>How are we doing?</p>
+                <textarea></textarea>
+                <a class="button" href="#" id="send-feedback">Send feedback</a>
+            </div>
+        </div>
+        {% endblock %}
         {% block analytics %}
         {% include "analytics.html" %}
         {% endblock %}

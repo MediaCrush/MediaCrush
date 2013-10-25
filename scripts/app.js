@@ -334,23 +334,6 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
-    var feedbackToggle = document.getElementById('toggle-feedback');
-    feedbackToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (e.target.parentElement.className.indexOf('active') == -1) {
-            e.target.parentElement.classList.add('active');
-        } else {
-            e.target.parentElement.classList.remove('active');
-        }
-    }, false);
-    var feedbackSend = document.getElementById('send-feedback');
-    feedbackSend.addEventListener('click', function(e) {
-        e.preventDefault();
-        // TODO
-        var feedback = document.getElementById('feedback').querySelector('div');
-        feedback.innerHTML = "<p>Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.</p>";
-    }, false);
-
     setTimeout(handleHistory, 50);
 }
 
@@ -499,7 +482,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab],{type:'image/png'});
 }
 
-window.onload = dropEnable;
+window.addEventListener('load', dropEnable, false);
 window.onbeforeunload = function() {
     if (uploads != 0) {
         return "If you leave the page, these uploads will be cancelled.";
