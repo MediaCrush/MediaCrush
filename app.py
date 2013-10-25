@@ -22,7 +22,7 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = True
+notice_enabled = False
 notice_text = "We don't just have great GIF support - try sharing some pictures on MediaCrush!"
 
 def prepare():
