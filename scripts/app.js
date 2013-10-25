@@ -334,11 +334,29 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
+    var feedbackToggle = document.getElementById('toggle-feedback');
+    feedbackToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (e.target.parentElement.className.indexOf('active') == -1) {
+            e.target.parentElement.classList.add('active');
+        } else {
+            e.target.parentElement.classList.remove('active');
+        }
+    }, false);
+    var feedbackSend = document.getElementById('send-feedback');
+    feedbackSend.addEventListener('click', function(e) {
+        e.preventDefault();
+        // TODO
+    }, false);
 
     setTimeout(handleHistory, 50);
 }
 
 function forceFocus() {
+    if (document.activeElement.tagName == 'TEXTAREA') {
+        setTimeout(forceFocus, 250);
+        return;
+    }
     var pasteTarget = document.getElementById('paste-target');
     pasteTarget.focus();
     setTimeout(forceFocus, 250);
