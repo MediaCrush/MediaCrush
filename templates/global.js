@@ -46,12 +46,14 @@ function switchTheme() {
     window.location.href = window.location.href;
 }
 window.addEventListener('load', function() {
+    var feedback = document.getElementById('feedback').querySelector('div');
     var feedbackToggle = document.getElementById('toggle-feedback');
-        if (feedbackToggle) {
+    if (feedbackToggle) {
         feedbackToggle.addEventListener('click', function(e) {
             e.preventDefault();
             if (e.target.parentElement.className.indexOf('active') == -1) {
                 e.target.parentElement.classList.add('active');
+                feedback.querySelector('textarea').focus();
             } else {
                 e.target.parentElement.classList.remove('active');
             }
@@ -62,7 +64,6 @@ window.addEventListener('load', function() {
         feedbackSend.addEventListener('click', function(e) {
             e.preventDefault();
             // TODO
-            var feedback = document.getElementById('feedback').querySelector('div');
             feedback.innerHTML = "<p>Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.</p>";
         }, false);
     }
