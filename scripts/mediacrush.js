@@ -56,7 +56,7 @@ window.MediaCrush = (function() {
         return blob;
     };
 
-    var renderImage = function(target, media) {
+    var renderImage = function(target, media, callback) {
         var image = document.createElement('img');
         image.src = self.domain + media.files[0].file;
         if (self.maxMediaWidth != -1) {
@@ -68,15 +68,17 @@ window.MediaCrush = (function() {
         target.appendChild(image);
         target.classList.remove('mediacrush');
         target.classList.add('mediacrush-processed');
+        if (callback)
+            callback(target, media);
     };
 
     var iframes = {};
-    var renderMedia = function(target, media) {
+    var renderMedia = function(target, media, callback) {
         var iframe = document.createElement('iframe');
         iframe.src = self.domain + '/' + media.hash + '/frame';
         iframe.setAttribute('frameborder', 0);
         iframe.allowFullscreen = true;
-        iframes[iframe.src] = iframe;
+        iframes[iframe.src] = { frame: iframe, media: media, callback: callback };
         target.appendChild(iframe);
         target.classList.remove('mediacrush');
         target.classList.add('mediacrush-processed');
@@ -105,9 +107,11 @@ window.MediaCrush = (function() {
                     }
                 }
             }
-            frame.width = width;
-            frame.height = height;
+            frame.frame.width = width;
+            frame.frame.height = height;
         }
+        if (frame.callback)
+            frame.callback(frame.frame.parentElement, frame.media);
     }, false);
 
     /*
@@ -221,13 +225,13 @@ window.MediaCrush = (function() {
     /*
      * Translates a .mediacrush div into an embedded MediaCrush object.
      */
-    self.render = function(element) {
+    self.render = function(element, callback) {
         var hash = element.getAttribute('data-media');
         self.get(hash, function(media) {
             if (media.type.indexOf('image/') == 0 && media.type != 'image/gif') {
-                renderImage(element, media);
+                renderImage(element, media, callback);
             } else {
-                renderMedia(element, media);
+                renderMedia(element, media, callback);
             }
         });
     };

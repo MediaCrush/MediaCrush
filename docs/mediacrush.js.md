@@ -118,11 +118,13 @@ Retrieves information about several hashes at once and calls back with an array,
         // Or dict['hash'] to get a specific one
     });
 
-### MediaCrush.render(element)
+### MediaCrush.render(element, [callback])
 
 Renders a specific MediaCrush DOM element. The element should look like this:
 
     <div class="mediacrush" data-media="tG6dvDt2jNcr"></div>
+
+When done, it'll call `callback(element, media)` with a `Media` object as the second parameter. `callback` is optional.
 
 ### MediaCrush.renderAll()
 
