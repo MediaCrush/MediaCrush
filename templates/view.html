@@ -7,6 +7,7 @@
     <script type="text/javascript">
         window.filename = '{{ filename }}';
         window.can_delete = '{{ can_delete }}';
+        window.embedded = '{{ embedded }}';
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
 {% endblock %}
@@ -53,7 +54,7 @@
 <div class="hidden" id="embed">
     <div class="center">
         <p>Copy this HTML and paste it into your website:</p>
-        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0"></iframe>' class="selectall" />
+        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
         <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.</p>
     </div>
 </div>

@@ -9,6 +9,9 @@
 .video video {
     max-width: 1000px;
 }
+.fullscreen.video video {
+    max-width: none;
+}
 .fullscreen.video {
     position: fixed;
     left: 0;

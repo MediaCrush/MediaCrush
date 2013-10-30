@@ -14,6 +14,10 @@ Additionally, the library will render any elements in your document that look li
 
 To suppress this behavior, set `window.preventMediaCrushAutoload` before loading mediacrush.js.
 
+You may also set `window.beforeMediaCrushLoad` to a function that should be executed before MediaCrush
+does its initial sweep of the DOM for `.mediacrush` elements. This gives you a chance to change settings
+like `MediaCrush.domain`.
+
 mediacrush.js can also be used to embed MediaCrush objects into pages. This is the preferred means of
 embedding files in third party sites. You can embed any MediaCrush file into a div, and it will
 look like:
@@ -69,6 +73,21 @@ The MediaCrush object provides access to the MediaCrush API, with several method
 
 This defaults to `https://mediacru.sh`. You may modify it to use alternate MediaCrush instances.
 
+### MediaCrush.maxMediaWidth
+
+Set to -1 (default) for unbounded width. Set to any other value to cause MediaCrush to limit the width of embedded
+media to the specified value, in pixels.
+
+### MediaCrush.maxMediaHeight
+
+Set to -1 (default) for unbounded height. Set to any other value to cause MediaCrush to limit the height of embedded
+media to the specified value, in pixels.
+
+### MediaCrush.preserveAspectRatio
+
+When true (default), and embedded media has to be limited by maxMediaWidth or maxMediaHeight, mediacrush.js will
+preserve the aspect ratio of the embedded media upon scaling it down.
+
 ### MediaCrush.version
 
 Returns the current version (integer) of the API and the mediacrush.js script.
@@ -99,11 +118,13 @@ Retrieves information about several hashes at once and calls back with an array,
         // Or dict['hash'] to get a specific one
     });
 
-### MediaCrush.render(element)
+### MediaCrush.render(element, [callback])
 
 Renders a specific MediaCrush DOM element. The element should look like this:
 
     <div class="mediacrush" data-media="tG6dvDt2jNcr"></div>
+
+When done, it'll call `callback(element, media)` with a `Media` object as the second parameter. `callback` is optional.
 
 ### MediaCrush.renderAll()
 

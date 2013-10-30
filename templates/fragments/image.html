@@ -2,6 +2,15 @@
     <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
 </a>
 <script type="text/javascript">
+function mediaSizeReporter() {
+    var img = document.getElementById('img-{{filename}}');
+    return { width: img.width, height: img.height };
+}
+function resizeMedia(x, y) {
+    var img = document.getElementById('img-{{filename}}');
+    img.width = x;
+    img.height = y;
+}
 window.addEventListener('load', function() {
     var image = document.getElementById('img-{{filename}}');
     var dupe = document.createElement('img'); // Duplicate image so that CSS sizing and such doesn't affect the resolution
