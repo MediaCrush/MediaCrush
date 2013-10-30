@@ -73,6 +73,21 @@ The MediaCrush object provides access to the MediaCrush API, with several method
 
 This defaults to `https://mediacru.sh`. You may modify it to use alternate MediaCrush instances.
 
+### MediaCrush.maxMediaWidth
+
+Set to -1 (default) for unbounded width. Set to any other value to cause MediaCrush to limit the width of embedded
+media to the specified value, in pixels.
+
+### MediaCrush.maxMediaHeight
+
+Set to -1 (default) for unbounded height. Set to any other value to cause MediaCrush to limit the height of embedded
+media to the specified value, in pixels.
+
+### MediaCrush.preserveAspectRatio
+
+When true (default), and embedded media has to be limited by maxMediaWidth or maxMediaHeight, mediacrush.js will
+preserve the aspect ratio of the embedded media upon scaling it down.
+
 ### MediaCrush.version
 
 Returns the current version (integer) of the API and the mediacrush.js script.

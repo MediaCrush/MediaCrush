@@ -8,6 +8,9 @@ window.MediaCrush = (function() {
     var self = this;
     self.version = 1;
     self.domain = 'https://mediacru.sh';
+    self.maxMediaWidth = -1;
+    self.maxMediaHeight = -1;
+    self.preserveAspectRatio = true;
 
     /*
      * Private methods/properties
@@ -56,6 +59,12 @@ window.MediaCrush = (function() {
     var renderImage = function(target, media) {
         var image = document.createElement('img');
         image.src = self.domain + media.files[0].file;
+        if (self.maxMediaWidth != -1) {
+            img.style.maxWidth = self.maxMediaWidth;
+        }
+        if (self.maxMediaHeight != -1) {
+            img.style.maxHeight = self.maxMediaHeight;
+        }
         target.appendChild(image);
         target.classList.remove('mediacrush');
         target.classList.add('mediacrush-processed');
@@ -76,8 +85,28 @@ window.MediaCrush = (function() {
     window.addEventListener('message', function(e) {
         var frame = iframes[e.source.location.href];
         if (frame) {
-            frame.width = e.data.width;
-            frame.height = e.data.height;
+            var width = e.data.width;
+            var height = e.data.height;
+            if (self.maxMediaWidth != -1) {
+                if (width > maxMediaWidth) {
+                    var difference = maxMediaWidth / width;
+                    width = maxMediaWidth;
+                    if (self.preserveAspectRatio) {
+                        height = height * difference;
+                    }
+                }
+            }
+            if (self.maxMediaHeight != -1) {
+                if (height > maxMediaHeight) {
+                    var difference = maxMediaHeight / height;
+                    height = maxMediaHeight;
+                    if (self.preserveAspectRatio) {
+                        width = width * difference;
+                    }
+                }
+            }
+            frame.width = width;
+            frame.height = height;
         }
     }, false);
 
