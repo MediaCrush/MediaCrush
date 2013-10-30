@@ -34,6 +34,16 @@ class RedisObject(object):
 
         return cls(**obj)
 
+    @classmethod
+    def get_all(cls):
+        keys = r.keys(cls.get_key("*"))
+        instances = []
+        for key in keys:
+            hash = key.rsplit(".")[2]
+            instances.append(cls.from_hash(hash))
+
+        return instances
+
     def save(self):
         key = _k(self.hash)
         obj = self.__get_vars()
