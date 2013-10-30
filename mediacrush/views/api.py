@@ -7,6 +7,7 @@ from ..files import media_url, get_mimetype, extension, processing_needed, delet
 from ..database import r, _k
 from ..objects import File, Feedback
 from ..network import get_ip
+from ..ratelimit import rate_limit_exceeded, rate_limit_update
 
 def _file_object(f):
     if not f.original:
@@ -149,6 +150,11 @@ class APIView(FlaskView):
 
         if len(text) > 10000:
             return {'error': 413}, 413
+
+        
+        rate_limit_update(1, "feedback")
+        if rate_limit_exceeded():
+            return {'error': 420}, 420
 
         feedback = Feedback(text=text, useragent=useragent)
         feedback.save()

@@ -44,4 +44,8 @@ docs_path = docs
 
 [ratelimit-upload]
 period = 3600 # One hour
-units_per_hour = 250000000 # 250 MB
+units_per_period = 250000000 # 250 MB
+
+[ratelimit-feedback]
+period = 86400 # One day
+units_per_period = 5
