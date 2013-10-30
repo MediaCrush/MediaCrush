@@ -32,6 +32,11 @@
             {% include fragment %}
         </div>
         <script type="text/javascript">
+            {% if mobile %}
+            window.mobile = true;
+            {% else %}
+            window.mobile = false;
+            {% endif %}
             window.addEventListener('load', function() {
                 var hash = window.location.hash;
                 if (hash.length > 1) {
