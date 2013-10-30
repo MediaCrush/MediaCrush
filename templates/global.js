@@ -63,8 +63,25 @@ window.addEventListener('load', function() {
     if (feedbackSend) {
         feedbackSend.addEventListener('click', function(e) {
             e.preventDefault();
-            // TODO
-            feedback.innerHTML = "<p>Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.</p>";
+
+            var feedbackText = document.getElementById("feedback-text");
+            var xhr = new XMLHttpRequest();
+            var formData = new FormData();
+
+            xhr.open('POST', '/api/feedback');
+            formData.append("feedback", feedbackText.value);
+            xhr.onload = function() {
+                if (this.status == 200)
+                    result = "Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.";
+                else if (this.status == 420)
+                    result = "Sorry, you can't send more feedback today. Try again in 24 hours!";
+                else
+                    result = "Sorry, something unexpected happened!";
+
+                feedback.innerHTML = "<p>" + result + "</p>";
+            };
+
+            xhr.send(formData);
         }, false);
     }
 }, false);
