@@ -24,7 +24,6 @@ restart_command = supervisorctl reload
 redis-ip = 127.0.0.1
 redis-port = 6379
 
-bytes_per_hour = 250000000
 
 google_analytics_id = UA-00000000-0
 google_analytics_domain = gifquick.net
@@ -42,3 +41,7 @@ admin_email = changeme@changeme.com
 from_email = admin@mediacru.sh
 
 docs_path = docs
+
+[ratelimit-upload]
+period = 3600 # One hour
+units_per_hour = 250000000 # 250 MB
