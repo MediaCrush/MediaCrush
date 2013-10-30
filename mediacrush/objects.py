@@ -1,4 +1,6 @@
 from .database import r, _k
+import hashlib
+import uuid
 
 import inspect
 
@@ -8,6 +10,9 @@ class RedisObject(object):
     def __init__(self, **kw):
         for k, v in kw.items():
             setattr(self, k, v)
+
+        if "hash" not in kw:
+            self.hash = hashlib.md5(uuid.uuid4().bytes).hexdigest()[:12]
 
     def __get_vars(self):
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
@@ -53,6 +58,10 @@ class File(RedisObject):
 
         if self.reports > 0:
             r.sadd(_k("reports-triggered"), self.hash)
+
+class Feedback(RedisObject):
+    text = None
+    useragent = None
 
 if __name__ == '__main__':
     a = File(hash="aasdf", compression=2)
