@@ -75,6 +75,8 @@ window.addEventListener('load', function() {
                     result = "Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.";
                 else if (this.status == 420)
                     result = "Sorry, you can't send more feedback today. Try again in 24 hours!";
+                else if (this.status == 413)
+                    result = "Sorry, that feedback is too large.";
                 else
                     result = "Sorry, something unexpected happened!";
 

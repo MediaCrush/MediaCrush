@@ -153,7 +153,7 @@ class APIView(FlaskView):
 
         
         rate_limit_update(1, "feedback")
-        if rate_limit_exceeded():
+        if rate_limit_exceeded("feedback"):
             return {'error': 420}, 420
 
         feedback = Feedback(text=text, useragent=useragent)

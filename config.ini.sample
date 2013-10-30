@@ -43,9 +43,9 @@ from_email = admin@mediacru.sh
 docs_path = docs
 
 [ratelimit-upload]
-period = 3600 # One hour
-units_per_period = 250000000 # 250 MB
+period = 3600 
+units_per_period = 250000000
 
 [ratelimit-feedback]
-period = 86400 # One day
+period = 86400
 units_per_period = 5
