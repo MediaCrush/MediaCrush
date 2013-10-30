@@ -7,7 +7,6 @@ from flask import request
 
 def rate_limit_exceeded(section="upload"):
     consumed = int(r.get(_k("rate_limit.%s.%s" % (section, get_ip()))))
-    print consumed
     if not consumed:
         return False
 
