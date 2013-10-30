@@ -130,14 +130,9 @@ function createView(data) {
         preview = document.createElement('img');
         preview.src = item.original;
     } else if (item.type.indexOf('audio/') == 0) {
-        preview = document.createElement('audio');
-        preview.setAttribute('controls', 'controls');
-        for (var i = 0; i < item.files.length; i++) {
-            var source = document.createElement('source');
-            source.setAttribute('src', item.files[i].file);
-            source.setAttribute('type', item.files[i].type);
-            preview.appendChild(source);
-        }
+        preview = document.createElement('img');
+        preview.src = '/static/audio-player.png';
+        preview.style.marginTop = '23px';
     }
     preview.className = 'item';
     var container2 = document.createElement('div');
