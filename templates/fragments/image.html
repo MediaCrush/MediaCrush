@@ -11,4 +11,8 @@ function resizeMedia(x, y) {
     img.width = x;
     img.height = y;
 }
+window.addEventListener('load', function() {
+    var image = document.getElementById('img-{{filename}}');
+    document.title = "MediaCrush (" + image.width + "x" + image.height + ")";
+}, false);
 </script>
