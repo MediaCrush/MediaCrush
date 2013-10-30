@@ -400,14 +400,9 @@ function createHistoryItem(data) {
         preview.src = item.original;
         preview.className = 'item-view';
     } else if (item.type.indexOf('audio/') == 0) {
-        preview = document.createElement('audio');
-        preview.setAttribute('controls', 'controls');
-        for (var i = 0; i < item.files.length; i++) {
-            var source = document.createElement('source');
-            source.setAttribute('src', item.files[i].file);
-            source.setAttribute('type', item.files[i].type);
-            preview.appendChild(source);
-        }
+        preview = document.createElement('img');
+        preview.src = '/static/audio-player-narrow.png';
+        preview.className = 'item-view';
     }
     var a = document.createElement('a');
     a.href = '/' + data.hash;
