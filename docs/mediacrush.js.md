@@ -14,6 +14,10 @@ Additionally, the library will render any elements in your document that look li
 
 To suppress this behavior, set `window.preventMediaCrushAutoload` before loading mediacrush.js.
 
+You may also set `window.beforeMediaCrushLoad` to a function that should be executed before MediaCrush
+does its initial sweep of the DOM for `.mediacrush` elements. This gives you a chance to change settings
+like `MediaCrush.domain`.
+
 mediacrush.js can also be used to embed MediaCrush objects into pages. This is the preferred means of
 embedding files in third party sites. You can embed any MediaCrush file into a div, and it will
 look like:

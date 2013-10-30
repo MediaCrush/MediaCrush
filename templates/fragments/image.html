@@ -6,4 +6,9 @@ function mediaSizeReporter() {
     var img = document.getElementById('img-{{filename}}');
     return { width: img.width, height: img.height };
 }
+function resizeMedia(x, y) {
+    var img = document.getElementById('img-{{filename}}');
+    img.width = x;
+    img.height = y;
+}
 </script>

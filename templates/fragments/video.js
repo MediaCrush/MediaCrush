@@ -264,3 +264,6 @@ function mediaSizeReporter() {
     var video = document.querySelector('video');
     return { width: video.videoWidth, height: video.videoHeight };
 }
+function resizeMedia(x, y) {
+    document.querySelector('.video').classList.add('fullscreen');
+}

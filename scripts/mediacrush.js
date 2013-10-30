@@ -66,6 +66,7 @@ window.MediaCrush = (function() {
         var iframe = document.createElement('iframe');
         iframe.src = self.domain + '/' + media.hash + '/frame';
         iframe.setAttribute('frameborder', 0);
+        iframe.allowFullscreen = true;
         iframes[iframe.src] = iframe;
         target.appendChild(iframe);
         target.classList.remove('mediacrush');
@@ -233,6 +234,9 @@ window.MediaCrush = (function() {
 window.addEventListener('load', function() {
     if (window.preventMediaCrushAutoload) {
         return;
+    }
+    if (window.beforeMediaCrushLoad) {
+        window.beforeMediaCrushLoad();
     }
     MediaCrush.renderAll();
 }, false);
