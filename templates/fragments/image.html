@@ -4,6 +4,10 @@
 <script type="text/javascript">
 window.addEventListener('load', function() {
     var image = document.getElementById('img-{{filename}}');
-    document.title = "MediaCrush (" + image.width + "x" + image.height + ")";
+    var dupe = document.createElement('img'); // Duplicate image so that CSS sizing and such doesn't affect the resolution
+    dupe.onload = function() {
+        document.title = "MediaCrush (" + dupe.width + "x" + dupe.height + ")";
+    };
+    dupe.src = image.src;
 }, false);
 </script>
