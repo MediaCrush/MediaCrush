@@ -7,11 +7,7 @@
 window.MediaCrush = (function() {
     var self = this;
     self.version = 1;
-    self.domain = 'http://localhost:5000'; // TODO
-    self.settings = {
-        basicVideo: false,
-        basicAudio: false,
-    };
+    self.domain = 'https://mediacru.sh';
 
     /*
      * Private methods/properties
