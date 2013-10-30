@@ -37,6 +37,12 @@
                 if (hash.length > 1) {
                     handleHash(hash);
                 }
+                {% if embedded %}
+                var body = document.body, html = document.documentElement;
+                var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+                var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+                window.top.postMessage({ width: width, height: height }, '*');
+                {% endif %}
             }, false);
             function handleHash(hash) {
                 if (mediaHashHandler)

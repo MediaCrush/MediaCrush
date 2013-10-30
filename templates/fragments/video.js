@@ -260,3 +260,7 @@ function mediaHashHandler(hash) {
         }
     }
 }
+function mediaSizeReporter() {
+    var video = document.querySelector('video');
+    return { width: video.videoWidth, height: video.videoHeight };
+}

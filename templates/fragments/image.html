@@ -1,3 +1,9 @@
 <a href="{{ share('directlink', filename) }}">
-    <img src="/{{ original }}" alt="MediaCrush" id="image" />
+    <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
 </a>
+<script type="text/javascript">
+function mediaSizeReporter() {
+    var img = document.getElementById('img-{{filename}}');
+    return { width: img.width, height: img.height };
+}
+</script>
