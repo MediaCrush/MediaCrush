@@ -77,6 +77,7 @@ window.MediaCrush = (function() {
         var iframe = document.createElement('iframe');
         iframe.src = self.domain + '/' + media.hash + '/frame';
         iframe.setAttribute('frameborder', 0);
+        iframe.setAttribute('scrolling', 'no');
         iframe.allowFullscreen = true;
         iframes[media.hash] = { frame: iframe, media: media, callback: callback };
         target.appendChild(iframe);
