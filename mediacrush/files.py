@@ -131,6 +131,13 @@ def media_url(f):
 def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
+def file_length(f):
+    f.seek(0, 2)
+    by = f.tell()
+    f.seek(0)
+
+    return by
+
 def compression_rate(f):
     f_original = File.from_hash(f)
     ext = extension(f_original.original)
@@ -170,8 +177,8 @@ def upload(f, filename):
         filename += ext
 
     if f and allowed_file(filename):
-        if not current_app.debug:
-            rate_limit_update(f)
+        if not current_app.debug or True:
+            rate_limit_update(file_length(f))
             if rate_limit_exceeded():
                 return "ratelimit", 420
 

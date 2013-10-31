@@ -334,11 +334,14 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
-
     setTimeout(handleHistory, 50);
 }
 
 function forceFocus() {
+    if (document.activeElement.tagName == 'TEXTAREA') {
+        setTimeout(forceFocus, 250);
+        return;
+    }
     var pasteTarget = document.getElementById('paste-target');
     pasteTarget.focus();
     setTimeout(forceFocus, 250);
@@ -474,7 +477,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab],{type:'image/png'});
 }
 
-window.onload = dropEnable;
+window.addEventListener('load', dropEnable, false);
 window.onbeforeunload = function() {
     if (uploads != 0) {
         return "If you leave the page, these uploads will be cancelled.";

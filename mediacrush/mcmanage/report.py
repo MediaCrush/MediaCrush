@@ -1,6 +1,6 @@
 from ..database import r, _k
 from ..config import _cfg
-from ..objects import File
+from ..objects import File, Feedback
 from ..files import extension
 
 from .compliments import compliments
@@ -22,6 +22,9 @@ Disk info:
 %s
 
 Files with more than 10 reports:
+%s
+
+User feedback:
 %s
 
 %s"""
@@ -64,7 +67,16 @@ def report():
     if len(reports) == 0:
         reportinfo += "    No reports today. Good job!"
 
-    blobs = len(r.keys("mediacrush.file.*"))
+    blobs = len(r.keys(_k("file.*")))
+
+    feedback = Feedback.get_all()
+    user_feedback = "" 
+    for f in feedback:
+        user_feedback += "    %s:\n        %s\n" % (f.useragent, f.text)
+        f.delete()
+
+    if not feedback:
+        user_feedback += "    No fedback today!"
 
     report = TEMPLATE % (
         datetime.now().strftime("%d/%m/%Y"),
@@ -72,6 +84,7 @@ def report():
         fileinfo,
         diskinfo,
         reportinfo,
+        user_feedback,
 
         random.choice(compliments)
     )

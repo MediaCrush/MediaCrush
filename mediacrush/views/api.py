@@ -5,8 +5,9 @@ from flask import request
 from ..decorators import json_output, cors
 from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
 from ..database import r, _k
-from ..objects import File
+from ..objects import File, Feedback
 from ..network import get_ip
+from ..ratelimit import rate_limit_exceeded, rate_limit_update
 
 def _file_object(f):
     if not f.original:
@@ -141,3 +142,20 @@ class APIView(FlaskView):
             return {'exists': False}, 404
 
         return {'exists': True}
+
+    @route("/api/feedback", methods=['POST'])
+    def feedback(self):
+        text = request.form.get('feedback')
+        useragent = request.headers.get('User-Agent')
+
+        if len(text) > 10000:
+            return {'error': 413}, 413
+
+        
+        rate_limit_update(1, "feedback")
+        if rate_limit_exceeded("feedback"):
+            return {'error': 420}, 420
+
+        feedback = Feedback(text=text, useragent=useragent)
+        feedback.save()
+        return {'status': 'success'}
