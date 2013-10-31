@@ -60,10 +60,10 @@ window.MediaCrush = (function() {
         var image = document.createElement('img');
         image.src = self.domain + media.files[0].file;
         if (self.maxMediaWidth != -1) {
-            img.style.maxWidth = self.maxMediaWidth;
+            image.style.maxWidth = self.maxMediaWidth;
         }
         if (self.maxMediaHeight != -1) {
-            img.style.maxHeight = self.maxMediaHeight;
+            image.style.maxHeight = self.maxMediaHeight;
         }
         target.appendChild(image);
         target.classList.remove('mediacrush');
