@@ -213,7 +213,7 @@ window.MediaCrush = (function() {
             xhr = createRequest('POST', '/api/upload/url');
             formData.append('url', file);
         }
-        xhr.onprogress = onprogress;
+        xhr.upload.onprogress = onprogress;
         xhr.onload = function() {
             var json = JSON.parse(this.responseText);
             var blob = { hash: json.hash };
