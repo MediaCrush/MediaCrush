@@ -46,7 +46,7 @@
                 var body = document.body, html = document.documentElement;
                 var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
                 {% if mimetype.startswith('audio/') %}
-                var height = 70;
+                var height = 50;
                 {% else %}
                 var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
                 {% endif %}

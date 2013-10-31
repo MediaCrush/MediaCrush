@@ -1,3 +1,7 @@
+body > div {
+    height: 45px;
+    overflow: hidden;
+}
 .audio a {
     outline: none;
 }
