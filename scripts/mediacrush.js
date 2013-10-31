@@ -78,14 +78,14 @@ window.MediaCrush = (function() {
         iframe.src = self.domain + '/' + media.hash + '/frame';
         iframe.setAttribute('frameborder', 0);
         iframe.allowFullscreen = true;
-        iframes[iframe.src] = { frame: iframe, media: media, callback: callback };
+        iframes[media.hash] = { frame: iframe, media: media, callback: callback };
         target.appendChild(iframe);
         target.classList.remove('mediacrush');
         target.classList.add('mediacrush-processed');
     };
 
     window.addEventListener('message', function(e) {
-        var frame = iframes[e.source.location.href];
+        var frame = iframes[e.data.media];
         if (frame) {
             var width = e.data.width;
             var height = e.data.height;

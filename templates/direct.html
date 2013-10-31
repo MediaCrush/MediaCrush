@@ -46,7 +46,7 @@
                 var body = document.body, html = document.documentElement;
                 var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
                 var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-                window.top.postMessage({ width: width, height: height }, '*');
+                window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
                 // This mess just gets the window width,height in x,y
                 var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
                 if (window.resizeMedia) {
