@@ -76,7 +76,7 @@ def report():
         f.delete()
 
     if not feedback:
-        user_feedback += "    No fedback today!"
+        user_feedback += "    No feedback today!"
 
     report = TEMPLATE % (
         datetime.now().strftime("%d/%m/%Y"),
