@@ -109,9 +109,9 @@ window.MediaCrush = (function() {
             }
             frame.frame.width = width;
             frame.frame.height = height;
+            if (frame.callback)
+                frame.callback(frame.frame.parentElement, frame.media);
         }
-        if (frame.callback)
-            frame.callback(frame.frame.parentElement, frame.media);
     }, false);
 
     /*
