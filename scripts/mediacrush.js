@@ -75,6 +75,7 @@ window.MediaCrush = (function() {
     var iframes = {};
     var renderMedia = function(target, media, callback) {
         var iframe = document.createElement('iframe');
+        iframe.setAttribute('sandbox', 'allow-same-origin');
         iframe.src = self.domain + '/' + media.hash + '/frame';
         iframe.setAttribute('frameborder', 0);
         iframe.allowFullscreen = true;
