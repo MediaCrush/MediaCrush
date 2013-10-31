@@ -70,5 +70,13 @@
             {% if embedded %}
             {% endif %}
         </script>
+        {% if mimetype.startswith('audio') %}
+        <style>
+            body > div {
+                height: 45px;
+                overflow: hidden;
+            }
+        </style>
+        {% endif %}
     </body>
 </html>

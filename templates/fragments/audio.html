@@ -4,7 +4,11 @@
         <source src="/{{ filename }}.ogg" type='audio/ogg'>
     </audio>
     <h1 class="brand">
+        {% if embedded %}
+        <a href="/{{filename}}" target="_blank">
+        {% else %}
         <a href="/" target="_blank">
+        {% endif %}
             <span>
                 <img src="/static/logo-bg.png" class="bg" alt="logo" />
                 <img src="/static/logo-fg.png" alt="logo" />
