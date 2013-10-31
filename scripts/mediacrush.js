@@ -139,6 +139,7 @@ window.MediaCrush = (function() {
                             dictionary[blob] = result[blob];
                         } else {
                             var media = createMediaObject(result[blob]);
+                            media.hash = blob;
                             array.push(media);
                             dictionary[blob] = media;
                         }
