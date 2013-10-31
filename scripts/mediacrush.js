@@ -131,6 +131,8 @@ window.MediaCrush = (function() {
                     var array = [];
                     var dictionary = {};
                     for (blob in result) {
+                        if (blob.length != 12)
+                            continue;
                         result[blob].hash = blob;
                         if (result[blob] == null) {
                             array.push(result[blob]);
