@@ -147,8 +147,11 @@ window.MediaCrush = (function() {
                     if (callback)
                         callback(array, dictionary);
                 } else {
-                    if (callback)
-                        callback(createMediaObject(result));
+                    if (callback) {
+                        var media = createMediaObject(result);
+                        media.hash = hashes;
+                        callback(media);
+                    }
                 }
             }
         };
