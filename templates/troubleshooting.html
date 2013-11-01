@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='troubleshooting.css') }}?version=2" />
+{% endblock %}
+{% block scripts %}
+<script src="/static/troubleshooting.js"></script>
+{% endblock %}
+{% block content %}
+<h1>Troubleshooting</h1>
+<p>MediaCrush relies on a lot of new technologies to get you videos. For the majority of our users, this isn't a problem. However,
+some users have trouble playing our videos. If videos aren't playing well for you, it might be one of the following problems:</p>
+<ul>
+    <li>Your web browser is not up-to-date
+    <ul><li>If you're on IE, we suggest <a href="http://abetterbrowser.org/">switching to an alternative</a>, or updating to at least IE 11.</li></ul>
+    </li>
+    <li>Your system is missing codecs
+        <ul>
+            <li>On Windows, try installing <a href="http://www.videolan.org/" target="_blank">VLC</a>. It installs a lot of useful codecs.</li>
+            <li>On Linux, install all the ffmpeg browser packages for your selected web browser.
+                <ul>
+                    <li>Using Firefox? Install all the gstreamer packages and search for "gstreamer" in about:config to enable it.</li>
+                    <li>Using Chromium? Install ffmpeg-chromium-extra (it might be different on your system).</li>
+                </ul>
+            </li>
+            <li>On Mac, <a href="http://www.videolan.org/" target="_blank">VLC</a> is your best bet, too.</li>
+        </ul>
+    </li>
+    <li>On mobile? Try using the latest Chrome or Firefox for your device instead of the built-in browser.</li>
+</ul>
+<p>If none of these suggestions solve your problem, there's still hope. Please check any of the following videos that <strong>do not</strong>
+play correctly for you:</p>
+<div class="hidden" id="warning" style="color: red;">Warning: with all of these removed, you will not be able to play videos.</div>
+<div class="video-test">
+    <label for="webm-check">
+        <input type="checkbox" id="webm-check" name="webm-check" data-type="video/webm" />This does not play correctly
+    </label>
+    <video controls>
+        <source type="video/webm" src="https://mediacru.sh/Cjbft93YWNNu.webm">
+    </video>
+</div>
+<div class="video-test">
+    <label for="mp4-check">
+        <input type="checkbox" id="mp4-check" name="mp4-check" data-type="video/mp4" />This does not play correctly
+    </label>
+    <video controls>
+        <source type="video/mp4" src="https://mediacru.sh/Cjbft93YWNNu.mp4">
+    </video>
+</div>
+<div class="video-test">
+    <label for="ogg-check">
+        <input type="checkbox" id="ogg-check" name="ogg-check" data-type="video/ogg" />This does not play correctly
+    </label>
+    <video controls>
+        <source type="video/webm" src="https://mediacru.sh/Cjbft93YWNNu.ogv">
+    </video>
+</div>
+<p class="clearfix">We won't offer the broken videos to your browser. In most cases, your web browser will skip video formats it can't play, but we won't offer
+them in the first place if you mark them here.</p>
+{% endblock %}

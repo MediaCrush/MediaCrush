@@ -1,9 +1,11 @@
 from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash 
+from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response, g
 import os
+import json
+import mimetypes
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status
+from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status, processing_needed
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File
@@ -20,8 +22,8 @@ class MediaView(FlaskView):
            return send_file(path, as_attachment=True)
         return self.get(id)
 
-    def _template_params(self, id): 
-        f = File.from_hash(id) 
+    def _template_params(self, id):
+        f = File.from_hash(id)
         if not f.original:
             abort(404)
 
@@ -38,16 +40,28 @@ class MediaView(FlaskView):
         mimetype = get_mimetype(f.original)
 
         fragments = ['video', 'mobilevideo', 'image', 'audio']
-        fragment_check = [ 
+        fragment_check = [
             (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
             mimetype.startswith('video') and g.mobile,
             (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
             mimetype.startswith('audio'),
-        ] 
+        ]
 
         for i, truth in enumerate(fragment_check):
             if truth:
-                fragment = fragments[i] 
+                fragment = fragments[i]
+
+        types = [ mimetype ]
+        for f_ext in processing_needed[ext]['formats']:
+            types.append(mimetypes.guess_type('foo.' + f_ext)[0])
+        if 'do-not-send' in request.cookies:
+            try:
+                blacklist = json.loads(request.cookies['do-not-send'])
+                for t in blacklist:
+                    if t in types:
+                        types.remove(t)
+            except:
+                pass
 
         return {
             'filename': f.hash,
@@ -58,20 +72,21 @@ class MediaView(FlaskView):
             'compression': compression,
             'mimetype': mimetype,
             'can_delete': can_delete if can_delete is not None else 'check',
-            'fragment': 'fragments/' + fragment + '.html'
+            'fragment': 'fragments/' + fragment + '.html',
+            'types': types
         }
 
     def get(self, id):
         if ".." in id or id.startswith("/"):
             abort(403)
 
-        if "." in id: 
+        if "." in id:
             if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
-    
+
         return render_template("view.html", **self._template_params(id))
-    
+
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()

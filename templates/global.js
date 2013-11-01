@@ -8,6 +8,14 @@ Array.prototype.remove = function(from, to) {
   this.length = from < 0 ? this.length + from : from;
   return this.push.apply(this, rest);
 };
+Array.prototype.contains = function(a) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == a) {
+            return true;
+        }
+    }
+    return false;
+};
 function readCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
