@@ -40,6 +40,9 @@
     </div>
 </div>
 <div class="center small clearfix">
+    {% if mimetype.startswith('video') %}
+    <a href="/troubleshooting">Troubleshoot video problems</a>
+    {% endif %}
     <ul class="inline">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
