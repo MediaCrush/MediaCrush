@@ -1,0 +1,10 @@
+@import 'stylesheet.scss'
+
+.video-test {
+    float: left;
+    margin-left: 25px;
+    video {
+        width: 300px;
+        display: block;
+    }
+}

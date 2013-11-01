@@ -139,6 +139,10 @@ def version():
 def serious():
     return render_template("serious.html")
 
+@app.route("/troubleshooting")
+def troubleshooting():
+    return render_template("troubleshooting.html")
+
 @app.route("/mediacrush.js")
 def mediacrushjs():
     v = render_template("mediacrush.js", host=_cfg("domain"))
