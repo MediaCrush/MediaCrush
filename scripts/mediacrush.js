@@ -271,14 +271,14 @@ window.MediaCrush = (function() {
     self.play = function(media) {
         var hash = media.getAttribute('data-media');
         if (iframes[hash]) {
-            iframes[hash].contentWindow.postMessage({ action: 'play' }, '*');
+            iframes[hash].frame.contentWindow.postMessage({ action: 'play' }, '*');
         }
     };
 
     self.pause = function(media) {
         var hash = media.getAttribute('data-media');
         if (iframes[hash]) {
-            iframes[hash].contentWindow.postMessage({ action: 'pause' }, '*');
+            iframes[hash].frame.contentWindow.postMessage({ action: 'pause' }, '*');
         }
     };
 
