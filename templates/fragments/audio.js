@@ -3,7 +3,7 @@ window.addEventListener('load', function() {
         if (!window.localStorage.volume) {
             window.localStorage.volume = 1;
     }
-    } catch { /* this causes security exceptions in sandboxed iframes */ }
+    } catch (ex) { /* this causes security exceptions in sandboxed iframes */ }
     var controls = document.querySelectorAll('.audio .control');
     for (var i = 0; i < controls.length; i++) {
         controls[i].addEventListener('click', controlClick, false);
@@ -31,7 +31,7 @@ window.addEventListener('load', function() {
         try {
             if (amount)
                 amount.style.width = (window.localStorage.volume * 100) + '%';
-        } catch {
+        } catch (ex) {
             amount.style.width = '100%';
         }
         volumes[i].addEventListener('mousedown', beginAdjustVolume, false);
@@ -70,7 +70,7 @@ function adjustVolume(e) {
     audio.volume = amount;
     try {
         window.localStorage.volume = amount;
-    } catch { /* ... */ }
+    } catch (ex) { /* ... */ }
     container.querySelector('.amount').style.width = (amount * 100) + '%';
 }
 function handleSeek(e) {
