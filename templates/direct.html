@@ -63,9 +63,9 @@
                 }, false);
                 window.addEventListener('message', function(e) {
                     var action = e.data.action;
-                    if (action == 'PLAY') {
+                    if (action == 'play') {
                         if (window.playMedia) playMedia();
-                    } else if (action == 'PAUSE') {
+                    } else if (action == 'pause') {
                         if (window.pauseMedia) pauseMedia();
                     }
                 });
