@@ -1,8 +1,10 @@
 var fullscreenElement;
 window.addEventListener('load', function() {
-    if (!window.localStorage.volume) {
-        window.localStorage.volume = 1;
-    }
+    try {
+        if (!window.localStorage.volume) {
+            window.localStorage.volume = 1;
+        }
+    } catch { /* this causes security exceptions in sandboxed iframes */ }
     var controls = document.querySelectorAll('.video .control');
     for (var i = 0; i < controls.length; i++) {
         controls[i].addEventListener('click', controlClick, false);
@@ -27,8 +29,12 @@ window.addEventListener('load', function() {
     var volumes = document.querySelectorAll('.volume, .volume .amount');
     for (var i = 0; i < volumes.length; i++) {
         var amount = volumes[i].querySelector('.amount');
-        if (amount)
-            amount.style.width = (window.localStorage.volume * 100) + '%';
+        try {
+            if (amount)
+                amount.style.width = (window.localStorage.volume * 100) + '%';
+        } catch {
+            amount.style.width = '100%';
+        }
         volumes[i].addEventListener('mousedown', beginAdjustVolume, false);
         volumes[i].addEventListener('mousemove', adjustVolume, false);
         volumes[i].addEventListener('mouseup', endAdjustVolume, false);
@@ -115,7 +121,9 @@ function adjustVolume(e) {
     else
         amount = e.layerX / container.clientWidth;
     video.volume = amount;
-    window.localStorage.volume = amount;
+    try {
+        window.localStorage.volume = amount;
+    } catch { /* ... */ }
     container.querySelector('.amount').style.width = (amount * 100) + '%';
 }
 function handleSeek(e) {
