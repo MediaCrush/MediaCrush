@@ -1,16 +1,16 @@
 #feedback {
     position: fixed;
     z-index: 1000;
-    transition: bottom 0.25s linear;
-    bottom: -150px;
-    right: 10px;
+    transition: right 0.25s linear;
+    top: 20px;
+    right: -200px;
     width: 200px;
-    height: 150px;
+    height: 155px;
     background: #1692d0;
     color: #fff;
 
     &.active {
-        bottom: 0;
+        right: 0;
     }
 
     textarea {
@@ -39,14 +39,18 @@
     }
 
     & > a {
+        text-align: center;
         color: #fff;
         position: absolute;
-        top: -28px;
+        top: 30px;
         background: #1692d0;
         display: block;
         width: 83px;
-        left: 107px;
+        left: -62px;
         padding: 5px;
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        transform: rotate(-90deg);
     }
 
     & > div {
