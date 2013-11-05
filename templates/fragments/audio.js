@@ -144,3 +144,15 @@ function pause(audio) {
     playbackControl.classList.add('play');
     audio.pause();
 }
+function playMedia() {
+    var audio = document.querySelectorAll('audio');
+    for (var i = 0; i < audio.length; i++) {
+        play(audio[i]);
+    }
+}
+function pauseMedia() {
+    var audio = document.querySelectorAll('audio');
+    for (var i = 0; i < audio.length; i++) {
+        pause(audio[i]);
+    }
+}

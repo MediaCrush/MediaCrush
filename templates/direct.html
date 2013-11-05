@@ -61,6 +61,14 @@
                         resizeMedia(x, y);
                     }
                 }, false);
+                window.addEventListener('message', function(e) {
+                    var action = e.data.action;
+                    if (action == 'PLAY') {
+                        if (window.playMedia) playMedia();
+                    } else if (action == 'PAUSE') {
+                        if (window.pauseMedia) pauseMedia();
+                    }
+                });
                 {% endif %}
             }, false);
             function handleHash(hash) {

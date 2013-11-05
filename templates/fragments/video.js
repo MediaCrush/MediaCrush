@@ -218,6 +218,18 @@ function pause(video) {
     playbackControl.classList.add('play');
     video.pause();
 }
+function playMedia() {
+    var video = document.querySelectorAll('video');
+    for (var i = 0; i < video.length; i++) {
+        play(video[i]);
+    }
+}
+function pauseMedia() {
+    var video = document.querySelectorAll('video');
+    for (var i = 0; i < video.length; i++) {
+        pause(video[i]);
+    }
+}
 function addHash(hash) {
     var parts = window.location.hash.substr(1).split(',');
     var newParts = [];
