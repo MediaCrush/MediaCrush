@@ -73,9 +73,12 @@ window.MediaCrush = (function() {
     };
 
     var iframes = {};
-    var renderMedia = function(target, media, callback) {
+    var renderMedia = function(target, media, options, callback) {
         var iframe = document.createElement('iframe');
-        iframe.src = self.domain + '/' + media.hash + '/frame';
+        var src = self.domain + '/' + media.hash + '/frame';
+        if (options != '')
+            src += '#' + options;
+        iframe.src = src;
         iframe.setAttribute('frameborder', 0);
         iframe.setAttribute('scrolling', 'no');
         iframe.setAttribute('allowFullscreen', 'true');
@@ -234,11 +237,16 @@ window.MediaCrush = (function() {
      */
     self.render = function(element, callback) {
         var hash = element.getAttribute('data-media');
+        var options = '';
+        if (hash.indexOf('#') == 12) {
+            options = hash.split('#')[1];
+            hash = hash.split('#')[0];
+        }
         self.get(hash, function(media) {
             if (media.type.indexOf('image/') == 0 && media.type != 'image/gif') {
                 renderImage(element, media, callback);
             } else {
-                renderMedia(element, media, callback);
+                renderMedia(element, media, options, callback);
             }
         });
     };
@@ -249,6 +257,9 @@ window.MediaCrush = (function() {
         for (var i = 0; i < elements.length; i++) {
             var hash = elements[i].getAttribute('data-media');
             if (hash) {
+                if (hash.indexOf('#') == 12) {
+                    hash = hash.split('#')[0];
+                }
                 hashes.push(hash);
             }
         }
@@ -257,11 +268,16 @@ window.MediaCrush = (function() {
         self.get(hashes, function(array, result) {
             for (var i = 0; i < elements.length; i++) {
                 var hash = elements[i].getAttribute('data-media');
+                var options = '';
+                if (hash.indexOf('#') == 12) {
+                    options = hash.split('#')[1];
+                    hash = hash.split('#')[0];
+                }
                 if (hash && result[hash]) {
                     if (result[hash].type.indexOf('image/') == 0 && result[hash].type != 'image/gif') {
                         renderImage(elements[i], result[hash]);
                     } else {
-                        renderMedia(elements[i], result[hash]);
+                        renderMedia(elements[i], result[hash], options);
                     }
                 }
             }
