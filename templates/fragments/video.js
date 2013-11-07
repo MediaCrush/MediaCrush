@@ -22,6 +22,10 @@ window.addEventListener('load', function() {
         }
         videos[i].addEventListener('timeupdate', updateVideo, false);
     }
+    var hovers = document.querySelectorAll('.video .hover');
+    for (var i = 0; i < hovers.length; i++) {
+        hovers[i].addEventListener('mousemove', videoMouseMove, false);
+    }
     var buffers = document.querySelectorAll('.seek .buffering, .seek .progress, .seek .unbuffered');
     for (var i = 0; i < buffers.length; i++) {
         buffers[i].addEventListener('click', handleSeek, false);
@@ -46,32 +50,33 @@ window.addEventListener('load', function() {
         }
     }, false);
     document.addEventListener('webkitfullscreenchange', function() {
-        if (document.mozFullScreenElement === null) {
+        if (document.webkitFullScreenElement === null) {
+            exitFullscreen();
+        }
+    }, false);
+    document.addEventListener('fullscreenchange', function() {
+        if (document.fullScreenElement === null) {
             exitFullscreen();
         }
     }, false);
     window.addEventListener('keyup', function(e) {
-        if (e.keyCode == 27 && fullscreenElement) // esc
+        if (e.keyCode == 27 && fullscreenElement !== null) // esc
             exitFullscreen();
     }, false);
-    window.addEventListener('mousemove', windowMouseMove, false);
 }, false);
-var debounce = false;
-function windowMouseMove() {
-    if (fullscreenElement && fullscreenElement != null) {
-        var hover = fullscreenElement.querySelector('.hover');
-        if (hover.className.indexOf('disabled') != -1) {
-            hover.classList.remove('disabled');
-            debounce = false;
-        }
-        setTimeout(function() {
-            if (debounce) {
-                return;
-            }
-            debounce = true;
-            hover.classList.add('disabled');
-        }, 3000);
+function videoMouseMove(e) {
+    var hover = e.target;
+    if (hover.className.indexOf('disabled') != -1) {
+        hover.classList.remove('disabled');
+        hover.setAttribute('data-debounce', false);
     }
+    setTimeout(function() {
+        if (hover.getAttribute('data-debounce') == 'true') {
+            return;
+        }
+        hover.setAttribute('data-debounce', true);
+        hover.classList.add('disabled');
+    }, 2000);
 }
 function exitFullscreen() {
     if (document.cancelFullScreen)
@@ -87,7 +92,6 @@ function exitFullscreen() {
     else if (fullscreenElement.webkitCancelFullScreen)
         fullscreenElement.webkitCancelFullScreen();
     fullscreenElement.classList.remove('fullscreen');
-    fullscreenElement.querySelector('.hover').classList.remove('disabled');
     var target = fullscreenElement.querySelector('.window');
     target.classList.remove('window');
     target.classList.add('full');
