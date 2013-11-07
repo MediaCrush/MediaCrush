@@ -123,10 +123,11 @@
     opacity: 0.8;
     border-radius: 10px;
     text-decoration: none;
-    background: url('/static/repeat.png') no-repeat 16px 24px #333;
+    background: url('/static/repeat-dim.png') no-repeat 16px 24px #333;
     transition: box-shadow 0.3s linear;
 }
 .video .side .loop.enabled {
+    background: url('/static/repeat.png') no-repeat 16px 24px #333;
     box-shadow: 0 0 5px 5px #fff;
     color: #fff;
 }
