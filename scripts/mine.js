@@ -14,8 +14,9 @@ function clearHistoryAndReload() {
     window.location = "/mine";
 }
 
-var items = [];
+var items = {};
 var elements = [];
+var loaded_pages = [];
 var ITEMS_PER_PAGE = 10;
 var MAX_PAGES_DISPLAYED = 6;
 
@@ -28,10 +29,7 @@ window.onload = function() {
         link.textContent = 'enable local history';
     }
     createPagination();
-    loadDetailedHistory(history, function(result) {
-        items = result;
-        loadCurrentPage();
-    });
+    loadCurrentPage();
     window.onhashchange = function() {
         window.scrollTo(0, 0);
         createPagination();
@@ -82,6 +80,29 @@ function loadCurrentPage() {
     var container = document.getElementById('items');
     while (container.hasChildNodes()) container.removeChild(container.lastChild);
     var page = getCurrentPage();
+    if (loaded_pages.contains(page)) {
+        loadPage(page);
+    } else {
+        var reversedHistory = history.slice(0).reverse();
+        to_load = [];
+        for (var i = page * ITEMS_PER_PAGE; i < page * ITEMS_PER_PAGE + ITEMS_PER_PAGE && i < history.length; i++) {
+            to_load.push(reversedHistory[i]);
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/info?list=' + to_load.join(','));
+        xhr.onload = function() {
+            var result = JSON.parse(this.responseText);
+            for (a in result) {
+                items[a] = result[a];
+            }
+            loadPage(page);
+        };
+        xhr.send();
+    }
+}
+
+function loadPage(page) {
+    var container = document.getElementById('items');
     var reversedHistory = history.slice(0).reverse();
     elements = [];
     for (var i = page * ITEMS_PER_PAGE; i < page * ITEMS_PER_PAGE + ITEMS_PER_PAGE && i < history.length; i++) {
@@ -119,6 +140,8 @@ function createView(data) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         for (var i = 0; i < item.files.length; i++) {
+            if (item.files[i].type == 'image/gif')
+                continue;
             var source = document.createElement('source');
             source.setAttribute('src', item.files[i].file);
             source.setAttribute('type', item.files[i].type);
