@@ -176,8 +176,12 @@ function controlClick(e) {
             removeHash('loop');
             addHash('noloop');
         }
-        if (video.paused)
+        if (video.ended) {
+            video.currentTime = 0;
             play(video);
+        } else if (video.paused) {
+            play(video);
+        }
         if (target.className.indexOf('enabled') != -1)
             target.classList.remove('enabled');
         else
