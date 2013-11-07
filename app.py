@@ -117,9 +117,9 @@ def mine():
 def apps():
     return render_template("apps.html")
 
-@app.route("/demo")
+@app.route("/about")
 def demo():
-    return render_template("demo.html")
+    return render_template("about.html")
 
 @app.route("/donate")
 def donate():
