@@ -3,38 +3,53 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='demo.css') }}?version=2" />
 {% endblock %}
 {% block content %}
-<p>We make media load super fast. We have a whole bunch of tricks up our sleeves to make your files smaller without
-sacrificing quality. When you upload a picture, we run it through lossless compression tools - they find the best
-way to make the file smaller, without reducing the quality of the file. And we have epsecially good tools for GIF
-files. If you upload a GIF to MediaCrush, we'll convert it into a video before we save it. You see, the GIF file
-format is quite old and quite bad. In the years since it came about, computers have become a lot better at compressing
-files. No, seriously - this example got 1600% faster when we converted it to a video:</p>
+<p>We make media load super fast, without sacrificing quality. Here's an example:</p>
 <div class="row">
     <div class="left">
-        <h3>GIF</h3>
+        <h3>Before MediaCrush</h3>
         <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
         <p>Filesize: 1965 kB (~2.0 MB)</p>
     </div>
     <div class="middle">
         Result:<br />
-        <strong>1600% compression</strong><br />
+        <strong>1600% faster</strong><br />
         <a href="/">Try it yourself!</a>
     </div>
     <div class="right">
-        <h3>Video</h3>
-        {% if mobile %}
-            <video controls loop>
-        {% else %}
-            <video autoplay loop>
-        {% endif %}
-            <source src="{{ url_for('static', filename='demo.mp4') }}" type='video/mp4'>
-            <source src="{{ url_for('static', filename='demo.ogv') }}" type='video/ogg; codecs="theora,vorbis"'>
-        </video>
+        <h3>After MediaCrush</h3>
+        <iframe src="https://mediacru.sh/sSjUfGQLO7zc/frame" frameborder="0" allowFullscreen width="384" height="221"></iframe>
         <p>Filesize: 118 kB (~0.118 MB)</p>
     </div>
 </div>
-<p class="clearfix">We usually see 110-200% improvements on images, too. Not nearly as good as GIFs, but it means they
-load twice as fast. If you're interested to see how all of this works, have a look at our
-<a href="https://github.com/MediaCrush/MediaCrush">source code</a> - maybe you can help make it even better!</p>
+<p class="clearfix">Hey, have you ever been able to pause a GIF before? You can with MediaCrush!</p>
+<h2>Is it free?</h2>
+<p>Yes, always and forever. We will never charge for our services, you'll be able to host your media losslessly and
+easily on MediaCrush until the end of time. We even let you
+<a href="javascript:adOptOut(true)">turn off advertisements</a> if you wish. Plus, we're free as in freedom, too. 
+MediaCrush is <a href="https://mediacru.sh">totally open source</a>. You're welcome to run your own version of
+MediaCrush or contribute new ideas to ours. You can also steal our secret sauce if you please, all the tricks we use
+to make media faster are there.</p>
+<h2>How do I keep in touch?</h2>
+<p>We announce new features and respond to user feedback from our <a href="https://twitter.com/mediacru_sh">Twitter
+account</a>, and write about them on our <a href="https://blog.mediacru.sh">blog</a>. You can also get in touch
+through <a href="https://pay.reddit.com/r/mediacrush">/r/mediacrush</a>, or
+<a href="mailto:support@mediacru.sh">email us</a>. Developers are invited to join us on our IRC channel,
+<a href="http://webchat.freenode.net/?channels=mediacrush&uio=d4">#mediacrush on irc.freenode.net</a>.</p>
+<h2>How do you feel about privacy?</h2>
+<p>Very serious. More so than a lot of people. We take lots of steps to ensure you're protected - note that you're
+reading this over HTTPS, for one. We never ever store anything about you when you use our service. We also respect
+your Do Not Track settings. You can donate anonymously to our efforts with bitcoin, and you can opt-out of ads with
+nasty tracking code. Also, if you're wondering what we're up to, we publish
+<a href="/transparency">detailed reports</a> on what we're doing every month.</p>
+<h2>What's the upload limit?</h2>
+<p>A very generous <strong>25 MB</strong>! This is more than imgur and minus combined, <em>and</em> it's lossless
+and fast, so you know who the obvious choice is ;)</p>
+<h2>Can I hotlink to MediaCrush?</h2>
+<p>Yes, of course! What use is media hosting if you can't share your files with it? You can hotlink to our images,
+but you might have a problem hotlinking to GIFs, video, or music, due to technical limitations. Never fear, though:
+we have prepared a iframe-based solution that gives you some HTML to paste into your blog or website or whatever.
+Just click "embed" on the page you want to embed and you'll get the code. Programmers may also want to browse our
+<a href="/docs">developer documentation</a>. If you want to direct link in Reddit, though, don't worry about it -
+MediaCrush is RES-compatible and it'll work out anyway.</p>
 <p><a href="/">Back to the home page</a></p>
 {% endblock %}
