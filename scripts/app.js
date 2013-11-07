@@ -385,6 +385,8 @@ function createHistoryItem(data) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         for (var i = 0; i < item.files.length; i++) {
+            if (item.files[i].type == 'image/gif')
+                continue;
             var source = document.createElement('source');
             source.setAttribute('src', item.files[i].file);
             source.setAttribute('type', item.files[i].type);
