@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, g, Response
+from flask import Flask, render_template, request, g, Response, redirect
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
@@ -117,9 +117,13 @@ def mine():
 def apps():
     return render_template("apps.html")
 
-@app.route("/demo")
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route('/demo')
 def demo():
-    return render_template("demo.html")
+    return redirect('/about', code=301)
 
 @app.route("/donate")
 def donate():
