@@ -74,8 +74,8 @@ function handleFile(file) {
     var droparea = document.getElementById('droparea');
     reader.onloadend = function(e) {
         var data = e.target.result;
-        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
         var preview = createPreview(file);
+        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
         if (!preview.supported) {
             var error = document.createElement('span');
             error.className = 'error';
