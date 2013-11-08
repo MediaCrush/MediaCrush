@@ -22,11 +22,15 @@ Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support
 
 ### Python
 
-* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request.
+* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request - MIT license
 
 ### JavaScript
 
-* [mediacrush.js](/docs/mediacrush.js) - Official JS library for working with MediaCrush in the browser
+* [mediacrush.js](/docs/mediacrush.js) - Official JS library for working with MediaCrush in the browser - MIT license
+
+### Java
+
+* [jCrush](https://github.com/hypereddie10/jCrush) - API wrapper written in (and for) Java - MIT license
 
 Note: We're looking for a node.js version of mediacrush.js. Interested in contributing one? Join us on IRC
 for a chat: [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4).
