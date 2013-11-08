@@ -156,3 +156,33 @@ function pauseMedia() {
         pause(audio[i]);
     }
 }
+function mediaHashHandler(hash) {
+    var parts = hash.split(',');
+    var audio = document.getElementById('audio-{{ filename }}');
+    var loopControl = document.querySelector('.control.loop');
+    var largePlayControl = document.querySelector('.control.play.large');
+    var muteControl = document.querySelector('.control.mute');
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i] == 'loop') {
+            audio.loop = true;
+            loopControl.classList.add('enabled');
+        } else if (parts[i] == 'noloop') {
+            audio.loop = false;
+            loopControl.classList.remove('enabled');
+        } else if (parts[i] == 'autoplay') {
+            if (!mobile)
+                play(audio);
+        } else if (parts[i] == 'noautoplay') {
+            if (!mobile) {
+                largePlayControl.classList.remove('hidden');
+                pause(audio);
+            }
+        } else if (parts[i] == 'mute') {
+            audio.muted = true;
+            muteControl.classList.add('unmute');
+            muteControl.classList.remove('mute');
+        } else if (parts[i] == 'nobrand') {
+            audio.parentElement.classList.add('nobrand');
+        }
+    }
+}

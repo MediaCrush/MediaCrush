@@ -43,6 +43,19 @@ If you add a div like this into the page at runtime, you can use something like 
     MediaCrush.render(document.getElementById('...')); // One item
     MediaCrush.renderAll(); // Re-discovers and renders all items on the page
 
+MediaCrush.js will preserve all #controls in the data-media attribute. For example, you might do:
+
+    <div class="mediacrush" data-media="tG6dvDt2jNcr#autoplay,loop"></div>
+
+The full list of modifiers is:
+
+* `autoplay`: Forces the media to autoplay
+* `noautoplay`: Forces the media not to autoplay
+* `loop`: Forces the media to loop
+* `noloop`: Forces the media not to loop
+* `mute`: Mutes the media by default
+* `nobrand`: Does not show MediaCrush branding in the embedded media player (doing this makes us sad, but we won't stop you)
+
 **Upload a file**
 
 Say you have this in your page somewhere:

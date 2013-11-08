@@ -285,6 +285,8 @@ function mediaHashHandler(hash) {
             video.muted = true;
             muteControl.classList.add('unmute');
             muteControl.classList.remove('mute');
+        } else if (parts[i] == 'nobrand') {
+            video.parentElement.classList.add('nobrand');
         }
     }
 }

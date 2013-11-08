@@ -214,3 +214,6 @@
     top: 0;
     left: 0;
 }
+.nobrand h1.brand {
+    display: none;
+}
