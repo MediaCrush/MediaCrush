@@ -102,7 +102,9 @@ function exitFullscreen() {
     // Chrome hack to force layout recalculation (fixes weird bug when exiting fullscreen)
     var media = document.querySelector('.media');
     media.style.right = 0;
-    media.style.right = '-50%';
+    setTimeout(function() {
+        media.style.right = '-50%';
+    }, 100);
 }
 function beginAdjustVolume(e) {
     e.preventDefault();
