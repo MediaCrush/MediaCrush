@@ -177,7 +177,7 @@ def upload(f, filename):
         filename += ext
 
     if f and allowed_file(filename):
-        if not current_app.debug or True:
+        if not current_app.debug:
             rate_limit_update(file_length(f))
             if rate_limit_exceeded():
                 return "ratelimit", 420

@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash 
-from flask import request
+from flask import request, current_app
 
 from ..decorators import json_output, cors
 from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
@@ -150,10 +150,9 @@ class APIView(FlaskView):
 
         if len(text) > 10000:
             return {'error': 413}, 413
-
         
         rate_limit_update(1, "feedback")
-        if rate_limit_exceeded("feedback"):
+        if not current_app.debug and rate_limit_exceeded("feedback"):
             return {'error': 420}, 420
 
         feedback = Feedback(text=text, useragent=useragent)

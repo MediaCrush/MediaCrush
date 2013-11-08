@@ -83,7 +83,7 @@ window.addEventListener('load', function() {
             formData.append("feedback", feedbackText.value);
             xhr.onload = function() {
                 if (this.status == 200)
-                    result = "Thanks! We'll have a look. Feel free to <a href='mailto:support@mediacru.sh'>email us</a> if need some help.";
+                    result = "Thanks! We read every one of these. Keep in mind, though, this feedback is anonymous. <a href='mailto:support@mediacru.sh'>Email us</a> if you want a response.";
                 else if (this.status == 420)
                     result = "Sorry, you can't send more feedback today. Try again in 24 hours!";
                 else if (this.status == 413)
