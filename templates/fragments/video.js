@@ -66,6 +66,9 @@ window.addEventListener('load', function() {
 }, false);
 function videoMouseMove(e) {
     var hover = e.target;
+    while (hover.className.indexOf('video') == -1)
+        hover = hover.parentElement;
+    hover = hover.querySelector('.hover');
     if (hover.className.indexOf('disabled') != -1) {
         hover.classList.remove('disabled');
         hover.setAttribute('data-debounce', false);
