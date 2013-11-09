@@ -85,12 +85,6 @@ body {
     line-height: 40px;
 }
 
-
-h2 {
-    border-bottom: 1px solid #888;
-    padding-left: 10px;
-}
-
 .hidden {
     display: none;
 }
@@ -194,4 +188,52 @@ h2 {
     to {
         background-position: 39px;
     }
+}
+
+.navigation ul {
+    list-style: none;
+
+    li {
+        display: inline;
+        a {
+            line-height: 35px;
+            margin-left: 15px;
+            text-decoration: none;
+        }
+    }
+}
+
+.clearfix {
+    clear: both;
+}
+
+.center {
+    text-align: center;
+}
+
+.small {
+    font-size: 10pt;
+}
+
+ul.inline {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+        display: inline;
+        padding: 0 5px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+}
+
+.content {
+    padding: 5px;
+}
+
+#feedback {
+    display: none;
 }

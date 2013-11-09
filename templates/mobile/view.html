@@ -15,5 +15,25 @@
         {% include fragment %}
     </div>
 </div>
+<div class="center small clearfix">
+    <ul class="inline">
+        <li><a href="/{{ filename }}/direct">Direct Link</a></li>
+        <li><a href="/{{ filename }}/download">Download</a></li>
+        <li><a href="#" id="report">Report</a></li>
+    </ul>
+</div>
+<script type="text/javascript">
+window.addEventListener('load', function() {
+    var report = document.getElementById('report');
+    report.addEventListener('click', function(e) {
+        e.preventDefault();
+        var parent = document.getElementById('report').parentElement;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/report/{{ filename }}');
+        xhr.send();
+        parent.innerHTML = "Reported";
+    }, false);
+}, false);
+</script>
 {% endblock %}
 {% block feedback %}{% endblock %}

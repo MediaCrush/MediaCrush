@@ -1,8 +1,15 @@
 {% extends "layout.html" %}
 {% block styles %}
+{% if mobile %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about-mobile.css') }}?version=2" />
+{% else %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about.css') }}?version=2" />
+{% endif %}
 {% endblock %}
 {% block content %}
+{% if mobile %}
+<p>We make media load super fast, without sacrificing quality.</p>
+{% else %}
 <p>We make media load super fast, without sacrificing quality. Here's an example:</p>
 <div class="row">
     <div class="left">
@@ -22,6 +29,7 @@
     </div>
 </div>
 <p class="clearfix">Hey, have you ever been able to pause a GIF before? You can with MediaCrush!</p>
+{% endif %}
 <h2>Is it free?</h2>
 <p>Yes, always and forever. We will never charge for our services, you'll be able to host your media losslessly and
 easily on MediaCrush until the end of time. We even let you
