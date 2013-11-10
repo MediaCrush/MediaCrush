@@ -62,11 +62,11 @@ window.addEventListener('load', function() {
     if (feedbackToggle) {
         feedbackToggle.addEventListener('click', function(e) {
             e.preventDefault();
-            if (e.target.parentElement.className.indexOf('active') == -1) {
-                e.target.parentElement.classList.add('active');
+            if (feedbackToggle.parentElement.className.indexOf('active') == -1) {
+                feedbackToggle.parentElement.classList.add('active');
                 feedback.querySelector('textarea').focus();
             } else {
-                e.target.parentElement.classList.remove('active');
+                feedbackToggle.parentElement.classList.remove('active');
             }
         }, false);
     }

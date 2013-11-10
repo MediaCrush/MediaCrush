@@ -5,7 +5,7 @@
     top: 20px;
     right: -200px;
     width: 200px;
-    height: 155px;
+    height: 130px;
     background: #1692d0;
     color: #fff;
 
@@ -42,15 +42,12 @@
         text-align: center;
         color: #fff;
         position: absolute;
-        top: 30px;
+        top: 0;
         background: #1692d0;
         display: block;
-        width: 83px;
-        left: -62px;
+        height: 83px;
+        left: -32px;
         padding: 5px;
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        transform: rotate(-90deg);
     }
 
     & > div {
