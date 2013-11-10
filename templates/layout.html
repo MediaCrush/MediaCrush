@@ -25,6 +25,7 @@
     </head>
     <body class="{% if not ads %}noads{% endif %}">
         <div class="container">
+            {% block navigation %}
             <div class="navigation">
                 <h1 class="brand">
                     <a href="/">
@@ -40,8 +41,14 @@
                     <li><a href="/about">About</a></li>
                 </ul>
                 <a href="javascript:switchTheme();" class="pull-right small">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
+                {% else %}
+                <ul>
+                    <li><a href="/">Upload</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
                 {% endif %}
             </div>
+            {% endblock %}
             <div class="content">
                 {% block content %}{% endblock %}
             </div>

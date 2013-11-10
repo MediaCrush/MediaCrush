@@ -22,6 +22,9 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
+notice_enabled = False
+notice_text = "We don't just have great GIF support - try sharing some pictures on MediaCrush!"
+
 def prepare():
     if os.path.exists(app.static_folder):
         rmtree(app.static_folder)
@@ -103,6 +106,8 @@ def inject():
         'dark_theme': "dark_theme" in request.cookies,
         'ads': not "ad-opt-out" in request.cookies,
         'share': share,
+        'notice_text': notice_text,
+        'notice_enabled': notice_enabled
     }
 
 @app.route("/")
