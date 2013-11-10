@@ -9,7 +9,7 @@ MediaCrush runs on the following things:
 
 * Linux!
 * Python!
-* ffmpeg
+* ffmpeg!
 * jhead
 * tidy
 * redis
