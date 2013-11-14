@@ -15,6 +15,13 @@ class RedisObject(object):
             self.hash = hashlib.md5(uuid.uuid4().bytes).hexdigest()[:12]
 
     def __get_vars(self):
+        if "__store__" in dir(self):
+            d = {}
+            for variable in set(self.__store__ + ['hash']): # Ensure we always store the hash
+                d[variable] = getattr(self, variable)
+
+            return d
+
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
         names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
         return dict(names)
@@ -73,9 +80,21 @@ class Feedback(RedisObject):
     text = None
     useragent = None
 
-if __name__ == '__main__':
-    a = File(hash="aasdf", compression=2)
-    a.save()
+class Album(RedisObject):
+    _items = None
+    __store__ = ['_items'] # ORM override for __get_vars
 
-    b = File.from_hash("aasdf")
-    print(vars(b))
+    @property
+    def items(self):
+        return self._items.split(",")
+
+    @items.setter
+    def items(self, l):
+        self._items = ','.join(l)
+
+if __name__ == '__main__':
+    a = Album()
+
+    a.items = ['a', 'b', 'c']
+    a.save()
+    print a.items, type(a.items), a.hash
