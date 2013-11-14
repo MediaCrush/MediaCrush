@@ -19,7 +19,49 @@ Example:
 
 # Methods
 
-## File information endpoints
+## Albums
+
+### /api/album
+
+*Parameters*: `list`, a list of MediaCrush hashes.
+
+*Returns*: The hash of the album on success, an error code otherwise.
+    
+    POST /api/album
+    list=LxqXxVPAvqqB,tVWMM_ziA3nm    
+
+    {
+        "hash": "LxqXxVPAvqqC"
+    }
+
+In case of error, the response will contain an 'error' parameter and additional information if necessary.
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The album was created correctly.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>At least one of the items in the list could not be found.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>At least one of the items in the list is not a File (i.e, you tried to create an album that cantains an album)</td>
+        <td>false</td>
+    </tr>
+</table>
+
+## Hash information endpoints
 
 ### /api/&lt;hash&gt;
 
@@ -27,7 +69,7 @@ Example:
 
 *Parameters*: none.
 
-*Returns*: information about the file whose hash is `<hash>`.
+*Returns*: information about `<hash>`. Please see Appendix A for reference objects for each possible type.
 
     GET /api/CPvuR5lRhmS0
 
@@ -70,7 +112,7 @@ If the file is not found, you will get a dictionary like:
 
 *Parameters*: `list`, a comma-separated list of hashes.
 
-*Returns*: an array of file objects.
+*Returns*: an array of objects. Please see Appendix A for reference objects for each possible type.
 
     GET /api/info?list=tVWMM_ziA3nm,CPvuR5lRhmS0
 
@@ -186,6 +228,11 @@ If the file is not found, you will get a dictionary like:
         <td>There is no file with that hash.</td>
         <td>false</td>
     </tr>
+    <tr>
+        <td>415</td>
+        <td>The data type associated with this hash does not accept processing.</td>
+        <td>false</td>
+    </tr>
 </table>
 
 *Possible values for `status`*:
@@ -217,7 +264,7 @@ If the file is not found, you will get a dictionary like:
 
 The "result" object will only be included if the status is "done".
 
-## File manipulation endpoints
+## Hash manipulation endpoints
 
 ### /api/&lt;hash&gt;/delete
 
@@ -250,7 +297,7 @@ If the request is unsuccessful, you will get a response like:
     </tr>
     <tr>
         <td>200</td>
-        <td>The IP matches the stored hash and the file was deleted.</td>
+        <td>The IP matches the stored hash and the file (if applicable) was deleted.</td>
         <td>true</td>
     </tr>
     <tr>
@@ -260,7 +307,7 @@ If the request is unsuccessful, you will get a response like:
     </tr>
     <tr>
         <td>404</td>
-        <td>There is no file with that hash.</td>
+        <td>There is no such hash.</td>
         <td>false</td>
     </tr>
 </table>
@@ -374,3 +421,86 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>false</td>
     </tr>
 </table>
+
+# Appendix A
+
+## Example objects
+
+### File
+
+    {
+      "compression": 8.93,
+      "files": [
+        {
+          "file": "/CPvuR5lRhmS0.mp4",
+          "type": "video/mp4"
+        },
+        {
+          "file": "/CPvuR5lRhmS0.ogv",
+          "type": "video/ogg"
+        },
+        {
+          "file": "/CPvuR5lRhmS0.gif",
+          "type": "image/gif"
+        }
+      ],
+      "extras": [
+      ],
+      "original": "/CPvuR5lRhmS0.gif",
+      "type": "image/gif"
+    }
+
+When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
+files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
+will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
+file in the extras.
+
+### Album
+
+    {
+      "hash": "LxqXxVPAvqqC",
+      "items": {
+        "CPvuR5lRhmS0": {
+           "compression": 8.93,
+           "files": [
+             {
+               "file": "/CPvuR5lRhmS0.mp4",
+               "type": "video/mp4"
+             },
+             {
+               "file": "/CPvuR5lRhmS0.ogv",
+               "type": "video/ogg"
+             },
+             {
+               "file": "/CPvuR5lRhmS0.gif",
+               "type": "image/gif"
+             }
+           ],
+           "extras": [
+           ],
+           "original": "/CPvuR5lRhmS0.gif",
+           "type": "image/gif"
+        },
+        "tVWMM_ziA3nm": {
+          "compression": 17.99,
+          "files": [
+            {
+              "file": "/tVWMM_ziA3nm.mp4",
+              "type": "video/mp4"
+            },
+            {
+              "file": "/tVWMM_ziA3nm.ogv",
+              "type": "video/ogg"
+            },
+            {
+              "file": "/tVWMM_ziA3nm.gif",
+              "type": "image/gif"
+            }
+          ],
+          "extras": [
+          ],
+          "original": "/tVWMM_ziA3nm.gif",
+          "type": "image/gif"
+        }
+    }
+
