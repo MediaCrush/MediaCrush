@@ -23,10 +23,10 @@ class MediaView(FlaskView):
         return self.get(id)
 
     def _template_params(self, id):
-        f = File.from_hash(id)
-        if not f.original:
+        if not File.exists(id):
             abort(404)
 
+        f = File.from_hash(id)
         if f.compression:
             compression = int(float(f.compression) * 100)
         if compression == 100 or processing_status(f.hash) != "done":
@@ -94,10 +94,10 @@ class MediaView(FlaskView):
 
     @route("/<h>/delete")
     def delete(self, h):
-        f = File.from_hash(h)
-        if not f.original:
+        if not File.exists(h):
             abort(404)
 
+        f = File.from_hash(h)
         if not check_password_hash(f.ip, get_ip()):
             abort(401)
 

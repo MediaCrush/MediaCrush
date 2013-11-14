@@ -81,10 +81,10 @@ class APIView(FlaskView):
     @route("/api/<id>")
     @route("/<id>.json")
     def get(self, id):
-        f = File.from_hash(id) 
-
-        if not f.original:
+        if not File.exists(id):
             return {'error': 404}, 404
+
+        f = File.from_hash(id) 
 
         return _file_object(f)
 
@@ -96,21 +96,20 @@ class APIView(FlaskView):
 
         res = {}
         for i in items:
-            f = File.from_hash(i)
-            
-            if not f.original:
+            if not File.exists(i):
                 res[i] = None
             else:
+                f = File.from_hash(i)
                 res[i] = _file_object(f)
         
         return res
 
     @route("/api/<h>/delete")
     def delete(self, h):
-        f = File.from_hash(h) 
-        if not f.original:
+        if not File.exists(h):
             return {'error': 404}, 404
         try:
+            f = File.from_hash(h) 
             if not check_password_hash(f.ip, get_ip()):
                 return {'error': 401}, 401
         except:
@@ -142,10 +141,10 @@ class APIView(FlaskView):
 
     @route("/api/<h>/status")
     def status(self, h):
-        f = File.from_hash(h)
-        if not f.original: 
+        if not File.exists(h): 
             return {'error': 404}, 404
 
+        f = File.from_hash(h)
         ret = {'status': processing_status(h)}
         if ret['status'] == 'done':
             ret[h] = _file_object(f)
@@ -155,8 +154,7 @@ class APIView(FlaskView):
 
     @route("/api/<h>/exists")
     def exists(self, h):
-        f = File.from_hash(h)
-        if not f.original:
+        if not File.exists(h):
             return {'exists': False}, 404
 
         return {'exists': True}
