@@ -21,13 +21,13 @@ Example:
 
 ## Albums
 
-### /api/album
+### /api/album/create
 
 *Parameters*: `list`, a list of MediaCrush hashes.
 
 *Returns*: The hash of the album on success, an error code otherwise.
     
-    POST /api/album
+    POST /api/album/create
     list=LxqXxVPAvqqB,tVWMM_ziA3nm    
 
     {

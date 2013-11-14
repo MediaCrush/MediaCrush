@@ -60,7 +60,7 @@ class APIView(FlaskView):
     decorators = [json_output, cors]
     route_base = '/'
 
-    @route("/api/album", methods=['POST'])
+    @route("/api/album/create", methods=['POST'])
     def album(self):
         items = request.form['list'].split(",")
 
