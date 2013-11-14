@@ -11,6 +11,21 @@ from ..config import _cfg
 from ..objects import File
 from ..network import get_ip
 
+def fragment(mimetype):
+    fragments = ['video', 'mobilevideo', 'image', 'audio']
+    fragment_check = [
+        (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
+        mimetype.startswith('video') and g.mobile,
+        (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
+        mimetype.startswith('audio'),
+    ]
+
+    for i, truth in enumerate(fragment_check):
+        if truth:
+            fragment = fragments[i]
+
+    return 'fragments/' + fragment + '.html'
+
 class MediaView(FlaskView):
     route_base = '/'
 
@@ -39,19 +54,7 @@ class MediaView(FlaskView):
         ext = extension(f.original)
         mimetype = get_mimetype(f.original)
 
-        fragments = ['video', 'mobilevideo', 'image', 'audio']
-        fragment_check = [
-            (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
-            mimetype.startswith('video') and g.mobile,
-            (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
-            mimetype.startswith('audio'),
-        ]
-
-        for i, truth in enumerate(fragment_check):
-            if truth:
-                fragment = fragments[i]
-
-        types = [ mimetype ]
+        types = [mimetype]
         for f_ext in processing_needed[ext]['formats']:
             types.append(mimetypes.guess_type('foo.' + f_ext)[0])
         if 'do-not-send' in request.cookies:
@@ -72,7 +75,7 @@ class MediaView(FlaskView):
             'compression': compression,
             'mimetype': mimetype,
             'can_delete': can_delete if can_delete is not None else 'check',
-            'fragment': 'fragments/' + fragment + '.html',
+            'fragment': fragment(mimetype),
             'types': types
         }
 
