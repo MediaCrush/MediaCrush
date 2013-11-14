@@ -51,6 +51,9 @@ class RedisObject(object):
 
     @classmethod
     def from_hash(cls, hash):
+        if cls == RedisObject:
+            cls = RedisObject.klass(hash)
+
         obj = r.hgetall(cls.get_key(hash))
         obj['hash'] = hash
 
@@ -109,8 +112,6 @@ class Album(RedisObject):
         self._items = ','.join(l)
 
 if __name__ == '__main__':
-    a = Album()
+    a = RedisObject.from_hash("11fcf48f2c44") 
 
-    a.items = ['a', 'b', 'c']
-    a.save()
     print a.items, type(a.items), a.hash
