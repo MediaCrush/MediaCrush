@@ -30,6 +30,21 @@ class RedisObject(object):
         return self.__class__.get_key(self.hash)
 
     @classmethod
+    def klass(cls, hash):
+        k = r.keys(_k("*.%s") % hash)
+        if len(k) != 1:
+            return False
+        
+        klass = k[0].split(".")[1].title()
+        for subclass in cls.__subclasses__():
+            if subclass.__name__ == klass:
+                return subclass
+
+    @staticmethod
+    def exists(hash):
+        return len(r.keys(_k("*.%s" % hash))) > 0
+
+    @classmethod
     def get_key(cls, hash):
         classname = cls.__name__
         return _k("%s.%s" % (classname.lower(), hash))
@@ -82,7 +97,8 @@ class Feedback(RedisObject):
 
 class Album(RedisObject):
     _items = None
-    __store__ = ['_items'] # ORM override for __get_vars
+    ip = None
+    __store__ = ['_items', 'ip'] # ORM override for __get_vars
 
     @property
     def items(self):

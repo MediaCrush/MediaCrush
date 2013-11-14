@@ -5,8 +5,8 @@ from flask import request, current_app
 from ..decorators import json_output, cors
 from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
 from ..database import r, _k
-from ..objects import File, Feedback
-from ..network import get_ip
+from ..objects import File, Album, Feedback, RedisObject
+from ..network import get_ip, secure_ip
 from ..ratelimit import rate_limit_exceeded, rate_limit_update
 
 def _file_object(f):
@@ -59,6 +59,24 @@ def _upload_f(f, filename):
 class APIView(FlaskView):
     decorators = [json_output, cors]
     route_base = '/'
+
+    @route("/api/album", methods=['POST'])
+    def album(self):
+        items = request.form['list'].split(",")
+
+        for i in items:
+            klass = RedisObject.klass(i)
+            if klass == False: # Does not exist
+                return {'error': 404}, 404
+            if klass != File: # Wrong type
+                return {'error': 415}, 415
+       
+        a = Album()
+        a.items = items
+        a.ip = secure_ip()
+        a.save()
+
+        return {"hash": a.hash}
 
     @route("/api/<id>")
     @route("/<id>.json")
