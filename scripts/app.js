@@ -5,6 +5,7 @@ function browse() {
 
 var firstUpload = true;
 var uploads = 0;
+var files = [];
 
 function uploadUrl(url) {
     var droparea = document.getElementById('droparea');
@@ -52,6 +53,7 @@ function handleFiles(files) {
     if (firstUpload) {
         document.getElementById('files').innerHTML = '';
         firstUpload = false;
+        document.getElementById('createAlbum').className = '';
     }
     var timeout = 500;
     for (var i = 0; i < files.length; i++) {
@@ -85,6 +87,7 @@ function handleFile(file) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/' + hash + '/exists');
             xhr.onload = function() {
+                files.push(hash);
                 if (this.status == 200) {
                     var p = document.createElement('p');
                     p.textContent = 'Upload complete!';
@@ -202,6 +205,7 @@ function finish(statusUI, hash) {
         e.preventDefault();
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/api/' + hash + '/delete');
+        files.remove(files.indexOf(hash));
         xhr.send();
         var container = statusUI.parentElement;
         container.parentElement.removeChild(container);
