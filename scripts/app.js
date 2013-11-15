@@ -3,7 +3,7 @@ function browse() {
     file.click();
 }
 
-var firstUpload = true;
+var totalUploads = 0;
 var uploads = 0;
 var files = [];
 var albumAssociated = false;
@@ -53,9 +53,11 @@ function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     droparea.className = 'files';
-    if (firstUpload) {
+    if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        firstUpload = false;
+    }
+    totalUploads += files.length;
+    if (totalUploads > 1) {
         document.getElementById('createAlbum').className = '';
     }
     var timeout = 500;
@@ -80,11 +82,12 @@ function createAlbum(e) {
     albumAssociated = true;
     document.getElementById('createAlbum').className = 'hidden';
     document.getElementById('albumPending').classList.remove('hidden');
+    updateAlbum();
 }
 
 function updateAlbum() {
     if (!albumAssociated) return;
-    if (files.length == 0) {
+    if (files.length <= 1) {
         document.getElementById('createAlbum').className.add('hidden');
         document.getElementById('albumPending').classList.add('hidden');
         document.getElementById('albumUrl').parentElement.classList.add('hidden');

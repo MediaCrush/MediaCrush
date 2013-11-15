@@ -3,10 +3,22 @@
 /*
  * Layout
  */
-#createAlbum {
-    color: green;
-    text-align: center;
-    display: block;
+#albumUI {
+    div, & > a {
+        display: block;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #createAlbum {
+        color: #fff;
+        background: #00b200;
+
+        &:hover {
+            background: #007f00;
+        }
+    }
 }
 
 #droparea {
