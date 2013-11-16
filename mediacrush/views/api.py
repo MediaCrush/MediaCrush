@@ -10,12 +10,10 @@ from ..network import get_ip, secure_ip
 from ..ratelimit import rate_limit_exceeded, rate_limit_update
 
 def _file_object(f):
-    if not f.original:
-        return {'error': 404}, 404
-
     ext = extension(f.original)
 
     ret = {
+        'object': 'file',
         'original': media_url(f.original),
         'type': get_mimetype(f.original),
         'files': [],
@@ -39,6 +37,24 @@ def _file_entry(f):
         'type': get_mimetype(f),
         'file': media_url(f),
     }
+
+def _album_object(a):
+    ret = {
+        'object': 'album',
+        'hash': a.hash,
+        'items': {},
+    }
+
+    for h in a.items:
+        f = File.from_hash(h)
+        ret['items'][h] = _file_object(f)
+
+    return ret
+
+objects = {
+    File: _file_object,
+    Album: _album_object,
+}
 
 def _upload_f(f, filename):
     result = upload(f, filename)
@@ -81,12 +97,13 @@ class APIView(FlaskView):
     @route("/api/<id>")
     @route("/<id>.json")
     def get(self, id):
-        if not File.exists(id):
+        klass = RedisObject.klass(id)
+
+        if not klass:
             return {'error': 404}, 404
 
-        f = File.from_hash(id)
-
-        return _file_object(f)
+        o = klass.from_hash(id)
+        return objects[klass](o)
 
     @route("/api/info")
     def info(self):

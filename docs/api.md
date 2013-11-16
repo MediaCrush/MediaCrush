@@ -26,9 +26,9 @@ Example:
 *Parameters*: `list`, a list of MediaCrush hashes.
 
 *Returns*: The hash of the album on success, an error code otherwise.
-    
+
     POST /api/album/create
-    list=LxqXxVPAvqqB,tVWMM_ziA3nm    
+    list=LxqXxVPAvqqB,tVWMM_ziA3nm
 
     {
         "hash": "LxqXxVPAvqqC"
@@ -447,7 +447,8 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "original": "/CPvuR5lRhmS0.gif",
-      "type": "image/gif"
+      "type": "image/gif",
+      "object": "file"
     }
 
 When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
@@ -458,6 +459,7 @@ file in the extras.
 ### Album
 
     {
+      "object": "album",
       "hash": "LxqXxVPAvqqC",
       "items": {
         "CPvuR5lRhmS0": {
