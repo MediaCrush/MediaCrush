@@ -93,6 +93,7 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "original": "/CPvuR5lRhmS0.gif",
+      "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
     }
 
@@ -137,8 +138,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/CPvuR5lRhmS0.gif",
+        "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
-        "object": "file"
       },
       "tVWMM_ziA3nm": {
         "compression": 17.99,
@@ -159,7 +160,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/tVWMM_ziA3nm.gif",
-        "type": "image/gif",
+        "hash": "tVWMM_ziA3nm",
+        "type": "image/gif"
       }
     }
 
@@ -206,7 +208,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/LxqXxVPAvqqB.gif",
-        "type": "image/gif",
+        "hash": "LxqXxVPAvqqB",
+        "type": "image/gif"
       }
     }
 
@@ -344,7 +347,8 @@ In case of error, the response will contain an 'error' parameter and additional 
         "extras": [
         ],
         "original": "/LxqXxVPAvqqB.png",
-        "type": "image/png",
+        "hash": "LxqXxVPAvqqB",
+        "type": "image/png"
       }
     }
 
@@ -449,7 +453,8 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "original": "/CPvuR5lRhmS0.gif",
-      "type": "image/gif",
+      "hash": "CPvuR5lRhmS0",
+      "type": "image/gif"
     }
 
 When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
@@ -462,42 +467,42 @@ file in the extras.
     {
       "files": [
         {
-          "compression": 0.0, 
-          "extras": [], 
+          "compression": 0.0,
+          "extras": [],
           "files": [
             {
-              "file": "/yOEHB2vDiWS-.jpe", 
+              "file": "/yOEHB2vDiWS-.jpe",
               "type": "image/jpeg"
             }
-          ], 
-          "original": "/yOEHB2vDiWS-.jpe", 
+          ],
+          "original": "/yOEHB2vDiWS-.jpe",
           "type": "image/jpeg"
-        }, 
+        },
         {
-          "compression": 0.0, 
-          "extras": [], 
+          "compression": 0.0,
+          "extras": [],
           "files": [
             {
-              "file": "/vLGcgr9eXhsH.jpe", 
+              "file": "/vLGcgr9eXhsH.jpe",
               "type": "image/jpeg"
             }
-          ], 
-          "original": "/vLGcgr9eXhsH.jpe", 
+          ],
+          "original": "/vLGcgr9eXhsH.jpe",
           "type": "image/jpeg"
-        }, 
+        },
         {
-          "compression": 0.0, 
-          "extras": [], 
+          "compression": 0.0,
+          "extras": [],
           "files": [
             {
-              "file": "/uEKCcQyLVci7.jpe", 
+              "file": "/uEKCcQyLVci7.jpe",
               "type": "image/jpeg"
             }
-          ], 
-          "original": "/uEKCcQyLVci7.jpe", 
+          ],
+          "original": "/uEKCcQyLVci7.jpe",
           "type": "image/jpeg"
         }
-      ], 
-      "hash": "6ecd2bbd34ec", 
+      ],
+      "hash": "6ecd2bbd34ec",
       "type": "application/album"
     }

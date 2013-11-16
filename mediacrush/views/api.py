@@ -15,6 +15,7 @@ def _file_object(f):
     ret = {
         'original': media_url(f.original),
         'type': get_mimetype(f.original),
+        'hash': f.hash,
         'files': [],
         'extras': []
     }
@@ -177,7 +178,6 @@ class APIView(FlaskView):
         ret = {'status': processing_status(h)}
         if ret['status'] == 'done':
             ret[h] = _file_object(f)
-            ret['hash'] = h
 
         return ret
 
