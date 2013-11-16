@@ -75,8 +75,8 @@ class RedisObject(object):
         r.sadd(_k(self.__class__.__name__.lower()), self.hash) # Add to type-set
 
     def delete(self):
+        r.srem(_k(self.__class__.__name__.lower()), self.hash)
         r.delete(self.__get_key())
-
 
 class File(RedisObject):
     original = None

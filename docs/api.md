@@ -92,7 +92,8 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "original": "/CPvuR5lRhmS0.gif",
-      "type": "image/gif"
+      "type": "image/gif",
+      "object": "file"
     }
 
 When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
@@ -136,7 +137,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/CPvuR5lRhmS0.gif",
-        "type": "image/gif"
+        "type": "image/gif",
+        "object": "file"
       },
       "tVWMM_ziA3nm": {
         "compression": 17.99,
@@ -157,7 +159,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/tVWMM_ziA3nm.gif",
-        "type": "image/gif"
+        "type": "image/gif",
+        "object": "file"
       }
     }
 
@@ -204,7 +207,8 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "original": "/LxqXxVPAvqqB.gif",
-        "type": "image/gif"
+        "type": "image/gif",
+        "object": "file"
       }
     }
 
@@ -342,7 +346,8 @@ In case of error, the response will contain an 'error' parameter and additional 
         "extras": [
         ],
         "original": "/LxqXxVPAvqqB.png",
-        "type": "image/png"
+        "type": "image/png",
+        "object": "file"
       }
     }
 

@@ -56,6 +56,11 @@ objects = {
     Album: _album_object,
 }
 
+deletion_procedures = {
+    File: delete_file,
+    Album: lambda a: a.delete()
+}
+
 def _upload_f(f, filename):
     result = upload(f, filename)
     if not isinstance(result, tuple):
@@ -113,26 +118,29 @@ class APIView(FlaskView):
 
         res = {}
         for i in items:
-            if not File.exists(i):
+            klass = RedisObject.klass(i)
+            if not klass:
                 res[i] = None
             else:
-                f = File.from_hash(i)
-                res[i] = _file_object(f)
+                o = klass.from_hash(i)
+                res[i] = objects[klass](o)
 
         return res
 
     @route("/api/<h>/delete")
     def delete(self, h):
-        if not File.exists(h):
+        klass = RedisObject.klass(h)
+
+        if not klass:
             return {'error': 404}, 404
         try:
-            f = File.from_hash(h)
-            if not check_password_hash(f.ip, get_ip()):
+            o = klass.from_hash(h)
+            if not check_password_hash(o.ip, get_ip()):
                 return {'error': 401}, 401
         except:
             return {'error': 401}, 401
 
-        delete_file(f)
+        deletion_procedures[klass](o)
         return {'status': 'success'}
 
     @route("/api/upload/file", methods=['POST'])
@@ -158,8 +166,13 @@ class APIView(FlaskView):
 
     @route("/api/<h>/status")
     def status(self, h):
-        if not File.exists(h):
+        klass = RedisObject.klass(h)
+
+        if not klass:
             return {'error': 404}, 404
+
+        if klass is not File:
+            return {'error': 415}, 415
 
         f = File.from_hash(h)
         ret = {'status': processing_status(h)}
