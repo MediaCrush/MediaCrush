@@ -13,7 +13,6 @@ def _file_object(f):
     ext = extension(f.original)
 
     ret = {
-        'object': 'file',
         'original': media_url(f.original),
         'type': get_mimetype(f.original),
         'files': [],
@@ -40,14 +39,14 @@ def _file_entry(f):
 
 def _album_object(a):
     ret = {
-        'object': 'album',
+        'type': 'application/album',
         'hash': a.hash,
-        'items': {},
+        'files': [],
     }
 
     for h in a.items:
         f = File.from_hash(h)
-        ret['items'][h] = _file_object(f)
+        ret['files'].append(_file_object(f))
 
     return ret
 
