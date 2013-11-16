@@ -31,18 +31,15 @@ class RedisObject(object):
 
     @classmethod
     def klass(cls, hash):
-        k = r.keys(_k("*.%s") % hash)
-        if len(k) != 1:
-            return False
-        
-        klass = k[0].split(".")[1].title()
         for subclass in cls.__subclasses__():
-            if subclass.__name__ == klass:
+            if r.sismember(_k(subclass.__name__.lower()), hash):
                 return subclass
+
+        return None
 
     @staticmethod
     def exists(hash):
-        return len(r.keys(_k("*.%s" % hash))) > 0
+        return RedisObject.klass(hash) is not None
 
     @classmethod
     def get_key(cls, hash):
@@ -75,6 +72,7 @@ class RedisObject(object):
         del obj['hash']
 
         r.hmset(self.__get_key() , obj)
+        r.sadd(_k(self.__class__.__name__.lower()), self.hash) # Add to type-set
 
     def delete(self):
         r.delete(self.__get_key())
@@ -112,6 +110,6 @@ class Album(RedisObject):
         self._items = ','.join(l)
 
 if __name__ == '__main__':
-    a = RedisObject.from_hash("11fcf48f2c44") 
+    a = RedisObject.from_hash("11fcf48f2c44")
 
     print a.items, type(a.items), a.hash
