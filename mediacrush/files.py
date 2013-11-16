@@ -144,7 +144,7 @@ def compression_rate(f):
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
-    original_size = f_original.compression 
+    original_size = f_original.compression
     minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
     for f_ext in processing_needed[ext]['formats']:
         try:
@@ -185,7 +185,7 @@ def upload(f, filename):
         h = get_hash(f)
         identifier = to_id(h)
         filename = "%s.%s" % (identifier, extension(filename))
-        path = file_storage(filename) 
+        path = file_storage(filename)
 
         if os.path.exists(path):
             return identifier, 409
@@ -230,7 +230,7 @@ def processing_status(id):
 
 def delete_file_storage(path):
     try:
-        os.unlink(file_storage(f))
+        os.unlink(file_storage(path))
     except:
         print('Failed to delete file ' + path)
 

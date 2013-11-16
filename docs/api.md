@@ -1,6 +1,7 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods.
+The MediaCrush API returns JSON on all methods. You might be interested in some of the API wrappers listed on our
+[documentation overview](/docs/).
 
 MediaCrush also supports CORS for cross-origin requests. If you intend to use the MediaCrush API from browser JavaScript,
 you will want to set the `X-CORS-Status` header to `1`. This is because browsers will errornously handle any request that
