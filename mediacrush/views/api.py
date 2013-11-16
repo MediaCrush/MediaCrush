@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash 
+from flaskext.bcrypt import check_password_hash
 from flask import request, current_app
 
 from ..decorators import json_output, cors
@@ -23,7 +23,7 @@ def _file_object(f):
     }
     if f.compression:
         ret['compression'] = float(f.compression)
-         
+
     ret['files'].append(_file_entry(f.original))
 
     if ext in processing_needed:
@@ -47,12 +47,12 @@ def _upload_f(f, filename):
     else:
         h, status = result
 
-        resp = {'error': status} 
+        resp = {'error': status}
         if status == 409:
-            f = _file_object(File.from_hash(h)) 
+            f = _file_object(File.from_hash(h))
 
             resp[h] = f
-            resp['hash'] = h 
+            resp['hash'] = h
 
         return resp, status
 
@@ -70,7 +70,7 @@ class APIView(FlaskView):
                 return {'error': 404}, 404
             if klass != File: # Wrong type
                 return {'error': 415}, 415
-       
+
         a = Album()
         a.items = items
         a.ip = secure_ip()
@@ -84,7 +84,7 @@ class APIView(FlaskView):
         if not File.exists(id):
             return {'error': 404}, 404
 
-        f = File.from_hash(id) 
+        f = File.from_hash(id)
 
         return _file_object(f)
 
@@ -101,7 +101,7 @@ class APIView(FlaskView):
             else:
                 f = File.from_hash(i)
                 res[i] = _file_object(f)
-        
+
         return res
 
     @route("/api/<h>/delete")
@@ -109,7 +109,7 @@ class APIView(FlaskView):
         if not File.exists(h):
             return {'error': 404}, 404
         try:
-            f = File.from_hash(h) 
+            f = File.from_hash(h)
             if not check_password_hash(f.ip, get_ip()):
                 return {'error': 401}, 401
         except:
@@ -121,7 +121,7 @@ class APIView(FlaskView):
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
         f = request.files['file']
-       
+
         return _upload_f(f, f.filename)
 
     @route("/api/upload/url", methods=['POST'])
@@ -141,7 +141,7 @@ class APIView(FlaskView):
 
     @route("/api/<h>/status")
     def status(self, h):
-        if not File.exists(h): 
+        if not File.exists(h):
             return {'error': 404}, 404
 
         f = File.from_hash(h)
@@ -166,7 +166,7 @@ class APIView(FlaskView):
 
         if len(text) > 10000:
             return {'error': 413}, 413
-        
+
         rate_limit_update(1, "feedback")
         if not current_app.debug and rate_limit_exceeded("feedback"):
             return {'error': 420}, 420
