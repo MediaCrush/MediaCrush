@@ -35,6 +35,9 @@ class RedisObject(object):
             if r.sismember(_k(subclass.__name__.lower()), hash):
                 return subclass
 
+        # TEMP
+        # TODO: jdiez fix this
+        return File
         return None
 
     @staticmethod
