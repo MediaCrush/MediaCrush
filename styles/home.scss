@@ -191,7 +191,7 @@
 
             img, video {
                 width: auto;
-                height: 239px;
+                max-height: 239px;
             }
 
             &:nth-of-type(3n+2) {
