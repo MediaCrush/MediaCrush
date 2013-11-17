@@ -23,7 +23,7 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = True 
+notice_enabled = False 
 notice_text = "We just added album support! Upload a few files and check it out."
 
 def prepare():
