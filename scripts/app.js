@@ -125,7 +125,7 @@ function handleFile(file) {
     reader.onloadend = function(e) {
         var data = e.target.result;
         var preview = createPreview(file);
-        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
+        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-', 'g').replace('/', '_', 'g');
         if (!preview.supported) {
             var error = document.createElement('span');
             error.className = 'error';
