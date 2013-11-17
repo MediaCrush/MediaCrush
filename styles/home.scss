@@ -177,6 +177,34 @@
             max-width: 250px;
         }
     }
+
+    .album-preview {
+        position: relative;
+        height: 261px;
+        overflow: hidden;
+        margin-bottom: 10px;
+
+        & > div {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+
+            img, video {
+                width: 239px;
+                height: 239px;
+            }
+
+            &:nth-of-type(3n+2) {
+                top: 10px;
+                left: 10px;
+            }
+
+            &:nth-of-type(3n+1) {
+                top: 0;
+                left: 0;
+            }
+        }
+    }
 }
 
 /*

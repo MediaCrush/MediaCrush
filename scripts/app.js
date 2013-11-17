@@ -111,6 +111,7 @@ function updateAlbum() {
             url.textContent = window.location.origin + '/' + data.hash;
             url.href = window.location.origin + '/' + data.hash;
             url.parentElement.classList.remove('hidden');
+            addItemToHistory(data.hash);
         };
         var form = new FormData();
         form.append('list', files.join(','));
@@ -440,7 +441,11 @@ function handleHistory() {
 
 function createHistoryItem(data) {
     var item = data.item;
-    var container = document.createElement('li');
+    var container = null;
+    if (data.base)
+        container = document.createElement(data.base);
+    else
+        container = document.createElement('li');
     var preview = null;
     if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
         preview = document.createElement('video');
@@ -469,11 +474,24 @@ function createHistoryItem(data) {
         preview = document.createElement('img');
         preview.src = '/static/audio-player-narrow.png';
         preview.className = 'item-view';
+    } else if (item.type == 'application/album') {
+        preview = document.createElement('div');
+        preview.className = 'album-preview';
+        for (var i = 0; i < item.files.length && i < 3; i++) {
+            preview.appendChild(createHistoryItem({ item: item.files[i], hash: item.files[i].hash, nolink: true, base: 'div' }));
+        }
+    } else {
+        return container;
     }
-    var a = document.createElement('a');
-    a.href = '/' + data.hash;
-    a.appendChild(preview);
-    container.appendChild(a);
+    if (!data.nolink) {
+        var a = document.createElement('a');
+        a.href = '/' + data.hash;
+        a.target = '_blank';
+        a.appendChild(preview);
+        container.appendChild(a);
+    } else {
+        container.appendChild(preview);
+    }
     return container;
 }
 
