@@ -3,14 +3,18 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
 {% endblock %}
 {% block content %}
+<h2 class="center">Album - {{ len(items) }} files</h2>
 
-{% for hash in items %}
-<div class="media-wrapper">
-    <div class="media">
-        {{ render_media(hash) | safe }}
+<div class="album">
+    {% for hash in items %}
+    <div class="media-wrapper">
+        <div class="media">
+            {{ render_media(hash) | safe }}
+        </div>
     </div>
+    <div class="clearfix"></div>
+    {% endfor %}
 </div>
-{% endfor %}
 
 <script>
 window.album = true;

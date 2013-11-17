@@ -110,7 +110,8 @@ def inject():
         'notice_enabled': notice_enabled,
         'share': share,
         'render_media': render_media,
-        'type_files': type_files
+        'type_files': type_files,
+        'len': len
     }
 
 @app.route("/")
