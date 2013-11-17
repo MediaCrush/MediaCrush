@@ -131,11 +131,51 @@ class MediaView(FlaskView):
 
     @route("/<id>/direct")
     def direct(self, id):
-        template_params = self._template_params(id)
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id:
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
+
+        klass = RedisObject.klass(id)
+        if klass is Album:
+            album = klass.from_hash(id)
+            items = [File.from_hash(h) for h in album.items]
+            types = set([get_mimetype(f.original) for f in items])
+
+            return render_template("album.html", items=items, types=types)
+
+        f = File.from_hash(id)
+        # TODO jdiez
+        if not f:
+            abort(404)
+        template_params = _template_params(f)
         return render_template("direct.html", **template_params)
 
-    @route("/<h>/frame")
-    def frame(self, h):
-        template_params = self._template_params(h)
+    @route("/<id>/frame")
+    def frame(self, id):
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id:
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
+
+        klass = RedisObject.klass(id)
+        if klass is Album:
+            album = klass.from_hash(id)
+            items = [File.from_hash(h) for h in album.items]
+            types = set([get_mimetype(f.original) for f in items])
+
+            return render_template("album.html", items=items, types=types)
+
+        f = File.from_hash(id)
+        # TODO jdiez
+        if not f:
+            abort(404)
+        template_params = _template_params(f)
         template_params['embedded'] = True
         return render_template("direct.html", **template_params)
