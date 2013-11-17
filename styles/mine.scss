@@ -65,7 +65,7 @@ audio {
 
             img, video {
                 width: auto;
-                max-width: 470px;
+                max-width: 450px;
                 max-height: 450px;
                 border: 1px solid #000;
             }
@@ -76,6 +76,7 @@ audio {
                 right: auto;
 
                 img, video {
+                    max-width: 470px;
                     width: auto;
                 }
             }
@@ -86,6 +87,7 @@ audio {
                 right: auto;
 
                 img, video {
+                    max-width: 470px;
                     width: 450px;
                 }
             }
