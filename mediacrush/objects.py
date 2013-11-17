@@ -15,6 +15,13 @@ class RedisObject(object):
             self.hash = hashlib.md5(uuid.uuid4().bytes).hexdigest()[:12]
 
     def __get_vars(self):
+        if "__store__" in dir(self):
+            d = {}
+            for variable in set(self.__store__ + ['hash']): # Ensure we always store the hash
+                d[variable] = getattr(self, variable)
+
+            return d
+
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
         names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
         return dict(names)
@@ -23,12 +30,27 @@ class RedisObject(object):
         return self.__class__.get_key(self.hash)
 
     @classmethod
+    def klass(cls, hash):
+        for subclass in cls.__subclasses__():
+            if r.sismember(_k(subclass.__name__.lower()), hash):
+                return subclass
+
+        return None
+
+    @staticmethod
+    def exists(hash):
+        return RedisObject.klass(hash) is not None
+
+    @classmethod
     def get_key(cls, hash):
         classname = cls.__name__
         return _k("%s.%s" % (classname.lower(), hash))
 
     @classmethod
     def from_hash(cls, hash):
+        if cls == RedisObject:
+            cls = RedisObject.klass(hash)
+
         obj = r.hgetall(cls.get_key(hash))
         obj['hash'] = hash
 
@@ -50,10 +72,11 @@ class RedisObject(object):
         del obj['hash']
 
         r.hmset(self.__get_key() , obj)
+        r.sadd(_k(self.__class__.__name__.lower()), self.hash) # Add to type-set
 
     def delete(self):
+        r.srem(_k(self.__class__.__name__.lower()), self.hash)
         r.delete(self.__get_key())
-
 
 class File(RedisObject):
     original = None
@@ -73,9 +96,20 @@ class Feedback(RedisObject):
     text = None
     useragent = None
 
-if __name__ == '__main__':
-    a = File(hash="aasdf", compression=2)
-    a.save()
+class Album(RedisObject):
+    _items = None
+    ip = None
+    __store__ = ['_items', 'ip'] # ORM override for __get_vars
 
-    b = File.from_hash("aasdf")
-    print(vars(b))
+    @property
+    def items(self):
+        return self._items.split(",")
+
+    @items.setter
+    def items(self, l):
+        self._items = ','.join(l)
+
+if __name__ == '__main__':
+    a = RedisObject.from_hash("11fcf48f2c44")
+
+    print a.items, type(a.items), a.hash

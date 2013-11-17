@@ -3,6 +3,26 @@
 /*
  * Layout
  */
+#albumUI {
+    margin-bottom: 5px;
+
+    div, & > a {
+        display: block;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #createAlbum {
+        color: #fff;
+        background: #00b200;
+
+        &:hover {
+            background: #007f00;
+        }
+    }
+}
+
 #droparea {
     background: #fff;
     border: 2px dotted #005483;

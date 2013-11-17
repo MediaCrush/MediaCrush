@@ -1,4 +1,4 @@
-<a href="{{ share('directlink', filename) }}">
+<a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
     <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
 </a>
 <script type="text/javascript">
@@ -12,6 +12,10 @@ function resizeMedia(x, y) {
     img.height = y;
 }
 window.addEventListener('load', function() {
+    if (window.album) {
+    document.querySelector('#img-a-{{ filename }}').href = '/{{ filename }}';
+        return;
+    }
     var image = document.getElementById('img-{{filename}}');
     var dupe = document.createElement('img'); // Duplicate image so that CSS sizing and such doesn't affect the resolution
     dupe.onload = function() {

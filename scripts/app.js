@@ -3,8 +3,10 @@ function browse() {
     file.click();
 }
 
-var firstUpload = true;
+var totalUploads = 0;
 var uploads = 0;
+var files = [];
+var albumAssociated = false;
 
 function uploadUrl(url) {
     var droparea = document.getElementById('droparea');
@@ -20,6 +22,7 @@ function uploadUrl(url) {
     preview.fileStatus.appendChild(p);
     preview.progress.style.width = '100%';
     uploads++;
+    updateAlbum();
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/upload/url');
     xhr.onload = function() {
@@ -28,6 +31,7 @@ function uploadUrl(url) {
             p.textContent = 'Processing... (this may take a while)';
             preview.fileStatus.appendChild(p);
             hash = responseJSON['hash'];
+            files.push(hash);
             preview.progress.className += ' progress-green';
             preview.progress.style.width = '100%';
             setTimeout(function() {
@@ -49,13 +53,17 @@ function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     droparea.className = 'files';
-    if (firstUpload) {
+    if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        firstUpload = false;
+    }
+    totalUploads += files.length;
+    if (totalUploads > 1) {
+        document.getElementById('createAlbum').className = '';
     }
     var timeout = 500;
     for (var i = 0; i < files.length; i++) {
         uploads++;
+        updateAlbum();
         if (i == 0)
             handleFile(files[i]);
         else {
@@ -66,6 +74,47 @@ function handleFiles(files) {
             }(i);
             timeout += 500;
         }
+    }
+}
+
+function createAlbum(e) {
+    e.preventDefault();
+    albumAssociated = true;
+    document.getElementById('createAlbum').className = 'hidden';
+    document.getElementById('albumPending').classList.remove('hidden');
+    updateAlbum();
+}
+
+function updateAlbum() {
+    if (!albumAssociated) return;
+    if (files.length <= 1) {
+        document.getElementById('createAlbum').className.add('hidden');
+        document.getElementById('albumPending').classList.add('hidden');
+        document.getElementById('albumUrl').parentElement.classList.add('hidden');
+    }
+    if (uploads > 0) {
+        document.getElementById('createAlbum').className = 'hidden';
+        document.getElementById('albumPending').classList.remove('hidden');
+        document.getElementById('albumUrl').parentElement.classList.add('hidden');
+    } else {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/album/create');
+        xhr.onload = function() {
+            if (this.status != 200) {
+                document.getElementById('albumPending').textContent = 'An error occured creating this album.';
+                return;
+            }
+            var data = JSON.parse(this.responseText);
+            document.getElementById('createAlbum').className = 'hidden';
+            document.getElementById('albumPending').classList.add('hidden');
+            var url = document.getElementById('albumUrl');
+            url.textContent = window.location.origin + '/' + data.hash;
+            url.href = window.location.origin + '/' + data.hash;
+            url.parentElement.classList.remove('hidden');
+        };
+        var form = new FormData();
+        form.append('list', files.join(','));
+        xhr.send(form);
     }
 }
 
@@ -81,10 +130,13 @@ function handleFile(file) {
             error.className = 'error';
             error.textContent = 'This filetype is not supported.';
             preview.fileStatus.appendChild(error);
+            files.remove(files.indexOf(hash));
+            updateAlbum();
         } else {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/' + hash + '/exists');
             xhr.onload = function() {
+                files.push(hash);
                 if (this.status == 200) {
                     var p = document.createElement('p');
                     p.textContent = 'Upload complete!';
@@ -100,6 +152,7 @@ function handleFile(file) {
                     preview.fileStatus.appendChild(a);
                     preview.fileStatus.parentElement.appendChild(a2);
                     uploads--;
+                    updateAlbum();
                     addItemToHistory(hash);
                 } else {
                     var p = document.createElement('p');
@@ -151,6 +204,8 @@ function uploadFile(file, hash, statusUI, progressUI) {
             errorText.textContent = error;
             statusUI.appendChild(errorText);
             progressUI.style.width = 0;
+            files.remove(files.indexOf(hash));
+            updateAlbum();
         }
     };
     var formData = new FormData();
@@ -166,6 +221,7 @@ function checkStatus(hash, statusUI, progressUI) {
         if (responseJSON['status'] == 'done') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
+            updateAlbum();
         } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
@@ -177,7 +233,9 @@ function checkStatus(hash, statusUI, progressUI) {
                 error.textContent = 'There was an error processing this file.';
             }
             statusUI.appendChild(error);
+            files.remove(files.indexOf(hash));
             uploads--;
+            updateAlbum();
         } else {
             setTimeout(function() {
                 checkStatus(hash, statusUI, progressUI);
@@ -202,6 +260,7 @@ function finish(statusUI, hash) {
         e.preventDefault();
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '/api/' + hash + '/delete');
+        files.remove(files.indexOf(hash));
         xhr.send();
         var container = statusUI.parentElement;
         container.parentElement.removeChild(container);
@@ -334,11 +393,13 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
+    var create = document.getElementById('createAlbum');
+    create.addEventListener('click', createAlbum, false);
     setTimeout(handleHistory, 50);
 }
 
 function forceFocus() {
-    if (document.activeElement.tagName == 'TEXTAREA') {
+    if (document.activeElement.tagName == 'TEXTAREA' || document.activeElement.tagName == 'INPUT') {
         setTimeout(forceFocus, 250);
         return;
     }

@@ -19,6 +19,6 @@ class DocsView(FlaskView):
 
     def get(self, doc):
         try:
-            return DocsView._get_doc(doc) 
+            return DocsView._get_doc(doc)
         except:
             abort(404)

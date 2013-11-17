@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
+{% endblock %}
+{% block content %}
+
+{% for hash in items %}
+<div class="media-wrapper">
+    <div class="media">
+        {{ render_media(hash) | safe }}
+    </div>
+</div>
+{% endfor %}
+
+<script>
+window.album = true;
+</script>
+
+{% for type in types %}
+{{ type_files(type) | safe }}
+{% endfor %}
+
+{% endblock %}

@@ -5,11 +5,7 @@
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a>page.</p>
     </audio>
     <h1 class="brand">
-        {% if embedded %}
         <a href="/{{filename}}" target="_blank">
-        {% else %}
-        <a href="/" target="_blank">
-        {% endif %}
             <span>
                 <img src="/static/logo-bg.png" class="bg" alt="logo" />
                 <img src="/static/logo-fg.png" alt="logo" />
@@ -43,12 +39,3 @@
         </div>
     </div>
 </div>
-{% if videologic is not defined %}
-{% set videologic = True %}
-<style>
-{% include "fragments/audio.css" %}
-</style>
-<script type="text/javascript">
-{% include "fragments/audio.js" %}
-</script>
-{% endif %}

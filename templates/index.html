@@ -16,6 +16,13 @@
             </div>
             <div id="droparea">
                 <input type="file" id="browse" class="hidden" multiple />
+                <div id="albumUI">
+                    <a href="#" id="createAlbum" class="hidden">Create Album</a>
+                    <div class="hidden" id="albumPending">Processing, please wait...</div>
+                    <div class="hidden">
+                        Album: <a href="#" id="albumUrl"></a>
+                    </div>
+                </div>
                 <div id="files">
                     {# Things in here will be removed after the first file is uploaded #}
                     <ul id="types" class="inline">
