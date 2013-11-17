@@ -106,10 +106,10 @@ class MediaView(FlaskView):
 
             return render_template("album.html", items=items, types=types)
 
-        f = File.from_hash(id)
-        # TODO jdiez
-        if not f:
+        if klass is not File:
             abort(404)
+
+        f = File.from_hash(id)
         return render_template("view.html", **_template_params(f))
 
     def report(self, id):
@@ -147,10 +147,10 @@ class MediaView(FlaskView):
 
             return render_template("album.html", items=items, types=types)
 
-        f = File.from_hash(id)
-        # TODO jdiez
-        if not f:
+        if klass is not File:
             abort(404)
+
+        f = File.from_hash(id)
         template_params = _template_params(f)
         return render_template("direct.html", **template_params)
 
@@ -172,10 +172,10 @@ class MediaView(FlaskView):
 
             return render_template("album.html", items=items, types=types)
 
-        f = File.from_hash(id)
-        # TODO jdiez
-        if not f:
+        if klass is not File:
             abort(404)
+
+        f = File.from_hash(id)
         template_params = _template_params(f)
         template_params['embedded'] = True
         return render_template("direct.html", **template_params)
