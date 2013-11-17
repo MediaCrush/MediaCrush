@@ -65,6 +65,7 @@ window.addEventListener('load', function() {
     }, false);
 }, false);
 function videoMouseMove(e) {
+    return; // TODO: Fix this
     var hover = e.target;
     while (hover.className.indexOf('video') == -1)
         hover = hover.parentElement;
