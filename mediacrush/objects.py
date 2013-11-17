@@ -31,17 +31,24 @@ class RedisObject(object):
 
     @classmethod
     def klass(cls, hash):
+        # TODO: jdiez fix this
+        if File.from_hash(hash) is not None:
+            return File
+        if Album.from_hash(hash) is not None:
+            return Album
+        return None
+
         for subclass in cls.__subclasses__():
             if r.sismember(_k(subclass.__name__.lower()), hash):
                 return subclass
-
-        # TEMP
-        # TODO: jdiez fix this
-        return File
         return None
 
     @staticmethod
     def exists(hash):
+        # TODO: jdiez fix this
+        # fuck shit fuck
+        return File.from_hash(hash) is not None or Album.from_hash(hash) is not None
+
         return RedisObject.klass(hash) is not None
 
     @classmethod
@@ -55,6 +62,9 @@ class RedisObject(object):
             cls = RedisObject.klass(hash)
 
         obj = r.hgetall(cls.get_key(hash))
+        # TODO jdiez
+        if not obj:
+            return None
         obj['hash'] = hash
 
         return cls(**obj)
