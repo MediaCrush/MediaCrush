@@ -190,18 +190,26 @@
             left: 20px;
 
             img, video {
-                width: 239px;
+                width: auto;
                 height: 239px;
             }
 
             &:nth-of-type(3n+2) {
                 top: 10px;
                 left: 10px;
+
+                img, video {
+                    width: auto;
+                }
             }
 
             &:nth-of-type(3n+1) {
                 top: 0;
                 left: 0;
+
+                img, video {
+                    width: 239px;
+                }
             }
         }
     }

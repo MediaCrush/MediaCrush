@@ -64,7 +64,7 @@ audio {
             left: 40px;
 
             img, video {
-                width: 450px;
+                width: auto;
                 height: 450px;
                 border: 1px solid #000;
             }
@@ -72,11 +72,19 @@ audio {
             &:nth-of-type(3n+2) {
                 top: 20px;
                 left: 20px;
+
+                img, video {
+                    width: auto;
+                }
             }
 
             &:nth-of-type(3n+1) {
                 top: 0;
                 left: 0;
+
+                img, video {
+                    width: 450px;
+                }
             }
         }
     }
