@@ -8,7 +8,7 @@ import mimetypes
 from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status, processing_needed
 from ..database import r, _k
 from ..config import _cfg
-from ..objects import File
+from ..objects import File, Album, RedisObject
 from ..network import get_ip
 
 def fragment(mimetype):
@@ -26,6 +26,52 @@ def fragment(mimetype):
 
     return 'fragments/' + fragment + '.html'
 
+def _template_params(id):
+    if not File.exists(id):
+        abort(404)
+
+    f = File.from_hash(id)
+    if f.compression:
+        compression = int(float(f.compression) * 100)
+    if compression == 100 or processing_status(f.hash) != "done":
+        compression = None
+
+    can_delete = None
+    if request.cookies.get('hist-opt-out', '0') == '1':
+        can_delete = check_password_hash(f.ip, get_ip())
+
+    ext = extension(f.original)
+    mimetype = get_mimetype(f.original)
+
+    types = [mimetype]
+    for f_ext in processing_needed[ext]['formats']:
+        types.append(mimetypes.guess_type('foo.' + f_ext)[0])
+    if 'do-not-send' in request.cookies:
+        try:
+            blacklist = json.loads(request.cookies['do-not-send'])
+            for t in blacklist:
+                if t in types:
+                    types.remove(t)
+        except:
+            pass
+
+    return {
+        'filename': f.hash,
+        'original': f.original,
+        'video': ext in VIDEO_EXTENSIONS,
+        'loop': ext in LOOP_EXTENSIONS,
+        'autoplay': ext in AUTOPLAY_EXTENSIONS,
+        'compression': compression,
+        'mimetype': mimetype,
+        'can_delete': can_delete if can_delete is not None else 'check',
+        'fragment': fragment(mimetype),
+        'types': types
+    }
+
+def render_media(hash):
+    params = _template_params(hash)
+    return render_template(params['fragment'], **params)
+
 class MediaView(FlaskView):
     route_base = '/'
 
@@ -37,47 +83,6 @@ class MediaView(FlaskView):
            return send_file(path, as_attachment=True)
         return self.get(id)
 
-    def _template_params(self, id):
-        if not File.exists(id):
-            abort(404)
-
-        f = File.from_hash(id)
-        if f.compression:
-            compression = int(float(f.compression) * 100)
-        if compression == 100 or processing_status(f.hash) != "done":
-            compression = None
-
-        can_delete = None
-        if request.cookies.get('hist-opt-out', '0') == '1':
-            can_delete = check_password_hash(f.ip, get_ip())
-
-        ext = extension(f.original)
-        mimetype = get_mimetype(f.original)
-
-        types = [mimetype]
-        for f_ext in processing_needed[ext]['formats']:
-            types.append(mimetypes.guess_type('foo.' + f_ext)[0])
-        if 'do-not-send' in request.cookies:
-            try:
-                blacklist = json.loads(request.cookies['do-not-send'])
-                for t in blacklist:
-                    if t in types:
-                        types.remove(t)
-            except:
-                pass
-
-        return {
-            'filename': f.hash,
-            'original': f.original,
-            'video': ext in VIDEO_EXTENSIONS,
-            'loop': ext in LOOP_EXTENSIONS,
-            'autoplay': ext in AUTOPLAY_EXTENSIONS,
-            'compression': compression,
-            'mimetype': mimetype,
-            'can_delete': can_delete if can_delete is not None else 'check',
-            'fragment': fragment(mimetype),
-            'types': types
-        }
 
     def get(self, id):
         if ".." in id or id.startswith("/"):
@@ -88,7 +93,13 @@ class MediaView(FlaskView):
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
 
-        return render_template("view.html", **self._template_params(id))
+        klass = RedisObject.klass(id)
+        if klass is Album:
+            album = klass.from_hash(id)
+
+            return render_template("album.html", album=album)
+
+        return render_template("view.html", **_template_params(id))
 
     def report(self, id):
         f = File.from_hash(id)
