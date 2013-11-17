@@ -187,10 +187,11 @@
         & > div {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 80px;
 
             img, video {
                 width: auto;
+                max-width: 150px;
                 height: 239px;
             }
 
@@ -200,6 +201,7 @@
 
                 img, video {
                     width: auto;
+                    max-width: none;
                 }
             }
 
@@ -209,6 +211,7 @@
 
                 img, video {
                     width: 239px;
+                    max-width: none;
                 }
             }
         }

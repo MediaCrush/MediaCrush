@@ -61,10 +61,11 @@ audio {
         & > div {
             position: absolute;
             top: 40px;
-            left: 40px;
+            left: 80px;
 
             img, video {
                 width: auto;
+                max-width: 350;
                 height: 450px;
                 border: 1px solid #000;
             }
@@ -75,6 +76,7 @@ audio {
 
                 img, video {
                     width: auto;
+                    max-width: none;
                 }
             }
 
@@ -84,6 +86,7 @@ audio {
 
                 img, video {
                     width: 450px;
+                    max-width: none;
                 }
             }
         }
