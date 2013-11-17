@@ -23,8 +23,8 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = False
-notice_text = "We're currently experiencing some problems with user history and the API"
+notice_enabled = True
+notice_text = "We're currently experiencing problems with uploading new files."
 
 def prepare():
     if os.path.exists(app.static_folder):
