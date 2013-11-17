@@ -227,7 +227,7 @@ function play(video) {
     playbackControl.classList.remove('play');
     playbackControl.classList.add('pause');
     video.play();
-    document.querySelector('.large.play').classList.add('hidden');
+    document.querySelector('[data-video="' + video.id + '"] .large.play').classList.add('hidden');
 }
 function pause(video) {
     var playbackControl = document.querySelectorAll('a.control.pause[data-video="' + video.id + '"]')[0];
@@ -248,6 +248,7 @@ function pauseMedia() {
     }
 }
 function addHash(hash) {
+    if (window.album) return;
     var parts = window.location.hash.substr(1).split(',');
     var newParts = [];
     for (var i = 0; i < parts.length; i++) {
@@ -259,6 +260,7 @@ function addHash(hash) {
     window.location.hash = '#' + newParts.join(',');
 }
 function removeHash(hash) {
+    if (window.album) return;
     var parts = window.location.hash.substr(1).split(',');
     var newParts = [];
     for (var i = 0; i < parts.length; i++) {
@@ -269,6 +271,7 @@ function removeHash(hash) {
     window.location.hash = '#' + newParts.join(',');
 }
 function mediaHashHandler(hash) {
+    if (window.album) return;
     var parts = hash.split(',');
     // TODO: Be careful not to break this when albums happen
     var video = document.getElementById('video-{{ filename }}');
