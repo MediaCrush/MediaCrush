@@ -23,8 +23,8 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = False
-notice_text = "We don't just have great GIF support - try sharing some pictures on MediaCrush!"
+notice_enabled = True
+notice_text = "We're currently experiencing some problems with user history and the API"
 
 def prepare():
     if os.path.exists(app.static_folder):
