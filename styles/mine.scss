@@ -61,11 +61,10 @@ audio {
         & > div {
             position: absolute;
             top: 40px;
-            left: 80px;
+            right: 60px;
 
             img, video {
                 width: auto;
-                max-width: 350;
                 height: 450px;
                 border: 1px solid #000;
             }
@@ -73,20 +72,20 @@ audio {
             &:nth-of-type(3n+2) {
                 top: 20px;
                 left: 20px;
+                right: auto;
 
                 img, video {
                     width: auto;
-                    max-width: none;
                 }
             }
 
             &:nth-of-type(3n+1) {
                 top: 0;
                 left: 0;
+                right: auto;
 
                 img, video {
                     width: 450px;
-                    max-width: none;
                 }
             }
         }

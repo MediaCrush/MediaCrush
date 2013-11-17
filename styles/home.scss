@@ -187,31 +187,30 @@
         & > div {
             position: absolute;
             top: 20px;
-            left: 80px;
+            right: 40px;
 
             img, video {
                 width: auto;
-                max-width: 150px;
                 height: 239px;
             }
 
             &:nth-of-type(3n+2) {
                 top: 10px;
                 left: 10px;
+                right: auto;
 
                 img, video {
                     width: auto;
-                    max-width: none;
                 }
             }
 
             &:nth-of-type(3n+1) {
                 top: 0;
                 left: 0;
+                right: auto;
 
                 img, video {
                     width: 239px;
-                    max-width: none;
                 }
             }
         }
