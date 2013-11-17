@@ -107,6 +107,9 @@ class MediaView(FlaskView):
             return render_template("album.html", items=items, types=types)
 
         f = File.from_hash(id)
+        # TODO jdiez
+        if not f:
+            abort(404)
         return render_template("view.html", **_template_params(f))
 
     def report(self, id):
