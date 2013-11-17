@@ -51,6 +51,36 @@ audio {
         position: relative;
     }
 
+    .album-preview {
+        position: relative;
+        width: 500px;
+        height: 496px;
+        overflow: hidden;
+        margin-bottom: 10px;
+
+        & > div {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+
+            img, video {
+                width: 450px;
+                height: 450px;
+                border: 1px solid #000;
+            }
+
+            &:nth-of-type(3n+2) {
+                top: 20px;
+                left: 20px;
+            }
+
+            &:nth-of-type(3n+1) {
+                top: 0;
+                left: 0;
+            }
+        }
+    }
+
     .bar {
         background: rgba(111, 111, 111, 0.8);
         color: #fff;

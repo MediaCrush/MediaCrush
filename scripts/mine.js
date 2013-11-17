@@ -156,50 +156,62 @@ function createView(data) {
         preview = document.createElement('img');
         preview.src = '/static/audio-player.png';
         preview.style.marginTop = '23px';
+    } else if (item.type == 'application/album') {
+        preview = document.createElement('div');
+        preview.className = 'album-preview';
+        for (var i = 0; i < item.files.length && i < 3; i++) {
+            preview.appendChild(createView({ item: item.files[i], hash: item.files[i].hash, nolink: true }));
+        }
     }
-    preview.className = 'item';
-    var container2 = document.createElement('div');
-    var bar = document.createElement('div');
-    bar.className = 'bar';
+    preview.className += ' item';
+    if (!data.nolink) {
+        var container2 = document.createElement('div');
+        var bar = document.createElement('div');
+        bar.className = 'bar';
 
-    var forgetLink = document.createElement('a');
-    forgetLink.textContent = 'Forget';
-    forgetLink.className = 'left';
-    forgetLink.href = '/forget/' + data.hash;
-    forgetLink.onclick = function(e) {
-        e.preventDefault();
-        removeItemFromHistory(data.hash);
-        container2.parentElement.removeChild(container2);
-        createPagination();
-        loadCurrentPage();
-    };
-    forgetLink.title = 'Remove this item from your history';
-    bar.appendChild(forgetLink);
+        var forgetLink = document.createElement('a');
+        forgetLink.textContent = 'Forget';
+        forgetLink.className = 'left';
+        forgetLink.href = '/forget/' + data.hash;
+        forgetLink.onclick = function(e) {
+            e.preventDefault();
+            removeItemFromHistory(data.hash);
+            container2.parentElement.removeChild(container2);
+            createPagination();
+            loadCurrentPage();
+        };
+        forgetLink.title = 'Remove this item from your history';
+        bar.appendChild(forgetLink);
 
-    var deleteLink = document.createElement('a');
-    deleteLink.textContent = 'Delete';
-    deleteLink.className = 'right';
-    deleteLink.href = '/delete/' + data.hash;
-    deleteLink.onclick = function(e) {
-        e.preventDefault();
-        removeItemFromHistory(data.hash);
-        container2.parentElement.removeChild(container2);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/' + data.hash + '/delete');
-        xhr.send();
-    };
-    deleteLink.title = 'Delete this item from the MediaCrush server';
-    bar.appendChild(deleteLink);
+        var deleteLink = document.createElement('a');
+        deleteLink.textContent = 'Delete';
+        deleteLink.className = 'right';
+        deleteLink.href = '/delete/' + data.hash;
+        deleteLink.onclick = function(e) {
+            e.preventDefault();
+            removeItemFromHistory(data.hash);
+            container2.parentElement.removeChild(container2);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/' + data.hash + '/delete');
+            xhr.send();
+        };
+        deleteLink.title = 'Delete this item from the MediaCrush server';
+        bar.appendChild(deleteLink);
 
-    var a = document.createElement('a');
-    a.href = '/' + data.hash;
-    a.appendChild(preview);
-    container.appendChild(a);
-    container.appendChild(bar);
-    container2.className = 'item-wrapper';
-    container2.appendChild(container);
-    container2.id = data.hash;
-    return container2;
+        var a = document.createElement('a');
+        a.href = '/' + data.hash;
+        a.target = '_blank';
+        a.appendChild(preview);
+        container.appendChild(a);
+        container.appendChild(bar);
+        container2.className = 'item-wrapper';
+        container2.appendChild(container);
+        container2.id = data.hash;
+        return container2;
+    } else {
+        container.appendChild(preview);
+        return container;
+    }
 }
 
 function createPagination() {
