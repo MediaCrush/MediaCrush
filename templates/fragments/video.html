@@ -56,12 +56,3 @@
     </div>
     <a href="#" class="control play large {% if autoplay %}hidden{% endif %}" data-video="video-{{ filename }}"><img src="/static/play-large.png" /></a>
 </div>
-{% if videologic is not defined %}
-{% set videologic = True %}
-<style>
-{% include "fragments/video.css" %}
-</style>
-<script type="text/javascript">
-{% include "fragments/video.js" %}
-</script>
-{% endif %}

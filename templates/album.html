@@ -4,12 +4,16 @@
 {% endblock %}
 {% block content %}
 
-{% for hash in album.items %}
+{% for hash in items %}
 <div class="media-wrapper">
     <div class="media">
         {{ render_media(hash) |safe }}
     </div>
 </div>
+{% endfor %}
+
+{% for type in types %}
+{{ type_files(type) |safe }}
 {% endfor %}
 
 {% endblock %}

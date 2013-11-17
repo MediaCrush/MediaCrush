@@ -24,13 +24,18 @@ def fragment(mimetype):
         if truth:
             fragment = fragments[i]
 
-    return 'fragments/' + fragment + '.html'
+    return fragment
 
-def _template_params(id):
-    if not File.exists(id):
-        abort(404)
+def type_files(t):
+    frag = fragment(t)
+    require_files = ['video', 'audio']
 
-    f = File.from_hash(id)
+    if frag in require_files:
+        return render_template('fragments/%s_files.html' % frag)
+    else:
+        return ''
+
+def _template_params(f):
     if f.compression:
         compression = int(float(f.compression) * 100)
     if compression == 100 or processing_status(f.hash) != "done":
@@ -64,12 +69,12 @@ def _template_params(id):
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
-        'fragment': fragment(mimetype),
+        'fragment': 'fragments/' + fragment(mimetype) + '.html',
         'types': types
     }
 
-def render_media(hash):
-    params = _template_params(hash)
+def render_media(f):
+    params = _template_params(f)
     return render_template(params['fragment'], **params)
 
 class MediaView(FlaskView):
@@ -96,10 +101,13 @@ class MediaView(FlaskView):
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)
+            items = [File.from_hash(h) for h in album.items]
+            types = set([get_mimetype(f.original) for f in items])
 
-            return render_template("album.html", album=album)
+            return render_template("album.html", items=items, types=types)
 
-        return render_template("view.html", **_template_params(id))
+        f = File.from_hash(id)
+        return render_template("view.html", **_template_params(f))
 
     def report(self, id):
         f = File.from_hash(id)

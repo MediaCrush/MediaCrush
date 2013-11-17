@@ -12,7 +12,7 @@ import subprocess
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
-from mediacrush.views.media import render_media
+from mediacrush.views.media import render_media, type_files
 from mediacrush.share import share
 
 app = Flask(__name__)
@@ -109,7 +109,8 @@ def inject():
         'notice_text': notice_text,
         'notice_enabled': notice_enabled,
         'share': share,
-        'render_media': render_media
+        'render_media': render_media,
+        'type_files': type_files
     }
 
 @app.route("/")
