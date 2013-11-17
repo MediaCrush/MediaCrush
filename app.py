@@ -23,7 +23,7 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = True
+notice_enabled = False
 notice_text = "We're currently experiencing some problems with user history and the API"
 
 def prepare():
