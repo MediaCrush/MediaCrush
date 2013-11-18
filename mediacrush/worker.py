@@ -65,7 +65,7 @@ converters = {
 processors = {
     'jpg': Invocation("jhead -purejpg {0} {0}"),
     'jpeg': Invocation("jhead -purejpg {0} {0}"),
-    'png': Invocation("optipng -o5 {0}"),
+    #'png': Invocation("optipng -o5 {0}"),
     'svg': Invocation("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 }
 
