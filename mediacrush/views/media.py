@@ -73,8 +73,9 @@ def _template_params(f):
         'types': types
     }
 
-def render_media(f):
+def render_media(f, album=False):
     params = _template_params(f)
+    params['album'] = album
     return render_template(params['fragment'], **params)
 
 class MediaView(FlaskView):
@@ -103,8 +104,11 @@ class MediaView(FlaskView):
             album = klass.from_hash(id)
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
+            can_delete = None
+            if request.cookies.get('hist-opt-out', '0') == '1':
+                can_delete = check_password_hash(f.ip, get_ip())
 
-            return render_template("album.html", items=items, types=types)
+            return render_template("album.html", items=items, types=types, filename=id, can_delete=can_delete)
 
         if klass is not File:
             abort(404)
@@ -119,10 +123,10 @@ class MediaView(FlaskView):
 
     @route("/<h>/delete")
     def delete(self, h):
-        if not File.exists(h):
+        if not RedisObject.exists(h):
             abort(404)
 
-        f = File.from_hash(h)
+        f = RedisObject.from_hash(h)
         if not check_password_hash(f.ip, get_ip()):
             abort(401)
 
@@ -170,7 +174,7 @@ class MediaView(FlaskView):
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
 
-            return render_template("album.html", items=items, types=types)
+            return render_template("album-embedded.html", items=items, types=types)
 
         if klass is not File:
             abort(404)
