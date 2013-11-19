@@ -73,8 +73,9 @@ def _template_params(f):
         'types': types
     }
 
-def render_media(f):
+def render_media(f, album=False):
     params = _template_params(f)
+    params['album'] = album
     return render_template(params['fragment'], **params)
 
 class MediaView(FlaskView):
