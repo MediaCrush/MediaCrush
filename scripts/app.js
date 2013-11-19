@@ -12,9 +12,9 @@ function uploadUrl(url) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     droparea.className = 'files';
-    if (firstUpload) {
+    if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        firstUpload = false;
+        totalUploads++;
     }
     var preview = createPreview({ type: 'image/png', name: url }, url); // Note: we only allow uploading images by URL, not AV
     var p = document.createElement('p');
