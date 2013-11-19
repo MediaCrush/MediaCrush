@@ -1,0 +1,37 @@
+@import 'view.scss'
+
+.container {
+    width: 700px;
+}
+
+.album {
+    img, video {
+        max-width: 700px !important;
+    }
+
+    .media-wrapper {
+        display: none;
+
+        &.selected {
+            display: block;
+        }
+
+        .media {
+            margin: 0 auto;
+
+            img, video {
+                display: block;
+            }
+        }
+    }
+}
+
+.subtitle {
+    margin-left: 10px;
+    font-size: 14pt;
+}
+
+.brand {
+    margin: 0;
+    height: 33px;
+}
