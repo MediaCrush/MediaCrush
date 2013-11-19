@@ -1,0 +1,9 @@
+@import 'view.scss'
+
+h2 {
+    margin: 0;
+
+    & + div {
+        margin-bottom: 10px;
+    }
+}
