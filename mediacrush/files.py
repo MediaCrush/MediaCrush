@@ -207,9 +207,6 @@ def upload(f, filename):
         return "no", 415
 
 def delete_file(f):
-    if f is Album:
-        f.delete()
-        return
     ext = extension(f.original)
     delete_file_storage(f.original)
 

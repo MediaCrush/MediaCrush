@@ -121,18 +121,6 @@ class MediaView(FlaskView):
         f.add_report()
         return "ok"
 
-    @route("/<h>/delete")
-    def delete(self, h):
-        if not RedisObject.exists(h):
-            abort(404)
-
-        f = RedisObject.from_hash(h)
-        if not check_password_hash(f.ip, get_ip()):
-            abort(401)
-
-        delete_file(f)
-        return "ok"
-
     @route("/<id>/direct")
     def direct(self, id):
         if ".." in id or id.startswith("/"):
