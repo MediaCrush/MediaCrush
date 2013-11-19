@@ -9,98 +9,98 @@
 {% endblock %}
 {% block content %}
 <div class="psuedohidden" id="paste-target" contenteditable></div>
-    <div class="grid">
-        <div class="column">
-            <div id="beta">
-                <span>Beta</span>
-            </div>
-            <div id="droparea">
-                <input type="file" id="browse" class="hidden" multiple />
-                <div id="albumUI">
-                    <a href="#" id="createAlbum" class="hidden">Create Album</a>
-                    <div class="hidden" id="albumPending">Processing, please wait...</div>
-                    <div class="hidden">
-                        Album: <a href="#" id="albumUrl"></a>
-                    </div>
-                </div>
-                <div id="files">
-                    {# Things in here will be removed after the first file is uploaded #}
-                    <ul id="types" class="inline">
-                        <li class="images">
-                            PNG JPG GIF SVG
-                        </li>
-                        <li class="videos">
-                            MP4 OGV
-                        </li>
-                        <li class="audio">
-                            MP3 OGG
-                        </li>
-                    </ul>
-                    {% if notice_enabled %}
-                    <div id="notice">
-                        <div>{{ notice_text }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="hint">
-                    {# Things in here stay in here past the first upload #}
-                    <div id="droptext">
-                        <a href="#" id="browseLink">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or links<br />Upload several to create an album!</span></a>
-                    </div>
+<div class="grid">
+    <div class="column">
+        <div id="beta">
+            <span>Beta</span>
+        </div>
+        <div id="droparea">
+            <input type="file" id="browse" class="hidden" multiple />
+            <div id="albumUI">
+                <a href="#" id="createAlbum" class="hidden">Create Album</a>
+                <div class="hidden" id="albumPending">Processing, please wait...</div>
+                <div class="hidden">
+                    Album: <a href="#" id="albumUrl"></a>
                 </div>
             </div>
-            <div class="small">
-                <ul class="inline">
-                    <li><a href="https://twitter.com/mediacru_sh" target="_blank" title="Follow @mediacru_sh on Twitter!"></a></li>
-                    <li><a href="https://pay.reddit.com/r/mediacrush" target="_blank" title="Subscribe to /r/mediacrush on Reddit!"></a></li>
-                    <li><a href="/serious">Terms & Privacy</a></li>
-                    <li><a href="/docs">Developers</a></li>
-                    <li><a href="mailto:support@mediacru.sh">Help</a></li>
+            <div id="files">
+                {# Things in here will be removed after the first file is uploaded #}
+                <ul id="types" class="inline">
+                    <li class="images">
+                        PNG JPG GIF SVG
+                    </li>
+                    <li class="videos">
+                        MP4 OGV
+                    </li>
+                    <li class="audio">
+                        MP3 OGG
+                    </li>
                 </ul>
+                {% if notice_enabled %}
+                <div id="notice">
+                    <div>{{ notice_text }}</div>
+                </div>
+                {% endif %}
             </div>
-        </div>
-        <div class="column narrow">
-            <div id="blurb">
-                <p>MediaCrush makes sharing media super fast by reducing the filesize, without sacrificing quality.</p>
-                <p>We'll losslessly compress images, video, and audio uploaded to our service. We can get <a href="/about">1000-3000%</a> faster for some files!</p>
-                <p>Best of all, MediaCrush is entirely <a href="https://github.com/MediaCrush/MediaCrush">open-source</a>, and we
-                <a href="https://blog.mediacru.sh/2013/07/19/MediaCrush-for-nerds.html">respect your privacy</a>.
-            </div>
-            <div id="history" class="hidden">
-                <ul>
-                    <li class="fader"></li>
-                </ul>
-                <div>
-                    <a href="/mine" class="small pull-left" id="histView">View full history</a>
-                    <a href="javascript:toggleHistory();" class="small pull-right" id="historyEnabled">Disable local history</a>
+            <div class="hint">
+                {# Things in here stay in here past the first upload #}
+                <div id="droptext">
+                    <a href="#" id="browseLink">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or links<br />Upload several to create an album!</span></a>
                 </div>
             </div>
         </div>
-        {% if ads and adsense_client != "CHANGEME" %}
-        <div id="gad" class="column">
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <!-- Home Page Skyscraper -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:120px;height:600px"
-                 data-ad-client="{{ adsense_client }}"
-                 data-ad-slot="{{ adsense_slot }}"></ins>
-            <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            <a href="javascript:adOptOut();" class="small red">Click here to disable ads</a>
+        <div class="small">
+            <ul class="inline">
+                <li><a href="https://twitter.com/mediacru_sh" target="_blank" title="Follow @mediacru_sh on Twitter!"></a></li>
+                <li><a href="https://pay.reddit.com/r/mediacrush" target="_blank" title="Subscribe to /r/mediacrush on Reddit!"></a></li>
+                <li><a href="/serious">Terms & Privacy</a></li>
+                <li><a href="/docs">Developers</a></li>
+                <li><a href="mailto:support@mediacru.sh">Help</a></li>
+            </ul>
         </div>
-        <div id="lgad" class="column">
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <!-- Home Page Skyscraper -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:120px;height:240px"
-                 data-ad-client="{{ adsense_client }}"
-                 data-ad-slot="{{ adsense_slot }}"></ins>
-            <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-            <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
-        </div>
-        {% endif %}
     </div>
+    <div class="column narrow">
+        <div id="blurb">
+            <p>MediaCrush makes sharing media super fast by reducing the filesize, without sacrificing quality.</p>
+            <p>We'll losslessly compress images, video, and audio uploaded to our service. We can get <a href="/about">1000-3000%</a> faster for some files!</p>
+            <p>Best of all, MediaCrush is entirely <a href="https://github.com/MediaCrush/MediaCrush">open-source</a>, and we
+            <a href="https://blog.mediacru.sh/2013/07/19/MediaCrush-for-nerds.html">respect your privacy</a>.
+        </div>
+        <div id="history" class="hidden">
+            <ul>
+                <li class="fader"></li>
+            </ul>
+            <div>
+                <a href="/mine" class="small pull-left" id="histView">View full history</a>
+                <a href="javascript:toggleHistory();" class="small pull-right" id="historyEnabled">Disable local history</a>
+            </div>
+        </div>
+    </div>
+    {% if ads and adsense_client != "CHANGEME" %}
+    <div id="gad" class="column">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Home Page Skyscraper -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:120px;height:600px"
+             data-ad-client="{{ adsense_client }}"
+             data-ad-slot="{{ adsense_slot }}"></ins>
+        <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        <a href="javascript:adOptOut();" class="small red">Click here to disable ads</a>
+    </div>
+    <div id="lgad" class="column">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Home Page Skyscraper -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:120px;height:240px"
+             data-ad-client="{{ adsense_client }}"
+             data-ad-slot="{{ adsense_slot }}"></ins>
+        <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
