@@ -7,3 +7,51 @@ h2 {
         margin-bottom: 10px;
     }
 }
+
+.left {
+    float: left;
+    padding-left: 5px;
+}
+
+.right {
+    float: right;
+    padding-right: 5px;
+}
+
+.media {
+    overflow: hidden;
+}
+
+.item-wrapper {
+    overflow: hidden;
+
+    a {
+        color: #fff;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    div {
+        display: inline-block;
+        min-width: 100px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .bar {
+        background: rgba(111, 111, 111, 0.8);
+        color: #fff;
+        height: 23px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -23px;
+        transition: top 0.15s linear;
+    }
+
+    &:hover .bar {
+        top: 0;
+    }
+}

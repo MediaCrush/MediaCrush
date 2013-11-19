@@ -1,6 +1,18 @@
+{% if album %}
+<div class="item-wrapper">
+    <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
+        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+    </a>
+    <div class="bar">
+        <a class="left" href="/{{ filename }}">Direct Link</a>
+        <a class="right" href="/{{ filename }}/download">Download</a>
+    </div>
+</div>
+{% else %}
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
     <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
 </a>
+{% endif %}
 <script type="text/javascript">
 function mediaSizeReporter() {
     var img = document.getElementById('img-{{filename}}');

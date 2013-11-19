@@ -217,3 +217,13 @@
 .nobrand h1.brand {
     display: none;
 }
+.video .downloads {
+    position: absolute;
+    bottom: 45px;
+    right: 3px;
+}
+.video .downloads a {
+    color: #fff;
+    text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
+    text-decoration: underline;
+}

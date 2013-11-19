@@ -17,7 +17,7 @@
     {% for hash in items %}
     <div class="media-wrapper {% if hash == items[0] %}selected{% endif %}">
         <div class="media">
-            {{ render_media(hash, album=True) | safe }}
+            {{ render_media(hash, album=False) | safe }}{# albums=False is intentional #}
         </div>
     </div>
     <div class="clearfix"></div>
