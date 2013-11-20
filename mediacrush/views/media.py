@@ -14,9 +14,9 @@ from ..network import get_ip
 def fragment(mimetype):
     fragments = ['video', 'mobilevideo', 'image', 'audio']
     fragment_check = [
-        (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
-        mimetype.startswith('video') and g.mobile,
-        (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
+        mimetype == 'image/gif' or mimetype.startswith('video'),
+        (mimetype.startswith('video') and g.mobile) or (mimetype == 'image/gif' and g.mobile),
+        mimetype.startswith('image') and mimetype != 'image/gif',
         mimetype.startswith('audio'),
     ]
 
