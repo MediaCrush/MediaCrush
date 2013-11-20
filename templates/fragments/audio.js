@@ -109,15 +109,15 @@ function controlClick(e) {
         target = target.parentElement;
     var audio = document.getElementById(target.getAttribute('data-audio'));
     if (target.className.indexOf('play') != -1) {
-        play(audio);
+        audio_play(audio);
         if (target.className.indexOf('large') != -1)
             target.parentElement.removeChild(target);
     } else if (target.className.indexOf('pause') != -1) {
-        pause(audio);
+        audio_pause(audio);
     } else if (target.className.indexOf('loop') != -1) {
         audio.loop = !audio.loop;
         if (audio.paused)
-            play(audio);
+            audio_play(audio);
         if (target.className.indexOf('enabled') != -1)
             target.classList.remove('enabled');
         else
@@ -132,13 +132,13 @@ function controlClick(e) {
         target.classList.add('unmute');
     }
 }
-function play(audio) {
+function audio_play(audio) {
     var playbackControl = document.querySelectorAll('a.control.play[data-audio="' + audio.id + '"]')[0];
     playbackControl.classList.remove('play');
     playbackControl.classList.add('pause');
     audio.play();
 }
-function pause(audio) {
+function audio_pause(audio) {
     var playbackControl = document.querySelectorAll('a.control.pause[data-audio="' + audio.id + '"]')[0];
     playbackControl.classList.remove('pause');
     playbackControl.classList.add('play');
@@ -147,13 +147,13 @@ function pause(audio) {
 function playMedia() {
     var audio = document.querySelectorAll('audio');
     for (var i = 0; i < audio.length; i++) {
-        play(audio[i]);
+        audio_play(audio[i]);
     }
 }
 function pauseMedia() {
     var audio = document.querySelectorAll('audio');
     for (var i = 0; i < audio.length; i++) {
-        pause(audio[i]);
+        audio_pause(audio[i]);
     }
 }
 function mediaHashHandler(hash) {

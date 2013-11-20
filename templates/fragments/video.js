@@ -13,7 +13,7 @@ window.addEventListener('load', function() {
     for (var i = 0; i < videos.length; i++) {
         videos[i].addEventListener('ended', function(e) {
             if (!e.target.loop) {
-                pause(e.target);
+                video_pause(e.target);
             }
         }, true);
         videos[i].addEventListener('progress', updateVideo, false);
@@ -176,11 +176,11 @@ function controlClick(e) {
         target = target.parentElement;
     var video = document.getElementById(target.getAttribute('data-video'));
     if (target.className.indexOf('play') != -1) {
-        play(video);
+        video_play(video);
         if (target.className.indexOf('large') != -1)
             target.classList.add('hidden');
     } else if (target.className.indexOf('pause') != -1) {
-        pause(video);
+        video_pause(video);
     } else if (target.className.indexOf('loop') != -1) {
         video.loop = !video.loop;
         if (video.loop) {
@@ -192,9 +192,9 @@ function controlClick(e) {
         }
         if (video.ended) {
             video.currentTime = 0;
-            play(video);
+            video_play(video);
         } else if (video.paused) {
-            play(video);
+            video_play(video);
         }
         if (target.className.indexOf('enabled') != -1)
             target.classList.remove('enabled');
@@ -223,14 +223,14 @@ function controlClick(e) {
         exitFullscreen();
     }
 }
-function play(video) {
+function video_play(video) {
     var playbackControl = document.querySelectorAll('a.control.play[data-video="' + video.id + '"]')[0];
     playbackControl.classList.remove('play');
     playbackControl.classList.add('pause');
     video.play();
     document.querySelector('[data-video="' + video.id + '"] .large.play').classList.add('hidden');
 }
-function pause(video) {
+function video_pause(video) {
     var playbackControl = document.querySelectorAll('a.control.pause[data-video="' + video.id + '"]')[0];
     playbackControl.classList.remove('pause');
     playbackControl.classList.add('play');
@@ -239,13 +239,13 @@ function pause(video) {
 function playMedia() {
     var video = document.querySelectorAll('video');
     for (var i = 0; i < video.length; i++) {
-        play(video[i]);
+        video_play(video[i]);
     }
 }
 function pauseMedia() {
     var video = document.querySelectorAll('video');
     for (var i = 0; i < video.length; i++) {
-        pause(video[i]);
+        video_pause(video[i]);
     }
 }
 function addHash(hash) {
