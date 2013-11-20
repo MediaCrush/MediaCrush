@@ -137,10 +137,11 @@ window.MediaCrush = (function() {
                     for (blob in result) {
                         if (blob.length != 12)
                             continue;
-                        result[blob].hash = blob;
                         if (result[blob] == null) {
                             array.push(result[blob]);
                             dictionary[blob] = result[blob];
+                            result[blob].hash = blob;
+                            dictionary[blob].hash = blob;
                         } else {
                             var media = createMediaObject(result[blob]);
                             media.hash = blob;
