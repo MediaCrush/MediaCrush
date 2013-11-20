@@ -6,7 +6,7 @@ window.addEventListener('load', function() {
     } catch (ex) { /* this causes security exceptions in sandboxed iframes */ }
     var controls = document.querySelectorAll('.audio .control');
     for (var i = 0; i < controls.length; i++) {
-        controls[i].addEventListener('click', controlClick, false);
+        controls[i].addEventListener('click', audio_controlClick, false);
     }
     var audioElements = document.querySelectorAll('audio');
     for (var i = 0; i < audioElements.length; i++) {
@@ -21,11 +21,11 @@ window.addEventListener('load', function() {
         }
         audioElements[i].addEventListener('timeupdate', updateAudio, false);
     }
-    var buffers = document.querySelectorAll('.seek .buffering, .seek .progress, .seek .unbuffered');
+    var buffers = document.querySelectorAll('.audio .seek .buffering, .audio .seek .progress, .audio .seek .unbuffered');
     for (var i = 0; i < buffers.length; i++) {
         buffers[i].addEventListener('click', handleSeek, false);
     }
-    var volumes = document.querySelectorAll('.volume, .volume .amount');
+    var volumes = document.querySelectorAll('.audio .volume, .audio .volume .amount');
     for (var i = 0; i < volumes.length; i++) {
         var amount = volumes[i].querySelector('.amount');
         try {
@@ -34,27 +34,27 @@ window.addEventListener('load', function() {
         } catch (ex) {
             amount.style.width = '100%';
         }
-        volumes[i].addEventListener('mousedown', beginAdjustVolume, false);
-        volumes[i].addEventListener('mousemove', adjustVolume, false);
-        volumes[i].addEventListener('mouseup', endAdjustVolume, false);
-        volumes[i].addEventListener('mouseleave', endAdjustVolume, false);
+        volumes[i].addEventListener('mousedown', audio_beginAdjustVolume, false);
+        volumes[i].addEventListener('mousemove', audio_adjustVolume, false);
+        volumes[i].addEventListener('mouseup', audio_endAdjustVolume, false);
+        volumes[i].addEventListener('mouseleave', audio_endAdjustVolume, false);
     }
 }, false);
-function beginAdjustVolume(e) {
+function audio_beginAdjustVolume(e) {
     e.preventDefault();
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
         container = e.target.parentElement;
     container.classList.add('action');
-    adjustVolume(e);
+    audio_adjustVolume(e);
 }
-function endAdjustVolume(e) {
+function audio_endAdjustVolume(e) {
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
         container = e.target.parentElement;
     container.classList.remove('action');
 }
-function adjustVolume(e) {
+function audio_adjustVolume(e) {
     e.preventDefault();
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
@@ -102,7 +102,7 @@ function updateAudio(e) {
     else
         time.textContent = minutes + ':' + seconds;
 }
-function controlClick(e) {
+function audio_controlClick(e) {
     e.preventDefault();
     var target = e.target;
     if (!target.className)
@@ -159,9 +159,9 @@ function pauseMedia() {
 function mediaHashHandler(hash) {
     var parts = hash.split(',');
     var audio = document.getElementById('audio-{{ filename }}');
-    var loopControl = document.querySelector('.control.loop');
-    var largePlayControl = document.querySelector('.control.play.large');
-    var muteControl = document.querySelector('.control.mute');
+    var loopControl = document.querySelector('.audio .control.loop');
+    var largePlayControl = document.querySelector('.audio .control.play.large');
+    var muteControl = document.querySelector('.audio .control.mute');
     for (var i = 0; i < parts.length; i++) {
         if (parts[i] == 'loop') {
             audio.loop = true;

@@ -57,15 +57,15 @@
 .fullscreen.video .controls {
     bottom: 0;
 }
-.controls .pull-left {
+.video .controls .pull-left {
     float: left;
     width: 80px;
 }
-.controls .pull-right {
+.video .controls .pull-right {
     float: right;
     width: 155px;
 }
-.controls .time {
+.video .controls .time {
     position: relative;
     top: -9px;
     font-weight: bold;
@@ -131,28 +131,28 @@
     box-shadow: 0 0 5px 5px #fff;
     color: #fff;
 }
-.control {
+.video .control {
     width: 32px;
     height: 32px;
     background: url('/static/controls.png') 0 0 transparent no-repeat;
     display: inline-block;
 }
-.control.pause {
+.video .control.pause {
     background-position: -32px 0;
 }
-.control.mute {
+.video .control.mute {
     background-position: -64px 0;
 }
-.control.unmute {
+.video .control.unmute {
     background-position: -96px 0;
 }
-.control.full {
+.video .control.full {
     background-position: -160px 0;
 }
-.control.window {
+.video .control.window {
     background-position: -128px 0;
 }
-.volume {
+.video .volume {
     display: inline-block;
     width: 80px;
     height: 16px;
@@ -161,12 +161,12 @@
     background: #444;
     cursor: pointer;
 }
-.volume .amount {
+.video .volume .amount {
     background: #fff;
     height: 100%;
     pointer-events: none;
 }
-.control.play.large {
+.video .control.play.large {
     background: none;
     position: absolute;
     left: 0;
@@ -176,10 +176,10 @@
     width: 100%;
     height: 100%;
 }
-.control.play.large.hidden {
+.video .control.play.large.hidden {
     display: none;
 }
-.control.play.large img {
+.video .control.play.large img {
     display: block;
     position: absolute;
     top: 50%;

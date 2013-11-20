@@ -7,7 +7,7 @@ window.addEventListener('load', function() {
     } catch (ex) { /* this causes security exceptions in sandboxed iframes */ }
     var controls = document.querySelectorAll('.video .control');
     for (var i = 0; i < controls.length; i++) {
-        controls[i].addEventListener('click', controlClick, false);
+        controls[i].addEventListener('click', video_controlClick, false);
     }
     var videos = document.querySelectorAll('video');
     for (var i = 0; i < videos.length; i++) {
@@ -26,11 +26,11 @@ window.addEventListener('load', function() {
     for (var i = 0; i < hovers.length; i++) {
         hovers[i].addEventListener('mousemove', videoMouseMove, false);
     }
-    var buffers = document.querySelectorAll('.seek .buffering, .seek .progress, .seek .unbuffered');
+    var buffers = document.querySelectorAll('.video .seek .buffering, .video .seek .progress, .video .seek .unbuffered');
     for (var i = 0; i < buffers.length; i++) {
         buffers[i].addEventListener('click', handleSeek, false);
     }
-    var volumes = document.querySelectorAll('.volume, .volume .amount');
+    var volumes = document.querySelectorAll('.video .volume, .video .volume .amount');
     for (var i = 0; i < volumes.length; i++) {
         var amount = volumes[i].querySelector('.amount');
         try {
@@ -39,10 +39,10 @@ window.addEventListener('load', function() {
         } catch (ex) {
             amount.style.width = '100%';
         }
-        volumes[i].addEventListener('mousedown', beginAdjustVolume, false);
-        volumes[i].addEventListener('mousemove', adjustVolume, false);
-        volumes[i].addEventListener('mouseup', endAdjustVolume, false);
-        volumes[i].addEventListener('mouseleave', endAdjustVolume, false);
+        volumes[i].addEventListener('mousedown', video_beginAdjustVolume, false);
+        volumes[i].addEventListener('mousemove', video_adjustVolume, false);
+        volumes[i].addEventListener('mouseup', video_endAdjustVolume, false);
+        volumes[i].addEventListener('mouseleave', video_endAdjustVolume, false);
     }
     document.addEventListener('mozfullscreenchange', function() {
         if (document.mozFullScreenElement === null) {
@@ -107,21 +107,21 @@ function exitFullscreen() {
         media.style.right = '-50%';
     }, 100);
 }
-function beginAdjustVolume(e) {
+function video_beginAdjustVolume(e) {
     e.preventDefault();
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
         container = e.target.parentElement;
     container.classList.add('action');
-    adjustVolume(e);
+    video_adjustVolume(e);
 }
-function endAdjustVolume(e) {
+function video_endAdjustVolume(e) {
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
         container = e.target.parentElement;
     container.classList.remove('action');
 }
-function adjustVolume(e) {
+function video_adjustVolume(e) {
     e.preventDefault();
     var container = e.target;
     if (e.target.className.indexOf('volume') == -1)
@@ -169,7 +169,7 @@ function updateVideo(e) {
     else
         time.textContent = minutes + ':' + seconds;
 }
-function controlClick(e) {
+function video_controlClick(e) {
     e.preventDefault();
     var target = e.target;
     if (!target.className)
@@ -276,9 +276,9 @@ function mediaHashHandler(hash) {
     var parts = hash.split(',');
     // TODO: Be careful not to break this when albums happen
     var video = document.getElementById('video-{{ filename }}');
-    var loopControl = document.querySelector('.control.loop');
-    var largePlayControl = document.querySelector('.control.play.large');
-    var muteControl = document.querySelector('.control.mute');
+    var loopControl = document.querySelector('.video .control.loop');
+    var largePlayControl = document.querySelector('.video .control.play.large');
+    var muteControl = document.querySelector('.video .control.mute');
     for (var i = 0; i < parts.length; i++) {
         if (parts[i] == 'loop') {
             video.loop = true;
