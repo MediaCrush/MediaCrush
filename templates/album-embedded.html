@@ -37,6 +37,7 @@ window.album = true;
                 if (media[i].classList.contains('selected')) media[i].classList.remove('selected');
             }
         }
+        var body = document.body, html = document.documentElement;
         var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
         window.top.postMessage({ width: 720, height: height, media: "{{ filename }}" }, '*');
     };
