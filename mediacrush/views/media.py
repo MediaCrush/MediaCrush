@@ -162,7 +162,7 @@ class MediaView(FlaskView):
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
 
-            return render_template("album-embedded.html", items=items, types=types)
+            return render_template("album-embedded.html", items=items, types=types, filename=id)
 
         if klass is not File:
             abort(404)
