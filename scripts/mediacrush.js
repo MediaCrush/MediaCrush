@@ -93,26 +93,30 @@ window.MediaCrush = (function() {
         if (frame) {
             var width = e.data.width;
             var height = e.data.height;
-            if (self.maxMediaWidth != -1) {
-                if (width > maxMediaWidth) {
-                    var difference = maxMediaWidth / width;
-                    width = maxMediaWidth;
-                    if (self.preserveAspectRatio) {
-                        height = height * difference;
+            // All albums are 720px wide and don't work well at other resolutions
+            // TODO: Consider making them work well at other resolutions
+            if (frame.media.mimetype != 'application/album') {
+                if (self.maxMediaWidth != -1) {
+                    if (width > maxMediaWidth) {
+                        var difference = maxMediaWidth / width;
+                        width = maxMediaWidth;
+                        if (self.preserveAspectRatio) {
+                            height = height * difference;
+                        }
                     }
                 }
-            }
-            if (self.maxMediaHeight != -1) {
-                if (height > maxMediaHeight) {
-                    var difference = maxMediaHeight / height;
-                    height = maxMediaHeight;
-                    if (self.preserveAspectRatio) {
-                        width = width * difference;
+                if (self.maxMediaHeight != -1) {
+                    if (height > maxMediaHeight) {
+                        var difference = maxMediaHeight / height;
+                        height = maxMediaHeight;
+                        if (self.preserveAspectRatio) {
+                            width = width * difference;
+                        }
                     }
                 }
+                frame.frame.width = width;
+                frame.frame.height = height;
             }
-            frame.frame.width = width;
-            frame.frame.height = height;
             if (frame.callback)
                 frame.callback(frame.frame.parentElement, frame.media);
         }
