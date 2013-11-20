@@ -1,6 +1,78 @@
+{% if mimetype == 'image/gif' and mobile %}
+{# @jdiez: if you can think of a better place to put these, by all means do so #}
+<style>
+    #media-select {
+        position: relative;
+        height: 180px;
+        margin-bottom: 10px;
+    }
+
+    #media-select .left, #media-select .right {
+        position: absolute;
+        display: block;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+        padding-top: 10px;
+    }
+
+    #media-select .left {
+        left: 0;
+        background: #0C0;
+    }
+    
+    #media-select .right {
+        right: 0;
+        background: #08c;
+    }
+</style>
+
+<script>
+window.addEventListener('load', function() {
+    var selectHtml5 = document.getElementById('selectHtml5');
+    var selectGif = document.getElementById('selectGIF');
+    selectHtml5.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('media-select').className = 'hidden';
+        var video = document.getElementById('video-option');
+        video.className = '';
+        video.play();
+    });
+    selectGif.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('media-select').className = 'hidden';
+        var gif = document.getElementById('gif-option');
+        gif.src = '/{{ filename }}.gif';
+        gif.className = '';
+    });
+}, false);
+</script>
+
+<div id="media-select">
+    <a href="#" class="left" id="selectHtml5">
+        <div>Tap here to</div>
+        <h3>View as<br />HTML 5</h3>
+        <div>Loads {{ compression }}% faster</div>
+    </a>
+    <a href="#" class="right" id="selectGIF">
+        <div>Tap here to</div>
+        <h3>View as<br />GIF</h3>
+        <div>Loads more reliably</div>
+    </a>
+</div>
+<video class="hidden" id="video-option" controls {% if loop %}loop {% endif %}>
+  <source src="/{{ filename }}.mp4" type='video/mp4;'>
+  <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+</video>
+<img src="this space intentionally left blank" class="hidden" id="gif-option" />
+{% else %}
 <video controls {% if loop %}loop {% endif %}>
   <source src="/{{ filename }}.mp4" type='video/mp4;'>
   <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
 </video>
 <div>Having playback trouble? Try <a href="{{ filename }}.mp4">downloading</a> the file and playing it directly, or
 visiting our <a href="/troubleshooting">troubleshooting</a> page.</div>
+{% endif %}
