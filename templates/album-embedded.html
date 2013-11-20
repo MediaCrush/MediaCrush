@@ -30,16 +30,17 @@ window.album = true;
     var index = 0;
     function reload() {
         var media = document.querySelectorAll('.album .media-wrapper');
+        var selected = null;
         for (var i = 0; i < media.length; i++) {
             if (i == index) {
                 if (!media[i].classList.contains('selected')) media[i].classList.add('selected');
+                selected = media[i];
             } else {
                 if (media[i].classList.contains('selected')) media[i].classList.remove('selected');
             }
         }
-        var body = document.body, html = document.documentElement;
-        var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-        window.top.postMessage({ width: 750, height: height, media: "{{ filename }}" }, '*');
+        var height = selected.clientHeight;
+        window.top.postMessage({ width: 750, height: height + 50, media: "{{ filename }}" }, '*');
     };
     reload();
 
