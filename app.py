@@ -23,7 +23,7 @@ scss.config.LOAD_PATHS = [
     './styles/'
 ];
 
-notice_enabled = True 
+notice_enabled = False 
 notice_text = "Processing time is higher than usual due to heavy load."
 
 def prepare():
