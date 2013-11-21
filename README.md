@@ -15,7 +15,7 @@ If you aren't looking to contribute, but just want to do some cool stuff with th
 
 See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md). To get started, join our
 our [IRC channel](http://webchat.freenode.net/?channels=mediacrush&uio=d4) (#mediacrush on irc.freenode.net) to listen
-in on dev chatter. We can help you sort our your ideas and we'll work with you directly to fine tune your pull requests.
+in on dev chatter. We can help you sort out your ideas and we'll work with you directly to fine tune your pull requests.
 
 ## Installation
 
