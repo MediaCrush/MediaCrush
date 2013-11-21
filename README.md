@@ -1,91 +1,86 @@
-# mediacrush
+# MediaCrush
 
-A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and [jdiez](https://github.com/jdiez17),
-and several [other contributors](https://github.com/MediaCrush/MediaCrush/graphs/contributors).
+A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and
+[jdiez](https://github.com/jdiez17), and several
+[other contributors](https://github.com/MediaCrush/MediaCrush/graphs/contributors).
 
 https://mediacru.sh
-
-MediaCrush runs on the following things:
-
-* Linux!
-* Python!
-* ffmpeg!
-* jhead
-* tidy
-* redis
-* flask-classy
-* optipng
-
-This list grows as we find more cool tech to make media smaller.
 
 ## Developer Docs
 
 If you aren't looking to contribute, but just want to do some cool stuff with the site, you might be interested in our
-[Developer Documentation](https://mediacru.sh/docs), which documents our API and a few other nice things.
-
-## Versioning
-
-MediaCrush uses semantic versioning. In a nutshell: vMAJOR.MINOR.PATCH. Major increments for breaking changes, minor
-increments for new, backwards-compatible features, and patch increments for backwards-compatible bug fixes or refactoring.
-Check the latest git tag to see which version is the latest.
+[developer documentation](https://mediacru.sh/docs), which documents our API and a few other nice things.
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md).
-
-Also join our [IRC channel](http://webchat.freenode.net/?channels=mediacrush&uio=d4) to listen in on (and participate
-in) dev chatter. It's #mediacrush on irc.freenode.net, if you already have a client.
+See [CONTRIBUTING.md](https://github.com/MediaCrush/MediaCrush/blob/master/CONTRIBUTING.md). To get started, join our
+our [IRC channel](http://webchat.freenode.net/?channels=mediacrush&uio=d4) (#mediacrush on irc.freenode.net) to listen
+in on dev chatter. We can help you sort our your ideas and we'll work with you directly to fine tune your pull requests.
 
 ## Installation
 
-Install the requirements:
+Here's a quick overview of installation:
 
-    sudo apt-get install redis-server jhead tidy optipng
+1. Install Python 2, redis, ffmpeg, tidy, jhead, and optipng.
+2. Clone the MediaCrush git repository.
+3. Activate the virtualenv.
+4. Install pip requirements.
+5. Configure MediaCrush.
+6. Start the services and you're done!
 
-Install ffmpeg (you'll need to compile from source if the ffmpeg version in your repos is outdated):
+Here it is again, in more detail.
 
-Note: you'll need libtheora enabled to output ogv files and libvpx for webm.
+**Install the requirements**
 
-    mkdir /tmp/ffmpeg
-    git clone --depth 1 git://source.ffmpeg.org/ffmpeg.git /tmp/ffmpeg
-    cd /tmp/ffmpeg
-    ./configure --enable-libtheora --enable-libx264 --enable-libvpx --enable-gpl
-    make
-    sudo make install
+Our servers run on Ubuntu, and you install the deps with `sudo apt-get install jhead redis-server tidy optipng`. The
+Ubuntu repos have a poor distribution of [ffmpeg](http://ffmpeg.org), so you'll need to build that from source. Our
+dev machines run Arch Linux: `sudo pacman -S redis jhead tidy optipng ffmpeg`. Make sure you enable libtheora,
+libx264, and libvpx when you build ffmpeg.
 
-Pull the repository to a folder:
+**Clone the repository**
 
-    git clone http://github.com/MediaCrush/MediaCrush /home/service/webapps/mediacrush
+    git clone http://github.com/MediaCrush/MediaCrush && cd MediaCrush
 
-Create a virtual environment:
+**Create a virtual environment**
 
-Note: you'll need to use python2. If python3 is your default python interpreter, add `"--python=python2"` to the `virtualenv` command.
+Note: you'll need to use Python 2. If Python 3 is your default python interpreter (`python --version`), add
+`"--python=python2"` to the `virtualenv` command.
 
-    virtualenv /home/service/webapps/mediacrush --no-site-packages
+    virtualenv . --no-site-packages
 
-Go to the folder you created and activate the virtual environment:
+**Activate the virtualenv**
 
-    cd /home/services/webapps/mediacrush
     source bin/activate
 
-Install the Python modules:
+If you use fish (like I do):
+
+    source bin/activate.fish
+
+**Install pip requirements**
 
     pip install -r requirements.txt
 
-Review the config.ini.sample file and rename it as config.ini.
+**Configure MediaCrush**
 
-Make the storage directory:
+    cp config.ini.sample config.ini
 
-    mkdir storage
+Review `config.ini` and change any details you like. The default place to store uploaded files is `./storage`,
+which you'll need to create (`mkdir storage`) if you don't change this in the config.
 
-Make sure the redis daemon is running, and if everything went according to plan, you can now run the development server with debug capabilities by executing:
+**Start the services**
 
+You'll want to make sure Redis is running at this point. It's probably best to set it up to run when you boot
+up the server (`systemctl enable redis.service` on Arch).
+
+MediaCrush requires the daemon and the website to be running concurently to work correctly. The website is
+`app.py`, and the daemon is `daemon.py`. The daemon is responsible for handling media processing. Run the
+daemon, then the website:
+
+    python daemon.py &
     python app.py
 
-If you plan to host the service in a more robust fashion, consider using gunicorn. Run it as such:
+This runs the site in debug mode. If you want to run this on a production server, you'll probably want to
+run it with gunicorn, and probably behind an nginx proxy
+[like we do](https://github.com/MediaCrush/MediaCrush/blob/master/config/nginx.conf).
 
     gunicorn -w 4 app:app
-
-You will also need to have the daemon running in order to process files. To do this, execute:
-
-    python daemon.py
