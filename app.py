@@ -24,7 +24,7 @@ scss.config.LOAD_PATHS = [
 ];
 
 notice_enabled = True 
-notice_text = "Processing time is higher than usual due to heavy load. Hi Hacker News!"
+notice_text = "Processing time is higher than usual due to heavy load."
 
 def prepare():
     if os.path.exists(app.static_folder):
