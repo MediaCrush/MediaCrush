@@ -52,10 +52,6 @@ Note: you'll need to use Python 2. If Python 3 is your default python interprete
 
     source bin/activate
 
-If you use fish (like I do):
-
-    source bin/activate.fish
-
 **Install pip requirements**
 
     pip install -r requirements.txt
