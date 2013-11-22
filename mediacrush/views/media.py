@@ -42,8 +42,11 @@ def _template_params(f):
         compression = None
 
     can_delete = None
-    if request.cookies.get('hist-opt-out', '0') == '1':
-        can_delete = check_password_hash(f.ip, get_ip())
+    try:
+        if request.cookies.get('hist-opt-out', '0') == '1':
+            can_delete = check_password_hash(f.ip, get_ip())
+    except:
+        pass
 
     ext = extension(f.original)
     mimetype = get_mimetype(f.original)
