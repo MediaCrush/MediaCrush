@@ -274,8 +274,7 @@ function removeHash(hash) {
 function mediaHashHandler(hash) {
     if (window.album) return;
     var parts = hash.split(',');
-    // TODO: Be careful not to break this when albums happen
-    var video = document.getElementById('video-{{ filename }}');
+    var video = document.getElementById('video-' + window.filename);
     var loopControl = document.querySelector('.video .control.loop');
     var largePlayControl = document.querySelector('.video .control.play.large');
     var muteControl = document.querySelector('.video .control.mute');
