@@ -288,11 +288,11 @@ function mediaHashHandler(hash) {
             loopControl.classList.remove('enabled');
         } else if (parts[i] == 'autoplay') {
             if (!mobile)
-                play(video);
+                video_play(video);
         } else if (parts[i] == 'noautoplay') {
             if (!mobile) {
                 largePlayControl.classList.remove('hidden');
-                pause(video);
+                video_pause(video);
             }
         } else if (parts[i] == 'mute') {
             video.muted = true;
