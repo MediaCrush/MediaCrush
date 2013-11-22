@@ -13,8 +13,8 @@ something, head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and h
 [**API Documentation**](/docs/api)
 
 MediaCrush offers a free API to developers that allows you to upload media and retrieve information on files
-on our servers. This API is completely free, but we appriciate a [donation](/donate) if you plan to use it,
-since we don't get any ad views from API users. We also appreciate that donation if you hotlink to us often.
+on our servers. This API is completely free, but we appreciate a [donation](/donate) if you plan to use it,
+since we don't get any ad views from API users. We would also appreciate a donation if you hotlink to us often.
 
 ## API Wrappers
 
