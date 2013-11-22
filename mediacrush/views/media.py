@@ -105,8 +105,11 @@ class MediaView(FlaskView):
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
             can_delete = None
-            if request.cookies.get('hist-opt-out', '0') == '1':
-                can_delete = check_password_hash(f.ip, get_ip())
+            try:
+                if request.cookies.get('hist-opt-out', '0') == '1':
+                    can_delete = check_password_hash(f.ip, get_ip())
+            except:
+                pass
 
             return render_template("album.html", items=items, types=types, filename=id, can_delete=can_delete)
 
