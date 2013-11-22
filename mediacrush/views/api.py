@@ -92,6 +92,9 @@ class APIView(FlaskView):
             if klass != File: # Wrong type
                 return {'error': 415}, 415
 
+        if len(items) > 50:
+            return {'error': 413}, 413
+
         a = Album()
         a.items = items
         a.ip = secure_ip()

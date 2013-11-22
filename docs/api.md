@@ -56,6 +56,11 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>false</td>
     </tr>
     <tr>
+        <td>413</td>
+        <td>Albums with more than 50 limits are unsupported..</td>
+        <td>false</td>
+    </tr>
+    <tr>
         <td>415</td>
         <td>At least one of the items in the list is not a File (i.e, you tried to create an album that cantains an album)</td>
         <td>false</td>
