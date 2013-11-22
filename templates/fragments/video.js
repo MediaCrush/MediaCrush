@@ -183,13 +183,6 @@ function video_controlClick(e) {
         video_pause(video);
     } else if (target.className.indexOf('loop') != -1) {
         video.loop = !video.loop;
-        if (video.loop) {
-            removeHash('noloop');
-            addHash('loop');
-        } else {
-            removeHash('loop');
-            addHash('noloop');
-        }
         if (video.ended) {
             video.currentTime = 0;
             video_play(video);
@@ -247,29 +240,6 @@ function pauseMedia() {
     for (var i = 0; i < video.length; i++) {
         video_pause(video[i]);
     }
-}
-function addHash(hash) {
-    if (window.album) return;
-    var parts = window.location.hash.substr(1).split(',');
-    var newParts = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i] === hash)
-            return;
-        newParts.push(parts[i]);
-    }
-    newParts.push(hash);
-    window.location.hash = '#' + newParts.join(',');
-}
-function removeHash(hash) {
-    if (window.album) return;
-    var parts = window.location.hash.substr(1).split(',');
-    var newParts = [];
-    for (var i = 0; i < parts.length; i++) {
-        if (parts[i] === hash)
-            continue;
-        newParts.push(parts[i]);
-    }
-    window.location.hash = '#' + newParts.join(',');
 }
 function mediaHashHandler(hash) {
     if (window.album) return;
