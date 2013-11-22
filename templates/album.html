@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block styles %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}?version=2" />
+    {% if mobile %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view-mobile.css') }}?version=2" />
+    {% else %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}?version=2" />
+    {% endif %}
 {% endblock %}
 {% block content %}
 <h2 class="center">Album - {{ len(items) }} files</h2>

@@ -16,6 +16,10 @@
             max-width: 1000px;
         }
 
+        //& > a > img {
+        //    border: 1px solid #888;
+        //}
+
         & > a, img, video, .video {
             display: block;
         }

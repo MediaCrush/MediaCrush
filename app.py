@@ -24,7 +24,7 @@ scss.config.LOAD_PATHS = [
 ];
 
 notice_enabled = False 
-notice_text = "We just added album support! Upload a few files and check it out."
+notice_text = "Processing time is higher than usual due to heavy load."
 
 def prepare():
     if os.path.exists(app.static_folder):

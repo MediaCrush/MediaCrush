@@ -14,9 +14,9 @@ from ..network import get_ip
 def fragment(mimetype):
     fragments = ['video', 'mobilevideo', 'image', 'audio']
     fragment_check = [
-        (mimetype == 'image/gif' and not g.mobile) or mimetype.startswith('video'),
-        mimetype.startswith('video') and g.mobile,
-        (mimetype.startswith('image') and mimetype != 'image/gif') or (mimetype == 'image/gif' and g.mobile),
+        mimetype == 'image/gif' or mimetype.startswith('video'),
+        (mimetype.startswith('video') and g.mobile) or (mimetype == 'image/gif' and g.mobile),
+        mimetype.startswith('image') and mimetype != 'image/gif',
         mimetype.startswith('audio'),
     ]
 
@@ -42,8 +42,11 @@ def _template_params(f):
         compression = None
 
     can_delete = None
-    if request.cookies.get('hist-opt-out', '0') == '1':
-        can_delete = check_password_hash(f.ip, get_ip())
+    try:
+        if request.cookies.get('hist-opt-out', '0') == '1':
+            can_delete = check_password_hash(f.ip, get_ip())
+    except:
+        pass
 
     ext = extension(f.original)
     mimetype = get_mimetype(f.original)
@@ -105,8 +108,11 @@ class MediaView(FlaskView):
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
             can_delete = None
-            if request.cookies.get('hist-opt-out', '0') == '1':
-                can_delete = check_password_hash(f.ip, get_ip())
+            try:
+                if request.cookies.get('hist-opt-out', '0') == '1':
+                    can_delete = check_password_hash(f.ip, get_ip())
+            except:
+                pass
 
             return render_template("album.html", items=items, types=types, filename=id, can_delete=can_delete)
 
@@ -162,7 +168,7 @@ class MediaView(FlaskView):
             items = [File.from_hash(h) for h in album.items]
             types = set([get_mimetype(f.original) for f in items])
 
-            return render_template("album-embedded.html", items=items, types=types)
+            return render_template("album-embedded.html", items=items, types=types, filename=id, embedded=True)
 
         if klass is not File:
             abort(404)

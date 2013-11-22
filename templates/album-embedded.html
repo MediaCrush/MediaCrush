@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <h1 class="brand pull-left">
-    <a href="/{{ filename }}">
+    <a href="/{{ filename }}" target="_blank">
     <img src="/static/mediacrush_logo.svg" alt="logo" width=24 height=24 />
     MediaCrush</a>
     <span class="subtitle">Album - {{ len(items) }} files</span>
@@ -30,15 +30,17 @@ window.album = true;
     var index = 0;
     function reload() {
         var media = document.querySelectorAll('.album .media-wrapper');
+        var selected = null;
         for (var i = 0; i < media.length; i++) {
             if (i == index) {
                 if (!media[i].classList.contains('selected')) media[i].classList.add('selected');
+                selected = media[i];
             } else {
                 if (media[i].classList.contains('selected')) media[i].classList.remove('selected');
             }
         }
-        var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
-        window.top.postMessage({ width: 700, height: y, media: "{{ filename }}" }, '*');
+        var height = selected.clientHeight;
+        window.top.postMessage({ width: 750, height: height + 120, media: "{{ filename }}" }, '*');
     };
     reload();
 
