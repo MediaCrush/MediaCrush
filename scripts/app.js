@@ -93,6 +93,10 @@ function handleFiles(files) {
 
 function createAlbum(e) {
     e.preventDefault();
+    if (albumAssociated) {
+        updateAlbum();
+        return;
+    }
     albumAssociated = true;
     document.getElementById('createAlbum').className = 'hidden';
     document.getElementById('albumPending').classList.remove('hidden');
@@ -102,12 +106,12 @@ function createAlbum(e) {
 function updateAlbum() {
     if (!albumAssociated) return;
     if (files.length <= 1) {
-        document.getElementById('createAlbum').className.add('hidden');
+        document.getElementById('createAlbum').classList.add('hidden');
         document.getElementById('albumPending').classList.add('hidden');
         document.getElementById('albumUrl').parentElement.classList.add('hidden');
     }
     if (uploads > 0) {
-        document.getElementById('createAlbum').className = 'hidden';
+        document.getElementById('createAlbum').classList.remove('hidden');
         document.getElementById('albumPending').classList.remove('hidden');
         document.getElementById('albumUrl').parentElement.classList.add('hidden');
     } else {
@@ -115,7 +119,10 @@ function updateAlbum() {
         xhr.open('POST', '/api/album/create');
         xhr.onload = function() {
             if (this.status != 200) {
-                document.getElementById('albumPending').textContent = 'An error occured creating this album.';
+                document.getElementById('albumPending').textContent = 'An error occured creating this album. ';
+                var create = document.getElementById('createAlbum');
+                create.textContent = 'Try again';
+                create.classList.remove('hidden');
                 return;
             }
             var data = JSON.parse(this.responseText);
