@@ -193,7 +193,7 @@ def upload(f, filename):
             else:
                 # Delete residual files from storage by creating a dummy File
                 dummy = File(original=filename)
-                dummy.delete = lambda: pass # nop
+                dummy.delete = lambda: None # nop
                 delete_file(dummy)
 
         f.seek(0)  # Otherwise it'll write a 0-byte file
