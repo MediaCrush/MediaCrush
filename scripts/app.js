@@ -1,3 +1,17 @@
+// This is checked on the server, too, but we check it locally to prevent excess
+// bandwidth consumption
+var supportedMimetypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/svg+xml',
+    'video/mp4',
+    'video/ogg',
+    'audio/mp3',
+    'audio/ogg',
+    'audio/mpeg'
+];
+
 function browse() {
     var file = document.getElementById('browse');
     file.click();
@@ -294,7 +308,6 @@ function finish(statusUI, hash) {
 }
 
 function createPreview(file) {
-    var supported = false;
     var container = document.createElement('div');
     container.className = 'image-loading';
     var wrapper = document.createElement('div');
@@ -307,16 +320,14 @@ function createPreview(file) {
     }
 
     var preview = null;
+    var supported = supportedMimetypes.contains(file.type);
     if (file.type.indexOf('image/') == 0) {
-        supported = true;
         preview = document.createElement('img');
         preview.src = uri;
     } else if (file.type.indexOf('audio/') == 0) {
-        supported = true;
         preview = document.createElement('img');
         preview.src = '/static/audio.png';
     } else if (file.type.indexOf('video/') == 0) {
-        supported = true;
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         var source = document.createElement('source');
