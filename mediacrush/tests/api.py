@@ -121,6 +121,16 @@ class InfoTestCase(APITestCase):
         self.assertIn(u'3H3zGlUzzwF4', response.data)
         self.assertIn(u'HM-nQeR0oJ7p', response.data)
 
+    def test_exists(self):
+        h = self._get_hash('cat.png')
+        response = self.client.get('/api/%s/exists' % h)
+
+        self.assertEqual(json.loads(response.data), {u'exists': True})
+
+    def test_exists_bad_hash(self):
+        response = self.client.get('/api/gfsdgf/exists')
+        self.assertEqual(json.loads(response.data), {u'exists': False})
+
 class DeleteTestCase(APITestCase):
     def test_delete(self):
         h = self._get_hash('cat.png')
