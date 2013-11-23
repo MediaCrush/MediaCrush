@@ -23,7 +23,7 @@ window.addEventListener('load', function() {
     }
     var buffers = document.querySelectorAll('.audio .seek .buffering, .audio .seek .progress, .audio .seek .unbuffered');
     for (var i = 0; i < buffers.length; i++) {
-        buffers[i].addEventListener('click', handleSeek, false);
+        buffers[i].addEventListener('click', audio_handleSeek, false);
     }
     var volumes = document.querySelectorAll('.audio .volume, .audio .volume .amount');
     for (var i = 0; i < volumes.length; i++) {
@@ -73,7 +73,7 @@ function audio_adjustVolume(e) {
     } catch (ex) { /* ... */ }
     container.querySelector('.amount').style.width = (amount * 100) + '%';
 }
-function handleSeek(e) {
+function audio_handleSeek(e) {
     e.preventDefault();
     var container = e.target.parentElement;
     var audio = document.getElementById(container.getAttribute('data-audio'));
