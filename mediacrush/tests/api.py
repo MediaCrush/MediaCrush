@@ -18,6 +18,7 @@ class APITestCase(TestMixin):
     def _get_hash(self, f):
         return json.loads(self._upload(f).data)['hash']
 
+class UtilsTestCase(APITestCase):
     def test_jsonp_callbacks(self):
         response = self.client.get('/api/dummy?callback=function123')
 
@@ -37,12 +38,7 @@ class APITestCase(TestMixin):
         self.assertEqual(response.status_code, 200)
         self.assertIn('x-status', json.loads(response.data))
 
-    def test_upload_png(self):
-        response = self._upload('cat.png')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.data), {u'hash': u'HM-nQeR0oJ7p'})
-
+class AlbumTestCase(APITestCase):
     def test_create_album(self):
         h = [
            self._get_hash('cat.png'),
@@ -95,6 +91,13 @@ class APITestCase(TestMixin):
         response = self.client.get('/%s' % album)
         self.assertEqual(response.status_code, 404)
 
+class UploadTestCase(APITestCase):
+    def test_upload_png(self):
+        response = self._upload('cat.png')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.data), {u'hash': u'HM-nQeR0oJ7p'})
+
     def test_upload_twice(self):
         self._upload('cat.png')
         response = self._upload('cat.png')
@@ -106,6 +109,19 @@ class APITestCase(TestMixin):
 
         self.assertEqual(response.status_code, 415)
 
+class InfoTestCase(APITestCase):
+    def test_list(self):
+        h = [
+           self._get_hash('cat.png'),
+           self._get_hash('cat2.jpg')
+        ]
+
+        response = self.client.get('/api/info?list=' + ','.join(h))
+
+        self.assertIn(u'3H3zGlUzzwF4', response.data)
+        self.assertIn(u'HM-nQeR0oJ7p', response.data)
+
+class DeleteTestCase(APITestCase):
     def test_delete(self):
         h = self._get_hash('cat.png')
         response = self.client.get('/api/%s/delete' % h, environ_base={
@@ -126,14 +142,3 @@ class APITestCase(TestMixin):
         response = self.client.get('/api/asdfasgdfs/delete')
 
         self.assertEqual(response.status_code, 404)
-
-    def test_list(self):
-        h = [
-           self._get_hash('cat.png'),
-           self._get_hash('cat2.jpg')
-        ]
-
-        response = self.client.get('/api/info?list=' + ','.join(h))
-
-        self.assertIn(u'3H3zGlUzzwF4', response.data)
-        self.assertIn(u'HM-nQeR0oJ7p', response.data)
