@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, g, Response
+from flask import Flask, render_template, request, g, Response, redirect
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
@@ -15,13 +15,15 @@ from .files import extension
 from .share import share
 
 app = Flask(__name__)
-app.secret_key = _cfg("secret_key")
 app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 scss.config.LOAD_PATHS = [
     './styles/'
 ];
+
+notice_enabled = False
+notice_text = "We don't just have great GIF support - try sharing some pictures on MediaCrush!"
 
 def prepare():
     if os.path.exists(app.static_folder):
@@ -104,6 +106,8 @@ def inject():
         'dark_theme': "dark_theme" in request.cookies,
         'ads': not "ad-opt-out" in request.cookies,
         'share': share,
+        'notice_text': notice_text,
+        'notice_enabled': notice_enabled
     }
 
 @app.route("/")
@@ -118,9 +122,13 @@ def mine():
 def apps():
     return render_template("apps.html")
 
-@app.route("/demo")
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route('/demo')
 def demo():
-    return render_template("demo.html")
+    return redirect('/about', code=301)
 
 @app.route("/donate")
 def donate():
@@ -140,6 +148,10 @@ def version():
 def serious():
     return render_template("serious.html")
 
+@app.route("/troubleshooting")
+def troubleshooting():
+    return render_template("troubleshooting.html")
+
 @app.route("/mediacrush.js")
 def mediacrushjs():
     v = render_template("mediacrush.js", host=_cfg("domain"))
@@ -149,4 +161,3 @@ DocsView.register(app)
 APIView.register(app)
 HookView.register(app)
 MediaView.register(app)
-

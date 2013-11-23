@@ -19,7 +19,7 @@ class APITestCase(TestMixin):
 
     def test_bad_hash(self):
         response = self.client.get('/api/asdfasdfasdf')
-        
+
         self.assertEqual(response.status_code, 404)
         self.assertEqual(json.loads(response.data), {u'error': 404})
 
@@ -57,7 +57,7 @@ class APITestCase(TestMixin):
         self.assertEqual(response.status_code, 200)
 
     def test_delete_bad_ip(self):
-        h = self._get_hash('cat.png') 
+        h = self._get_hash('cat.png')
         response = self.client.get('/api/%s/delete' % h, environ_base={
             'REMOTE_ADDR': '127.0.0.2'
         })
@@ -77,5 +77,5 @@ class APITestCase(TestMixin):
 
         response = self.client.get('/api/info?list=' + ','.join(h))
 
-        self.assertIn(u'x8bQs1NSiTm0', response.data)
+        self.assertIn(u'3H3zGlUzzwF4', response.data)
         self.assertIn(u'HM-nQeR0oJ7p', response.data)
