@@ -196,6 +196,9 @@ def upload(f, filename):
                 dummy.delete = lambda: None # nop
                 delete_file(dummy)
 
+                r.delete(_k("%s.lock") % identifier) # Remove processing lock and error
+                r.delete(_k("%s.error") % identifier)
+
         f.seek(0)  # Otherwise it'll write a 0-byte file
         f.save(path)
 
