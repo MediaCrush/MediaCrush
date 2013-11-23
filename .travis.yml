@@ -11,8 +11,7 @@ script:
     - python tests.py
 notifications:
     email:
-        - sir@cmpwn.com
-        - me@jdiez.me
+        - admin@mediacru.sh
     irc:
         channels:
             - "chat.freenode.net#mediacrush"
