@@ -6,6 +6,26 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}?version=2" />
     {% endif %}
 {% endblock %}
+{% block meta %}
+{% for item in [ items[0] ] %}
+{% set mimetype = get_mimetype(item.original) %}
+    <meta property="og:type" content="{{ mimetype }}" />
+    <meta property="og:site_name" content="MediaCrush" />
+    {% if mimetype.startswith("video") or mimetype == "image/gif" %}
+        <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.png" />
+        <meta property="twitter:card" content="player" />
+        <meta property="twitter:title" content="MediaCrush" />
+        <meta property="twitter:description" content="A video shared with MediaCrush." />
+        <meta property="twitter:image" content="https://mediacru.sh/{{ item.hash }}.png">
+    {% elif mimetype.startswith("audio") %}
+        <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+    {% else %}
+        <meta property="og:image" content="https://mediacru.sh/{{ item.original }}" />
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ item.original }}">
+    {% endif %}
+{% endfor %}
+{% endblock %}
 {% block content %}
 <h2 class="center">Album - {{ len(items) }} files</h2>
 <div class="center small clearfix">
