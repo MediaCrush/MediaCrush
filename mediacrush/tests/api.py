@@ -61,6 +61,39 @@ class APITestCase(TestMixin):
         response = self._create_album(h)
         self.assertEqual(response.status_code, 404)
 
+    def test_create_album_containing_album(self):
+        h = [
+            self._get_hash('cat.png')
+        ]
+
+        response = self._create_album(h)
+        h.append(json.loads(response.data)["hash"]) # Add the previous album's hash to the list
+
+        response = self._create_album(h)
+        self.assertEqual(response.status_code, 415)
+
+    def test_create_album_51_files(self):
+        cat = self._get_hash('cat.png')
+        h = [cat for _ in range(51)]
+
+        response = self._create_album(h)
+        self.assertEqual(response.status_code, 413)
+
+    def test_delete_album(self):
+        h = [
+            self._get_hash('cat.png'),
+            self._get_hash('cat2.jpg')
+        ]
+
+        album = json.loads(self._create_album(h).data)["hash"]
+        response = self.client.get('/api/%s/delete' % album, environ_base={
+            'REMOTE_ADDR': '127.0.0.1'
+        })
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get('/%s' % album)
+        self.assertEqual(response.status_code, 404)
+
     def test_upload_twice(self):
         self._upload('cat.png')
         response = self._upload('cat.png')
