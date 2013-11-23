@@ -4,15 +4,16 @@ import json
 from .utils import TestMixin
 
 class APITestCase(TestMixin):
+    def _post(self, url, data, ip='127.0.0.1'):
+        return self.client.post(url, data=data, environ_base={'REMOTE_ADDR': ip})
+
     def _upload(self, f, ip='127.0.0.1'):
-        return self.client.post('/api/upload/file', data={
+        return self._post('/api/upload/file', {
             'file': (open('test_data/%s' % f), f)
-        }, environ_base={'REMOTE_ADDR': ip})
+        }, ip=ip)
 
     def _create_album(self, files, ip='127.0.0.1'):
-        return self.client.post('/api/album/create', data={
-            'list': ','.join(files)
-        }, environ_base={'REMOTE_ADDR': ip})
+        return self._post('/api/album/create', {'list': ','.join(files)}, ip=ip)
 
     def _get_hash(self, f):
         return json.loads(self._upload(f).data)['hash']
