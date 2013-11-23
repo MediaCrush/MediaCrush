@@ -9,3 +9,13 @@ install:
     - cp config.ini.sample config.ini
 script:
     - python tests.py
+notifications:
+    email:
+        - sir@cmpwn.com
+        - me@jdiez.me
+    irc:
+        channels:
+            - "chat.freenode.net#mediacrush"
+        on_success: change
+        on_failure: always
+        skip_join: true
