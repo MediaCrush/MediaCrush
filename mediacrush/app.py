@@ -11,7 +11,8 @@ import subprocess
 
 from .views import HookView, APIView, MediaView, DocsView
 from .config import _cfg, _cfgi
-from .files import extension
+from .files import extension, get_mimetype
+from .views.media import render_media, type_files
 from .share import share
 
 app = Flask(__name__)
@@ -23,7 +24,7 @@ scss.config.LOAD_PATHS = [
 ];
 
 notice_enabled = False
-notice_text = "We don't just have great GIF support - try sharing some pictures on MediaCrush!"
+notice_text = "Processing time is higher than usual due to heavy load."
 
 def prepare():
     if os.path.exists(app.static_folder):
@@ -105,9 +106,13 @@ def inject():
         'adsense_slot': _cfg("adsense_slot"),
         'dark_theme': "dark_theme" in request.cookies,
         'ads': not "ad-opt-out" in request.cookies,
-        'share': share,
         'notice_text': notice_text,
-        'notice_enabled': notice_enabled
+        'notice_enabled': notice_enabled,
+        'share': share,
+        'render_media': render_media,
+        'type_files': type_files,
+        'len': len,
+        'get_mimetype': get_mimetype
     }
 
 @app.route("/")
