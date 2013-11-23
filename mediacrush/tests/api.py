@@ -20,6 +20,7 @@ class APITestCase(TestMixin):
 
 class UtilsTestCase(APITestCase):
     def test_jsonp_callbacks(self):
+        self.assertTrue(False)
         response = self.client.get('/api/dummy?callback=function123')
 
         self.assertTrue(response.data.startswith("function123({"))
