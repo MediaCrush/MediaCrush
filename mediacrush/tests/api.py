@@ -9,6 +9,11 @@ class APITestCase(TestMixin):
             'file': (open('test_data/%s' % f), f)
         }, environ_base={'REMOTE_ADDR': ip})
 
+    def _create_album(self, files, ip='127.0.0.1'):
+        return self.client.post('/api/album/create', data={
+            'list': ','.join(files)
+        }, environ_base={'REMOTE_ADDR': ip})
+
     def _get_hash(self, f):
         return json.loads(self._upload(f).data)['hash']
 
@@ -36,6 +41,25 @@ class APITestCase(TestMixin):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.data), {u'hash': u'HM-nQeR0oJ7p'})
+
+    def test_create_album(self):
+        h = [
+           self._get_hash('cat.png'),
+           self._get_hash('cat2.jpg')
+        ]
+
+        response = self._create_album(h)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("hash", json.loads(response.data))
+
+    def test_create_album_bad_hash(self):
+        h = [
+            self._get_hash('cat.png'),
+            'sdfgksgflg'
+        ]
+
+        response = self._create_album(h)
+        self.assertEqual(response.status_code, 404)
 
     def test_upload_twice(self):
         self._upload('cat.png')
