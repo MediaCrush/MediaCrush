@@ -10,12 +10,16 @@ function toggleHistory() {
 }
 
 function clearHistoryAndReload() {
-    clearHistory();
-    window.location = "/mine";
+    confirm(function(a) {
+        if (!a) return;
+        clearHistory();
+        window.location = "/mine";
+    });
 }
 
-var items = [];
+var items = {};
 var elements = [];
+var loaded_pages = [];
 var ITEMS_PER_PAGE = 10;
 var MAX_PAGES_DISPLAYED = 6;
 
@@ -28,10 +32,7 @@ window.onload = function() {
         link.textContent = 'enable local history';
     }
     createPagination();
-    loadDetailedHistory(history, function(result) {
-        items = result;
-        loadCurrentPage();
-    });
+    loadCurrentPage();
     window.onhashchange = function() {
         window.scrollTo(0, 0);
         createPagination();
@@ -82,6 +83,29 @@ function loadCurrentPage() {
     var container = document.getElementById('items');
     while (container.hasChildNodes()) container.removeChild(container.lastChild);
     var page = getCurrentPage();
+    if (loaded_pages.contains(page)) {
+        loadPage(page);
+    } else {
+        var reversedHistory = history.slice(0).reverse();
+        to_load = [];
+        for (var i = page * ITEMS_PER_PAGE; i < page * ITEMS_PER_PAGE + ITEMS_PER_PAGE && i < history.length; i++) {
+            to_load.push(reversedHistory[i]);
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/info?list=' + to_load.join(','));
+        xhr.onload = function() {
+            var result = JSON.parse(this.responseText);
+            for (a in result) {
+                items[a] = result[a];
+            }
+            loadPage(page);
+        };
+        xhr.send();
+    }
+}
+
+function loadPage(page) {
+    var container = document.getElementById('items');
     var reversedHistory = history.slice(0).reverse();
     elements = [];
     for (var i = page * ITEMS_PER_PAGE; i < page * ITEMS_PER_PAGE + ITEMS_PER_PAGE && i < history.length; i++) {
@@ -106,10 +130,13 @@ function createView(data) {
         forget.href = '/forget/' + data.hash;
         forget.onclick = function(e) {
             e.preventDefault();
-            removeItemFromHistory(data.hash);
-            container.parentElement.removeChild(container);
-            createPagination();
-            loadCurrentPage();
+            confirm(function(a) {
+                if (!a) return;
+                removeItemFromHistory(data.hash);
+                container.parentElement.removeChild(container);
+                createPagination();
+                loadCurrentPage();
+            });
         };
         container.appendChild(forget);
         return container;
@@ -119,6 +146,8 @@ function createView(data) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         for (var i = 0; i < item.files.length; i++) {
+            if (item.files[i].type == 'image/gif')
+                continue;
             var source = document.createElement('source');
             source.setAttribute('src', item.files[i].file);
             source.setAttribute('type', item.files[i].type);
@@ -130,58 +159,68 @@ function createView(data) {
         preview = document.createElement('img');
         preview.src = item.original;
     } else if (item.type.indexOf('audio/') == 0) {
-        preview = document.createElement('audio');
-        preview.setAttribute('controls', 'controls');
-        for (var i = 0; i < item.files.length; i++) {
-            var source = document.createElement('source');
-            source.setAttribute('src', item.files[i].file);
-            source.setAttribute('type', item.files[i].type);
-            preview.appendChild(source);
+        preview = document.createElement('img');
+        preview.src = '/static/audio-player.png';
+        preview.style.marginTop = '23px';
+    } else if (item.type == 'application/album') {
+        preview = document.createElement('div');
+        preview.className = 'album-preview';
+        for (var i = 0; i < item.files.length && i < 3; i++) {
+            preview.appendChild(createView({ item: item.files[i], hash: item.files[i].hash, nolink: true }));
         }
     }
-    preview.className = 'item';
-    var container2 = document.createElement('div');
-    var bar = document.createElement('div');
-    bar.className = 'bar';
+    preview.className += ' item';
+    if (!data.nolink) {
+        var container2 = document.createElement('div');
+        var bar = document.createElement('div');
+        bar.className = 'bar';
 
-    var forgetLink = document.createElement('a');
-    forgetLink.textContent = 'Forget';
-    forgetLink.className = 'left';
-    forgetLink.href = '/forget/' + data.hash;
-    forgetLink.onclick = function(e) {
-        e.preventDefault();
-        removeItemFromHistory(data.hash);
-        container2.parentElement.removeChild(container2);
-        createPagination();
-        loadCurrentPage();
-    };
-    forgetLink.title = 'Remove this item from your history';
-    bar.appendChild(forgetLink);
+        var forgetLink = document.createElement('a');
+        forgetLink.textContent = 'Forget';
+        forgetLink.className = 'left';
+        forgetLink.href = '/forget/' + data.hash;
+        forgetLink.onclick = function(e) {
+            e.preventDefault();
+            removeItemFromHistory(data.hash);
+            container2.parentElement.removeChild(container2);
+            createPagination();
+            loadCurrentPage();
+        };
+        forgetLink.title = 'Remove this item from your history';
+        bar.appendChild(forgetLink);
 
-    var deleteLink = document.createElement('a');
-    deleteLink.textContent = 'Delete';
-    deleteLink.className = 'right';
-    deleteLink.href = '/delete/' + data.hash;
-    deleteLink.onclick = function(e) {
-        e.preventDefault();
-        removeItemFromHistory(data.hash);
-        container2.parentElement.removeChild(container2);
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/' + data.hash + '/delete');
-        xhr.send();
-    };
-    deleteLink.title = 'Delete this item from the MediaCrush server';
-    bar.appendChild(deleteLink);
+        var deleteLink = document.createElement('a');
+        deleteLink.textContent = 'Delete';
+        deleteLink.className = 'right';
+        deleteLink.href = '/delete/' + data.hash;
+        deleteLink.onclick = function(e) {
+            e.preventDefault();
+            confirm(function(a) {
+                if (!a) return;
+                removeItemFromHistory(data.hash);
+                container2.parentElement.removeChild(container2);
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/' + data.hash + '/delete');
+                xhr.send();
+            });
+        };
+        deleteLink.title = 'Delete this item from the MediaCrush server';
+        bar.appendChild(deleteLink);
 
-    var a = document.createElement('a');
-    a.href = '/' + data.hash;
-    a.appendChild(preview);
-    container.appendChild(a);
-    container.appendChild(bar);
-    container2.className = 'item-wrapper';
-    container2.appendChild(container);
-    container2.id = data.hash;
-    return container2;
+        var a = document.createElement('a');
+        a.href = '/' + data.hash;
+        a.target = '_blank';
+        a.appendChild(preview);
+        container.appendChild(a);
+        container.appendChild(bar);
+        container2.className = 'item-wrapper';
+        container2.appendChild(container);
+        container2.id = data.hash;
+        return container2;
+    } else {
+        container.appendChild(preview);
+        return container;
+    }
 }
 
 function createPagination() {

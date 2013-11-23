@@ -1,14 +1,24 @@
+# Most of these options can (and should) be left with their default values.
+
 [meta]
+# Internal use for determining if this is the live site or not.
+# Not really used right now, just leave it be.
 environment = dev
 
 [dev]
+# Protocol and domain are used for constructing URLs in scripts like mediacrush.js.
+# Don't worry about changing these values in unless you need to distribute a custom
+# mediacrush.js.
 protocol = https
 domain = mediacru.sh
 
+# When running in debug mode, this controls the endpoint that it listens on.
 debug-host = 0.0.0.0
 debug-port = 5000
 
+# storage_folder is the location on disk where uploaded files should be saved.
 storage_folder = storage
+# This value is currently ignored, and each supported mimetype has its own timing rules.
 max_processing_time = 60
 
 # Hooks allow the site to rebuild itself when there's a commit to the repository
@@ -24,23 +34,33 @@ restart_command = supervisorctl reload
 redis-ip = 127.0.0.1
 redis-port = 6379
 
-secret_key = !!CHANGEME!!
+google_analytics_id = 
+google_analytics_domain = 
 
-bytes_per_hour = 250000000
-
-google_analytics_id = UA-00000000-0
-google_analytics_domain = gifquick.net
-
-# Make sure you use the 120x600 "skyscraper" ad format
+# Make sure you use the 120x600 "skyscraper" ad format if you want ads
+# Leave it as "CHANGEME" to disable ads
 adsense_client = CHANGEME
 adsense_slot = CHANGEME
 
+# Leave these as "changeme" to disable them
 dwolla_id = changeme
 flattr_id = changeme
 coinbase_id = changeme
 
+# Change these options to configure mandrill for sending daily reports to the admins of your instance
 mandrill_api = changeme
 admin_email = changeme@changeme.com
 from_email = admin@mediacru.sh
 
+# If you put the dev docs somewhere other than ./docs/, update this
 docs_path = docs
+
+[ratelimit-upload]
+# Period is in seconds. Units in bytes. Default rate limit is 0.2ish GB per hour
+period = 3600 
+units_per_period = 250000000
+
+[ratelimit-feedback]
+# Controls how frequently users can post feedback using the feedback tool on every page. Default is 5 times per day.
+period = 86400
+units_per_period = 5

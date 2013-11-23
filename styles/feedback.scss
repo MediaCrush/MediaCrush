@@ -1,0 +1,60 @@
+#feedback {
+    position: fixed;
+    z-index: 1000;
+    transition: right 0.25s linear;
+    top: 20px;
+    right: -200px;
+    width: 200px;
+    height: 130px;
+    background: #1692d0;
+    color: #fff;
+
+    &.active {
+        right: 0;
+    }
+
+    textarea {
+        width: 184px;
+        height: 80px;
+        border: none;
+        padding: 3px;
+        resize: none;
+    }
+
+    a.button {
+        display: block;
+        padding: 3px;
+        color: #fff;
+        text-align: center;
+        margin-top: 5px;
+        background: #073045;
+
+        &:hover {
+            background: #1f4457;
+        }
+    }
+
+    a {
+        color: #ccc;
+    }
+
+    & > a {
+        text-align: center;
+        color: #fff;
+        position: absolute;
+        top: 0;
+        background: #1692d0;
+        display: block;
+        height: 83px;
+        left: -32px;
+        padding: 5px;
+    }
+
+    & > div {
+        padding: 5px;
+
+        p {
+            margin: 0;
+        }
+    }
+}

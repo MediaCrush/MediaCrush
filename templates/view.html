@@ -1,13 +1,37 @@
 {% extends "layout.html" %}
+{% block mobile_responsive %}{% endblock %}
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript">
-window.filename = '{{ filename }}';
-window.can_delete = '{{ can_delete }}';
-</script>
-<script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+    <script type="text/javascript">
+        window.filename = '{{ filename }}';
+        window.can_delete = '{{ can_delete }}';
+        window.embedded = '{{ embedded }}';
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+{% endblock %}
+{% block meta %}
+    <meta property="og:type" content="{{ mimetype }}" />
+    <meta property="og:site_name" content="MediaCrush" />
+    {% if mimetype.startswith("video") or mimetype == "image/gif" %}
+        {# Generated thumbnail #}
+        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        <meta property="twitter:card" content="player" />
+        <meta property="twitter:title" content="MediaCrush" />
+        <meta property="twitter:description" content="A video shared with MediaCrush." />
+        <meta property="twitter:player" content="{{ share('frame', filename) }}" />
+        <meta property="twitter:player:width" content="640" />
+        <meta property="twitter:player:height" content="360" />
+        <meta property="twitter:image" content="https://mediacru.sh/{{ filename }}.png">
+
+    {% elif mimetype.startswith("audio") %}
+        <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+    {% else %}
+        <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+    {% endif %}
 {% endblock %}
 {% block content %}
 <div class="media-wrapper">
@@ -16,6 +40,9 @@ window.can_delete = '{{ can_delete }}';
     </div>
 </div>
 <div class="center small clearfix">
+    {% if mimetype.startswith('video') %}
+    <a href="/troubleshooting">Troubleshoot video problems</a>
+    {% endif %}
     <ul class="inline">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
@@ -30,7 +57,7 @@ window.can_delete = '{{ can_delete }}';
 <div class="hidden" id="embed">
     <div class="center">
         <p>Copy this HTML and paste it into your website:</p>
-        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0"></iframe>' class="selectall" />
+        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
         <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.</p>
     </div>
 </div>
@@ -48,6 +75,9 @@ window.can_delete = '{{ can_delete }}';
         <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
+
+{{ type_files(mimetype) | safe }} {# Very important - include files for the type #}
+
 {% if ads and adsense_client != "CHANGEME" %}
 <div id="gad">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

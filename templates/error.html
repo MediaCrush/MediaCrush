@@ -2,6 +2,7 @@
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
 {% endblock %}
+{% block analytics %}{# disable analytics for error pages #}{% endblock %}
 {% block content %}
 <h1>Error - {{ error }}</h1>
 <p>Something went wrong. You can go <a href="/">to the home page</a> or you can

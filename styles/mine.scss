@@ -51,6 +51,49 @@ audio {
         position: relative;
     }
 
+    .album-preview {
+        position: relative;
+        width: 500px;
+        height: 496px;
+        overflow: hidden;
+        margin-bottom: 10px;
+
+        & > div {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+
+            img, video {
+                width: auto;
+                max-width: 450px;
+                max-height: 430px;
+                border: 1px solid #000;
+            }
+
+            &:nth-of-type(3n+2) {
+                top: 20px;
+                left: 20px;
+                right: auto;
+
+                img, video {
+                    max-width: 470px;
+                    width: auto;
+                }
+            }
+
+            &:nth-of-type(3n+1) {
+                top: 0;
+                left: 0;
+                right: auto;
+
+                img, video {
+                    max-width: 470px;
+                    width: 450px;
+                }
+            }
+        }
+    }
+
     .bar {
         background: rgba(111, 111, 111, 0.8);
         color: #fff;

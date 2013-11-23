@@ -3,6 +3,26 @@
 /*
  * Layout
  */
+#albumUI {
+    margin-bottom: 5px;
+
+    div, & > a {
+        display: block;
+        padding: 5px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #createAlbum {
+        color: #fff;
+        background: #00b200;
+
+        &:hover {
+            background: #007f00;
+        }
+    }
+}
+
 #droparea {
     background: #fff;
     border: 2px dotted #005483;
@@ -31,6 +51,26 @@
 
         #droptext {
             margin-top: 10px;
+        }
+    }
+
+    #notice {
+        text-align: center;
+        position: absolute;
+        bottom: 20px;
+        float: left;
+        left: 50%;
+
+        div {
+            position: relative;
+            float: left;
+            left: -50%;
+            padding: 3px;
+            background-color: rgb(223, 240, 216);
+            white-space: nowrap;
+            color: #000;
+            border: 1px solid rgb(214, 233, 198);
+            border-radius: 3px;
         }
     }
 
@@ -137,63 +177,45 @@
             max-width: 250px;
         }
     }
-}
 
-/*
- * Responsive
- */
-@media (max-height: 700px) {
-    .grid {
-        height: 340px;
-        margin-top: -190px;
-    }
+    .album-preview {
+        position: relative;
+        height: 261px;
+        overflow: hidden;
+        margin-bottom: 10px;
 
-    #droparea {
-        height: 320px;
-    }
+        & > div {
+            position: absolute;
+            top: 20px;
+            right: 40px;
 
-    #droptext {
-        margin-top: 145px;
-    }
+            img, video {
+                width: auto;
+                max-width: 210px;
+                max-height: 239px;
+            }
 
-    #gad {
-        display: none;
-    }
+            &:nth-of-type(3n+2) {
+                top: 10px;
+                left: 10px;
+                right: auto;
 
-    #lgad {
-        display: block;
-    }
+                img, video {
+                    max-width: 210px;
+                    width: auto;
+                }
+            }
 
-    #history ul {
-        height: 250px;
-    }
-}
+            &:nth-of-type(3n+1) {
+                top: 0;
+                left: 0;
+                right: auto;
 
-@media (max-width: 1048px) {
-    .vertical-center {
-        width: 705px;
-    }
-
-    #droparea {
-        width: 300px !important;
-    }
-
-    .responsive-hidden {
-        display: none;
-    }
-
-    .responsive-break {
-        display: block;
-    }
-}
-
-@media (max-width: 765px) {
-    .vertical-center {
-        width: 575px;
-    }
-
-    #gad, #lgad {
-        display: none;
+                img, video {
+                    width: 239px;
+                }
+            }
+        }
     }
 }
 
@@ -276,6 +298,10 @@
         position: absolute;
         bottom: 3px;
         right: 3px;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     border: 1px solid #888;
@@ -308,6 +334,14 @@
         margin: 0;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    h2, div.status {
+        position: relative;
+    }
+
+    .responsive-fade {
+        display: none;
     }
 }
 
@@ -365,3 +399,5 @@ a[href^="https://addons.mozilla.org"] {
     position: relative;
     top: 3px;
 }
+
+@import 'home-responsive.scss'

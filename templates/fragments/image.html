@@ -1,3 +1,38 @@
-<a href="{{ share('directlink', filename) }}">
-    <img src="/{{ original }}" alt="MediaQuick" id="image" />
+{% if album %}
+<div class="item-wrapper">
+    <a href="{{ share('directlink', filename) }}" target="_blank" id="img-a-{{ filename }}">
+        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+    </a>
+    <div class="bar">
+        <a class="left" href="/{{ filename }}">Direct Link</a>
+        <a class="right" href="/{{ filename }}/download">Download</a>
+    </div>
+</div>
+{% else %}
+<a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
+    <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
 </a>
+{% endif %}
+<script type="text/javascript">
+function mediaSizeReporter() {
+    var img = document.getElementById('img-{{filename}}');
+    return { width: img.width, height: img.height };
+}
+function resizeMedia(x, y) {
+    var img = document.getElementById('img-{{filename}}');
+    img.width = x;
+    img.height = y;
+}
+window.addEventListener('load', function() {
+    if (window.album) {
+    document.querySelector('#img-a-{{ filename }}').href = '/{{ filename }}';
+        return;
+    }
+    var image = document.getElementById('img-{{filename}}');
+    var dupe = document.createElement('img'); // Duplicate image so that CSS sizing and such doesn't affect the resolution
+    dupe.onload = function() {
+        document.title = "MediaCrush (" + dupe.width + "x" + dupe.height + ")";
+    };
+    dupe.src = image.src;
+}, false);
+</script>

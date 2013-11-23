@@ -9,9 +9,15 @@
         {% if mobile %}
         <meta name="viewport" content="width=device-width" />
         {% endif %}
-        {% if mimetype.startswith("image") %}
-        <meta name="twitter:card" content="photo">
-        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+        <meta property="og:type" content="{{ mimetype }}" />
+        <meta property="og:site_name" content="MediaCrush" />
+        {% if mimetype.startswith("video") %}
+            {# Generated thumbnail #}
+            <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        {% elif mimetype.startswith("audio") %}
+            <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+        {% else %}
+            <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
         {% endif %}
         <title>MediaCrush</title>
         <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
@@ -25,17 +31,61 @@
         <div style="display: inline-block">
             {% include fragment %}
         </div>
+{{ type_files(mimetype) | safe }} {# Very important - include files for the type #}
         <script type="text/javascript">
+            {% if mobile %}
+            window.mobile = true;
+            {% else %}
+            window.mobile = false;
+            {% endif %}
             window.addEventListener('load', function() {
                 var hash = window.location.hash;
                 if (hash.length > 1) {
                     handleHash(hash);
                 }
+                {% if embedded %}
+                var body = document.body, html = document.documentElement;
+                var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+                {% if mimetype.startswith('audio/') %}
+                var height = 50;
+                {% else %}
+                var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+                {% endif %}
+                window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
+                // This mess just gets the window width,height in x,y
+                var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+                if (window.resizeMedia) {
+                    resizeMedia(x, y);
+                }
+                window.addEventListener('resize', function(e) {
+                    if (window.resizeMedia) {
+                        resizeMedia(x, y);
+                    }
+                }, false);
+                window.addEventListener('message', function(e) {
+                    var action = e.data.action;
+                    if (action == 'play') {
+                        if (window.playMedia) playMedia();
+                    } else if (action == 'pause') {
+                        if (window.pauseMedia) pauseMedia();
+                    }
+                });
+                {% endif %}
             }, false);
             function handleHash(hash) {
                 if (mediaHashHandler)
                     mediaHashHandler(hash.substr(1));
             }
+            {% if embedded %}
+            {% endif %}
         </script>
+        {% if mimetype.startswith('audio') %}
+        <style>
+            body > div {
+                height: 45px;
+                overflow: hidden;
+            }
+        </style>
+        {% endif %}
     </body>
 </html>

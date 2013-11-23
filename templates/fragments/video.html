@@ -1,17 +1,28 @@
-<div class="video">
+<div class="video" data-video="video-{{ filename }}">
     <video id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
+        {% if 'video/mp4' in types %}
         <source src="/{{ filename }}.mp4" type='video/mp4;'>
+        {% endif %}
+        {% if 'video/webm' in types %}
+        <source src="/{{ filename }}.webm" type='video/webm;'>
+        {% endif %}
+        {% if 'video/ogg' in types %}
         <source src="/{{ filename }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+        {% endif %}
+        <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
     <div class="hover">
         <h1 class="brand">
-            <a href="/" target="_blank">
+            <a href="/{{filename}}" target="_blank">
                 <span>
                     <img src="/static/logo-bg.png" class="bg" alt="logo" />
                     <img src="/static/logo-fg.png" alt="logo" />
                 </span>
             MediaCrush</a>
         </h1>
+        <div class="downloads">
+            <a href="/{{ filename }}/download">Download</a>
+        </div>
         <div class="side">
             <a href="#" class="control loop {% if loop %}enabled{% endif %}" data-video="video-{{ filename }}">Loop</a>
         </div>
@@ -44,12 +55,3 @@
     </div>
     <a href="#" class="control play large {% if autoplay %}hidden{% endif %}" data-video="video-{{ filename }}"><img src="/static/play-large.png" /></a>
 </div>
-{% if videologic is not defined %}
-{% set videologic = True %}
-<style>
-{% include "fragments/video.css" %}
-</style>
-<script type="text/javascript">
-{% include "fragments/video.js" %}
-</script>
-{% endif %}

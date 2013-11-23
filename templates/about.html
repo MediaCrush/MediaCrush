@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block styles %}
+{% if mobile %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about-mobile.css') }}?version=2" />
+{% else %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='about.css') }}?version=2" />
+{% endif %}
+{% endblock %}
+{% block content %}
+{% if mobile %}
+<p>We make sharing media easy and fast.</p>
+{% else %}
+<p>We make sharing media easy and fast. We also do some fancy tricks like converting GIFs to HTML5 video so that
+they load even faster:</p>
+<div class="row">
+    <div class="left">
+        <h3>Before MediaCrush</h3>
+        <img src="{{ url_for('static', filename='demo.gif') }}" alt="GIF demo" />
+        <p>Filesize: 1965 kB (~2.0 MB)</p>
+    </div>
+    <div class="middle">
+        Result:<br />
+        <strong>1600% faster</strong><br />
+        <a href="/">Try it yourself!</a>
+    </div>
+    <div class="right">
+        <h3>After MediaCrush</h3>
+        <iframe src="https://mediacru.sh/sSjUfGQLO7zc/frame" frameborder="0" allowFullscreen width="384" height="221"></iframe>
+        <p>Filesize: 118 kB (~0.118 MB)</p>
+    </div>
+</div>
+<p class="clearfix">Have you ever been able to pause a GIF before? You can with MediaCrush!</p>
+{% endif %}
+<h2>Is it free?</h2>
+<p>Yes, always and forever. We will never charge for our services, you'll be able to host your media easily and
+in high quality on MediaCrush until the end of time. We even let you
+<a href="javascript:adOptOut(true)">turn off advertisements</a> if you wish. Plus, we're free as in freedom, too.
+MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush">totally open source</a>. You're welcome to run your own version of
+MediaCrush or contribute new ideas to ours.</p>
+<h2>How do you feel about privacy?</h2>
+<p>Very serious. More so than a lot of people. We take lots of steps to ensure you're protected - note that you're
+reading this over HTTPS, for one. We never ever store anything about you when you use our service. We also respect
+your Do Not Track settings. You can donate anonymously to our efforts with bitcoin, and you can opt-out of ads with
+nasty tracking code. Also, if you're wondering what we're up to, we publish
+<a href="/transparency">detailed reports</a> on what we're doing every month.</p>
+<h2>How do I keep in touch?</h2>
+<p>We announce new features and respond to user feedback from our <a href="https://twitter.com/mediacru_sh">Twitter
+account</a>, and write about them on our <a href="https://blog.mediacru.sh">blog</a>. You can also get in touch
+through <a href="https://pay.reddit.com/r/mediacrush">/r/mediacrush</a>, or
+<a href="mailto:support@mediacru.sh">email us</a>. Developers are invited to join us on our IRC channel,
+<a href="http://webchat.freenode.net/?channels=mediacrush&uio=d4">#mediacrush on irc.freenode.net</a>.</p>
+<h2>Have you got any apps?</h2>
+<p>Yes, of course! We want to make it as easy as possible to use MediaCrush. Check out our <a href="/apps">apps</a>
+page to see what we've got. There's a Windows app, a mobile site, browser plugins, and a bash script, plus anything
+else we might have added since this text here was written. You can also check out our <a href="/docs">API</a> and
+work on your own! Let us know if you've done one and we'll promote it on our apps page.</p>
+<h2>What's the upload limit?</h2>
+<p>A very generous <strong>25 MB</strong>! This is more than imgur and minus combined, <em>and</em> it's lossless
+and fast, so you know who the obvious choice is ;)</p>
+<h2>Can I hotlink to MediaCrush?</h2>
+<p>What use is media hosting if you can't share your files with it? You can hotlink to our images,
+but you might have a problem hotlinking to GIFs, video, or music, due to technical limitations. Never fear, though:
+we have prepared a iframe-based solution that gives you some HTML to paste into your blog or website or whatever.
+Just click "embed" on the page you want to embed and you'll get the code. Programmers may also want to browse our
+<a href="/docs">developer documentation</a>. If you want to direct link in Reddit, though, don't worry about it -
+MediaCrush is RES-compatible and it'll work out anyway.</p>
+<p><a href="/">Back to the home page</a></p>
+{% endblock %}

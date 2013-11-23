@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album-embed.css') }}?version=2" />
+{% endblock %}
+{% block dark_theme %}{# Dark theme is disabled for embedded albums #}{% endblock %}
+{% block content %}
+<h1 class="brand pull-left">
+    <a href="/{{ filename }}" target="_blank">
+    <img src="/static/mediacrush_logo.svg" alt="logo" width=24 height=24 />
+    MediaCrush</a>
+    <span class="subtitle">Album - {{ len(items) }} files</span>
+</h1>
+<div class="album-controls clearfix">
+    <a href="#" class="pull-left previous">Previous</a>
+    <a href="#" class="pull-right next">Next</a>
+</div>
+<div class="album clearfix">
+    {% for hash in items %}
+    <div class="media-wrapper {% if hash == items[0] %}selected{% endif %}">
+        <div class="media">
+            {{ render_media(hash, album=False) | safe }}{# albums=False is intentional #}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    {% endfor %}
+</div>
+
+<script>
+window.album = true;
+(function() {
+    var index = 0;
+    function reload() {
+        var media = document.querySelectorAll('.album .media-wrapper');
+        var selected = null;
+        for (var i = 0; i < media.length; i++) {
+            if (i == index) {
+                if (!media[i].classList.contains('selected')) media[i].classList.add('selected');
+                selected = media[i];
+            } else {
+                if (media[i].classList.contains('selected')) media[i].classList.remove('selected');
+            }
+        }
+        var height = selected.clientHeight;
+        window.top.postMessage({ width: 750, height: height + 120, media: "{{ filename }}" }, '*');
+    };
+    reload();
+
+    var previous = document.querySelector('.album-controls .previous');
+    var next = document.querySelector('.album-controls .next');
+    previous.addEventListener('click', function(e) {
+        e.preventDefault();
+        index--;
+        if (index < 0) {
+            index = {{ len(items) }} - 1;
+        }
+        reload();
+    }, false);
+    next.addEventListener('click', function(e) {
+        e.preventDefault();
+        index++;
+        if (index >= {{ len(items) }}) {
+            index = 0;
+        }
+        reload();
+    }, false);
+})();
+</script>
+
+{% for type in types %}
+{{ type_files(type) | safe }}
+{% endfor %}
+
+{% endblock %}
+{% block navigation %}{% endblock %}
+{% block feedback %}{% endblock %}

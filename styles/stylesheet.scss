@@ -1,8 +1,27 @@
+@import 'feedback.scss'
 /*
  * Element styles and UI components
  */
 body {
     font-family: "Open Sans", sans-serif;
+}
+
+.brand {
+    font-size: 18pt;
+
+    a {
+        color: #000;
+
+        &:hover {
+            color: #000;
+            text-decoration: none;
+        }
+    }
+
+    img {
+        float: left;
+        margin: 0 3px 0 0;
+    }
 }
 
 .navigation {
@@ -13,18 +32,8 @@ body {
         float: left;
         margin: 0 0 10px;
         position: relative;
-        font-size: 18pt;
-
-        a {
-            color: #000;
-
-            &:hover {
-                text-decoration: none;
-            }
-        }
 
         img {
-            float: left;
             margin: 5px 3px 0 0;
         }
     }
@@ -69,6 +78,59 @@ ul.inline {
 
     .noads & {
         padding: 0 5px;
+    }
+}
+
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(50, 50, 50, 0.75);
+
+    & > div {
+        width: 500px;
+        height: 150px;
+        top: 50%;
+        position: relative;
+        background: #fff;
+        margin: -75px auto 0 auto;
+        padding: 5px;
+
+        h2 {
+            margin: 0;
+        }
+
+        .buttons {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+
+            button {
+                color: #fff;
+                border: none;
+                width: 75px;
+                height: 30px;
+                cursor: pointer;
+
+                &.yes {
+                    background: #0C0;
+
+                    &:hover {
+                        background: #090;
+                    }
+                }
+
+                &.no {
+                    background: #C00;
+
+                    &:hover {
+                        background: #900;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -154,6 +216,7 @@ table {
     display: inline-block;
     position: absolute;
     left: -1000px;
+    top: -1000px;
 }
 
 /**
@@ -216,4 +279,13 @@ table {
 
 .pull-right {
     float: right;
+}
+
+img.centered {
+    margin: 0 auto;
+    display: block;
+}
+
+.bold {
+    font-weight: bold;
 }

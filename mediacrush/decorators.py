@@ -2,6 +2,11 @@ from flask import jsonify, request
 from functools import wraps
 import json
 
+jsonp_notice = """
+// MediaCrush supports Cross Origin Resource Sharing requests.
+// There is no reason to use JSONP; please use CORS instead.
+// For more information, see https://mediacru.sh/docs/api"""
+
 def json_output(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -9,7 +14,8 @@ def json_output(f):
             callback = request.args.get('callback', False) 
             jsonification = jsonify(obj)
             if callback:
-                jsonification.data = "%s(%s);" % (callback, jsonification.data) # Alter the response
+                jsonification.data = "%s(%s);\n%s" % (callback, jsonification.data, jsonp_notice) # Alter the response
+                jsonification.mimetype = "text/javascript"
 
             return jsonification
 

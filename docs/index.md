@@ -1,15 +1,39 @@
 # Developer Documentation
 
-MediaCrush offers a free API to developers that allows you to upload media and retrieve information on files
-on our servers. This API is completely free, but we appriciate a [donation](/donate) if you plan to use it,
-since we don't get any ad views from API users. We also appreciate that donation if you hotlink to us often.
-
-Documentation for our API is provided [here](/docs/API).
+If you have any questions about using our service from a development standpoint, please feel free to join
+[#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4) to get help.
 
 ## Open Source
 
 MediaCrush is completely open source. If you want to learn more about how something works, or improve
-something, feel free to head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and hack away.
+something, head over to [GitHub](https://github.com/MediaCrush/MediaCrush) and hack away.
+
+## Public API
+
+[**API Documentation**](/docs/api)
+
+MediaCrush offers a free API to developers that allows you to upload media and retrieve information on files
+on our servers. This API is completely free, but we appreciate a [donation](/donate) if you plan to use it,
+since we don't get any ad views from API users. We would also appreciate a donation if you hotlink to us often.
+
+## API Wrappers
+
+Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support@mediacru.sh) and we'll mention it here.
+
+### Python
+
+* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request - MIT license
+
+### JavaScript
+
+* [mediacrush.js](/docs/mediacrush.js) - Official JS library for working with MediaCrush in the browser - MIT license
+
+### Java
+
+* [jCrush](https://github.com/hypereddie10/jCrush) - API wrapper written in (and for) Java - MIT license
+
+Note: We're looking for a node.js version of mediacrush.js. Interested in contributing one? Join us on IRC
+for a chat: [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4).
 
 ## Blob Identifiers
 
@@ -25,31 +49,9 @@ protect sensitive information.
 
 ## Embedding Media
 
-It's possible to embed MediaCrush files in your own page. It's actually quite simple. For a given MediaCrush
-URL (i.e. [https://mediacru.sh/6-5E-TOqYQAr](https://mediacru.sh/6-5E-TOqYQAr)), place the following script
-wherever you'd like the media to show up:
+It's easy to embed media into your website. For simple cases, just click on 'Embed' on the media
+page and paste that HTML into your blog/website/whatever. For more complex cases, you may want to
+use [mediacrush.js](/docs/mediacrush.js), which will handle all the heavy lifting for you. It can be
+as simple as:
 
-    <script type="text/javascript" src="https://mediacru.sh/6-5E-TOqYQAr/embed"></script>
-
-This script will insert the following markup after the script tag:
-
-    <div class="mediacrush-embed" data-id="6-5E-TOqYQAr" data-type="image/jpeg">
-        <img src="https://mediacru.sh/6-5E-TOqYQAr.jpg" />
-    </div>
-
-Note that `data-type` is the original type of the uploaded image. Embedded gifs will be embedded as HTML5
-video, but still show `data-type="image/gif"`. Additionally, other media may actually contain several files
-of different types - for example, videos will include `video/mp4` and `video/ogv` files, regardless of the
-original file type.
-
-You can also manually embed media by just taking the generated markup and dropping it into your page, which
-avoids the need to load our script. It's also possible to get information about media through the API (in the
-form of JSON blobs), and then generate markup yourself based on the results.
-
-## API Wrappers
-
-Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support@mediacru.sh) and we'll mention it here.
-
-### Python
-
-* [PyCrush](https://github.com/MediaCrush/PyCrush) - Official API wrapper that makes the most out of each HTTP request.
+    <div class="mediacrush" data-media="9XtPgnJgFimB"></div>

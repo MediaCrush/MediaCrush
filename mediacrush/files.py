@@ -13,7 +13,7 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4'])
+VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4', 'webm'])
 AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
 EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
 LOOP_EXTENSIONS = set(['gif'])
@@ -62,16 +62,24 @@ class URLFile(object):
 
 processing_needed = {
     'gif': {
-        'formats': ['mp4', 'ogv'],
-        'time': 120,
+        'formats': ['mp4', 'ogv', 'webm'],
+        'extras': ['png'],
+        'time': 300,
     },
     'mp4': {
-        'formats': ['ogv'],
-        'time': 300,
+        'formats': ['webm', 'ogv'],
+        'extras': ['png'],
+        'time': 600,
+    },
+    'webm': {
+        'formats': ['mp4', 'ogv'],
+        'extras': ['png'],
+        'time': 600,
     },
     'ogv': {
-        'formats': ['mp4'],
-        'time': 300,
+        'formats': ['mp4', 'webm'],
+        'extras': ['png'],
+        'time': 600,
     },
     'jpg': {
         'formats': [],
@@ -123,13 +131,20 @@ def media_url(f):
 def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
+def file_length(f):
+    f.seek(0, 2)
+    by = f.tell()
+    f.seek(0)
+
+    return by
+
 def compression_rate(f):
     f_original = File.from_hash(f)
     ext = extension(f_original.original)
     if ext not in processing_needed: return 0
     if len(processing_needed[ext]['formats']) == 0: return 0
 
-    original_size = f_original.compression 
+    original_size = f_original.compression
     minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
     for f_ext in processing_needed[ext]['formats']:
         try:
@@ -163,14 +178,14 @@ def upload(f, filename):
 
     if f and allowed_file(filename):
         if not current_app.debug:
-            rate_limit_update(f)
+            rate_limit_update(file_length(f))
             if rate_limit_exceeded():
                 return "ratelimit", 420
 
         h = get_hash(f)
         identifier = to_id(h)
         filename = "%s.%s" % (identifier, extension(filename))
-        path = file_storage(filename) 
+        path = file_storage(filename)
 
         if os.path.exists(path):
             return identifier, 409
@@ -213,6 +228,11 @@ def processing_status(id):
         return "done"
     return "processing"
 
-delete_file_storage = lambda f: os.unlink(file_storage(f)) # Abstraction: we may need it if we switch to a non-fs-based storage in the future.
+def delete_file_storage(path):
+    try:
+        os.unlink(file_storage(path))
+    except:
+        print('Failed to delete file ' + path)
+
 extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

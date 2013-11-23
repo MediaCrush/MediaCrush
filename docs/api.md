@@ -1,18 +1,73 @@
 # MediaCrush API
 
-The MediaCrush API returns JSON on all methods. They also support JSONP callbacks. To specify the JavaScript function to be called use the `callback` GET parameter. 
+The MediaCrush API returns JSON on all methods. You might be interested in some of the API wrappers listed on our
+[documentation overview](/docs/).
 
-Example:    
+MediaCrush also supports CORS for cross-origin requests. If you intend to use the MediaCrush API from browser JavaScript,
+you will want to set the `X-CORS-Status` header to `1`. This is because browsers will errornously handle any request that
+returns a non-2xx status code (which the MediaCrush API frequently does). If you set this header, each JSON response will
+include the `x-status` property with the real status code.
 
-    GET /api/tVWMM_ziA3nm?callback=demo
+Example:
 
-    demo({
+    GET /api/tVWMM_ziA3nm
+    X-CORS-Status: 1
+
+    {
         ...
-    });
-    
+        "x-status": 404
+    }
+
 # Methods
 
-## File information endpoints
+## Albums
+
+### /api/album/create
+
+*Parameters*: `list`, a list of MediaCrush hashes.
+
+*Returns*: The hash of the album on success, an error code otherwise.
+
+    POST /api/album/create
+    list=LxqXxVPAvqqB,tVWMM_ziA3nm
+
+    {
+        "hash": "LxqXxVPAvqqC"
+    }
+
+In case of error, the response will contain an 'error' parameter and additional information if necessary.
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The album was created correctly.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>At least one of the items in the list could not be found.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>413</td>
+        <td>Albums with more than 50 items are unsupported.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>At least one of the items in the list is not a File (i.e, you tried to create an album that cantains an album)</td>
+        <td>false</td>
+    </tr>
+</table>
+
+## Hash information endpoints
 
 ### /api/&lt;hash&gt;
 
@@ -20,29 +75,37 @@ Example:
 
 *Parameters*: none.
 
-*Returns*: information about the file whose hash is `<hash>`. 
+*Returns*: information about `<hash>`. Please see Appendix A for reference objects for each possible type.
 
     GET /api/CPvuR5lRhmS0
 
     {
-      "compression": 8.93, 
+      "compression": 8.93,
       "files": [
         {
-          "file": "/CPvuR5lRhmS0.mp4", 
+          "file": "/CPvuR5lRhmS0.mp4",
           "type": "video/mp4"
-        }, 
+        },
         {
-          "file": "/CPvuR5lRhmS0.ogv", 
+          "file": "/CPvuR5lRhmS0.ogv",
           "type": "video/ogg"
-        }, 
+        },
         {
-          "file": "/CPvuR5lRhmS0.gif", 
+          "file": "/CPvuR5lRhmS0.gif",
           "type": "image/gif"
         }
-      ], 
-      "original": "/CPvuR5lRhmS0.gif", 
-      "type": "image/gif"
+      ],
+      "extras": [
+      ],
+      "original": "/CPvuR5lRhmS0.gif",
+      "hash": "CPvuR5lRhmS0",
+      "type": "image/gif",
     }
+
+When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
+files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
+will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
+file in the extras.
 
 If the file is not found, you will get a dictionary like:
 
@@ -56,47 +119,53 @@ If the file is not found, you will get a dictionary like:
 
 *Parameters*: `list`, a comma-separated list of hashes.
 
-*Returns*: an array of file objects.
+*Returns*: an array of objects. Please see Appendix A for reference objects for each possible type.
 
     GET /api/info?list=tVWMM_ziA3nm,CPvuR5lRhmS0
 
     {
       "CPvuR5lRhmS0": {
-        "compression": 8.93, 
+        "compression": 8.93,
         "files": [
           {
-            "file": "/CPvuR5lRhmS0.mp4", 
+            "file": "/CPvuR5lRhmS0.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/CPvuR5lRhmS0.ogv", 
+            "file": "/CPvuR5lRhmS0.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/CPvuR5lRhmS0.gif", 
+            "file": "/CPvuR5lRhmS0.gif",
             "type": "image/gif"
           }
-        ], 
-        "original": "/CPvuR5lRhmS0.gif", 
-        "type": "image/gif"
-      }, 
+        ],
+        "extras": [
+        ],
+        "original": "/CPvuR5lRhmS0.gif",
+        "hash": "CPvuR5lRhmS0",
+        "type": "image/gif",
+      },
       "tVWMM_ziA3nm": {
-        "compression": 17.99, 
+        "compression": 17.99,
         "files": [
           {
-            "file": "/tVWMM_ziA3nm.mp4", 
+            "file": "/tVWMM_ziA3nm.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/tVWMM_ziA3nm.ogv", 
+            "file": "/tVWMM_ziA3nm.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/tVWMM_ziA3nm.gif", 
+            "file": "/tVWMM_ziA3nm.gif",
             "type": "image/gif"
           }
-        ], 
-        "original": "/tVWMM_ziA3nm.gif", 
+        ],
+        "extras": [
+        ],
+        "original": "/tVWMM_ziA3nm.gif",
+        "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
       }
     }
@@ -113,55 +182,8 @@ If the file is not found, you will get a dictionary like:
       "exists": true
     }
 
-## File manipulation endpoints
 
-### /api/&lt;hash&gt;/delete
-
-*Parameters*: none.
-
-*Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
-
-    GET /api/CPvuR5lRhmS0/delete
-
-    {
-      "status": "success"
-    }
-
-If the request is unsuccessful, you will get a response like:
-
-    GET /api/CPvuR5lRhmS0/delete
-
-    {
-      "error": 401
-    }
-
-
-*Return codes*:
-
-<table>
-    <tr>
-        <th>HTTP code</th>
-        <th>Meaning</th>
-        <th>Success</th>
-    </tr>
-    <tr>
-        <td>200</td>
-        <td>The IP matches the stored hash and the file was deleted.</td>
-        <td>true</td>
-    </tr>
-    <tr>
-        <td>401</td>
-        <td>The IP does not match the stored hash.</td>
-        <td>false</td>
-    </tr>
-    <tr>
-        <td>404</td>
-        <td>There is no file with that hash.</td>
-        <td>false</td>
-    </tr>
-</table>
-
-## /api/&lt;hash&gt;/status
+### /api/&lt;hash&gt;/status
 
 *Parameters*: none.
 
@@ -173,27 +195,30 @@ If the request is unsuccessful, you will get a response like:
       "status": "done",
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 8.93, 
+        "compression": 8.93,
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.mp4", 
+            "file": "/LxqXxVPAvqqB.mp4",
             "type": "video/mp4"
-          }, 
+          },
           {
-            "file": "/LxqXxVPAvqqB.ogv", 
+            "file": "/LxqXxVPAvqqB.ogv",
             "type": "video/ogg"
-          }, 
+          },
           {
-            "file": "/LxqXxVPAvqqB.gif", 
+            "file": "/LxqXxVPAvqqB.gif",
             "type": "image/gif"
           }
-        ], 
-        "original": "/LxqXxVPAvqqB.gif", 
+        ],
+        "extras": [
+        ],
+        "original": "/LxqXxVPAvqqB.gif",
+        "hash": "LxqXxVPAvqqB",
         "type": "image/gif"
       }
     }
 
-*Return codes*: 
+*Return codes*:
 
 <table>
     <tr>
@@ -211,6 +236,11 @@ If the request is unsuccessful, you will get a response like:
     <tr>
         <td>404</td>
         <td>There is no file with that hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>The data type associated with this hash does not accept processing.</td>
         <td>false</td>
     </tr>
 </table>
@@ -243,8 +273,56 @@ If the request is unsuccessful, you will get a response like:
 *Notes:*
 
 The "result" object will only be included if the status is "done".
-   
-## /api/upload/file
+
+## Hash manipulation endpoints
+
+### /api/&lt;hash&gt;/delete
+
+*Parameters*: none.
+
+*Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "status": "success"
+    }
+
+If the request is unsuccessful, you will get a response like:
+
+    GET /api/CPvuR5lRhmS0/delete
+
+    {
+      "error": 401
+    }
+
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the file (if applicable) was deleted.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no such hash.</td>
+        <td>false</td>
+    </tr>
+</table>
+
+### /api/upload/file
 
 *Parameters*: `file`, the file to upload.
 
@@ -264,14 +342,17 @@ In case of error, the response will contain an 'error' parameter and additional 
       "error": 409,
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
-        "compression": 0.0, 
+        "compression": 0.0,
         "files": [
           {
-            "file": "/LxqXxVPAvqqB.png", 
+            "file": "/LxqXxVPAvqqB.png",
             "type": "image/png"
           }
-        ], 
-        "original": "/LxqXxVPAvqqB.png", 
+        ],
+        "extras": [
+        ],
+        "original": "/LxqXxVPAvqqB.png",
+        "hash": "LxqXxVPAvqqB",
         "type": "image/png"
       }
     }
@@ -306,7 +387,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
 </table>
 
-## /api/upload/url
+### /api/upload/url
 
 *Parameters*: `url`, the URL from where to fetch the file to upload.
 
@@ -351,3 +432,82 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>false</td>
     </tr>
 </table>
+
+# Appendix A
+
+## Example objects
+
+### File
+
+    {
+      "compression": 8.93,
+      "files": [
+        {
+          "file": "/CPvuR5lRhmS0.mp4",
+          "type": "video/mp4"
+        },
+        {
+          "file": "/CPvuR5lRhmS0.ogv",
+          "type": "video/ogg"
+        },
+        {
+          "file": "/CPvuR5lRhmS0.gif",
+          "type": "image/gif"
+        }
+      ],
+      "extras": [
+      ],
+      "original": "/CPvuR5lRhmS0.gif",
+      "hash": "CPvuR5lRhmS0",
+      "type": "image/gif"
+    }
+
+When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
+files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
+will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
+file in the extras.
+
+### Album
+
+    {
+      "files": [
+        {
+          "compression": 0.0,
+          "extras": [],
+          "files": [
+            {
+              "file": "/yOEHB2vDiWS-.jpe",
+              "type": "image/jpeg"
+            }
+          ],
+          "original": "/yOEHB2vDiWS-.jpe",
+          "type": "image/jpeg"
+        },
+        {
+          "compression": 0.0,
+          "extras": [],
+          "files": [
+            {
+              "file": "/vLGcgr9eXhsH.jpe",
+              "type": "image/jpeg"
+            }
+          ],
+          "original": "/vLGcgr9eXhsH.jpe",
+          "type": "image/jpeg"
+        },
+        {
+          "compression": 0.0,
+          "extras": [],
+          "files": [
+            {
+              "file": "/uEKCcQyLVci7.jpe",
+              "type": "image/jpeg"
+            }
+          ],
+          "original": "/uEKCcQyLVci7.jpe",
+          "type": "image/jpeg"
+        }
+      ],
+      "hash": "6ecd2bbd34ec",
+      "type": "application/album"
+    }

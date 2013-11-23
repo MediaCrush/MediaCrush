@@ -9,6 +9,9 @@
 .video video {
     max-width: 1000px;
 }
+.fullscreen.video video {
+    max-width: none;
+}
 .fullscreen.video {
     position: fixed;
     left: 0;
@@ -54,15 +57,15 @@
 .fullscreen.video .controls {
     bottom: 0;
 }
-.controls .pull-left {
+.video .controls .pull-left {
     float: left;
     width: 80px;
 }
-.controls .pull-right {
+.video .controls .pull-right {
     float: right;
     width: 155px;
 }
-.controls .time {
+.video .controls .time {
     position: relative;
     top: -9px;
     font-weight: bold;
@@ -120,35 +123,36 @@
     opacity: 0.8;
     border-radius: 10px;
     text-decoration: none;
-    background: url('/static/repeat.png') no-repeat 16px 24px #333;
+    background: url('/static/repeat-dim.png') no-repeat 16px 24px #333;
     transition: box-shadow 0.3s linear;
 }
 .video .side .loop.enabled {
+    background: url('/static/repeat.png') no-repeat 16px 24px #333;
     box-shadow: 0 0 5px 5px #fff;
     color: #fff;
 }
-.control {
+.video .control {
     width: 32px;
     height: 32px;
     background: url('/static/controls.png') 0 0 transparent no-repeat;
     display: inline-block;
 }
-.control.pause {
+.video .control.pause {
     background-position: -32px 0;
 }
-.control.mute {
+.video .control.mute {
     background-position: -64px 0;
 }
-.control.unmute {
+.video .control.unmute {
     background-position: -96px 0;
 }
-.control.full {
+.video .control.full {
     background-position: -160px 0;
 }
-.control.window {
+.video .control.window {
     background-position: -128px 0;
 }
-.volume {
+.video .volume {
     display: inline-block;
     width: 80px;
     height: 16px;
@@ -157,12 +161,12 @@
     background: #444;
     cursor: pointer;
 }
-.volume .amount {
+.video .volume .amount {
     background: #fff;
     height: 100%;
     pointer-events: none;
 }
-.control.play.large {
+.video .control.play.large {
     background: none;
     position: absolute;
     left: 0;
@@ -172,10 +176,10 @@
     width: 100%;
     height: 100%;
 }
-.control.play.large.hidden {
+.video .control.play.large.hidden {
     display: none;
 }
-.control.play.large img {
+.video .control.play.large img {
     display: block;
     position: absolute;
     top: 50%;
@@ -209,4 +213,17 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+.nobrand h1.brand {
+    display: none;
+}
+.video .downloads {
+    position: absolute;
+    bottom: 45px;
+    right: 3px;
+}
+.video .downloads a {
+    color: #fff;
+    text-shadow: 1px 1px 5px #666, 1px 1px 5px #666, 1px 1px 5px #666;
+    text-decoration: underline;
 }

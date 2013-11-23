@@ -1,18 +1,34 @@
+// This is checked on the server, too, but we check it locally to prevent excess
+// bandwidth consumption
+var supportedMimetypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/svg+xml',
+    'video/mp4',
+    'video/ogg',
+    'audio/mp3',
+    'audio/ogg',
+    'audio/mpeg'
+];
+
 function browse() {
     var file = document.getElementById('browse');
     file.click();
 }
 
-var firstUpload = true;
+var totalUploads = 0;
 var uploads = 0;
+var files = [];
+var albumAssociated = false;
 
 function uploadUrl(url) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     droparea.className = 'files';
-    if (firstUpload) {
+    if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        firstUpload = false;
+        totalUploads++;
     }
     var preview = createPreview({ type: 'image/png', name: url }, url); // Note: we only allow uploading images by URL, not AV
     var p = document.createElement('p');
@@ -20,6 +36,7 @@ function uploadUrl(url) {
     preview.fileStatus.appendChild(p);
     preview.progress.style.width = '100%';
     uploads++;
+    updateAlbum();
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/upload/url');
     xhr.onload = function() {
@@ -28,6 +45,7 @@ function uploadUrl(url) {
             p.textContent = 'Processing... (this may take a while)';
             preview.fileStatus.appendChild(p);
             hash = responseJSON['hash'];
+            files.push(hash);
             preview.progress.className += ' progress-green';
             preview.progress.style.width = '100%';
             setTimeout(function() {
@@ -49,13 +67,17 @@ function handleFiles(files) {
     var droparea = document.getElementById('droparea');
     droparea.style.overflowY = 'scroll';
     droparea.className = 'files';
-    if (firstUpload) {
+    if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        firstUpload = false;
+    }
+    totalUploads += files.length;
+    if (totalUploads > 1) {
+        document.getElementById('createAlbum').className = '';
     }
     var timeout = 500;
     for (var i = 0; i < files.length; i++) {
         uploads++;
+        updateAlbum();
         if (i == 0)
             handleFile(files[i]);
         else {
@@ -69,22 +91,74 @@ function handleFiles(files) {
     }
 }
 
+function createAlbum(e) {
+    e.preventDefault();
+    if (albumAssociated) {
+        updateAlbum();
+        return;
+    }
+    albumAssociated = true;
+    document.getElementById('createAlbum').className = 'hidden';
+    document.getElementById('albumPending').classList.remove('hidden');
+    updateAlbum();
+}
+
+function updateAlbum() {
+    if (!albumAssociated) return;
+    if (files.length <= 1) {
+        document.getElementById('createAlbum').classList.add('hidden');
+        document.getElementById('albumPending').classList.add('hidden');
+        document.getElementById('albumUrl').parentElement.classList.add('hidden');
+    }
+    if (uploads > 0) {
+        document.getElementById('createAlbum').classList.remove('hidden');
+        document.getElementById('albumPending').classList.remove('hidden');
+        document.getElementById('albumUrl').parentElement.classList.add('hidden');
+    } else {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/album/create');
+        xhr.onload = function() {
+            if (this.status != 200) {
+                document.getElementById('albumPending').textContent = 'An error occured creating this album. ';
+                var create = document.getElementById('createAlbum');
+                create.textContent = 'Try again';
+                create.classList.remove('hidden');
+                return;
+            }
+            var data = JSON.parse(this.responseText);
+            document.getElementById('createAlbum').className = 'hidden';
+            document.getElementById('albumPending').classList.add('hidden');
+            var url = document.getElementById('albumUrl');
+            url.textContent = window.location.origin + '/' + data.hash;
+            url.href = window.location.origin + '/' + data.hash;
+            url.parentElement.classList.remove('hidden');
+            addItemToHistory(data.hash);
+        };
+        var form = new FormData();
+        form.append('list', files.join(','));
+        xhr.send(form);
+    }
+}
+
 function handleFile(file) {
     var reader = new FileReader();
     var droparea = document.getElementById('droparea');
     reader.onloadend = function(e) {
         var data = e.target.result;
-        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-').replace('/', '_');
         var preview = createPreview(file);
+        var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-', 'g').replace('/', '_', 'g');
         if (!preview.supported) {
             var error = document.createElement('span');
             error.className = 'error';
             error.textContent = 'This filetype is not supported.';
             preview.fileStatus.appendChild(error);
+            files.remove(files.indexOf(hash));
+            updateAlbum();
         } else {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/api/' + hash + '/exists');
             xhr.onload = function() {
+                files.push(hash);
                 if (this.status == 200) {
                     var p = document.createElement('p');
                     p.textContent = 'Upload complete!';
@@ -96,10 +170,11 @@ function handleFile(file) {
                     a2.setAttribute('target', '_blank');
                     a2.href = '/' + hash;
                     a2.className = 'full-size';
-                    preview.fileStatus.appendChild(a2);
                     preview.fileStatus.appendChild(p);
                     preview.fileStatus.appendChild(a);
+                    preview.fileStatus.parentElement.appendChild(a2);
                     uploads--;
+                    updateAlbum();
                     addItemToHistory(hash);
                 } else {
                     var p = document.createElement('p');
@@ -151,6 +226,8 @@ function uploadFile(file, hash, statusUI, progressUI) {
             errorText.textContent = error;
             statusUI.appendChild(errorText);
             progressUI.style.width = 0;
+            files.remove(files.indexOf(hash));
+            updateAlbum();
         }
     };
     var formData = new FormData();
@@ -166,6 +243,7 @@ function checkStatus(hash, statusUI, progressUI) {
         if (responseJSON['status'] == 'done') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
+            updateAlbum();
         } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
@@ -177,7 +255,9 @@ function checkStatus(hash, statusUI, progressUI) {
                 error.textContent = 'There was an error processing this file.';
             }
             statusUI.appendChild(error);
+            files.remove(files.indexOf(hash));
             uploads--;
+            updateAlbum();
         } else {
             setTimeout(function() {
                 checkStatus(hash, statusUI, progressUI);
@@ -200,38 +280,41 @@ function finish(statusUI, hash) {
     deleteLink.className = 'delete';
     deleteLink.onclick = function(e) {
         e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/' + hash + '/delete');
-        xhr.send();
-        var container = statusUI.parentElement;
-        container.parentElement.removeChild(container);
-        var hashIndex = -1;
-        for (var i = 0; i < history.length; i++) {
-            if (history[i] == hash) {
-                hashIndex = i;
-                break;
+        confirm(function(a) {
+            if (!a) return;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/' + hash + '/delete');
+            files.remove(files.indexOf(hash));
+            xhr.send();
+            var container = statusUI.parentElement;
+            container.parentElement.removeChild(container);
+            var hashIndex = -1;
+            for (var i = 0; i < history.length; i++) {
+                if (history[i] == hash) {
+                    hashIndex = i;
+                    break;
+                }
             }
-        }
-        if (history) {
-            history.remove(hashIndex);
-            window.localStorage.setItem('history', JSON.stringify(history));
-        }
+            if (history) {
+                history.remove(hashIndex);
+                window.localStorage.setItem('history', JSON.stringify(history));
+            }
+        });
     };
     var a2 = document.createElement('a');
     a2.setAttribute('target', '_blank');
     a2.href = '/' + hash;
     a2.className = 'full-size';
     statusUI.innerHTML = '';
-    statusUI.appendChild(a2);
     statusUI.appendChild(p);
-    statusUI.appendChild(deleteLink);
     statusUI.appendChild(a);
+    statusUI.parentElement.appendChild(a2);
+    statusUI.parentElement.appendChild(deleteLink);
     uploads--;
     addItemToHistory(hash);
 }
 
 function createPreview(file) {
-    var supported = false;
     var container = document.createElement('div');
     container.className = 'image-loading';
     var wrapper = document.createElement('div');
@@ -244,16 +327,14 @@ function createPreview(file) {
     }
 
     var preview = null;
+    var supported = supportedMimetypes.contains(file.type);
     if (file.type.indexOf('image/') == 0) {
-        supported = true;
         preview = document.createElement('img');
         preview.src = uri;
     } else if (file.type.indexOf('audio/') == 0) {
-        supported = true;
         preview = document.createElement('img');
         preview.src = '/static/audio.png';
     } else if (file.type.indexOf('video/') == 0) {
-        supported = true;
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         var source = document.createElement('source');
@@ -267,14 +348,18 @@ function createPreview(file) {
     var name = document.createElement('h2');
     name.textContent = file.name;
     var fileStatus = document.createElement('div');
+    fileStatus.className = 'status';
     var progress = document.createElement('div');
     progress.className = 'progress';
     progress.style.width = 0;
+    var responsiveFade = document.createElement('div');
+    responsiveFade.className = 'responsive-fade';
 
     if (preview !== null) {
         wrapper.appendChild(preview);
     }
     container.appendChild(wrapper);
+    container.appendChild(responsiveFade);
     container.appendChild(name);
     container.appendChild(fileStatus);
     container.appendChild(progress);
@@ -330,11 +415,16 @@ function dropEnable() {
         e.preventDefault();
         browse();
     }, false);
-
+    var create = document.getElementById('createAlbum');
+    create.addEventListener('click', createAlbum, false);
     setTimeout(handleHistory, 50);
 }
 
 function forceFocus() {
+    if (document.activeElement.tagName == 'TEXTAREA' || document.activeElement.tagName == 'INPUT') {
+        setTimeout(forceFocus, 250);
+        return;
+    }
     var pasteTarget = document.getElementById('paste-target');
     pasteTarget.focus();
     setTimeout(forceFocus, 250);
@@ -353,7 +443,10 @@ function handleHistory() {
         historyElement.classList.remove('hidden');
         blurb.classList.add('hidden');
     }
-    var items = history.slice(history.length - 4).reverse();
+    var slice = history.length - 4;
+    if (slice < 0)
+        slice = 0;
+    var items = history.slice(slice).reverse();
     var historyList = historyElement.querySelectorAll('ul')[0];
     loadDetailedHistory(items, function(result) {
         for (var i = 0; i < items.length; i++) {
@@ -369,12 +462,18 @@ function handleHistory() {
 
 function createHistoryItem(data) {
     var item = data.item;
-    var container = document.createElement('li');
+    var container = null;
+    if (data.base)
+        container = document.createElement(data.base);
+    else
+        container = document.createElement('li');
     var preview = null;
     if (item.type == 'image/gif' || item.type.indexOf('video/') == 0) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         for (var i = 0; i < item.files.length; i++) {
+            if (item.files[i].type == 'image/gif')
+                continue;
             var source = document.createElement('source');
             source.setAttribute('src', item.files[i].file);
             source.setAttribute('type', item.files[i].type);
@@ -393,19 +492,27 @@ function createHistoryItem(data) {
         preview.src = item.original;
         preview.className = 'item-view';
     } else if (item.type.indexOf('audio/') == 0) {
-        preview = document.createElement('audio');
-        preview.setAttribute('controls', 'controls');
-        for (var i = 0; i < item.files.length; i++) {
-            var source = document.createElement('source');
-            source.setAttribute('src', item.files[i].file);
-            source.setAttribute('type', item.files[i].type);
-            preview.appendChild(source);
+        preview = document.createElement('img');
+        preview.src = '/static/audio-player-narrow.png';
+        preview.className = 'item-view';
+    } else if (item.type == 'application/album') {
+        preview = document.createElement('div');
+        preview.className = 'album-preview';
+        for (var i = 0; i < item.files.length && i < 3; i++) {
+            preview.appendChild(createHistoryItem({ item: item.files[i], hash: item.files[i].hash, nolink: true, base: 'div' }));
         }
+    } else {
+        return container;
     }
-    var a = document.createElement('a');
-    a.href = '/' + data.hash;
-    a.appendChild(preview);
-    container.appendChild(a);
+    if (!data.nolink) {
+        var a = document.createElement('a');
+        a.href = '/' + data.hash;
+        a.target = '_blank';
+        a.appendChild(preview);
+        container.appendChild(a);
+    } else {
+        container.appendChild(preview);
+    }
     return container;
 }
 
@@ -472,7 +579,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab],{type:'image/png'});
 }
 
-window.onload = dropEnable;
+window.addEventListener('load', dropEnable, false);
 window.onbeforeunload = function() {
     if (uploads != 0) {
         return "If you leave the page, these uploads will be cancelled.";
