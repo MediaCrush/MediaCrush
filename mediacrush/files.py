@@ -188,7 +188,13 @@ def upload(f, filename):
         path = file_storage(filename)
 
         if os.path.exists(path):
-            return identifier, 409
+            if File.exists(identifier):
+                return identifier, 409
+            else:
+                # Delete residual files from storage by creating a dummy File
+                dummy = File(original=filename)
+                dummy.delete = lambda: pass # nop
+                delete_file(dummy)
 
         f.seek(0)  # Otherwise it'll write a 0-byte file
         f.save(path)
