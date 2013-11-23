@@ -2,6 +2,7 @@
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album-embed.css') }}?version=2" />
 {% endblock %}
+{% block dark_theme %}{# Dark theme is disabled for embedded albums #}{% endblock %}
 {% block content %}
 <h1 class="brand pull-left">
     <a href="/{{ filename }}" target="_blank">
