@@ -84,3 +84,9 @@ run it with gunicorn, and probably behind an nginx proxy
 [like we do](https://github.com/MediaCrush/MediaCrush/blob/master/config/nginx.conf).
 
     gunicorn -w 4 app:app
+
+## Tests
+
+To run the unit tests, simply execute `python tests.py`.
+
+Note: do **not** execute the test script on a live instance - it clears the storage and database.

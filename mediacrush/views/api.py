@@ -87,7 +87,7 @@ class APIView(FlaskView):
 
         for i in items:
             klass = RedisObject.klass(i)
-            if klass == False: # Does not exist
+            if not klass: # Does not exist
                 return {'error': 404}, 404
             if klass != File: # Wrong type
                 return {'error': 415}, 415
