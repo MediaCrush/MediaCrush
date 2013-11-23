@@ -10,8 +10,11 @@ function toggleHistory() {
 }
 
 function clearHistoryAndReload() {
-    clearHistory();
-    window.location = "/mine";
+    confirm(function(a) {
+        if (!a) return;
+        clearHistory();
+        window.location = "/mine";
+    });
 }
 
 var items = {};
@@ -127,10 +130,13 @@ function createView(data) {
         forget.href = '/forget/' + data.hash;
         forget.onclick = function(e) {
             e.preventDefault();
-            removeItemFromHistory(data.hash);
-            container.parentElement.removeChild(container);
-            createPagination();
-            loadCurrentPage();
+            confirm(function(a) {
+                if (!a) return;
+                removeItemFromHistory(data.hash);
+                container.parentElement.removeChild(container);
+                createPagination();
+                loadCurrentPage();
+            });
         };
         container.appendChild(forget);
         return container;
@@ -189,11 +195,14 @@ function createView(data) {
         deleteLink.href = '/delete/' + data.hash;
         deleteLink.onclick = function(e) {
             e.preventDefault();
-            removeItemFromHistory(data.hash);
-            container2.parentElement.removeChild(container2);
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/' + data.hash + '/delete');
-            xhr.send();
+            confirm(function(a) {
+                if (!a) return;
+                removeItemFromHistory(data.hash);
+                container2.parentElement.removeChild(container2);
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/' + data.hash + '/delete');
+                xhr.send();
+            });
         };
         deleteLink.title = 'Delete this item from the MediaCrush server';
         bar.appendChild(deleteLink);

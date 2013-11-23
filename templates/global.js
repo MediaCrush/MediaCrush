@@ -97,4 +97,21 @@ window.addEventListener('load', function() {
             xhr.send(formData);
         }, false);
     }
+    var dialogYes = document.querySelector('.dialog .yes');
+    var dialogNo = document.querySelector('.dialog .no');
+    dialogYes.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirmCallback) confirmCallback(true);
+        document.querySelector('.dialog').classList.add('hidden');
+    }, false);
+    dialogNo.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirmCallback) confirmCallback(false);
+        document.querySelector('.dialog').classList.add('hidden');
+    }, false);
 }, false);
+var confirmCallback;
+function confirm(callback) {
+    confirmCallback = callback;
+    document.querySelector('.dialog').classList.remove('hidden');
+}

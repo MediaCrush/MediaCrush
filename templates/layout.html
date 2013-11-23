@@ -65,5 +65,17 @@
         {% block analytics %}
         {% include "analytics.html" %}
         {% endblock %}
+        {% block confirmation_dialog %}
+        <div class="dialog hidden">
+            <div>
+                <h2>Are you sure?</h2>
+                <p>This action cannot be undone.</p>
+                <div class="buttons">
+                    <button class="yes">Yes</button>
+                    <button class="no">No</button>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
     </body>
 </html>

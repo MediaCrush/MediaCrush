@@ -36,7 +36,7 @@ function removeItemFromHistory(hash) {
     saveHistory();
 }
 function loadDetailedHistory(items, callback) {
-    if (items.length == 0) return;
+    if (items.length == 0) callback([]);
     var hashes = items.join(',');
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/info?list=' + hashes);

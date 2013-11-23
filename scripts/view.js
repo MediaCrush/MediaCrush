@@ -53,14 +53,17 @@ window.addEventListener('load', function() {
     }
     document.getElementById('delete').addEventListener('click', function(e) {
         e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/' + window.filename + '/delete');
-        xhr.send();
-        document.getElementById('delete').parentElement.innerHTML = 'Deleted';
-        if (history) {
-            history.remove(hashIndex);
-            window.localStorage.setItem('history', JSON.stringify(history));
-        }
+        confirm(function(a) {
+            if (!a) return;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/' + window.filename + '/delete');
+            xhr.send();
+            document.getElementById('delete').parentElement.innerHTML = 'Deleted';
+            if (history) {
+                history.remove(hashIndex);
+                window.localStorage.setItem('history', JSON.stringify(history));
+            }
+        });
     }, false);
     var hash = window.location.hash;
     if (hash.length > 1) {

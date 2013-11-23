@@ -259,23 +259,26 @@ function finish(statusUI, hash) {
     deleteLink.className = 'delete';
     deleteLink.onclick = function(e) {
         e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/' + hash + '/delete');
-        files.remove(files.indexOf(hash));
-        xhr.send();
-        var container = statusUI.parentElement;
-        container.parentElement.removeChild(container);
-        var hashIndex = -1;
-        for (var i = 0; i < history.length; i++) {
-            if (history[i] == hash) {
-                hashIndex = i;
-                break;
+        confirm(function(a) {
+            if (!a) return;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/api/' + hash + '/delete');
+            files.remove(files.indexOf(hash));
+            xhr.send();
+            var container = statusUI.parentElement;
+            container.parentElement.removeChild(container);
+            var hashIndex = -1;
+            for (var i = 0; i < history.length; i++) {
+                if (history[i] == hash) {
+                    hashIndex = i;
+                    break;
+                }
             }
-        }
-        if (history) {
-            history.remove(hashIndex);
-            window.localStorage.setItem('history', JSON.stringify(history));
-        }
+            if (history) {
+                history.remove(hashIndex);
+                window.localStorage.setItem('history', JSON.stringify(history));
+            }
+        });
     };
     var a2 = document.createElement('a');
     a2.setAttribute('target', '_blank');
