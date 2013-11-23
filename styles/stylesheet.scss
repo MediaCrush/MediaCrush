@@ -77,6 +77,59 @@ ul.inline {
     }
 }
 
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(50, 50, 50, 0.75);
+
+    & > div {
+        width: 500px;
+        height: 150px;
+        top: 50%;
+        position: relative;
+        background: #fff;
+        margin: -75px auto 0 auto;
+        padding: 5px;
+
+        h2 {
+            margin: 0;
+        }
+
+        .buttons {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+
+            button {
+                color: #fff;
+                border: none;
+                width: 75px;
+                height: 30px;
+                cursor: pointer;
+
+                &.yes {
+                    background: #0C0;
+
+                    &:hover {
+                        background: #090;
+                    }
+                }
+
+                &.no {
+                    background: #C00;
+
+                    &:hover {
+                        background: #900;
+                    }
+                }
+            }
+        }
+    }
+}
+
 a {
     font-weight: bold;
     color: #08c;
