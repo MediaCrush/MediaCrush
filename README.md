@@ -6,6 +6,8 @@ A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpw
 
 https://mediacru.sh
 
+[![Build Status](https://travis-ci.org/MediaCrush/MediaCrush.png)](https://travis-ci.org/MediaCrush/MediaCrush)
+
 What is this? It's a website you can upload images, audio, and video to, and receive a link to share it with your
 friends. This readme documents contributor guidelines and installation instructions. For information on the official
 MediaCrush instance, see https://mediacru.sh/about
