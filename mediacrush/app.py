@@ -74,7 +74,7 @@ def find_dnt():
 
 @app.before_request
 def jinja_template_loader():
-    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad']
+    mobile = request.user_agent.platform in ['android', 'iphone', 'ipad'] or 'windows phone' in request.user_agent.string.lower()
     g.mobile = mobile
     if mobile:
         app.jinja_loader = ChoiceLoader([
