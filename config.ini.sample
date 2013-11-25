@@ -17,6 +17,7 @@ debug-host = 0.0.0.0
 debug-port = 5000
 
 # storage_folder is the location on disk where uploaded files should be saved.
+# If you have problems, you might want to use an absolute path here
 storage_folder = storage
 # This value is currently ignored, and each supported mimetype has its own timing rules.
 max_processing_time = 60
