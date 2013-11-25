@@ -76,6 +76,22 @@ def _template_params(f):
         'types': types
     }
 
+def _album_params(album):
+    items = album.items
+    if not items:
+        abort(404)
+
+    types = set([get_mimetype(f.original) for f in items])
+
+    can_delete = None
+    try:
+        if request.cookies.get('hist-opt-out', '0') == '1':
+            can_delete = check_password_hash(f.ip, get_ip())
+    except:
+        pass
+
+    return vars()
+
 def render_media(f, album=False):
     params = _template_params(f)
     params['album'] = album
@@ -83,6 +99,15 @@ def render_media(f, album=False):
 
 class MediaView(FlaskView):
     route_base = '/'
+
+    def _send_file(self, id):
+        if ".." in id or id.startswith("/"):
+            abort(403)
+
+        if "." in id:
+            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
+                path = os.path.join(_cfg("storage_folder"), id)
+                return send_file(path, as_attachment=True)
 
     @route("/<id>/download")
     def download(self, id):
@@ -92,29 +117,16 @@ class MediaView(FlaskView):
            return send_file(path, as_attachment=True)
         return self.get(id)
 
-
     def get(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(403)
-
-        if "." in id:
-            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
-                path = os.path.join(_cfg("storage_folder"), id)
-                return send_file(path, as_attachment=True)
+        send = self._send_file(id)
+        if send:
+            return send
 
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)
-            items = [File.from_hash(h) for h in album.items]
-            types = set([get_mimetype(f.original) for f in items])
-            can_delete = None
-            try:
-                if request.cookies.get('hist-opt-out', '0') == '1':
-                    can_delete = check_password_hash(f.ip, get_ip())
-            except:
-                pass
-
-            return render_template("album.html", items=items, types=types, filename=id, can_delete=can_delete)
+            v = _album_params(album)
+            return render_template("album.html", **v)
 
         if klass is not File:
             abort(404)
@@ -129,21 +141,15 @@ class MediaView(FlaskView):
 
     @route("/<id>/direct")
     def direct(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(403)
-
-        if "." in id:
-            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
-                path = os.path.join(_cfg("storage_folder"), id)
-                return send_file(path, as_attachment=True)
+        send = self._send_file(id)
+        if send:
+            return send
 
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)
-            items = [File.from_hash(h) for h in album.items]
-            types = set([get_mimetype(f.original) for f in items])
-
-            return render_template("album.html", items=items, types=types)
+            v = _album_params(album)
+            return render_template("album.html", **v)
 
         if klass is not File:
             abort(404)
@@ -154,21 +160,16 @@ class MediaView(FlaskView):
 
     @route("/<id>/frame")
     def frame(self, id):
-        if ".." in id or id.startswith("/"):
-            abort(403)
-
-        if "." in id:
-            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
-                path = os.path.join(_cfg("storage_folder"), id)
-                return send_file(path, as_attachment=True)
+        send = self._send_file(id)
+        if send:
+            return send
 
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)
-            items = [File.from_hash(h) for h in album.items]
-            types = set([get_mimetype(f.original) for f in items])
-
-            return render_template("album-embedded.html", items=items, types=types, filename=id, embedded=True)
+            v = _album_params(album)
+            v['embedded'] = True
+            return render_template("album-embedded.html", **v)
 
         if klass is not File:
             abort(404)

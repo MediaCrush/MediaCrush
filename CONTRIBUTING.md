@@ -19,6 +19,7 @@ Follow these guidelines to contribute to MediaCrush.
 * Add documentation for things that seem odd to you
 * Install a copy of MediaCrush locally
 * Test changes (especially ones to the backend) on your local copy
+* Add unit tests
 
 ### DON'T
 
