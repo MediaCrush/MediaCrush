@@ -45,8 +45,7 @@ def _album_object(a):
         'files': [],
     }
 
-    for h in a.items:
-        f = File.from_hash(h)
+    for f in a.items:
         ret['files'].append(_file_object(f))
 
     return ret

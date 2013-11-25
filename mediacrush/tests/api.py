@@ -49,6 +49,17 @@ class AlbumTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("hash", json.loads(response.data))
 
+    def test_album_content(self):
+        h = [
+           self._get_hash('cat.png'),
+           self._get_hash('cat2.jpg')
+        ]
+
+        h = json.loads(self._create_album(h).data)["hash"]
+
+        response = self.client.get("/api/%s" % h)
+        self.assertEqual(response.status_code, 200)
+
     def test_create_album_bad_hash(self):
         h = [
             self._get_hash('cat.png'),
