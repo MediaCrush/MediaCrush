@@ -78,6 +78,9 @@ def _template_params(f):
 
 def _album_params(album):
     items = album.items
+    if not items:
+        abort(404)
+
     types = set([get_mimetype(f.original) for f in items])
 
     can_delete = None

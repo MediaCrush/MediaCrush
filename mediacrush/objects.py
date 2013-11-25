@@ -120,8 +120,12 @@ class Album(RedisObject):
                 files.append(v)
 
         if deleted:
-            self.items = items - deleted
-            self.save()
+            new_items = items - deleted
+            if len(new_items) == 0:
+                self.delete()
+            else:
+                self.items = new_items
+                self.save()
 
         return files
 

@@ -45,6 +45,9 @@ def _album_object(a):
         'files': [],
     }
 
+    if not a.items:
+        return {'error': 404}, 404
+
     for f in a.items:
         ret['files'].append(_file_object(f))
 
