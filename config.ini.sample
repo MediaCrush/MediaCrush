@@ -29,7 +29,7 @@ max_processing_time = 60
 # The site will `git pull` and then execute restart_command
 hook_ips = 204.232.175.64/27,192.30.252.0/22,127.0.0.1
 hook_branch = master
-hook_repository = GifQuick/GifQuick
+hook_repository = MediaCrush/MediaCrush
 restart_command = supervisorctl reload
 
 redis-ip = 127.0.0.1
