@@ -50,7 +50,13 @@ class RedisObject(object):
         if cls == RedisObject:
             cls = RedisObject.klass(hash)
 
+        if not cls:
+            return None
+
         obj = r.hgetall(cls.get_key(hash))
+        if not obj:
+            return None
+
         obj['hash'] = hash
 
         return cls(**obj)
@@ -102,7 +108,26 @@ class Album(RedisObject):
 
     @property
     def items(self):
-        return self._items.split(",")
+        files = []
+        items = set(self._items.split(","))
+        deleted = set()
+
+        for h in items:
+            v = File.from_hash(h)
+            if not v:
+                deleted.add(h)
+            else:
+                files.append(v)
+
+        if deleted:
+            new_items = items - deleted
+            if len(new_items) == 0:
+                self.delete()
+            else:
+                self.items = new_items
+                self.save()
+
+        return files
 
     @items.setter
     def items(self, l):
