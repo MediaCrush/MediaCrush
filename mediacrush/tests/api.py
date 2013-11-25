@@ -84,6 +84,19 @@ class AlbumTestCase(APITestCase):
         self.assertEqual(len(hashes), 1)
         self.assertEqual(hashes[0], h[1])
 
+    def test_album_empty(self):
+        h = [
+           self._get_hash('cat.png'),
+        ]
+
+        album = json.loads(self._create_album(h).data)["hash"]
+        self.client.get('/api/%s/delete' % h[0], environ_base={
+            'REMOTE_ADDR': '127.0.0.1'
+        })
+
+        response = self.client.get("/api/%s" % album)
+        self.assertEqual(response.status_code, 404)
+
     def test_create_album_bad_hash(self):
         h = [
             self._get_hash('cat.png'),
