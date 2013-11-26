@@ -6,6 +6,7 @@ import os
 import scss
 from shutil import rmtree, copyfile
 
+app.static_folder = os.path.join(os.getcwd(), "static")
 scss.config.LOAD_PATHS = [
     './styles/'
 ]
