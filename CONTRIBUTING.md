@@ -9,6 +9,8 @@ Thanks for offering your help! Here's how you contribute:
 After you submit a pull request, we will review it and suggest changes and improvements. Then, we'll merge it into
 our repository and the changes will immediately go live.
 
+The easiest way to find work to do is by looking at the [pr-wanted](https://github.com/MediaCrush/MediaCrush/issues?labels=pr-wanted&page=1&state=open) label.
+If you start working on something, comment on the issue so other contributors can know someone is already working on it.
 
 ## DOs and DON'Ts
 
