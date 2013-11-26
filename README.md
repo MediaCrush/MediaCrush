@@ -65,7 +65,7 @@ Note: you'll need to use Python 2. If Python 3 is your default python interprete
     cp config.ini.sample config.ini
 
 Review `config.ini` and change any details you like. The default place to store uploaded files is `./storage`,
-which you'll need to create (`mkdir storage`) if you don't change this in the config.
+which you'll need to create (`mkdir storage`) and set the `storage_folder` variable in the config to an absolute path to this folder.
 
 **Start the services**
 
