@@ -109,22 +109,22 @@ class Album(RedisObject):
     @property
     def items(self):
         files = []
-        items = set(self._items.split(","))
-        deleted = set()
+        items = self._items.split(",")
+        deleted = []
 
         for h in items:
             v = File.from_hash(h)
             if not v:
-                deleted.add(h)
+                deleted.append(h)
             else:
                 files.append(v)
 
-        if deleted:
-            new_items = items - deleted
+        if len(deleted):
+            new_items = items
             if len(new_items) == 0:
                 self.delete()
             else:
-                self.items = new_items
+                self.items = items
                 self.save()
 
         return files

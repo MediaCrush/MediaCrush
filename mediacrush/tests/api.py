@@ -97,6 +97,21 @@ class AlbumTestCase(APITestCase):
         response = self.client.get("/api/%s" % album)
         self.assertEqual(response.status_code, 404)
 
+    def test_album_order(self):
+        h = [
+            self._get_hash('cat.png'),
+            self._get_hash('cat2.jpg')
+        ]
+
+        album = json.loads(self._create_album(h).data)["hash"]
+
+        response = self.client.get("/api/%s" % album)
+        files = json.loads(response.data)['files']
+        hashes = [f['hash'] for f in files]
+
+        self.assertEqual(hashes[0], h[0])
+        self.assertEqual(hashes[1], h[1])
+
     def test_create_album_bad_hash(self):
         h = [
             self._get_hash('cat.png'),
