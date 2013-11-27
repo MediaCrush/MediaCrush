@@ -38,8 +38,8 @@ Here it is again, in more detail.
 
 Our servers run on Ubuntu, and you install the deps with `sudo apt-get install jhead redis-server tidy optipng`. The
 Ubuntu repos have a poor distribution of [ffmpeg](http://ffmpeg.org), so you'll need to build that from source. Our
-dev machines run Arch Linux: `sudo pacman -S redis jhead tidy optipng ffmpeg`. Make sure you enable libtheora,
-libvorbis, libx264, and libvpx when you build ffmpeg.
+dev machines run Arch Linux: `sudo pacman -S redis jhead tidyhtml optipng ffmpeg`. Make sure you enable libtheora,
+libvorbis, libx264, and libvpx when you build ffmpeg. If you're on Arch, you might want ffmpeg-full from the AUR.
 
 **Clone the repository**
 

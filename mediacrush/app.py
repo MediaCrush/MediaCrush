@@ -18,8 +18,8 @@ app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 
-notice_enabled = False
-notice_text = "Processing time is higher than usual due to heavy load."
+notice_enabled = True
+notice_text = "We're moving things around, site may be slow"
 
 @app.before_request
 def find_dnt():
