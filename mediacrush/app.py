@@ -18,7 +18,7 @@ app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 
-notice_enabled = True
+notice_enabled = False
 notice_text = "We're having some technical issues with GIF uploads."
 
 @app.before_request
