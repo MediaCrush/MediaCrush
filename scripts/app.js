@@ -350,6 +350,7 @@ function createPreview(file) {
 
     var name = document.createElement('h2');
     name.textContent = file.name;
+    name.setAttribute('title', file.name);
     var fileStatus = document.createElement('div');
     fileStatus.className = 'status';
     var progress = document.createElement('div');
