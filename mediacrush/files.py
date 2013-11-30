@@ -13,11 +13,67 @@ from .objects import File
 from .ratelimit import rate_limit_exceeded, rate_limit_update
 from .network import secure_ip
 
-VIDEO_EXTENSIONS = set(['gif', 'ogv', 'mp4', 'webm'])
-AUDIO_EXTENSIONS = set(['mp3', 'ogg', 'oga'])
-EXTENSIONS = set(['png', 'jpg', 'jpe', 'jpeg', 'svg']) | VIDEO_EXTENSIONS | AUDIO_EXTENSIONS
-LOOP_EXTENSIONS = set(['gif'])
-AUTOPLAY_EXTENSIONS = set(['gif'])
+VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
+AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
+FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AUDIO_FORMATS
+LOOP_FORMATS = set(["image/gif"])
+AUTOPLAY_FORMATS = set(["image/gif"])
+
+EXTENSIONS = {
+    # "application/pdf": "pdf",
+    "audio/mpeg": "mp3",
+    "audio/ogg": "oga",
+    "image/gif": "gif",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/svg+xml": "svg",
+    # "text/plain": "txt",
+    "video/mp4": "mp4",
+    "video/ogg": "ogv",
+}
+
+processing_needed = {
+    'image/gif': {
+        'formats': ['video/mp4', 'video/ogg', 'video/webm'],
+        'extras': ['image/png'],
+        'time': 300,
+    },
+    'video/mp4': {
+        'formats': ['video/webm', 'video/ogg'],
+        'extras': ['image/png'],
+        'time': 600,
+    },
+    'video/webm': {
+        'formats': ['video/mp4', 'video/ogv'],
+        'extras': ['image/png'],
+        'time': 600,
+    },
+    'video/ogg': {
+        'formats': ['video/mp4', 'video/webm'],
+        'extras': ['image/png'],
+        'time': 600,
+    },
+    'image/jpeg': {
+        'formats': [],
+        'time': 5
+    },
+    'image/png': {
+        'formats': [],
+        'time': 60
+    },
+    'image/svg+xml': {
+        'formats': [],
+        'time': 5
+    },
+    'audio/mp3': {
+        'formats': ['audio/ogg'],
+        'time': 120
+    },
+    'audio/ogg': {
+        'formats': ['audio/oga','audio/mp3'],
+        'time': 120
+    },
+}
 
 class URLFile(object):
     filename = None
@@ -60,70 +116,21 @@ class URLFile(object):
 
         return True
 
-processing_needed = {
-    'gif': {
-        'formats': ['mp4', 'ogv', 'webm'],
-        'extras': ['png'],
-        'time': 300,
-    },
-    'mp4': {
-        'formats': ['webm', 'ogv'],
-        'extras': ['png'],
-        'time': 600,
-    },
-    'webm': {
-        'formats': ['mp4', 'ogv'],
-        'extras': ['png'],
-        'time': 600,
-    },
-    'ogv': {
-        'formats': ['mp4', 'webm'],
-        'extras': ['png'],
-        'time': 600,
-    },
-    'jpg': {
-        'formats': [],
-        'time': 5
-    },
-    'jpe': {
-        'formats': [],
-        'time': 5
-    },
-    'jpeg': {
-        'formats': [],
-        'time': 5
-    },
-    'png': {
-        'formats': [],
-        'time': 60
-    },
-    'svg': {
-        'formats': [],
-        'time': 5
-    },
-    'mp3': {
-        'formats': ['ogg'],
-        'time': 120
-    },
-    'ogg': {
-        'formats': ['oga','mp3'],
-        'time': 120
-    },
-    'oga': {
-        'formats': ['mp3'],
-        'time': 120
-    }
-}
+def allowed_format(mimetype):
+    return mimetype in EXTENSIONS
 
-def allowed_file(filename):
-    return '.' in filename and extension(filename) in EXTENSIONS
+def clean_extension(path, mimetype):
+    return "%s.%s" % (os.path.splitext(path)[0], EXTENSIONS[mimetype])
 
 def get_hash(f):
     f.seek(0)
     return hashlib.md5(f.read()).digest()
 
 def get_mimetype(url):
-    return mimetypes.guess_type(url)[0]
+    ext = extension(url)
+    for k, v in EXTENSIONS.items():
+        if v == ext:
+            return k
 
 def media_url(f):
     return '/%s' % f
@@ -165,55 +172,49 @@ def compression_rate(f):
     return round(1/x, 2)
 
 def upload(f, filename):
-    if f.content_type and f.content_type != "application/octet-stream":
-        # Add the proper file extension if the mimetype is provided
-        ext = mimetypes.guess_extension(f.content_type)
-        if not ext:
-            # Specified mimetype is not in /etc/mime.types.
-            # At this point, our best guess is to assume the extension
-            # is the last part of the mimetype.
-            ext = "." + f.content_type.split("/")[1]
+    if not f.content_type:
+        f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-        filename += ext
-
-    if f and allowed_file(filename):
-        if not current_app.debug:
-            rate_limit_update(file_length(f))
-            if rate_limit_exceeded():
-                return "ratelimit", 420
-
-        h = get_hash(f)
-        identifier = to_id(h)
-        filename = "%s.%s" % (identifier, extension(filename))
-        path = file_storage(filename)
-
-        if os.path.exists(path):
-            if File.exists(identifier):
-                return identifier, 409
-            else:
-                # Delete residual files from storage by creating a dummy File
-                dummy = File(original=filename)
-                dummy.delete = lambda: None # nop
-                delete_file(dummy)
-
-                r.delete(_k("%s.lock") % identifier) # Remove processing lock and error
-                r.delete(_k("%s.error") % identifier)
-
-        f.seek(0)  # Otherwise it'll write a 0-byte file
-        f.save(path)
-
-        file_object = File(hash=identifier)
-        file_object.compression = os.path.getsize(path)
-        file_object.original = filename
-        file_object.ip = secure_ip()
-        file_object.save()
-
-        r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
-        r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
-
-        return identifier
-    else:
+    if not allowed_format(f.content_type):
         return "no", 415
+
+    filename = clean_extension(filename, f.content_type)
+
+    if not current_app.debug:
+        rate_limit_update(file_length(f))
+        if rate_limit_exceeded():
+            return "ratelimit", 420
+
+    h = get_hash(f)
+    identifier = to_id(h)
+    filename = "%s.%s" % (identifier, extension(filename))
+    path = file_storage(filename)
+
+    if os.path.exists(path):
+        if File.exists(identifier):
+            return identifier, 409
+        else:
+            # Delete residual files from storage by creating a dummy File
+            dummy = File(original=filename)
+            dummy.delete = lambda: None # nop
+            delete_file(dummy)
+
+            r.delete(_k("%s.lock") % identifier) # Remove processing lock and error
+            r.delete(_k("%s.error") % identifier)
+
+    f.seek(0)  # Otherwise it'll write a 0-byte file
+    f.save(path)
+
+    file_object = File(hash=identifier)
+    file_object.compression = os.path.getsize(path)
+    file_object.original = filename
+    file_object.ip = secure_ip()
+    file_object.save()
+
+    r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+    r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
+
+    return identifier
 
 def delete_file(f):
     ext = extension(f.original)
