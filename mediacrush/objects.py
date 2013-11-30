@@ -8,7 +8,7 @@ class RedisObject(object):
     hash = None
 
     def __init__(self, **kw):
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(self, k, v)
 
         if "hash" not in kw:
@@ -22,8 +22,8 @@ class RedisObject(object):
 
             return d
 
-        names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
-        names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
+        names = [x for x in inspect.getmembers(self) if not x[0].startswith("_")]
+        names = [x for x in names if not (inspect.isfunction(x[1]) or inspect.ismethod(x[1]))]
         return dict(names)
 
     def __get_key(self):
@@ -136,4 +136,4 @@ class Album(RedisObject):
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")
 
-    print a.items, type(a.items), a.hash
+    print(a.items, type(a.items), a.hash)

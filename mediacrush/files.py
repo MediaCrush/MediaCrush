@@ -241,7 +241,7 @@ def delete_file_storage(path):
     try:
         os.unlink(file_storage(path))
     except:
-        print('Failed to delete file ' + path)
+        print(('Failed to delete file ' + path))
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

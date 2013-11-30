@@ -70,7 +70,7 @@ processors = {
 }
 
 def process_gif(filename):
-    print('Processing ' + filename)
+    print(('Processing ' + filename))
     f = File.from_hash(filename)
     ext = extension(f.original)
     path = os.path.join(_cfg("storage_folder"), f.original)
@@ -129,4 +129,4 @@ def process_gif(filename):
     f.save()
 
     end = datetime.now()
-    print("Processed %s %s" % (filename, end - start))
+    print(("Processed %s %s" % (filename, end - start)))

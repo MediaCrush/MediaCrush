@@ -1,5 +1,5 @@
 import logging
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 logger = logging.getLogger("MediaCrush")
 logger.setLevel(logging.DEBUG)
