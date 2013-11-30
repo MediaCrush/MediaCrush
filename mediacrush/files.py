@@ -30,6 +30,7 @@ EXTENSIONS = {
     # "text/plain": "txt",
     "video/mp4": "mp4",
     "video/ogg": "ogv",
+    "video/webm": "webm",
 }
 
 processing_needed = {
