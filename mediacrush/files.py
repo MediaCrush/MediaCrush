@@ -244,4 +244,4 @@ def delete_file_storage(path):
         print(('Failed to delete file ' + path))
 
 extension = lambda f: f.rsplit('.', 1)[1].lower()
-to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')
+to_id = lambda h: base64.b64encode(h)[:12] #.replace('/', '_').replace('+', '-')
