@@ -13,9 +13,8 @@ gunicorn==17.5
 itsdangerous==0.22
 mandrill==1.0.42
 pep8==1.4.6
-py-bcrypt==0.3
+py3k-bcrypt==0.3
 pyScss==1.2.0.post3
 redis==2.7.6
 requests==2.0.0
 six==1.4.1
-wsgiref==0.1.2
