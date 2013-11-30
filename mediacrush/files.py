@@ -212,7 +212,7 @@ def upload(f, filename):
     file_object.ip = secure_ip()
     file_object.save()
 
-    r.lpush(_k("gifqueue"), identifier)  # Add this job to the queue
+    r.rpush(_k("tasks"), identifier)  # Add this job to the queue
     r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
 
     return identifier
