@@ -75,31 +75,5 @@
             </div>
         </div>
     </div>
-    {% if ads and adsense_client != "CHANGEME" %}
-    <div id="gad" class="column">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Home Page Skyscraper -->
-        <ins class="adsbygoogle"
-             style="display:inline-block;width:120px;height:600px"
-             data-ad-client="{{ adsense_client }}"
-             data-ad-slot="{{ adsense_slot }}"></ins>
-        <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        <a href="javascript:adOptOut();" class="small red">Click here to disable ads</a>
-    </div>
-    <div id="lgad" class="column">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Home Page Skyscraper -->
-        <ins class="adsbygoogle"
-             style="display:inline-block;width:120px;height:240px"
-             data-ad-client="{{ adsense_client }}"
-             data-ad-slot="{{ adsense_slot }}"></ins>
-        <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-        <div><a href="javascript:adOptOut();" class="small">Click here to disable ads</a></div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
