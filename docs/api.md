@@ -272,6 +272,10 @@ If the file is not found, you will get a dictionary like:
         <td>timeout</td>
         <td>The file took too long to process.</td>
     </tr>
+    <tr>
+        <td>internal_error</td>
+        <td>The workers died unexpectedly. The client is advised to try again.</td>
+    </tr>
 </table>
 
 *Notes:*
