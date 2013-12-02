@@ -13,6 +13,7 @@ from mediacrush.objects import File
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.network import secure_ip
 from mediacrush.tasks import process_file
+from mediacrush.fileutils import processing_needed, EXTENSIONS, get_mimetype, extension, file_storage
 from mediacrush.celery import app
 
 VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
@@ -20,63 +21,6 @@ AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
 FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AUDIO_FORMATS
 LOOP_FORMATS = set(["image/gif"])
 AUTOPLAY_FORMATS = set(["image/gif"])
-
-EXTENSIONS = {
-    # "application/pdf": "pdf",
-    "audio/mpeg": "mp3",
-    "audio/ogg": "oga",
-    "image/gif": "gif",
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/svg+xml": "svg",
-    # "text/plain": "txt",
-    "video/mp4": "mp4",
-    "video/ogg": "ogv",
-    "video/webm": "webm",
-}
-
-processing_needed = {
-    'image/gif': {
-        'formats': ['video/mp4', 'video/ogg', 'video/webm'],
-        'extras': ['image/png'],
-        'time': 300,
-    },
-    'video/mp4': {
-        'formats': ['video/webm', 'video/ogg'],
-        'extras': ['image/png'],
-        'time': 600,
-    },
-    'video/webm': {
-        'formats': ['video/mp4', 'video/ogv'],
-        'extras': ['image/png'],
-        'time': 600,
-    },
-    'video/ogg': {
-        'formats': ['video/mp4', 'video/webm'],
-        'extras': ['image/png'],
-        'time': 600,
-    },
-    'image/jpeg': {
-        'formats': [],
-        'time': 5
-    },
-    'image/png': {
-        'formats': [],
-        'time': 60
-    },
-    'image/svg+xml': {
-        'formats': [],
-        'time': 5
-    },
-    'audio/mp3': {
-        'formats': ['audio/ogg'],
-        'time': 120
-    },
-    'audio/ogg': {
-        'formats': ['audio/oga','audio/mp3'],
-        'time': 120
-    },
-}
 
 class URLFile(object):
     filename = None
@@ -129,17 +73,9 @@ def get_hash(f):
     f.seek(0)
     return hashlib.md5(f.read()).digest()
 
-def get_mimetype(url):
-    ext = extension(url)
-    for k, v in EXTENSIONS.items():
-        if v == ext:
-            return k
 
 def media_url(f):
     return '/%s' % f
-
-def file_storage(f):
-    return os.path.join(_cfg("storage_folder"), f)
 
 def file_length(f):
     f.seek(0, 2)
@@ -147,32 +83,6 @@ def file_length(f):
     f.seek(0)
 
     return by
-
-def compression_rate(f):
-    f_original = File.from_hash(f)
-    ext = extension(f_original.original)
-    if ext not in processing_needed: return 0
-    if len(processing_needed[ext]['formats']) == 0: return 0
-
-    original_size = f_original.compression
-    minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
-    for f_ext in processing_needed[ext]['formats']:
-        try:
-            convsize = os.path.getsize(file_storage("%s.%s" % (f, f_ext)))
-            minsize = min(minsize, convsize)
-        except OSError:
-            continue # One of the target files wasn't processed.
-                     # This will fail later in the processing workflow.
-
-    # Cross-multiplication:
-    # Original size   1
-    # ------------- = -
-    # Min size        x
-
-    x = minsize / float(original_size)
-
-    # Compression rate: 1/x
-    return round(1/x, 2)
 
 def upload(f, filename):
     if not f.content_type:
@@ -234,5 +144,4 @@ def delete_file_storage(path):
     except:
         print('Failed to delete file ' + path)
 
-extension = lambda f: f.rsplit('.', 1)[1].lower()
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

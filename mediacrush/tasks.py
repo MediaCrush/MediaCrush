@@ -1,8 +1,8 @@
-from mediacrush.processing import *
 from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File
 from mediacrush.celery import app, get_task_logger
-from mediacrush.processing import processor_table, ProcessingException, TimeoutException
+from mediacrush.processing import processor_table
+from mediacrush.fileutils import compression_rate
 
 import time
 
@@ -31,3 +31,7 @@ def process_file(self, h, mimetype, sync):
     processor = processor_table[mimetype](f)
 
     processor.run(sync)
+
+    if sync:
+        f.compression = compression_rate(f.hash)
+        f.save()

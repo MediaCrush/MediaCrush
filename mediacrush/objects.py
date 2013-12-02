@@ -113,8 +113,10 @@ class File(RedisObject):
         if result.status == 'FAILURE':
             if 'ProcessingException' in result.traceback:
                 return 'error'
-            else:
+            if 'TimeoutException' in result.traceback:
                 return 'timeout'
+
+            return 'internal_error'
 
         status = {
             'PENDING': 'pending',
