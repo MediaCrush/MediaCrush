@@ -19,7 +19,6 @@ class Processor(object):
         print commands
         for command in commands:
             code, exited = command(self.path, self.output).run()
-            print code, exited, command.command
 
             if exited and important:
                 raise TimeoutException
