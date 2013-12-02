@@ -1,5 +1,6 @@
 from mediacrush.config import _cfg
 from mediacrush.processing.commands import *
+from mediacrush.celery import app
 
 import os
 
@@ -16,17 +17,20 @@ class Processor(object):
 
         self.f = f
 
-    def execute(self):
-        commands = self.sync()
-
+    def _execute(self, commands, important=True):
         for command in commands:
             code, exited = command(self.path, self.output).run()
-            if code != 0:
-                raise ProcessingException
 
-            if exited:
+            if exited and important:
                 raise TimeoutException
 
+            if code != 0 and important:
+                raise ProcessingException
+
+    def run(self, sync=True):
+        commands = self.sync() if sync else self.async()
+
+        self._execute(commands, important=sync) # The asynchronous step is the "non-important" one.
 
 class GIFProcessor(Processor):
     def sync(self):

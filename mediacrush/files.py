@@ -210,7 +210,8 @@ def upload(f, filename):
     file_object.original = filename
     file_object.ip = secure_ip()
 
-    result = process_file.delay(identifier, f.content_type) # Add to processing queue
+    result = process_file.delay(identifier, f.content_type, True) # Synchronous step
+    process_file.delay(identifier, f.content_type, False) # Asynchronous step
     file_object.taskid = result.id
 
     file_object.save()

@@ -108,14 +108,19 @@ class File(RedisObject):
 
     @property
     def status(self):
-        status = app.AsyncResult(self.taskid).status
+        result = app.AsyncResult(self.taskid)
+
+        if result.status == 'FAILURE':
+            if 'ProcessingException' in result.traceback:
+                return 'error'
+            else:
+                return 'timeout'
 
         status = {
             'PENDING': 'pending',
             'STARTED': 'processing',
             'SUCCESS': 'done',
-            'FAILURE': 'error'
-        }.get(status, 'internal_error')
+        }.get(result.status, 'internal_error')
 
         return status
 
