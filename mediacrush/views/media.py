@@ -5,7 +5,7 @@ import os
 import json
 import mimetypes
 
-from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file, processing_status, processing_needed
+from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file, processing_needed
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File, Album, RedisObject
@@ -38,7 +38,7 @@ def type_files(t):
 def _template_params(f):
     if f.compression:
         compression = int(float(f.compression) * 100)
-    if compression == 100 or processing_status(f.hash) != "done":
+    if compression == 100 or f.status != "done":
         compression = None
 
     can_delete = None

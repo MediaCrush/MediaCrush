@@ -3,7 +3,7 @@ from flaskext.bcrypt import check_password_hash
 from flask import request, current_app
 
 from ..decorators import json_output, cors
-from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status, EXTENSIONS
+from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, EXTENSIONS
 from ..database import r, _k
 from ..objects import File, Album, Feedback, RedisObject
 from ..network import get_ip, secure_ip
@@ -180,7 +180,7 @@ class APIView(FlaskView):
             return {'error': 415}, 415
 
         f = File.from_hash(h)
-        ret = {'status': processing_status(h)}
+        ret = {'status': f.status}
         if ret['status'] == 'done':
             ret[h] = _file_object(f)
             ret['hash'] = h

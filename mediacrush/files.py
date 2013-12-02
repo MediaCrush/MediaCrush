@@ -210,25 +210,12 @@ def upload(f, filename):
     file_object.original = filename
     file_object.ip = secure_ip()
 
-    result = process_file.delay(identifier) # Add to processing queue
+    result = process_file.delay(identifier, f.content_type) # Add to processing queue
     file_object.taskid = result.id
 
     file_object.save()
 
     return identifier
-
-def processing_status(h):
-    f = File.from_hash(h)
-    status = app.AsyncResult(f.taskid).status
-
-    status = {
-        'PENDING': 'pending',
-        'STARTED': 'processing',
-        'SUCCESS': 'done',
-        'FAILURE': 'error'
-    }.get(status, 'internal_error')
-
-    return status
 
 def delete_file(f):
     ext = extension(f.original)

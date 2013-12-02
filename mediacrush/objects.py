@@ -1,4 +1,6 @@
-from .database import r, _k
+from mediacrush.database import r, _k
+from mediacrush.celery import app
+
 import hashlib
 import uuid
 
@@ -24,6 +26,10 @@ class RedisObject(object):
 
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
         names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
+
+        if "__exclude__" in dir(self):
+            names = filter(lambda x: x[0] not in self.__exclude__, names)
+
         return dict(names)
 
     def __get_key(self):
@@ -84,6 +90,8 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
+    __exclude__ = ['status']
+
     original = None
     compression = 0
     reports = 0
@@ -97,6 +105,19 @@ class File(RedisObject):
 
         if self.reports > 0:
             r.sadd(_k("reports-triggered"), self.hash)
+
+    @property
+    def status(self):
+        status = app.AsyncResult(self.taskid).status
+
+        status = {
+            'PENDING': 'pending',
+            'STARTED': 'processing',
+            'SUCCESS': 'done',
+            'FAILURE': 'error'
+        }.get(status, 'internal_error')
+
+        return status
 
 class Feedback(RedisObject):
     text = None

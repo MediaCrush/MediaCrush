@@ -5,9 +5,11 @@ from mediacrush.config import _cfg
 from celery import Celery
 from celery.utils.log import get_task_logger
 
+redis_connection = 'redis://%s:%s/1' % (_cfg("redis-ip"), _cfg("redis-port"))
+
 app = Celery('proj',
-     broker='redis://%s:%s/1' % (_cfg("redis-ip"), _cfg("redis-port")),
-     backend='redis://',
+     broker=redis_connection,
+     backend=redis_connection,
      include=['mediacrush.tasks'])
 
 # Optional configuration, see the application user guide.
