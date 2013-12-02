@@ -7,11 +7,13 @@ import requests
 
 from flask import current_app
 
-from .config import _cfg
-from .database import r, _k
-from .objects import File
-from .ratelimit import rate_limit_exceeded, rate_limit_update
-from .network import secure_ip
+from mediacrush.config import _cfg
+from mediacrush.database import r, _k
+from mediacrush.objects import File
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
+from mediacrush.network import secure_ip
+from mediacrush.tasks import process_file
+from mediacrush.celery import app
 
 VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
 AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
@@ -200,9 +202,6 @@ def upload(f, filename):
             dummy.delete = lambda: None # nop
             delete_file(dummy)
 
-            r.delete(_k("%s.lock") % identifier) # Remove processing lock and error
-            r.delete(_k("%s.error") % identifier)
-
     f.seek(0)  # Otherwise it'll write a 0-byte file
     f.save(path)
 
@@ -210,12 +209,26 @@ def upload(f, filename):
     file_object.compression = os.path.getsize(path)
     file_object.original = filename
     file_object.ip = secure_ip()
+
+    result = process_file.delay(identifier) # Add to processing queue
+    file_object.taskid = result.id
+
     file_object.save()
 
-    r.lpush(_k("tasks"), identifier)  # Add this job to the queue
-    r.set(_k("%s.lock" % identifier), "1")  # Add a processing lock
-
     return identifier
+
+def processing_status(h):
+    f = File.from_hash(h)
+    status = app.AsyncResult(f.taskid).status
+
+    status = {
+        'PENDING': 'pending',
+        'STARTED': 'processing',
+        'SUCCESS': 'done',
+        'FAILURE': 'error'
+    }.get(status, 'internal_error')
+
+    return status
 
 def delete_file(f):
     ext = extension(f.original)
@@ -226,18 +239,6 @@ def delete_file(f):
             delete_file_storage("%s.%s" % (f.hash, f_ext))
 
     f.delete()
-
-def processing_status(id):
-    filename = id
-    if not r.exists(_k("%s.lock" % filename)):
-        if r.exists(_k("%s.error" % filename)):
-            failure_type = r.get(_k("%s.error" % filename))
-            r.delete(_k("%s.error") % filename)
-
-            return failure_type
-
-        return "done"
-    return "processing"
 
 def delete_file_storage(path):
     try:

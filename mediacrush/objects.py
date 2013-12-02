@@ -88,6 +88,7 @@ class File(RedisObject):
     compression = 0
     reports = 0
     ip = None
+    taskid = None
 
     def add_report(self):
         self.reports = int(self.reports)
