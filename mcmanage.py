@@ -3,7 +3,6 @@
 
 Usage:
     mcmanage.py database clear
-    mcmanage.py database upgrade
     mcmanage.py database sync
     mcmanage.py admin list
     mcmanage.py admin add <pwhash>
@@ -26,7 +25,6 @@ def show_report(args):
 
 database_commands = {
     'clear': database_clear,
-    'upgrade': database_upgrade,
     'sync': database_sync,
 }
 

@@ -5,7 +5,7 @@ import os
 import json
 import mimetypes
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status, processing_needed
+from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file, processing_needed
 from ..database import r, _k
 from ..config import _cfg
 from ..objects import File, Album, RedisObject
@@ -38,7 +38,7 @@ def type_files(t):
 def _template_params(f):
     if f.compression:
         compression = int(float(f.compression) * 100)
-    if compression == 100 or processing_status(f.hash) != "done":
+    if compression == 100 or f.status != "done":
         compression = None
 
     can_delete = None
@@ -48,12 +48,11 @@ def _template_params(f):
     except:
         pass
 
-    ext = extension(f.original)
     mimetype = get_mimetype(f.original)
 
     types = [mimetype]
-    for f_ext in processing_needed[ext]['formats']:
-        types.append(mimetypes.guess_type('foo.' + f_ext)[0])
+    for f_type in processing_needed[mimetype]['formats']:
+        types.append(f_type)
     if 'do-not-send' in request.cookies:
         try:
             blacklist = json.loads(request.cookies['do-not-send'])
@@ -66,9 +65,9 @@ def _template_params(f):
     return {
         'filename': f.hash,
         'original': f.original,
-        'video': ext in VIDEO_EXTENSIONS,
-        'loop': ext in LOOP_EXTENSIONS,
-        'autoplay': ext in AUTOPLAY_EXTENSIONS,
+        'video': mimetype in VIDEO_FORMATS,
+        'loop': mimetype in LOOP_FORMATS,
+        'autoplay': mimetype in AUTOPLAY_FORMATS,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',

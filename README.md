@@ -73,10 +73,10 @@ You'll want to make sure Redis is running at this point. It's probably best to s
 up the server (`systemctl enable redis.service` on Arch).
 
 MediaCrush requires the daemon and the website to be running concurently to work correctly. The website is
-`app.py`, and the daemon is `daemon.py`. The daemon is responsible for handling media processing. Run the
+`app.py`, and the daemon is celery. The daemon is responsible for handling media processing. Run the
 daemon, then the website:
 
-    python daemon.py &
+    celery worker -A mediacrush
     python app.py
 
 This runs the site in debug mode. If you want to run this on a production server, you'll probably want to

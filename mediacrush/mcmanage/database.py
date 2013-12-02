@@ -1,6 +1,5 @@
 from ..database import r, _k
 from ..objects import File, RedisObject
-from ..files import compression_rate
 
 def database_clear(arguments):
     keys = r.keys(_k("*"))
@@ -12,22 +11,6 @@ def database_clear(arguments):
 
     if not arguments.get('silent', False):
         print("Done.")
-
-def database_upgrade(arguments):
-    """This function upgrades the old, key-based DB scheme to a hash-based one."""
-    keys = r.keys(_k("*.file"))
-
-    for key in keys:
-        hash = key.split(".")[1]
-        f = File(hash=hash)
-        f.original = r.get(key)
-        f.save()
-        try:
-            f.compression = compression_rate(hash)
-            f.save()
-        except Exception:
-            pass # The compression rate does not apply in some cases
-        r.delete(key)
 
 def database_sync(arguments):
     keys = r.keys(_k("*"))

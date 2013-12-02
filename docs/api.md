@@ -257,16 +257,24 @@ If the file is not found, you will get a dictionary like:
         <td>The file has been processed.</td>
     </tr>
     <tr>
+        <td>pending</td>
+        <td>The is in the processing queue.</td>
+    </tr>
+    <tr>
         <td>processing</td>
-        <td>The file is being processed or in the processing queue.</td>
+        <td>The file is currently being processed.</td>
     </tr>
     <tr>
         <td>error</td>
-        <td>The processing step finished early with an abnormal return code.</td>
+        <td>A critical processing step finished early with an abnormal return code.</td>
     </tr>
     <tr>
         <td>timeout</td>
         <td>The file took too long to process.</td>
+    </tr>
+    <tr>
+        <td>internal_error</td>
+        <td>The workers died unexpectedly. The client is advised to try again.</td>
     </tr>
 </table>
 
