@@ -1,5 +1,5 @@
 <div class="video" data-video="video-{{ filename }}">
-    <video id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
+    <video poster="/{{ filename }}.png" id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
         {% if 'video/mp4' in types %}
         <source src="/{{ filename }}.mp4" type='video/mp4;'>
         {% endif %}
