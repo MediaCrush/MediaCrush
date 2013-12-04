@@ -44,6 +44,15 @@
             background: url('/static/upload.png') transparent no-repeat 100px 220px;
         }
 
+        #droptext a {
+            font-size: 14pt;
+            font-weight: bold;
+
+            span {
+                font-weight: normal;
+            }
+        }
+
         #files ul {
             left: 75px;
 
@@ -102,5 +111,9 @@
 
     .container {
         width: 634px;
+    }
+
+    .social {
+        display: none;
     }
 }

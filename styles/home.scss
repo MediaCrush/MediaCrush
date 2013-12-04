@@ -325,40 +325,28 @@
     }
 }
 
-a[href^="https://twitter.com"] {
-    display: inline-block;
-    background: url("/static/twitter.png") no-repeat;
-    width: 16px;
-    height: 16px;
+.social {
     position: relative;
-    top: 3px;
-}
+    top: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
 
-a[href^="https://pay.reddit.com"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url("/static/reddit.png") no-repeat;
-    position: relative;
-    top: 3px;
-}
+    a {
+        display: inline-block;
+        min-height: 16px;
+        padding-left: 18px;
+        font-size: 10pt;
+        margin-left: 5px;
 
-a[href^="https://chrome.google.com"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url('/static/chrome.png') no-repeat;
-    position: relative;
-    top: 3px;
-}
+        &[href^="https://twitter.com"] {
+            background: url("/static/twitter.png") no-repeat 0 1px;
+        }
 
-a[href^="https://addons.mozilla.org"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url('/static/firefox.png') no-repeat;
-    position: relative;
-    top: 3px;
+        &[href^="https://pay.reddit.com"] {
+            background: url("/static/reddit.png") no-repeat 0 1px;
+        }
+    }
 }
 
 @import 'home-responsive.scss'
