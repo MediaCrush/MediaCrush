@@ -22,6 +22,9 @@
             </a>
         </h1>
         {% endif %}
+        {% if album %}
+        <a href="/{{filename}}" class="album-direct">Direct Link</a>
+        {% endif %}
         <div class="downloads">
             <a href="/{{ filename }}/download">Download</a>
         </div>

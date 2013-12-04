@@ -74,3 +74,16 @@ dl {
         }
    }
 }
+
+a.album-direct {
+    color: #fff;
+    text-shadow: 3px 3px 3px #000;
+    text-decoration: underline;
+    position: absolute;
+    bottom: 45px;
+    left: 3px;
+
+    &:hover {
+        color: #fff;
+    }
+}
