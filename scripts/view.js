@@ -86,7 +86,8 @@ window.addEventListener('load', function() {
     }
 }, false);
 function handleHash(hash) {
-    if (hash == '#fromExtension') {
+    var historyEnabled = readCookie('hist-opt-out') === null;
+    if (hash == '#fromExtension' && historyEnabled) {
         var handled = false;
         for (var i = 0; i < history.length; i++) {
             if (history[i] === window.filename)
