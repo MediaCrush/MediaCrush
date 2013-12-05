@@ -30,7 +30,10 @@ def process_file(self, h, mimetype, sync):
     f = File.from_hash(h)
     processor = processor_table[mimetype](f)
 
-    processor.run(sync)
+    if sync:
+        processor.sync()
+    else:
+        processor.async()
 
     if sync:
         f.compression = compression_rate(f.hash)

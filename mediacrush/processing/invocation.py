@@ -4,25 +4,30 @@ import os
 import threading
 import subprocess
 
-class TimeLimitedCommand(object):
+class Invocation(object):
     crashed = False
+    exited = False
+    stdout = None
+    process = None
+    args = []
 
-    def __init__(self, *args):
-        self.args = args
-        self.process = None
+    def __init__(self, command):
+        self.command = command
+
+    def __call__(self, *args):
+        self.args = self.command.format(*args).split()
 
     def _target(self):
-        with open(os.devnull, "w") as devnull:
-            try:
-                self.process = subprocess.Popen(
-                    *self.args, stdout=devnull, stderr=devnull)
-                self.process.communicate()
-            except:
-                self.crashed = True
-                return
+        try:
+            self.process = subprocess.Popen(self.args, stdout=subprocess.PIPE)
+            self.stdout = self.process.communicate()
+        except:
+            self.crashed = True
+            return
 
     def run(self, timeout=_cfgi("max_processing_time")):
-        exited = False
+        if not self.args:
+            self.args = self.command.split()
 
         thread = threading.Thread(target=self._target)
         thread.start()
@@ -32,16 +37,6 @@ class TimeLimitedCommand(object):
             print("Terminating process")
             self.process.terminate()
             thread.join()
-            exited = True
+            self.exited = True
 
-        if self.process == None:
-            return 0 if not self.crashed else 1, exited
-        return self.process.returncode, exited
-
-class Invocation(object):
-    def __init__(self, command):
-        self.command = command
-
-    def __call__(self, *args):
-        args = self.command.format(*args).split()
-        return TimeLimitedCommand(args)
+        self.returncode = self.process.returncode

@@ -16,14 +16,13 @@ class Processor(object):
         self.f = f
 
     def _execute(self, commands, important=True):
-        print commands
         for command in commands:
-            code, exited = command(self.path, self.output).run()
+            tlc = command(self.path, self.output).run()
 
-            if exited and important:
+            if tlc.exited and important:
                 raise TimeoutException
 
-            if code != 0 and important:
+            if tlc.code != 0 and important:
                 raise ProcessingException
 
     def run(self, sync=True):
