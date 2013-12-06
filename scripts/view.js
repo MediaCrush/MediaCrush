@@ -82,7 +82,7 @@ window.addEventListener('load', function() {
         var size = mediaSizeReporter();
         size.height += 5;
         var embed = document.getElementById('embed-value');
-        embed.value = '<iframe src="https://mediacru.sh/' + window.filename + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
+        embed.value = '<iframe src="{{ protocol }}://{{ domain }}/' + window.filename + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
     }
 }, false);
 function handleHash(hash) {
