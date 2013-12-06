@@ -34,10 +34,26 @@ def prepare():
                 w.flush()
 
     copy = ['images', 'scripts']
-    # Simple copy for the rest of the files
+    preprocess = ['scripts/view.js', 'scripts/mediacrush.js']
+
+    # Simple copy images, preprocess some JS files 
     for folder in copy:
         for f in list(os.walk(folder))[0][2]:
-            copyfile(os.path.join(folder, f), os.path.join(app.static_folder, os.path.basename(f)))
+            outputpath = os.path.join(app.static_folder, os.path.basename(f))
+            inputpath = os.path.join(folder, f)
+
+            if inputpath in preprocess:
+                with open(inputpath) as r:
+                    # Using Jinja here is overkill
+                    output = r.read()
+                    output = output.replace("{{ protocol }}", _cfg("protocol"))
+                    output = output.replace("{{ domain }}", _cfg("domain"))
+
+                with open(outputpath, "w") as w:
+                    w.write(output)
+                    w.flush()
+            else:
+                copyfile(inputpath, outputpath)
 
 @app.before_first_request
 def compile_first():
