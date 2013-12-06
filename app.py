@@ -36,7 +36,7 @@ def prepare():
     copy = ['images', 'scripts']
     preprocess = ['scripts/view.js', 'scripts/mediacrush.js']
 
-    # Simple copy images, preprocess some JS files 
+    # Copy images, preprocess some JS files 
     for folder in copy:
         for f in list(os.walk(folder))[0][2]:
             outputpath = os.path.join(app.static_folder, os.path.basename(f))
