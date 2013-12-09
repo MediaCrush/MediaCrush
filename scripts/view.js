@@ -72,11 +72,15 @@ window.addEventListener('load', function() {
     var report = document.getElementById('report');
     report.addEventListener('click', function(e) {
         e.preventDefault();
-        var report = document.getElementById('report');
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/report/' + location.href.split('/')[3]);
-        xhr.send();
-        report.parentElement.innerHTML = "Reported";
+        
+        confirm(function(a) {
+            if(!a) return;
+            var report = document.getElementById('report');
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/report/' + location.href.split('/')[3]);
+            xhr.send();
+            report.parentElement.innerHTML = "Reported";  
+        });
     }, false);
     if (window.mediaSizeReporter) {
         var size = mediaSizeReporter();
