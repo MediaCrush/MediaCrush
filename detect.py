@@ -133,7 +133,7 @@ def detect_plaintext(path):
         return None
     result = a.stdout[0]
     if result.startswith('text/x-') or result == 'text/plain':
-        return result
+        return result[:result.find(';')]
     return None
 
 print detect(sys.argv[1])
