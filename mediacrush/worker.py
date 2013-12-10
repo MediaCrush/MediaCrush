@@ -54,7 +54,7 @@ class Invocation(object):
         return TimeLimitedCommand(args)
 
 converters = {
-    'mp4':  Invocation("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -profile baseline -preset slower -crf 19 -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4"),
+    'mp4':  Invocation("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -profile baseline -preset slower -crf 19 -vf 'scale=trunc(in_w/2)*2:trunc(in_h/2)*2' -r 30 {1}.mp4"),
     'ogv':  Invocation("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora {1}.ogv"),
     'webm': Invocation("ffmpeg -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 {1}.webm"),
     'mp3':  Invocation("ffmpeg -i {0} {1}.mp3"),
