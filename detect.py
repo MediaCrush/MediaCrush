@@ -9,6 +9,9 @@ import json
 # special procedures to optimize
 # It will return 'image' for all other images that imagemagick supports
 # It will return None for things we can't handle
+# Will also try to detect plaintext files (including various kinds of source code)
+# These will return 'text/x-python', for example, if we can detect the source code type
+# If we can't and we know that it's plaintext, we'll use 'text/plain'
 
 # The first goal is to detect files via inspection so that we aren't dependent on
 # extensions, and so that we can catch naughty files before we even try to process them
@@ -27,10 +30,13 @@ def detect(path):
     result = detect_imagemagick(path)
     if result:
         return result
+    result = detect_plaintext(path)
+    if result:
+        return result
     return None
 
 # This does *not* work with any containers that only have images in them, by design.
-def detect_ffprobe(path, suggestion):
+def detect_ffprobe(path):
     # IMPORTANT: jdiez, this doesn't work when the path has spaces in it
     # I tried wrapping {0} in quotes to no avail
     a = Invocation('ffprobe -print_format json -loglevel quiet -show_format -show_streams {0}')
@@ -91,11 +97,13 @@ def detect_stream(stream):
         return 'image/png'
     if stream["codec_name"] == 'bmp':
         return 'image/bmp'
+    if stream["codec_name"] == 'gif':
+        return 'image/gif'
     if stream["codec_type"] in [ 'video', 'audio' ]:
         return stream["codec_type"]
     return None
 
-def detect_imagemagick(path, suggestion):
+def detect_imagemagick(path):
     a = Invocation('identify -verbose {0}')
     a(path)
     a.run()
@@ -116,5 +124,16 @@ def detect_imagemagick(path, suggestion):
         if line ==  'Format: SVG (Scalable Vector Graphics)':
             return 'image/svg+xml'
     return 'image'
+
+def detect_plaintext(path):
+    a = Invocation('file -b -e elf -e tar -e compress -e cdf -e apptype -i {0}')
+    a(path)
+    a.run()
+    if a.returncode or a.exited:
+        return None
+    result = a.stdout[0]
+    if result.startswith('text/x-') or result == 'text/plain':
+        return result
+    return None
 
 print detect(sys.argv[1])
