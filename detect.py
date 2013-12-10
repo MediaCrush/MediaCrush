@@ -16,15 +16,15 @@ import json
 # allow us to broaden our supported media types to support basically everything.
 # We need to convert uploaded media to browser-friendly formats. We can do videos and
 # audio with ffmpeg, and we can do images with imagemagick.
-def detect(path, suggestion):
-    result = detect_ffprobe(path, suggestion)
+def detect(path):
+    result = detect_ffprobe(path)
     if result:
         return result
     # ffprobe can't identify images without examining the extensions, and doesn't
     # support SVG at all
     # Note that ffprobe *can* confirm the integrity of images if it knows the extension
     # first, so we allow it to resolve images if the provided extension makes sense.
-    result = detect_imagemagick(path, suggestion)
+    result = detect_imagemagick(path)
     if result:
         return result
     return None
