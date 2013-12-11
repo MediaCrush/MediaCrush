@@ -9,26 +9,12 @@ import os
 
 logger = get_task_logger(__name__)
 
-def _processing_needed(h, mimetype):
-    klass = RedisObject.klass(h)
-
-    if not klass:
-        return False
-
-    if klass is not File:
-        return False
-
-    if mimetype not in processor_table:
-        return False
-
-    return True
-
 @app.task(track_started=True)
 def convert_file(h, path, p, sync):
     f = File.from_hash(h)
 
     if p not in processor_table:
-        return
+        p = 'default'
 
     processor = processor_table[p](path, f)
 

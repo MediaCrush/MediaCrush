@@ -1,7 +1,7 @@
 from mediacrush.processing.invocation import Invocation
 
 # General invocations
-copy = Invocation("cp {0} {1}")
+copy = Invocation("cp {0} {1}.{extension}")
 
 # Video-related invocations
 mp4 = Invocation("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4")

@@ -1,4 +1,5 @@
 from mediacrush.config import _cfg
+from mediacrush.fileutils import EXTENSIONS, get_mimetype
 
 import os
 
@@ -13,7 +14,9 @@ class Processor(object):
         self.f = f
 
     def _execute(self, command, important=True):
-        tlc = command(self.path, self.output)
+        extension = EXTENSIONS[get_mimetype(self.f.original)]
+
+        tlc = command(self.path, self.output, extension=extension)
         tlc.run()
 
         if tlc.exited and important:
@@ -21,3 +24,9 @@ class Processor(object):
 
         if tlc.returncode != 0 and important:
             raise ProcessingException
+
+    def sync(self):
+        pass
+
+    def async(self):
+        pass

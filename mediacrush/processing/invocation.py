@@ -14,8 +14,8 @@ class Invocation(object):
     def __init__(self, command):
         self.command = command
 
-    def __call__(self, *args):
-        self.args = self.command.format(*args).split()
+    def __call__(self, *args, **kw):
+        self.args = self.command.format(*args, **kw).split()
         return self
 
     def _target(self):
