@@ -98,7 +98,7 @@ def detect_stream(stream):
     if stream["codec_name"] == 'bmp':
         return 'image/bmp'
     if stream["codec_name"] == 'gif':
-        return 'image/gif'
+        return 'video'
     if stream["codec_type"] in [ 'video', 'audio' ]:
         return stream["codec_type"]
     return None
