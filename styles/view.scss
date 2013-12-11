@@ -75,17 +75,17 @@ dl {
    }
 }
 
-#gad {
-    margin-top: 20px;
-    background-color: #ddd;
-    border-radius: 5px;
-    height: 108px;
-    padding: 5px;
-    text-align: center;
+a.album-direct {
+    color: #fff;
+    text-shadow: 3px 3px 3px #000;
+    text-decoration: underline;
+    position: absolute;
+    bottom: 45px;
+    left: 3px;
 
-    .small {
-        position: relative;
-        top: -5px;
-        color: red;
+    &:hover {
+        color: #fff;
     }
 }
+
+@import 'view-responsive.scss'

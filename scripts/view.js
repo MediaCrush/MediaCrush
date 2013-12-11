@@ -72,21 +72,26 @@ window.addEventListener('load', function() {
     var report = document.getElementById('report');
     report.addEventListener('click', function(e) {
         e.preventDefault();
-        var report = document.getElementById('report');
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/report/' + location.href.split('/')[3]);
-        xhr.send();
-        report.parentElement.innerHTML = "Reported";
+        
+        confirm(function(a) {
+            if(!a) return;
+            var report = document.getElementById('report');
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/report/' + location.href.split('/')[3]);
+            xhr.send();
+            report.parentElement.innerHTML = "Reported";  
+        });
     }, false);
     if (window.mediaSizeReporter) {
         var size = mediaSizeReporter();
         size.height += 5;
         var embed = document.getElementById('embed-value');
-        embed.value = '<iframe src="https://mediacru.sh/' + window.filename + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
+        embed.value = '<iframe src="{{ protocol }}://{{ domain }}/' + window.filename + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
     }
 }, false);
 function handleHash(hash) {
-    if (hash == '#fromExtension') {
+    var historyEnabled = readCookie('hist-opt-out') === null;
+    if (hash == '#fromExtension' && historyEnabled) {
         var handled = false;
         for (var i = 0; i < history.length; i++) {
             if (history[i] === window.filename)

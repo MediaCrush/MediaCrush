@@ -57,7 +57,7 @@
 <div class="hidden" id="embed">
     <div class="center">
         <p>Copy this HTML and paste it into your website:</p>
-        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
+        <input id="embed-value" type="text" value='&lt;iframe src="{{ protocol }}://{{ domain }}/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
         <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.</p>
     </div>
 </div>
@@ -78,7 +78,7 @@
 
 {{ type_files(mimetype) | safe }} {# Very important - include files for the type #}
 
-{% if ads and adsense_client != "CHANGEME" %}
+{% if ads and adsense_client != "CHANGEME" and False %}
 <div id="gad">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- View page horizontal -->

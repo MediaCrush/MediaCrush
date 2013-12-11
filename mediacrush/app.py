@@ -115,11 +115,6 @@ def serious():
 def troubleshooting():
     return render_template("troubleshooting.html")
 
-@app.route("/mediacrush.js")
-def mediacrushjs():
-    v = render_template("mediacrush.js", host=_cfg("domain"))
-    return Response(v, mimetype="application/javascript")
-
 DocsView.register(app)
 APIView.register(app)
 HookView.register(app)

@@ -113,7 +113,7 @@ function updateAlbum() {
         document.getElementById('albumPending').classList.add('hidden');
         document.getElementById('albumUrl').parentElement.classList.add('hidden');
     }
-    if (uploads > 0) {
+    if (uploads > 0 && !albumAssociated) {
         document.getElementById('createAlbum').classList.remove('hidden');
         document.getElementById('albumPending').classList.remove('hidden');
         document.getElementById('albumUrl').parentElement.classList.add('hidden');

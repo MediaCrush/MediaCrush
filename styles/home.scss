@@ -33,14 +33,9 @@
     -webkit-transition: box-shadow 0.25s linear;
     -moz-transition: box-shadow 0.25s linear;
     transition: box-shadow 0.25s linear;
-    width: 535px;
-    background: url('/static/upload.png') transparent no-repeat 140px 220px;
-
-    .noads & {
-        width: 700px;
-        margin-left: 6px;
-        background-position: 230px 220px;
-    }
+    background: url('/static/upload.png') transparent no-repeat 230px 220px;
+    width: 700px;
+    margin-left: 6px;
 
     &.hover {
         box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
@@ -91,12 +86,8 @@
 
     #files ul {
         position: absolute;
-        left: 30px;
+        left: 119px;
         bottom: 80px;
-
-        .noads & {
-            left: 119px;
-        }
 
         li {
             margin: 0 39px;
@@ -119,33 +110,6 @@
             }
         }
     }
-}
-
-#gad {
-    background-color: #ddd;
-    border-radius: 5px;
-    height: 620px;
-    padding: 5px;
-    text-align: center;
-    width: 120px;
-
-    &> div {
-        width: 120px;
-        height: 600px;
-    }
-
-    .small {
-        font-size: 8pt;
-    }
-}
-
-#lgad {
-    background: #ddd;
-    border-radius: 5px;
-    display: none;
-    padding: 5px;
-    text-align: center;
-    width: 120px;
 }
 
 #history {
@@ -236,11 +200,7 @@
     text-transform: uppercase;
     position: absolute;
     top: 53px;
-    left: -10px;
-
-    .noads & {
-        left: -5px;
-    }
+    left: -5px;
 
     &::before {
         content: '';
@@ -365,40 +325,28 @@
     }
 }
 
-a[href^="https://twitter.com"] {
-    display: inline-block;
-    background: url("/static/twitter.png") no-repeat;
-    width: 16px;
-    height: 16px;
+.social {
     position: relative;
-    top: 3px;
-}
+    top: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
 
-a[href^="https://pay.reddit.com"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url("/static/reddit.png") no-repeat;
-    position: relative;
-    top: 3px;
-}
+    a {
+        display: inline-block;
+        min-height: 16px;
+        padding-left: 18px;
+        font-size: 10pt;
+        margin-left: 5px;
 
-a[href^="https://chrome.google.com"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url('/static/chrome.png') no-repeat;
-    position: relative;
-    top: 3px;
-}
+        &[href^="https://twitter.com"] {
+            background: url("/static/twitter.png") no-repeat 0 1px;
+        }
 
-a[href^="https://addons.mozilla.org"] {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background: url('/static/firefox.png') no-repeat;
-    position: relative;
-    top: 3px;
+        &[href^="https://pay.reddit.com"] {
+            background: url("/static/reddit.png") no-repeat 0 1px;
+        }
+    }
 }
 
 @import 'home-responsive.scss'

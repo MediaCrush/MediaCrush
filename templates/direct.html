@@ -26,6 +26,9 @@
         {% if dark_theme %}
         <link rel="stylesheet" type="text/css" href="/static/dark.css" />
         {% endif %}
+        <script type="text/javascript">
+            window.filename = "{{ filename }}";
+        </script>
     </head>
     <body class="view">
         <div style="display: inline-block">

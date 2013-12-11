@@ -1,5 +1,5 @@
 <div class="video" data-video="video-{{ filename }}">
-    <video id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
+    <video poster="/{{ filename }}.png" id="video-{{ filename }}" {% if autoplay and not mobile %}autoplay {% endif %}{% if loop %}loop {% endif %}>
         {% if 'video/mp4' in types %}
         <source src="/{{ filename }}.mp4" type='video/mp4;'>
         {% endif %}
@@ -12,14 +12,19 @@
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
     <div class="hover">
+        {% if embedded %}
         <h1 class="brand">
             <a href="/{{filename}}" target="_blank">
                 <span>
                     <img src="/static/logo-bg.png" class="bg" alt="logo" />
                     <img src="/static/logo-fg.png" alt="logo" />
                 </span>
-            MediaCrush</a>
+            </a>
         </h1>
+        {% endif %}
+        {% if album %}
+        <a href="/{{filename}}" class="album-direct">Direct Link</a>
+        {% endif %}
         <div class="downloads">
             <a href="/{{ filename }}/download">Download</a>
         </div>

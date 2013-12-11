@@ -72,7 +72,9 @@ def _template_params(f):
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
         'fragment': 'fragments/' + fragment(mimetype) + '.html',
-        'types': types
+        'types': types,
+        'protocol': _cfg("protocol"),
+        'domain': _cfg("domain"),
     }
 
 def _album_params(album):
