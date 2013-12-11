@@ -40,5 +40,7 @@ def process_file(path, h):
     asyncstep = convert_file.s(h, path, p, False) # Asynchronous step
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
-    c = chord((syncstep, asyncstep), cleanup.s(path))()
-    c.get()
+    c = chord((syncstep, asyncstep), cleanup.s(path))
+
+    f.taskid = c.apply_async().id
+    f.save()

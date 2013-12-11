@@ -1,6 +1,7 @@
 import unittest
-import shutil 
+import shutil
 import os
+import time
 
 from ..app import app
 from ..config import _cfg
@@ -13,6 +14,7 @@ def clear_env():
 
 class TestMixin(unittest.TestCase):
     def setUp(self):
+        time.sleep(0.1)
         clear_env()
         app.config['TESTING'] = True
         self.client = app.test_client()

@@ -103,7 +103,7 @@ def upload(f, filename):
     filename = "%s.%s" % (identifier, extension(filename))
     path = tempfile.NamedTemporaryFile().name
 
-    if os.path.exists(path):
+    if os.path.exists(file_storage(filename)):
         if File.exists(identifier):
             return identifier, 409
         else:

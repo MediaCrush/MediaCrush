@@ -1,5 +1,6 @@
 import unittest
 import json
+import time
 
 from .utils import TestMixin
 
@@ -163,6 +164,7 @@ class UploadTestCase(APITestCase):
 
     def test_upload_twice(self):
         self._upload('cat.png')
+        time.sleep(1)
         response = self._upload('cat.png')
 
         self.assertEqual(response.status_code, 409)
