@@ -36,6 +36,7 @@ class VideoProcessor(Processor):
         self._execute(mp4)
         self._execute(webm)
         self._execute(ogv)
+        self._execute(copy)
 
     def async(self):
         self._execute(png_frame)

@@ -69,7 +69,7 @@ def compression_rate(originalpath, f):
     if len(processing_needed[mimetype]['formats']) == 0: return 0
 
     original_size = os.path.getsize(originalpath)
-    minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
+    minsize = min(original_size, original_size)
     for f_type in processing_needed[mimetype]['formats']:
         try:
             convsize = os.path.getsize(file_storage("%s.%s" % (f, EXTENSIONS[f_type])))
