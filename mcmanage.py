@@ -14,7 +14,7 @@ Usage:
 
 from docopt import docopt
 
-from mediacrush.mcmanage.database import database_clear, database_upgrade, database_sync
+from mediacrush.mcmanage.database import database_clear, database_sync
 from mediacrush.mcmanage.report import report
 from mediacrush.mcmanage.files import files_delete
 

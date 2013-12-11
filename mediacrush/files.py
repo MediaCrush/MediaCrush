@@ -101,7 +101,7 @@ def upload(f, filename):
     h = get_hash(f)
     identifier = to_id(h)
     filename = "%s.%s" % (identifier, extension(filename))
-    path = file_storage(filename)
+    path = tempfile.NamedTemporaryFile().name
 
     if os.path.exists(path):
         if File.exists(identifier):
@@ -120,8 +120,7 @@ def upload(f, filename):
     file_object.original = filename
     file_object.ip = secure_ip()
 
-    result = process_file.delay(identifier, f.content_type, True) # Synchronous step
-    process_file.delay(identifier, f.content_type, False) # Asynchronous step
+    result = process_file.delay(path, identifier)
     file_object.taskid = result.id
 
     file_object.save()

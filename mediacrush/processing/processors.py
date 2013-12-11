@@ -1,39 +1,45 @@
 from mediacrush.processing.invocations import *
 from mediacrush.processing.processor import Processor
 
-class GIFProcessor(Processor):
-    sync = [mp4, webm, ogv]
-    async = [png_frame]
+#class GIFProcessor(Processor):
+#    sync = [mp4, webm, ogv]
+#    async = [png_frame]
+#    time = 300
+#
+#class MP4Processor(Processor):
+#    sync = [webm, ogv]
+#    async = [png_frame]
+#    time = 600
+#
+#class WebMProcessor(Processor):
+#    sync = [mp4, ogv]
+#    async = [png_frame]
+#    time = 600
+#
+#class OGVProcessor(Processor):
+#    sync = [webm, mp4]
+#    async = [png_frame]
+#    time = 600
+#
+#class JPEGProcessor(Processor):
+#    async = [jpeg]
+#    time = 5
+#
+#class SVGProcessor(Processor):
+#    async = [svg]
+#    time = 5
+
+class VideoProcessor(Processor):
     time = 300
 
-class MP4Processor(Processor):
-    sync = [webm, ogv]
-    async = [png_frame]
-    time = 600
+    def sync(self):
+        self._execute(mp4)
+        self._execute(webm)
+        self._execute(ogv)
 
-class WebMProcessor(Processor):
-    sync = [mp4, ogv]
-    async = [png_frame]
-    time = 600
-
-class OGVProcessor(Processor):
-    sync = [webm, mp4]
-    async = [png_frame]
-    time = 600
-
-class JPEGProcessor(Processor):
-    async = [jpeg]
-    time = 5
-
-class SVGProcessor(Processor):
-    async = [svg]
-    time = 5
+    def async(self):
+        self._execute(png_frame)
 
 processor_table = {
-    'image/gif': GIFProcessor,
-    'video/mp4': MP4Processor,
-    'video/webm': WebMProcessor,
-    'video/ogg': OGVProcessor,
-    'image/jpeg': JPEGProcessor,
-    'image/svg+xml': SVGProcessor,
+    'video': VideoProcessor
 }

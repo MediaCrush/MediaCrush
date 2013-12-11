@@ -1,7 +1,7 @@
 from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File
 from mediacrush.celery import app, get_task_logger
-from mediacrush.processing import processor_table
+from mediacrush.processing import processor_table, detect
 from mediacrush.fileutils import compression_rate
 
 import time
@@ -23,12 +23,12 @@ def _processing_needed(h, mimetype):
     return True
 
 @app.task(track_started=True, bind=True)
-def process_file(self, h, mimetype, sync):
-    if not _processing_needed(h, mimetype):
+def convert_file(self, h, path, p, sync):
+    f = File.from_hash(h)
+    if p not in processor_table:
         return
 
-    f = File.from_hash(h)
-    processor = processor_table[mimetype](f)
+    processor = processor_table[p](path, f)
 
     if sync:
         processor.sync()
@@ -36,5 +36,17 @@ def process_file(self, h, mimetype, sync):
         processor.async()
 
     if sync:
-        f.compression = compression_rate(f.hash)
+        f.compression = compression_rate(path, f.hash)
         f.save()
+
+@app.task
+def process_file(path, h):
+    f = File.from_hash(h)
+    p = detect(path)
+
+    result = convert_file.delay(h, path, p, True) # Synchronous step
+    convert_file.delay(h, path, p, False) # Asynchronous step
+
+    print result.id
+    f.taskid = result.id
+    f.save()

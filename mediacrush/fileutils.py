@@ -62,13 +62,13 @@ def get_mimetype(url):
 def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)
 
-def compression_rate(f):
+def compression_rate(originalpath, f):
     f_original = File.from_hash(f)
     mimetype = get_mimetype(f_original.original)
     if mimetype not in processing_needed: return 0
     if len(processing_needed[mimetype]['formats']) == 0: return 0
 
-    original_size = os.path.getsize(file_storage(f_original.original))
+    original_size = os.path.getsize(originalpath)
     minsize = min(original_size, os.path.getsize(file_storage(f_original.original)))
     for f_type in processing_needed[mimetype]['formats']:
         try:

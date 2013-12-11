@@ -16,10 +16,11 @@ class Invocation(object):
 
     def __call__(self, *args):
         self.args = self.command.format(*args).split()
+        return self
 
     def _target(self):
         try:
-            self.process = subprocess.Popen(self.args, stdout=subprocess.PIPE)
+            self.process = subprocess.Popen(self.args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.stdout = self.process.communicate()
         except:
             self.crashed = True
