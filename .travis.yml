@@ -3,6 +3,9 @@ python:
     - "2.7"
 services:
     - redis
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq imagemagick tidy jhead optipng ffmpeg
 install:
     - pip install -r requirements.txt
     - mkdir storage
