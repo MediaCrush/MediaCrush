@@ -1,10 +1,10 @@
 from .config import _cfg, domain_url
-from .objects import File 
+from .objects import File
 from .files import get_mimetype
 
 def _still_image(h):
     f = File.from_hash(h)
-    mimetype = get_mimetype(f.original)
+    mimetype = f.mimetype
     if mimetype.startswith("image") and mimetype != "image/gif":
         return f.original
 
@@ -23,12 +23,12 @@ class Share(object):
         return getattr(self, method)(arg)
 
     def link_still(self, h):
-        return domain_url(h) 
+        return domain_url(h)
 
     link_other = link_still
 
     def directlink_still(self, h):
-        return domain_url(h) 
+        return domain_url(h)
 
     def directlink_other(self, h):
         return self.link_other(h) + "/direct"

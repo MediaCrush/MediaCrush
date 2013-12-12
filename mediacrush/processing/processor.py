@@ -18,7 +18,10 @@ class Processor(object):
         self.f = f
 
     def _execute(self, command, important=True):
-        extension = EXTENSIONS[get_mimetype(self.f.original)]
+        try:
+            extension = EXTENSIONS[get_mimetype(self.f.original)]
+        except KeyError:
+            extension = None
 
         tlc = Invocation(command)(self.path, self.output, extension=extension)
         tlc.run()

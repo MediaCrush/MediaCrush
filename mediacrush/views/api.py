@@ -11,7 +11,7 @@ from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 
 def _file_object(f):
-    mimetype = get_mimetype(f.original)
+    mimetype = f.mimetype
     processor = get_processor(f.processor)
 
     ret = {

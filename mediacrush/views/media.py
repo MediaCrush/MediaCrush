@@ -49,7 +49,7 @@ def _template_params(f):
     except:
         pass
 
-    mimetype = get_mimetype(f.original)
+    mimetype = f.mimetype
     processor = get_processor(f.processor)
 
     types = [mimetype]
