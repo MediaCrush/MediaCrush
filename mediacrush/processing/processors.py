@@ -1,29 +1,32 @@
-from mediacrush.processing.invocations import *
 from mediacrush.processing.processor import Processor
+
+copy = "cp {0} {1}.{extension}"
 
 class VideoProcessor(Processor):
     time = 300
 
     def sync(self):
-        self._execute(mp4)
-        self._execute(webm)
-        self._execute(ogv)
+        self._execute("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4")
+        self._execute("ffmpeg -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 {1}.webm")
+        self._execute("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora {1}.ogv")
+
         self._execute(copy)
 
     def async(self):
-        self._execute(png_frame)
+        self._execute("ffmpeg -i {0} -vframes 1 {1}.png")
 
 class JPEGProcessor(Processor):
     time = 5
 
     def sync(self):
-        self._execute(jpeg)
+        self._execute("jhead -purejpg {0}")
+        self._execute(copy)
 
 class SVGProcessor(Processor):
     time = 5
 
     def sync(self):
-        self._execute(svg)
+        self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 
 class DefaultProcessor(Processor):
     time = 5

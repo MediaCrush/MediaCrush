@@ -1,4 +1,5 @@
 from mediacrush.config import _cfg
+from mediacrush.processing.invocation import Invocation
 from mediacrush.fileutils import EXTENSIONS, get_mimetype
 
 import os
@@ -16,7 +17,7 @@ class Processor(object):
     def _execute(self, command, important=True):
         extension = EXTENSIONS[get_mimetype(self.f.original)]
 
-        tlc = command(self.path, self.output, extension=extension)
+        tlc = Invocation(command)(self.path, self.output, extension=extension)
         tlc.run()
 
         if tlc.exited and important:
