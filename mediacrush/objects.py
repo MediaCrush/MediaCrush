@@ -90,9 +90,10 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __exclude__ = ['status']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor']
 
     original = None
+    mimetype = None
     compression = 0
     reports = 0
     ip = None

@@ -64,13 +64,9 @@ class URLFile(object):
 
         return True
 
-def clean_extension(path, mimetype):
-    return "%s.%s" % (os.path.splitext(path)[0], EXTENSIONS[mimetype])
-
 def get_hash(f):
     f.seek(0)
     return hashlib.md5(f.read()).digest()
-
 
 def media_url(f):
     return '/%s' % f
@@ -89,8 +85,6 @@ def upload(f, filename):
     if f.content_type.split("/")[0] not in ['video', 'image', 'audio']:
         return "no", 415
 
-    filename = clean_extension(filename, f.content_type)
-
     if not current_app.debug:
         rate_limit_update(file_length(f))
         if rate_limit_exceeded():
@@ -98,7 +92,12 @@ def upload(f, filename):
 
     h = get_hash(f)
     identifier = to_id(h)
-    filename = "%s.%s" % (identifier, extension(filename))
+    if "." not in filename:
+        ext = mimetypes.guess_extension(f.content_type) # This not very scientific, but it works
+    else:
+        ext = extension(filename)
+
+    filename = "%s.%s" % (identifier, ext)
     path = tempfile.NamedTemporaryFile().name
 
     if os.path.exists(file_storage(filename)):
@@ -116,6 +115,7 @@ def upload(f, filename):
     file_object = File(hash=identifier)
     file_object.compression = os.path.getsize(path)
     file_object.original = filename
+    file_object.mimetype = f.content_type
     file_object.ip = secure_ip()
 
     result = process_file.delay(path, identifier)

@@ -19,10 +19,10 @@ class VideoProcessor(Processor):
 class AudioProcessor(Processor):
     time = 300
     outputs = ['mp3', 'ogg']
-    
+
     def sync(self):
-        self._execute("ffmpeg -i {0} {1}.mp3")
         self._execute(copy)
+        self._execute("ffmpeg -i {0} {1}.mp3")
 
     def async(self):
         self._execute("ffmpeg -i {0} -acodec libvorbis {1}.ogg")
@@ -32,8 +32,8 @@ class ImageProcessor(Processor):
     outputs = ['png']
 
     def sync(self):
-        self._execute("convert {0} {1}.png")
         self._execute(copy)
+        self._execute("convert {0} {1}.png")
 
 # We have some special optimizations for specific filetypes
 # These customized processors follow
@@ -46,7 +46,7 @@ class PNGProcessor(Processor):
         self._execute(copy)
 
     def async(self):
-        self._execute("optipng -o5 {0}")
+        self._execute("optipng -o5 {1}")
 
 class JPEGProcessor(Processor):
     time = 5

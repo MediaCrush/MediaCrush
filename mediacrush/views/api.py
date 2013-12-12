@@ -17,6 +17,7 @@ def _file_object(f):
     ret = {
         'original': media_url(f.original),
         'type': mimetype,
+        'blob_type': f.processor.split('/')[0] if '/' in f.processor else f.processor,
         'hash': f.hash,
         'files': [],
         'extras': []
@@ -24,7 +25,7 @@ def _file_object(f):
     if f.compression:
         ret['compression'] = float(f.compression)
 
-    ret['files'].append(_file_entry(f.original))
+    ret['files'].append(_file_entry(f.original, mimetype=f.mimetype))
 
     for f_ext in processor.outputs:
         ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
@@ -33,9 +34,9 @@ def _file_object(f):
 
     return ret
 
-def _file_entry(f):
+def _file_entry(f, mimetype=None):
     return {
-        'type': get_mimetype(f),
+        'type': mimetype if mimetype else get_mimetype(f),
         'file': media_url(f),
     }
 
