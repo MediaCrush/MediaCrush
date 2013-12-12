@@ -9,12 +9,12 @@ class VideoProcessor(Processor):
 
     def sync(self):
         self._execute(copy)
-        self._execute("ffmpeg -i {0} -vframes 1 {1}.png")
-        self._execute("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4")
-        self._execute("ffmpeg -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 {1}.webm")
+        self._execute("ffmpeg -i {0} -vframes 1 -map 0:v:0 {1}.png")
+        self._execute("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 -map 0:a:0 -map 0:v:0 {1}.mp4")
+        self._execute("ffmpeg -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 -map 0:a:0 -map 0:v:0 {1}.webm")
 
     def async(self):
-        self._execute("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora {1}.ogv")
+        self._execute("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora -map 0:a:0 -map 0:v:0 {1}.ogv")
 
 class AudioProcessor(Processor):
     time = 300
