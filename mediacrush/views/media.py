@@ -55,6 +55,7 @@ def _template_params(f):
     types = [mimetype]
     for f_ext in processor.outputs:
         types.append(get_mimetype(f_ext))
+
     if 'do-not-send' in request.cookies:
         try:
             blacklist = json.loads(request.cookies['do-not-send'])
@@ -84,7 +85,7 @@ def _album_params(album):
     if not items:
         abort(404)
 
-    types = set([get_mimetype(f.original) for f in items])
+    types = set([f.mimetype for f in items])
 
     can_delete = None
     try:
