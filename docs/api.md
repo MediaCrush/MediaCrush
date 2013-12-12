@@ -131,6 +131,7 @@ If the file is not found, you will get a dictionary like:
 
     {
       "CPvuR5lRhmS0": {
+        "blob_type": "video",
         "compression": 8.93,
         "files": [
           {
@@ -153,6 +154,7 @@ If the file is not found, you will get a dictionary like:
         "type": "image/gif",
       },
       "tVWMM_ziA3nm": {
+        "blob_type": "video",
         "compression": 17.99,
         "files": [
           {
@@ -201,6 +203,7 @@ If the file is not found, you will get a dictionary like:
       "status": "done",
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
+        "blob_type": "video",
         "compression": 8.93,
         "files": [
           {
@@ -360,6 +363,7 @@ In case of error, the response will contain an 'error' parameter and additional 
       "error": 409,
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
+        "blob_type": "video",
         "compression": 0.0,
         "files": [
           {
@@ -458,6 +462,7 @@ In case of error, the response will contain an 'error' parameter and additional 
 ### File
 
     {
+      "blob_type": "video",
       "compression": 8.93,
       "files": [
         {
@@ -490,6 +495,7 @@ file in the extras.
     {
       "files": [
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [
@@ -502,6 +508,7 @@ file in the extras.
           "type": "image/jpeg"
         },
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [
@@ -514,6 +521,7 @@ file in the extras.
           "type": "image/jpeg"
         },
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [
