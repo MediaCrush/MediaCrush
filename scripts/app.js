@@ -229,11 +229,11 @@ function checkStatus(hash, statusUI, progressUI) {
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
         responseJSON = JSON.parse(this.responseText);
-        if (responseJSON['status'] == 'done') {
+        if (responseJSON['status'] == 'done' || responseJSON['status'] == 'ready') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
             updateAlbum();
-        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
+        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
             error.className = 'error';
