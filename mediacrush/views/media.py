@@ -112,13 +112,9 @@ class MediaView(FlaskView):
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
 
-    @route("/<id>/download")
-    def download(self, id):
-        f = File.from_hash(id)
-        if os.path.exists(os.path.join(_cfg("storage_folder"), f.original)):
-           path = os.path.join(_cfg("storage_folder"), f.original)
-           return send_file(path, as_attachment=True)
-        return self.get(id)
+    @route("/download/<path:file>")
+    def download(self, file):
+        return self._send_file(file)
 
     def get(self, id):
         send = self._send_file(id)
