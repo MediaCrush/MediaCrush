@@ -109,6 +109,9 @@ class File(RedisObject):
 
     @property
     def status(self):
+        if self.taskid == 'done':
+            return 'done'
+
         result = app.AsyncResult(self.taskid)
 
         if result.status == 'FAILURE':
@@ -124,6 +127,10 @@ class File(RedisObject):
             'STARTED': 'processing',
             'SUCCESS': 'done',
         }.get(result.status, 'internal_error')
+
+        if status == 'done':
+            self.taskid = status
+            self.save()
 
         return status
 
