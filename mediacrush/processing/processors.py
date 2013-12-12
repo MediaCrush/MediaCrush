@@ -72,6 +72,8 @@ class DefaultProcessor(Processor):
 
 processor_table = {
     'video': VideoProcessor,
+    'audio': AudioProcessor,
+    'image': ImageProcessor,
     'image/jpeg': JPEGProcessor,
     'image/svg+xml': SVGProcessor,
     'default': DefaultProcessor,
