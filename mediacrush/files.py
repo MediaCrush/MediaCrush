@@ -64,9 +64,6 @@ class URLFile(object):
 
         return True
 
-def allowed_format(mimetype):
-    return mimetype in EXTENSIONS
-
 def clean_extension(path, mimetype):
     return "%s.%s" % (os.path.splitext(path)[0], EXTENSIONS[mimetype])
 
@@ -89,7 +86,7 @@ def upload(f, filename):
     if not f.content_type:
         f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-    if not allowed_format(f.content_type):
+    if f.content_type not in EXTENSIONS:
         return "no", 415
 
     filename = clean_extension(filename, f.content_type)
