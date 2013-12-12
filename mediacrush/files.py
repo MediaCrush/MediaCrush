@@ -86,7 +86,7 @@ def upload(f, filename):
     if not f.content_type:
         f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-    if f.content_type not in EXTENSIONS:
+    if f.content_type.split("/")[1] in ['video', 'image', 'audio']:
         return "no", 415
 
     filename = clean_extension(filename, f.content_type)
