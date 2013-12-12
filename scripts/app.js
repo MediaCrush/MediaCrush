@@ -1,17 +1,3 @@
-// This is checked on the server, too, but we check it locally to prevent excess
-// bandwidth consumption
-var supportedMimetypes = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/svg+xml',
-    'video/mp4',
-    'video/ogg',
-    'audio/mp3',
-    'audio/ogg',
-    'audio/mpeg'
-];
-
 function browse() {
     var file = document.getElementById('browse');
     file.click();
@@ -330,7 +316,6 @@ function createPreview(file) {
     }
 
     var preview = null;
-    var supported = supportedMimetypes.contains(file.type);
     if (file.type.indexOf('image/') == 0) {
         preview = document.createElement('img');
         preview.src = uri;
@@ -370,7 +355,7 @@ function createPreview(file) {
     var fileList = document.getElementById('files');
     fileList.appendChild(container);
 
-    return { supported: supported, fileStatus: fileStatus, progress: progress };
+    return { supported: true, fileStatus: fileStatus, progress: progress };
 }
 
 function dragNop(e) {

@@ -8,14 +8,45 @@ class VideoProcessor(Processor):
     extras = ['png']
 
     def sync(self):
+        self._execute("ffmpeg -i {0} -vframes 1 {1}.png")
         self._execute("ffmpeg -i {0} -vcodec libx264 -pix_fmt yuv420p -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2 {1}.mp4")
         self._execute("ffmpeg -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 {1}.webm")
-        self._execute("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora {1}.ogv")
-
         self._execute(copy)
 
     def async(self):
-        self._execute("ffmpeg -i {0} -vframes 1 {1}.png")
+        self._execute("ffmpeg -i {0} -q 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora {1}.ogv")
+
+class AudioProcessor(Processor):
+    time = 300
+    outputs = ['mp3', 'ogg']
+    
+    def sync(self):
+        self._execute("ffmpeg -i {0} {1}.mp3")
+        self._execute(copy)
+
+    def async(self):
+        self._execute("ffmpeg -i {0} -acodec libvorbis {1}.ogg")
+
+class ImageProcessor(Processor):
+    time = 60
+    outputs = ['png']
+
+    def sync(self):
+        self._execute("convert {0} {1}.png")
+        self._execute(copy)
+
+# We have some special optimizations for specific filetypes
+# These customized processors follow
+
+class PNGProcessor(Processor):
+    time = 120
+    outputs = ['png']
+
+    def sync(self):
+        self._execute(copy)
+
+    def async(self):
+        self._execute("optipng -o5 {0}")
 
 class JPEGProcessor(Processor):
     time = 5
