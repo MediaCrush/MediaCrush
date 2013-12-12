@@ -24,7 +24,7 @@ def convert_file(h, path, p, sync):
         processor.async()
 
     if sync:
-        f.compression = compression_rate(path, f.hash)
+        f.compression = compression_rate(path, f)
         f.save()
 
 @app.task
@@ -35,6 +35,9 @@ def cleanup(results, path):
 def process_file(path, h):
     f = File.from_hash(h)
     p = detect(path)
+
+    f.processor = p
+    f.save()
 
     syncstep = convert_file.s(h, path, p, True) # Synchronous step
     asyncstep = convert_file.s(h, path, p, False) # Asynchronous step

@@ -97,6 +97,7 @@ class File(RedisObject):
     reports = 0
     ip = None
     taskid = None
+    processor = None
 
     def add_report(self):
         self.reports = int(self.reports)

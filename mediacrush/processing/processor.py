@@ -1,6 +1,6 @@
 from mediacrush.config import _cfg
 from mediacrush.processing.invocation import Invocation
-from mediacrush.fileutils import EXTENSIONS, get_mimetype
+from mediacrush.mimetypes import EXTENSIONS, get_mimetype
 
 import os
 
@@ -8,6 +8,9 @@ class ProcessingException(Exception): pass
 class TimeoutException(Exception): pass
 
 class Processor(object):
+    outputs = []
+    extras = []
+
     def __init__(self, tmppath, f):
         self.path = tmppath
         self.output = os.path.join(_cfg("storage_folder"), f.hash)

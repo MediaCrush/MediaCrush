@@ -2,15 +2,17 @@ from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
 from flask import request, current_app
 
-from ..decorators import json_output, cors
-from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, EXTENSIONS
-from ..database import r, _k
-from ..objects import File, Album, Feedback, RedisObject
-from ..network import get_ip, secure_ip
-from ..ratelimit import rate_limit_exceeded, rate_limit_update
+from mediacrush.decorators import json_output, cors
+from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
+from mediacrush.database import r, _k
+from mediacrush.objects import File, Album, Feedback, RedisObject
+from mediacrush.network import get_ip, secure_ip
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
+from mediacrush.processing import get_processor
 
 def _file_object(f):
     mimetype = get_mimetype(f.original)
+    processor = get_processor(f.processor)
 
     ret = {
         'original': media_url(f.original),
@@ -24,11 +26,10 @@ def _file_object(f):
 
     ret['files'].append(_file_entry(f.original))
 
-    if mimetype in processing_needed:
-        for f_type in processing_needed[mimetype]['formats']:
-            ret['files'].append(_file_entry("%s.%s" % (f.hash, EXTENSIONS[f_type])))
-        for f_type in processing_needed[mimetype].get('extras', []):
-            ret['extras'].append(_file_entry("%s.%s" % (f.hash, EXTENSIONS[f_type])))
+    for f_ext in processor.outputs:
+        ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+    for f_ext in processor.extras:
+        ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
     return ret
 

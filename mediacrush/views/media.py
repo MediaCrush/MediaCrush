@@ -5,11 +5,12 @@ import os
 import json
 import mimetypes
 
-from ..files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file, processing_needed
-from ..database import r, _k
-from ..config import _cfg
-from ..objects import File, Album, RedisObject
-from ..network import get_ip
+from mediacrush.files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file
+from mediacrush.database import r, _k
+from mediacrush.config import _cfg
+from mediacrush.objects import File, Album, RedisObject
+from mediacrush.network import get_ip
+from mediacrush.processing import get_processor
 
 def fragment(mimetype):
     fragments = ['video', 'mobilevideo', 'image', 'audio']
@@ -49,10 +50,11 @@ def _template_params(f):
         pass
 
     mimetype = get_mimetype(f.original)
+    processor = get_processor(f.processor)
 
     types = [mimetype]
-    for f_type in processing_needed[mimetype]['formats']:
-        types.append(f_type)
+    for f_ext in processor.outputs:
+        types.append(get_mimetype(f_ext))
     if 'do-not-send' in request.cookies:
         try:
             blacklist = json.loads(request.cookies['do-not-send'])
