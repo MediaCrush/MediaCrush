@@ -1,7 +1,7 @@
 EXTENSIONS = {
     # "application/pdf": "pdf",
     "audio/mpeg": "mp3",
-    "audio/ogg": "oga",
+    "audio/ogg": "ogg",
     "image/gif": "gif",
     "image/jpeg": "jpg",
     "image/png": "png",
