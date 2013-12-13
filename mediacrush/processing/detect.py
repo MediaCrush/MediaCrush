@@ -62,25 +62,26 @@ def detect_ffprobe(path):
 
     for stream in result["streams"]:
         s = detect_stream(stream)
-        if not s:
+        t = s[0]
+        if not s or not t:
             unknown_streams += 1
         else:
-            if s.startswith('image'):
+            if t.startswith('image'):
                 image_streams += 1
-            elif s == 'video':
+            elif t == 'video':
                 video_streams += 1
-            elif s == 'audio':
+            elif t == 'audio':
                 audio_streams += 1
-            elif s == 'subtitle':
+            elif t == 'subtitle':
                 subtitle_streams += 1
-            elif s == 'font':
+            elif t == 'font':
                 font_streams += 1
             else:
                 unknown_streams += 1
     if audio_streams == 1 and video_streams == 0:
-        return 'audio', { has_audio: True, has_video: False }
+        return 'audio', { 'has_audio': True, 'has_video': False }
     if video_streams > 0:
-        return 'video', { has_audio: audio_streams > 0, has_video: True }
+        return 'video', { 'has_audio': audio_streams > 0, 'has_video': True }
     return None
 
 def detect_stream(stream):
@@ -101,11 +102,11 @@ def detect_stream(stream):
     if stream["codec_name"] == 'bmp':
         return 'image/bmp', None
     if stream["codec_name"] == 'gif':
-        return 'video', { has_audio: False, has_video: True }
+        return 'video', { 'has_audio': False, 'has_video': True }
     if stream["codec_type"] == 'video':
-        return 'video', { has_audio: False, has_video: True }
+        return 'video', { 'has_audio': False, 'has_video': True }
     if stream["codec_type"] == 'audio':
-        return 'video', { has_audio: True, has_video: False }
+        return 'audio', { 'has_audio': True, 'has_video': False }
     return None, None
 
 def detect_imagemagick(path):
