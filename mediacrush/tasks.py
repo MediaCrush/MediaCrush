@@ -31,7 +31,7 @@ def convert_file(h, path, p, extra, sync):
 def cleanup(results, path):
     os.unlink(path)
 
-@app.task(track_started=True)
+@app.task
 def process_file(path, h):
     f = File.from_hash(h)
     p, extra = detect(path)
@@ -42,8 +42,11 @@ def process_file(path, h):
     syncstep = convert_file.s(h, path, p, extra, True) # Synchronous step
     asyncstep = convert_file.s(h, path, p, extra, False) # Asynchronous step
 
+    syncstep_result = syncstep.freeze() # This sets the taskid, so we can pass it to the UI
+
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
     c = chord((syncstep, asyncstep), cleanup.s(path))
+    c.apply_async()
 
-    f.taskid = c.apply_async().id
+    f.taskid = syncstep_result.id
     f.save()
