@@ -10,13 +10,13 @@ import os
 logger = get_task_logger(__name__)
 
 @app.task(track_started=True)
-def convert_file(h, path, p, sync):
+def convert_file(h, path, p, extra, sync):
     f = File.from_hash(h)
 
     if p not in processor_table:
         p = 'default'
 
-    processor = processor_table[p](path, f)
+    processor = processor_table[p](path, f, extra)
 
     if sync:
         processor.sync()
@@ -34,13 +34,13 @@ def cleanup(results, path):
 @app.task(track_started=True)
 def process_file(path, h):
     f = File.from_hash(h)
-    p = detect(path)
+    p, extra = detect(path)
 
     f.processor = p
     f.save()
 
-    syncstep = convert_file.s(h, path, p, True) # Synchronous step
-    asyncstep = convert_file.s(h, path, p, False) # Asynchronous step
+    syncstep = convert_file.s(h, path, p, extra, True) # Synchronous step
+    asyncstep = convert_file.s(h, path, p, extra, False) # Asynchronous step
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
     c = chord((syncstep, asyncstep), cleanup.s(path))
