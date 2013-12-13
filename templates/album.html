@@ -8,16 +8,16 @@
 {% endblock %}
 {% block meta %}
 {% for item in [ items[0] ] %}
-{% set mimetype = get_mimetype(item.original) %}
+{% set type = item.processor %}
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
-    {% if mimetype.startswith("video") or mimetype == "image/gif" %}
+    {% if type.startswith("video") %}
         <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.png" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />
         <meta property="twitter:image" content="https://mediacru.sh/{{ item.hash }}.png">
-    {% elif mimetype.startswith("audio") %}
+    {% elif type.startswith("audio") %}
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
         <meta property="og:image" content="https://mediacru.sh/{{ item.original }}" />
