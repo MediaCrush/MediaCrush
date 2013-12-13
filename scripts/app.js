@@ -31,14 +31,15 @@ function uploadUrl(url) {
     xhr.onload = function() {
         var responseJSON = JSON.parse(this.responseText);
         if (this.status == 200 || this.status == 409) {
-            p.textContent = 'Processing... (this may take a while)';
+            p.textContent = 'Waiting to process...';
+            p.title = 'We are working on a lot of files right now, but your file is queued for processing.';
             preview.fileStatus.appendChild(p);
             hash = responseJSON['hash'];
             files.push(hash);
-            preview.progress.className += ' progress-green';
+            preview.progress.className += ' progress-grey';
             preview.progress.style.width = '100%';
             setTimeout(function() {
-                checkStatus(hash, preview.fileStatus, preview.progress);
+                checkStatus(hash, preview.fileStatus, preview.progress, p);
             }, 1000);
         } else {
             var error = document.createElement('span');
@@ -132,9 +133,9 @@ function updateAlbum() {
 function handleFile(file) {
     var reader = new FileReader();
     var droparea = document.getElementById('droparea');
+    var preview = createPreview(file);
     reader.onloadend = function(e) {
         var data = e.target.result;
-        var preview = createPreview(file);
         var hash = btoa(rstr_md5(data)).substr(0, 12).replace('+', '-', 'g').replace('/', '_', 'g');
         if (!preview.supported) {
             var error = document.createElement('span');
@@ -169,16 +170,24 @@ function handleFile(file) {
                     var p = document.createElement('p');
                     p.textContent = 'Uploading...';
                     preview.fileStatus.appendChild(p);
-                    uploadFile(file, hash, preview.fileStatus, preview.progress);
+                    uploadFile(file, preview.fileStatus, preview.progress, hash);
                 }
             };
             xhr.send();
         }
     };
-    reader.readAsBinaryString(file);
+    if (file.size < 10485760) { // 10 MB
+        reader.readAsBinaryString(file);
+    } else {
+        // Skip hashing and loading this into memory, it's too big to do so performantly
+        var p = document.createElement('p');
+        p.textContent = 'Uploading...';
+        preview.fileStatus.appendChild(p);
+        uploadFile(file, preview.fileStatus, preview.progress);
+    }
 }
 
-function uploadFile(file, hash, statusUI, progressUI) {
+function uploadFile(file, statusUI, progressUI, hash) {
     var xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/upload/file');
     xhr.upload.onprogress = function(e) {
@@ -199,13 +208,14 @@ function uploadFile(file, hash, statusUI, progressUI) {
         } else if (this.status == 200) {
             statusUI.innerHTML = '';
             var p = document.createElement('p');
-            p.textContent = 'Processing... (this may take a while)';
+            p.textContent = 'Waiting to process...';
+            p.title = 'We are working on a lot of files right now, but your file is queued for processing.';
             statusUI.appendChild(p);
             hash = responseJSON['hash'];
-            progressUI.className += ' progress-green';
+            progressUI.className += ' progress-grey';
             progressUI.style.width = '100%';
             setTimeout(function() {
-                checkStatus(hash, statusUI, progressUI);
+                checkStatus(hash, statusUI, progressUI, p);
             }, 1000);
         }
         if (error) {
@@ -215,7 +225,9 @@ function uploadFile(file, hash, statusUI, progressUI) {
             errorText.textContent = error;
             statusUI.appendChild(errorText);
             progressUI.style.width = 0;
-            files.remove(files.indexOf(hash));
+            if (hash) {
+                files.remove(files.indexOf(hash));
+            }
             updateAlbum();
         }
     };
@@ -224,7 +236,7 @@ function uploadFile(file, hash, statusUI, progressUI) {
     xhr.send(formData);
 }
 
-function checkStatus(hash, statusUI, progressUI) {
+function checkStatus(hash, statusUI, progressUI, text) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
@@ -233,6 +245,13 @@ function checkStatus(hash, statusUI, progressUI) {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
             updateAlbum();
+        } else if (responseJSON['status'] == 'processing') {
+            text.title = '';
+            text.textContent = 'Processing...';
+            progressUI.className = 'progress progress-green';
+            setTimeout(function() {
+                checkStatus(hash, statusUI, progressUI, text);
+            }, 1000);
         } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
@@ -249,7 +268,7 @@ function checkStatus(hash, statusUI, progressUI) {
             updateAlbum();
         } else {
             setTimeout(function() {
-                checkStatus(hash, statusUI, progressUI);
+                checkStatus(hash, statusUI, progressUI, text);
             }, 1000);
         }
     };
