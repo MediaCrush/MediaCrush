@@ -19,6 +19,9 @@ import json
 # allow us to broaden our supported media types to support basically everything.
 # We need to convert uploaded media to browser-friendly formats. We can do videos and
 # audio with ffmpeg, and we can do images with imagemagick.
+
+# This returns a tuple (type, extra), where the "extra" data is stuff that might be
+# be useful to know later along in the pipeline, specific to each file type.
 def detect(path):
     result = detect_ffprobe(path)
     if result:
@@ -33,7 +36,7 @@ def detect(path):
     result = detect_plaintext(path)
     if result:
         return result
-    return None
+    return None, None
 
 # This does *not* work with any containers that only have images in them, by design.
 def detect_ffprobe(path):
@@ -43,7 +46,7 @@ def detect_ffprobe(path):
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None
+        return None, None
     result = json.loads(a.stdout[0])
     if result["format"]["nb_streams"] == 1:
         return detect_stream(result["streams"][0])
@@ -75,9 +78,9 @@ def detect_ffprobe(path):
             else:
                 unknown_streams += 1
     if audio_streams == 1 and video_streams == 0:
-        return 'audio'
+        return 'audio', { has_audio: True, has_video: False }
     if video_streams > 0:
-        return 'video'
+        return 'video', { has_audio: audio_streams > 0, has_video: True }
     return None
 
 def detect_stream(stream):
@@ -90,18 +93,20 @@ def detect_stream(stream):
     if not "codec_name" in stream:
         if "tags" in stream and "mimetype" in stream["tags"]:
             if stream["tags"]["mimetype"] == 'application/x-truetype-font':
-                return 'font'
+                return 'font', None
     if stream["codec_name"] == 'mjpeg':
-        return 'image/jpeg'
+        return 'image/jpeg', None
     if stream["codec_name"] == 'png':
-        return 'image/png'
+        return 'image/png', None
     if stream["codec_name"] == 'bmp':
-        return 'image/bmp'
+        return 'image/bmp', None
     if stream["codec_name"] == 'gif':
-        return 'video'
-    if stream["codec_type"] in [ 'video', 'audio' ]:
-        return stream["codec_type"]
-    return None
+        return 'video', { has_audio: False, has_video: True }
+    if stream["codec_type"] == 'video':
+        return 'video', { has_audio: False, has_video: True }
+    if stream["codec_type"] == 'audio':
+        return 'video', { has_audio: True, has_video: False }
+    return None, None
 
 def detect_imagemagick(path):
     a = Invocation('identify -verbose {0}')
@@ -117,21 +122,21 @@ def detect_imagemagick(path):
         if line.startswith('Mime type: '):
             mimetype = line[11:]
     if mimetype in [ 'image/png', 'image/jpeg', 'image/bmp' ]:
-        return mimetype
+        return mimetype, None
     # Check for SVG, it's special
     for line in result:
         line = line.lstrip(' ')
         if line ==  'Format: SVG (Scalable Vector Graphics)':
-            return 'image/svg+xml'
-    return 'image'
+            return 'image/svg+xml', None
+    return 'image', None
 
 def detect_plaintext(path):
     a = Invocation('file -b -e elf -e tar -e compress -e cdf -e apptype -i {0}')
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None
+        return None, None
     result = a.stdout[0]
     if result.startswith('text/x-') or result == 'text/plain':
         return result[:result.find(';')]
-    return None
+    return None, None
