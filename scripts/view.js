@@ -91,15 +91,17 @@ window.addEventListener('load', function() {
 }, false);
 function handleHash(hash) {
     var historyEnabled = readCookie('hist-opt-out') === null;
-    if (hash == '#fromExtension' && historyEnabled) {
-        var handled = false;
-        for (var i = 0; i < history.length; i++) {
-            if (history[i] === window.filename)
-                handled = true;
-        }
-        if (!handled) {
-            history.push(window.filename);
-            window.localStorage.setItem('history', JSON.stringify(history));
+    if (hash == '#fromExtension') {
+        if (historyEnabled) {
+            var handled = false;
+            for (var i = 0; i < history.length; i++) {
+                if (history[i] === window.filename)
+                    handled = true;
+            }
+            if (!handled) {
+                history.push(window.filename);
+                window.localStorage.setItem('history', JSON.stringify(history));
+            }
         }
         window.location = window.location.href.substr(0, window.location.href.indexOf('#'));
     } else {
