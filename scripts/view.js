@@ -103,7 +103,7 @@ function handleHash(hash) {
         }
         window.location = window.location.href.substr(0, window.location.href.indexOf('#'));
     } else {
-        if (mediaHashHandler)
-            mediaHashHandler(hash.substr(1));
+        if (window.mediaHashHandler)
+            window.mediaHashHandler(hash.substr(1));
     }
 }
