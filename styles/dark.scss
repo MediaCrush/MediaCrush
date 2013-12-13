@@ -14,9 +14,10 @@ body {
 }
 
 #droparea {
-    background: url('/static/upload-dark.png') #666 no-repeat 140px 220px;
+    background: url('/static/upload-dark.png') #666 no-repeat 230px 220px;
+    border: 2px dotted #fff;
 
-    #droptext a {
+    a, #droptext a {
         color: #ccc;
     }
 
