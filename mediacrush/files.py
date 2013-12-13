@@ -98,7 +98,7 @@ def upload(f, filename):
         ext = extension(filename)
 
     filename = "%s.%s" % (identifier, ext)
-    path = tempfile.NamedTemporaryFile().name
+    path = tempfile.NamedTemporaryFile(suffix="." + ext).name # Fix for imagemagick's silliness
 
     if os.path.exists(file_storage(filename)):
         if File.exists(identifier):
