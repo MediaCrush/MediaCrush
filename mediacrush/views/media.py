@@ -76,7 +76,7 @@ def _template_params(f):
         'can_delete': can_delete if can_delete is not None else 'check',
         'fragment': 'fragments/' + fragment(mimetype) + '.html',
         'types': types,
-        'processor': processor,
+        'processor': f.processor,
         'protocol': _cfg("protocol"),
         'domain': _cfg("domain"),
     }
