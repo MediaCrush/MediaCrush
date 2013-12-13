@@ -63,16 +63,16 @@ class JPEGProcessor(Processor):
     outputs = []
 
     def sync(self):
-        self._execute("jhead -purejpg {0}")
         self._execute(copy)
+        self._execute("jhead -purejpg {0}")
 
 class SVGProcessor(Processor):
     time = 5
     outputs = []
 
     def sync(self):
-        self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
         self._execute(copy)
+        self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 
 class DefaultProcessor(Processor):
     time = 5
@@ -84,6 +84,7 @@ processor_table = {
     'video': VideoProcessor,
     'audio': AudioProcessor,
     'image': ImageProcessor,
+    'image/png': PNGProcessor,
     'image/jpeg': JPEGProcessor,
     'image/svg+xml': SVGProcessor,
     'default': DefaultProcessor,

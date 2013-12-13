@@ -24,17 +24,17 @@ import json
 # be useful to know later along in the pipeline, specific to each file type.
 def detect(path):
     result = detect_ffprobe(path)
-    if result:
+    if result[0]:
         return result
     # ffprobe can't identify images without examining the extensions, and doesn't
     # support SVG at all
     # Note that ffprobe *can* confirm the integrity of images if it knows the extension
     # first, so we allow it to resolve images if the provided extension makes sense.
     result = detect_imagemagick(path)
-    if result:
+    if result[0]:
         return result
     result = detect_plaintext(path)
-    if result:
+    if result[0]:
         return result
     return None, None
 
@@ -100,7 +100,7 @@ def detect_stream(stream):
     if stream["codec_name"] == 'png':
         return 'image/png', None
     if stream["codec_name"] == 'bmp':
-        return 'image/bmp', None
+        return None, None
     if stream["codec_name"] == 'gif':
         return 'video', { 'has_audio': False, 'has_video': True }
     if stream["codec_type"] == 'video':
@@ -114,7 +114,7 @@ def detect_imagemagick(path):
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None
+        return None, None
     result = a.stdout[0].split('\n')
     # Check for an actual mimetype first
     mimetype = None
@@ -122,7 +122,7 @@ def detect_imagemagick(path):
         line = line.lstrip(' ')
         if line.startswith('Mime type: '):
             mimetype = line[11:]
-    if mimetype in [ 'image/png', 'image/jpeg', 'image/bmp' ]:
+    if mimetype in [ 'image/png', 'image/jpeg' ]:
         return mimetype, None
     # Check for SVG, it's special
     for line in result:
