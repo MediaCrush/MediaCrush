@@ -22,7 +22,7 @@ class Processor(object):
         ext = extension(self.f.original)
 
         tlc = Invocation(command)(self.path, self.output, extension=ext)
-        tlc.run()
+        tlc.run(self.time)
 
         if tlc.exited and important:
             raise TimeoutException
