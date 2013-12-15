@@ -2,7 +2,7 @@ from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File
 from mediacrush.celery import app, get_task_logger, chord
 from mediacrush.processing import processor_table, detect
-from mediacrush.fileutils import compression_rate
+from mediacrush.fileutils import compression_rate, delete_file
 
 import time
 import os
@@ -28,8 +28,12 @@ def convert_file(h, path, p, extra, sync):
         f.save()
 
 @app.task
-def cleanup(results, path):
+def cleanup(results, path, h):
+    f = File.from_hash(h)
     os.unlink(path)
+
+    if f.status != "done":
+        delete_file(f)
 
 @app.task
 def process_file(path, h):
@@ -45,7 +49,7 @@ def process_file(path, h):
     syncstep_result = syncstep.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
-    c = chord((syncstep, asyncstep), cleanup.s(path))
+    c = chord((syncstep, asyncstep), cleanup.s(path, h))
     c.apply_async()
 
     f.taskid = syncstep_result.id

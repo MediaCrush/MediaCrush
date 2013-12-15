@@ -13,9 +13,8 @@ from mediacrush.objects import File
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.network import secure_ip
 from mediacrush.tasks import process_file
-from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension
+from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
 from mediacrush.celery import app
-from mediacrush.processing import get_processor
 
 VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
 AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
@@ -125,20 +124,5 @@ def upload(f, filename):
 
     return identifier
 
-def delete_file(f):
-    delete_file_storage(f.original)
-    processor = get_processor(f.processor)
-
-    if processor != 'default':
-        for f_ext in processor.outputs:
-            delete_file_storage("%s.%s" % (f.hash, f_ext))
-
-    f.delete()
-
-def delete_file_storage(path):
-    try:
-        os.unlink(file_storage(path))
-    except:
-        print('Failed to delete file ' + path)
 
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')
