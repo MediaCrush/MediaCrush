@@ -76,10 +76,8 @@ class SVGProcessor(Processor):
         self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 
 class DefaultProcessor(Processor):
-    time = 5
-
     def sync(self):
-        self._execute(copy)
+        raise Exception # It shouldn't get to this point, but if it does, invalidate the file
 
 processor_table = {
     'video': VideoProcessor,
