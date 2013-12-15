@@ -8,7 +8,6 @@ class VideoProcessor(Processor):
     extras = ['png']
 
     def sync(self):
-        self._execute("exit 1")
         self._execute(copy)
         map_string = ''
         if self.extra['has_video']:
