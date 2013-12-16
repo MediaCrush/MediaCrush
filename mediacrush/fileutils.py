@@ -38,7 +38,11 @@ def delete_file(f):
     processor = get_processor(f.processor)
 
     if processor != 'default':
-        for f_ext in processor.outputs:
+        extensions = processor.outputs
+        if 'extras' in dir(processor):
+            extensions += processor.extras
+
+        for f_ext in extensions:
             delete_file_storage("%s.%s" % (f.hash, f_ext))
 
     f.delete()
