@@ -45,6 +45,9 @@ class ImageProcessor(Processor):
         self._execute(copy)
         self._execute("convert {0} {1}.png")
 
+    def async(self):
+        self._execute("optipng -o5 {1}")
+
 # We have some special optimizations for specific filetypes
 # These customized processors follow
 
