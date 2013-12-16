@@ -14,7 +14,9 @@ if __name__ == '__main__':
             'ogg': 'audio/ogg',
         }
 
+        processor, extra = detect(file_storage(f.original))
+
         f.mimetype = overrides.get(ext, get_mimetype(f.original))
-        f.processor = detect(file_storage(f.original))
+        f.processor = processor
 
         f.save()
