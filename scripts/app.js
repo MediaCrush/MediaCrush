@@ -206,6 +206,9 @@ function uploadFile(file, statusUI, progressUI, hash) {
         } else if (this.status == 420) {
             error = 'You have consumed your hourly quota. Try again later.';
         } else if (this.status == 200) {
+            if (!hash) {
+                files.push(responseJSON['hash']);
+            }
             statusUI.innerHTML = '';
             var p = document.createElement('p');
             p.textContent = 'Waiting to process...';
