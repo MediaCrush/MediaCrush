@@ -72,6 +72,8 @@ class SVGProcessor(Processor):
 
     def sync(self):
         self._execute(copy)
+    
+    def async(self):
         self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 
 class DefaultProcessor(Processor):
