@@ -345,9 +345,14 @@ function createPreview(file) {
         preview = document.createElement('video');
         preview.setAttribute('loop', 'loop');
         var source = document.createElement('source');
+        source.addEventListener('error', function() {
+            preview.parentElement.replaceChild(fallback, preview);
+        }, false);
         source.setAttribute('src', uri);
         source.setAttribute('type', file.type);
         preview.appendChild(source);
+        var fallback = document.createElement('img');
+        fallback.src = '/static/video.png';
         preview.volume = 0;
         preview.play();
     }
