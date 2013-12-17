@@ -15,19 +15,21 @@ class Processor(object):
         self.path = tmppath
         self.output = os.path.join(_cfg("storage_folder"), f.hash)
         self.extra = extra
-        
+
+        self.important = True
+
         self.f = f
 
-    def _execute(self, command, important=True):
+    def _execute(self, command):
         ext = extension(self.f.original)
 
         tlc = Invocation(command)(self.path, self.output, extension=ext)
         tlc.run(self.time)
 
-        if tlc.exited and important:
+        if tlc.exited and self.important:
             raise TimeoutException
 
-        if tlc.returncode != 0 and important:
+        if tlc.returncode != 0 and self.important:
             raise ProcessingException
 
     def sync(self):

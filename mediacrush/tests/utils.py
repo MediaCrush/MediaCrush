@@ -14,7 +14,6 @@ def clear_env():
 
 class TestMixin(unittest.TestCase):
     def setUp(self):
-        time.sleep(0.5)
         clear_env()
         app.config['TESTING'] = True
         self.client = app.test_client()

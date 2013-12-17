@@ -29,6 +29,7 @@ def convert_file(self, h, path, p, extra):
     self.update_state(state="READY")
 
     # Execute the asynchronous step.
+    processor.important = False
     processor.async()
 
 @app.task
@@ -36,7 +37,7 @@ def cleanup(results, path, h):
     f = File.from_hash(h)
     os.unlink(path)
 
-    if f.status != "done":
+    if f.status in ["internal_error", "error", "timeout"]:
         delete_file(f)
 
 @app.task

@@ -17,7 +17,14 @@ class APITestCase(TestMixin):
         return self._post('/api/album/create', {'list': ','.join(files)}, ip=ip)
 
     def _get_hash(self, f):
-        return json.loads(self._upload(f).data)['hash']
+        h = json.loads(self._upload(f).data)['hash']
+
+        status = 'pending'
+        while status == 'pending':
+            status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
+            time.sleep(0.1)
+
+        return h
 
 class UtilsTestCase(APITestCase):
     def test_jsonp_callbacks(self):
