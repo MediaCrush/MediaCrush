@@ -126,6 +126,7 @@ class File(RedisObject):
         status = {
             'PENDING': 'pending',
             'STARTED': 'processing',
+            'READY': 'ready',
             'SUCCESS': 'done',
         }.get(result.status, 'internal_error')
 
