@@ -59,7 +59,7 @@ class PNGProcessor(Processor):
         self._execute(copy)
 
     def async(self):
-        self._execute("optipng -o5 {1}")
+        self._execute("optipng -o5 {0}")
 
 class JPEGProcessor(Processor):
     time = 5
@@ -75,7 +75,7 @@ class SVGProcessor(Processor):
 
     def sync(self):
         self._execute(copy)
-    
+
     def async(self):
         self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 

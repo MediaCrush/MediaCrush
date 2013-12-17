@@ -9,8 +9,8 @@ import os
 
 logger = get_task_logger(__name__)
 
-@app.task(track_started=True)
-def convert_file(h, path, p, extra, sync):
+@app.task(bind=True, track_started=True)
+def convert_file(self, h, path, p, extra):
     f = File.from_hash(h)
 
     if p not in processor_table:
@@ -18,14 +18,18 @@ def convert_file(h, path, p, extra, sync):
 
     processor = processor_table[p](path, f, extra)
 
-    if sync:
-        processor.sync()
-    else:
-        processor.async()
+    # Execute the synchronous step.
+    processor.sync()
 
-    if sync:
-        f.compression = compression_rate(path, f)
-        f.save()
+    # Save compression information
+    f.compression = compression_rate(path, f)
+    f.save()
+
+    # Notify frontend: sync step is done.
+    self.update_state(state="READY")
+
+    # Execute the asynchronous step.
+    processor.async()
 
 @app.task
 def cleanup(results, path, h):
@@ -43,14 +47,12 @@ def process_file(path, h):
     f.processor = p
     f.save()
 
-    syncstep = convert_file.s(h, path, p, extra, True) # Synchronous step
-    asyncstep = convert_file.s(h, path, p, extra, False) # Asynchronous step
-
-    syncstep_result = syncstep.freeze() # This sets the taskid, so we can pass it to the UI
+    task = convert_file.s(h, path, p, extra)
+    task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
-    c = chord((syncstep, asyncstep), cleanup.s(path, h))
+    c = task | cleanup.s(path, h)
     c.apply_async()
 
-    f.taskid = syncstep_result.id
+    f.taskid = task_result.id
     f.save()
