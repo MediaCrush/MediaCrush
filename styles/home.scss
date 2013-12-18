@@ -325,6 +325,38 @@
     }
 }
 
+.help {
+    font-size: 10pt;
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    text-align: center;
+    color: #08c;
+    font-weight: bold;
+    cursor: help;
+
+    & > div {
+        .hover {
+            position: absolute;
+            top: -15px;
+            left: 150px;
+            width: 400px;
+            background: #eee;
+            border: 1px solid #000;
+            border-radius: 3px;
+            padding: 5px;
+            color: #000;
+            font-weight: normal;
+            opacity: 0;
+            transition: linear 0.3s opacity;
+        }
+
+        &:hover .hover {
+            opacity: 1;
+        }
+    }
+}
+
 .social {
     position: relative;
     top: 10px;

@@ -1,4 +1,6 @@
-from .database import r, _k
+from mediacrush.database import r, _k
+from mediacrush.celery import app
+
 import hashlib
 import uuid
 
@@ -24,6 +26,10 @@ class RedisObject(object):
 
         names = filter(lambda x: not x[0].startswith("_"), inspect.getmembers(self))
         names = filter(lambda x: not (inspect.isfunction(x[1]) or inspect.ismethod(x[1])), names)
+
+        if "__exclude__" in dir(self):
+            names = filter(lambda x: x[0] not in self.__exclude__, names)
+
         return dict(names)
 
     def __get_key(self):
@@ -84,10 +90,15 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor']
+
     original = None
+    mimetype = None
     compression = 0
     reports = 0
     ip = None
+    taskid = None
+    processor = None
 
     def add_report(self):
         self.reports = int(self.reports)
@@ -96,6 +107,34 @@ class File(RedisObject):
 
         if self.reports > 0:
             r.sadd(_k("reports-triggered"), self.hash)
+
+    @property
+    def status(self):
+        if self.taskid == 'done':
+            return 'done'
+
+        result = app.AsyncResult(self.taskid)
+
+        if result.status == 'FAILURE':
+            if 'ProcessingException' in result.traceback:
+                return 'error'
+            if 'TimeoutException' in result.traceback:
+                return 'timeout'
+
+            return 'internal_error'
+
+        status = {
+            'PENDING': 'pending',
+            'STARTED': 'processing',
+            'READY': 'ready',
+            'SUCCESS': 'done',
+        }.get(result.status, 'internal_error')
+
+        if status == 'done':
+            self.taskid = status
+            self.save()
+
+        return status
 
 class Feedback(RedisObject):
     text = None

@@ -17,7 +17,7 @@ body {
     background: url('/static/upload-dark.png') #666 no-repeat 230px 220px;
     border: 2px dotted #fff;
 
-    a, #droptext a {
+    a, #droptext a, .help {
         color: #ccc;
     }
 
@@ -82,4 +82,8 @@ a[href="https://pay.reddit.com/r/mediacrush"] {
 
 .view .audio {
     background: #555 !important;
+}
+
+.media .audio {
+    box-shadow: 0 0 3px 3px #ccc;
 }

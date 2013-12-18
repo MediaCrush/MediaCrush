@@ -38,7 +38,7 @@ Here it is again, in more detail.
 
 Our servers run on Ubuntu, and you install the deps with `sudo apt-get install jhead redis-server tidy optipng`. The
 Ubuntu repos have a poor distribution of [ffmpeg](http://ffmpeg.org), so you'll need to build that from source. Our
-dev machines run Arch Linux: `sudo pacman -S redis jhead tidyhtml optipng ffmpeg`. Make sure you enable libtheora,
+dev machines run Arch Linux: `sudo pacman -S redis jhead tidyhtml optipng ffmpeg imagemagick`. Make sure you enable libtheora,
 libvorbis, libx264, and libvpx when you build ffmpeg. If you're on Arch, you might want ffmpeg-full from the AUR.
 
 **Clone the repository**
@@ -73,10 +73,10 @@ You'll want to make sure Redis is running at this point. It's probably best to s
 up the server (`systemctl enable redis.service` on Arch).
 
 MediaCrush requires the daemon and the website to be running concurently to work correctly. The website is
-`app.py`, and the daemon is `daemon.py`. The daemon is responsible for handling media processing. Run the
+`app.py`, and the daemon is celery. The daemon is responsible for handling media processing. Run the
 daemon, then the website:
 
-    python daemon.py &
+    celery worker -A mediacrush
     python app.py
 
 This runs the site in debug mode. If you want to run this on a production server, you'll probably want to

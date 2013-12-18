@@ -1,16 +1,26 @@
 {% if album %}
 <div class="item-wrapper">
     <a href="{{ share('directlink', filename) }}" target="_blank" id="img-a-{{ filename }}">
-        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+        {% if processor.startswith('image/') %}
+            {# This means that we have custom support for this type, with the full mimetype and all #}
+            <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+        {% else %}
+            <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" id="image" />
+        {% endif %}
     </a>
     <div class="bar">
         <a class="left" href="/{{ filename }}">Direct Link</a>
-        <a class="right" href="/{{ filename }}/download">Download</a>
+        <a class="right" href="/download/{{ original }}">Download</a>
     </div>
 </div>
 {% else %}
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
-    <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" title="Click to view full size" />
+    {% if processor.startswith('image/') %}
+        {# This means that we have custom support for this type, with the full mimetype and all #}
+        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+    {% else %}
+        <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" id="image" />
+    {% endif %}
 </a>
 {% endif %}
 <script type="text/javascript">

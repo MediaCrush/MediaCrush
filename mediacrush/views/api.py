@@ -2,19 +2,22 @@ from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
 from flask import request, current_app
 
-from ..decorators import json_output, cors
-from ..files import media_url, get_mimetype, extension, processing_needed, delete_file, upload, URLFile, processing_status
-from ..database import r, _k
-from ..objects import File, Album, Feedback, RedisObject
-from ..network import get_ip, secure_ip
-from ..ratelimit import rate_limit_exceeded, rate_limit_update
+from mediacrush.decorators import json_output, cors
+from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
+from mediacrush.database import r, _k
+from mediacrush.objects import File, Album, Feedback, RedisObject
+from mediacrush.network import get_ip, secure_ip
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
+from mediacrush.processing import get_processor
 
 def _file_object(f):
-    ext = extension(f.original)
+    mimetype = f.mimetype
+    processor = get_processor(f.processor)
 
     ret = {
         'original': media_url(f.original),
-        'type': get_mimetype(f.original),
+        'type': mimetype,
+        'blob_type': f.processor.split('/')[0] if '/' in f.processor else f.processor,
         'hash': f.hash,
         'files': [],
         'extras': []
@@ -22,19 +25,18 @@ def _file_object(f):
     if f.compression:
         ret['compression'] = float(f.compression)
 
-    ret['files'].append(_file_entry(f.original))
+    ret['files'].append(_file_entry(f.original, mimetype=f.mimetype))
 
-    if ext in processing_needed:
-        for f_ext in processing_needed[ext]['formats']:
-            ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
-        for f_ext in processing_needed[ext].get('extras', []):
-            ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+    for f_ext in processor.outputs:
+        ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+    for f_ext in processor.extras:
+        ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
     return ret
 
-def _file_entry(f):
+def _file_entry(f, mimetype=None):
     return {
-        'type': get_mimetype(f),
+        'type': mimetype if mimetype else get_mimetype(f),
         'file': media_url(f),
     }
 
@@ -180,7 +182,7 @@ class APIView(FlaskView):
             return {'error': 415}, 415
 
         f = File.from_hash(h)
-        ret = {'status': processing_status(h)}
+        ret = {'status': f.status}
         if ret['status'] == 'done':
             ret[h] = _file_object(f)
             ret['hash'] = h

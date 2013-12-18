@@ -80,6 +80,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     GET /api/CPvuR5lRhmS0
 
     {
+      "blob_type": "video",
       "compression": 8.93,
       "files": [
         {
@@ -102,10 +103,15 @@ In case of error, the response will contain an 'error' parameter and additional 
       "type": "image/gif",
     }
 
-When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
-files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
-will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
-file in the extras.
+When a file is uploaded to MediaCrush, it enters our processing pipeline. Various (lossless) tweaks and
+optimizations are done, and it's converted into several browser-friendly formats. All the files associated
+with a blob are included in the "files" array. If you wish to display a file to the user, examine the
+"blob_type" property, which may be "video", "audio", or "image". Iterate over the files available and
+choose any mimetypes that match what your platform can support.
+
+Please note that you should not trust the value of "type". This is the original mimetype that was supplied
+by the user at the time of upload. MediaCrush disregards this value and examines uploaded files to determine
+their type empirically and updates "blob_type" accordingly before moving files into the processing pipline.
 
 If the file is not found, you will get a dictionary like:
 
@@ -125,6 +131,7 @@ If the file is not found, you will get a dictionary like:
 
     {
       "CPvuR5lRhmS0": {
+        "blob_type": "video",
         "compression": 8.93,
         "files": [
           {
@@ -147,6 +154,7 @@ If the file is not found, you will get a dictionary like:
         "type": "image/gif",
       },
       "tVWMM_ziA3nm": {
+        "blob_type": "video",
         "compression": 17.99,
         "files": [
           {
@@ -195,6 +203,7 @@ If the file is not found, you will get a dictionary like:
       "status": "done",
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
+        "blob_type": "video",
         "compression": 8.93,
         "files": [
           {
@@ -257,16 +266,28 @@ If the file is not found, you will get a dictionary like:
         <td>The file has been processed.</td>
     </tr>
     <tr>
+        <td>ready</td>
+        <td>The file is still processing, but it is ready to be consumed by a web browser.</td>
+    </tr>
+    <tr>
+        <td>pending</td>
+        <td>The is in the processing queue.</td>
+    </tr>
+    <tr>
         <td>processing</td>
-        <td>The file is being processed or in the processing queue.</td>
+        <td>The file is currently being processed.</td>
     </tr>
     <tr>
         <td>error</td>
-        <td>The processing step finished early with an abnormal return code.</td>
+        <td>A critical processing step finished early with an abnormal return code.</td>
     </tr>
     <tr>
         <td>timeout</td>
         <td>The file took too long to process.</td>
+    </tr>
+    <tr>
+        <td>internal_error</td>
+        <td>The workers died unexpectedly. The client is advised to try again.</td>
     </tr>
 </table>
 
@@ -342,6 +363,7 @@ In case of error, the response will contain an 'error' parameter and additional 
       "error": 409,
       "hash": "LxqXxVPAvqqB",
       "LxqXxVPAvqqB": {
+        "blob_type": "video",
         "compression": 0.0,
         "files": [
           {
@@ -440,6 +462,7 @@ In case of error, the response will contain an 'error' parameter and additional 
 ### File
 
     {
+      "blob_type": "video",
       "compression": 8.93,
       "files": [
         {
@@ -472,6 +495,7 @@ file in the extras.
     {
       "files": [
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [
@@ -484,6 +508,7 @@ file in the extras.
           "type": "image/jpeg"
         },
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [
@@ -496,6 +521,7 @@ file in the extras.
           "type": "image/jpeg"
         },
         {
+          "blob_type": "video",
           "compression": 0.0,
           "extras": [],
           "files": [

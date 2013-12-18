@@ -5,11 +5,12 @@ import os
 import json
 import mimetypes
 
-from ..files import extension, VIDEO_EXTENSIONS, LOOP_EXTENSIONS, AUTOPLAY_EXTENSIONS, get_mimetype, delete_file, processing_status, processing_needed
-from ..database import r, _k
-from ..config import _cfg
-from ..objects import File, Album, RedisObject
-from ..network import get_ip
+from mediacrush.files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file
+from mediacrush.database import r, _k
+from mediacrush.config import _cfg
+from mediacrush.objects import File, Album, RedisObject
+from mediacrush.network import get_ip
+from mediacrush.processing import get_processor
 
 def fragment(mimetype):
     fragments = ['video', 'mobilevideo', 'image', 'audio']
@@ -38,7 +39,7 @@ def type_files(t):
 def _template_params(f):
     if f.compression:
         compression = int(float(f.compression) * 100)
-    if compression == 100 or processing_status(f.hash) != "done":
+    if compression == 100 or f.status != "done":
         compression = None
 
     can_delete = None
@@ -48,12 +49,13 @@ def _template_params(f):
     except:
         pass
 
-    ext = extension(f.original)
-    mimetype = get_mimetype(f.original)
+    mimetype = f.mimetype
+    processor = get_processor(f.processor)
 
     types = [mimetype]
-    for f_ext in processing_needed[ext]['formats']:
-        types.append(mimetypes.guess_type('foo.' + f_ext)[0])
+    for f_ext in processor.outputs:
+        types.append(get_mimetype(f_ext))
+
     if 'do-not-send' in request.cookies:
         try:
             blacklist = json.loads(request.cookies['do-not-send'])
@@ -66,14 +68,15 @@ def _template_params(f):
     return {
         'filename': f.hash,
         'original': f.original,
-        'video': ext in VIDEO_EXTENSIONS,
-        'loop': ext in LOOP_EXTENSIONS,
-        'autoplay': ext in AUTOPLAY_EXTENSIONS,
+        'video': mimetype in VIDEO_FORMATS,
+        'loop': mimetype in LOOP_FORMATS,
+        'autoplay': mimetype in AUTOPLAY_FORMATS,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
         'fragment': 'fragments/' + fragment(mimetype) + '.html',
         'types': types,
+        'processor': f.processor,
         'protocol': _cfg("protocol"),
         'domain': _cfg("domain"),
     }
@@ -83,7 +86,7 @@ def _album_params(album):
     if not items:
         abort(404)
 
-    types = set([get_mimetype(f.original) for f in items])
+    types = set([f.mimetype for f in items])
 
     can_delete = None
     try:
@@ -111,13 +114,9 @@ class MediaView(FlaskView):
                 path = os.path.join(_cfg("storage_folder"), id)
                 return send_file(path, as_attachment=True)
 
-    @route("/<id>/download")
-    def download(self, id):
-        f = File.from_hash(id)
-        if os.path.exists(os.path.join(_cfg("storage_folder"), f.original)):
-           path = os.path.join(_cfg("storage_folder"), f.original)
-           return send_file(path, as_attachment=True)
-        return self.get(id)
+    @route("/download/<path:file>")
+    def download(self, file):
+        return self._send_file(file)
 
     def get(self, id):
         send = self._send_file(id)
