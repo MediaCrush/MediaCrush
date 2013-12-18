@@ -175,4 +175,4 @@ class Album(RedisObject):
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")
 
-    print a.items, type(a.items), a.hash
+    print(a.items, type(a.items), a.hash)

@@ -14,8 +14,8 @@ function uploadUrl(url) {
     droparea.className = 'files';
     if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        totalUploads++;
     }
+    totalUploads++;
     if (totalUploads > 1) {
         document.getElementById('createAlbum').className = '';
     }
