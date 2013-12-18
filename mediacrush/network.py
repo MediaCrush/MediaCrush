@@ -7,7 +7,7 @@ get_ip = lambda: request.remote_addr if "X-Real-IP" not in request.headers else 
 
 def makeMask(n):
     "return a mask of n bits as a long integer"
-    return (2L << n - 1) - 1
+    return (2 << n - 1) - 1
 
 
 def dottedQuadToNum(ip):
