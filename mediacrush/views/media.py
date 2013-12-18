@@ -28,13 +28,13 @@ def fragment(mimetype, processor=''):
     return fragment
 
 def type_files(t):
-    frag = fragment(t)
     require_files = ['video', 'audio']
+    required = reduce(lambda u, v: u or v, map(t.startswith, require_files))
 
-    if frag in require_files:
-        return render_template('fragments/%s_files.html' % frag)
-    else:
+    if not required:
         return ''
+    else:
+        return render_template('fragments/%s_files.html' % fragment(t))
 
 def _template_params(f):
     if f.compression:
