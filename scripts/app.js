@@ -28,11 +28,11 @@ function uploadUrl(url) {
     droparea.className = 'files';
     if (totalUploads == 0) {
         document.getElementById('files').innerHTML = '';
-        totalUploads++;
     }
     if (totalUploads > 1) {
         document.getElementById('createAlbum').className = '';
     }
+    totalUploads++;
     var preview = createPreview({ type: 'image/png', name: url }, url); // Note: we only allow uploading images by URL, not AV
     var p = document.createElement('p');
     p.textContent = 'Uploading...';
