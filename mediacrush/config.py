@@ -1,5 +1,9 @@
 import logging
-from ConfigParser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    # Python 2 support
+    from ConfigParser import ConfigParser
 
 logger = logging.getLogger("MediaCrush")
 logger.setLevel(logging.DEBUG)
