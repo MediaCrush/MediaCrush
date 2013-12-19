@@ -12,13 +12,13 @@ from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
 from mediacrush.processing import get_processor
 
-def fragment(mimetype):
+def fragment(mimetype, processor=''):
     fragments = ['video', 'mobilevideo', 'image', 'audio']
     fragment_check = [
-        mimetype == 'image/gif' or mimetype.startswith('video'),
-        (mimetype.startswith('video') and g.mobile) or (mimetype == 'image/gif' and g.mobile),
-        mimetype.startswith('image') and mimetype != 'image/gif',
-        mimetype.startswith('audio'),
+        (mimetype == 'image/gif' or mimetype.startswith('video')) or processor.startswith('video'),
+        (((mimetype.startswith('video') or mimetype == 'image/gif') or processor.startswith('video')) and g.mobile),
+        (mimetype.startswith('image') and mimetype != 'image/gif') or processor.startswith('image'),
+        mimetype.startswith('audio') or processor.startswith('audio'),
     ]
 
     for i, truth in enumerate(fragment_check):
@@ -74,7 +74,7 @@ def _template_params(f):
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
-        'fragment': 'fragments/' + fragment(mimetype) + '.html',
+        'fragment': 'fragments/' + fragment(mimetype, processor=f.processor) + '.html',
         'types': types,
         'processor': f.processor,
         'protocol': _cfg("protocol"),
