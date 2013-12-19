@@ -12,20 +12,11 @@ from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
 from mediacrush.processing import get_processor
 
-def fragment(mimetype, processor=''):
-    fragments = ['video', 'mobilevideo', 'image', 'audio']
-    fragment_check = [
-        (mimetype == 'image/gif' or mimetype.startswith('video')) or processor.startswith('video'),
-        (((mimetype.startswith('video') or mimetype == 'image/gif') or processor.startswith('video')) and g.mobile),
-        (mimetype.startswith('image') and mimetype != 'image/gif') or processor.startswith('image'),
-        mimetype.startswith('audio') or processor.startswith('audio'),
-    ]
-
-    for i, truth in enumerate(fragment_check):
-        if truth:
-            fragment = fragments[i]
-
-    return fragment
+def fragment(processor):
+    if processor.startswith('video') and g.mobile:
+        return 'mobilevideo'
+    else:
+        return processor if "/" not in processor else processor.split("/")[0]
 
 def type_files(t):
     require_files = ['video', 'audio']
@@ -74,7 +65,7 @@ def _template_params(f):
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
-        'fragment': 'fragments/' + fragment(mimetype, processor=f.processor) + '.html',
+        'fragment': 'fragments/' + fragment(f.processor) + '.html',
         'types': types,
         'processor': f.processor,
         'protocol': _cfg("protocol"),
@@ -86,7 +77,7 @@ def _album_params(album):
     if not items:
         abort(404)
 
-    types = set([f.mimetype for f in items])
+    types = set([f.processor for f in items])
 
     can_delete = None
     try:

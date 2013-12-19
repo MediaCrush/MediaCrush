@@ -76,7 +76,7 @@
     </dl>
 </div>
 
-{{ type_files(mimetype) | safe }} {# Very important - include files for the type #}
+{{ type_files(processor) | safe }} {# Very important - include files for the type #}
 
 {% if ads and adsense_client != "CHANGEME" and False %}
 <div id="gad">
