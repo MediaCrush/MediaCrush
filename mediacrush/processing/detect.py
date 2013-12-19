@@ -20,23 +20,27 @@ import json
 # We need to convert uploaded media to browser-friendly formats. We can do videos and
 # audio with ffmpeg, and we can do images with imagemagick.
 
-# This returns a tuple (type, extra), where the "extra" data is stuff that might be
-# be useful to know later along in the pipeline, specific to each file type.
+# Returns:
+# {
+#   'type': 'video' | 'audio' | 'image' | full mimetype,
+#   'extra': { }, # type-specific extra data for the processor
+#   'flags': { 'autoplay': True, 'loop': True, 'mute': False } # type-specific
+# }
 def detect(path):
     result = detect_ffprobe(path)
-    if result[0]:
+    if result != None:
         return result
     # ffprobe can't identify images without examining the extensions, and doesn't
     # support SVG at all
     # Note that ffprobe *can* confirm the integrity of images if it knows the extension
     # first, so we allow it to resolve images if the provided extension makes sense.
     result = detect_imagemagick(path)
-    if result[0]:
+    if result != None:
         return result
     result = detect_plaintext(path)
-    if result[0]:
+    if result != None:
         return result
-    return None, None
+    return None
 
 # This does *not* work with any containers that only have images in them, by design.
 def detect_ffprobe(path):
@@ -46,7 +50,7 @@ def detect_ffprobe(path):
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None, None
+        return None
     result = json.loads(a.stdout[0])
     if result["format"]["nb_streams"] == 1:
         return detect_stream(result["streams"][0])
@@ -62,7 +66,7 @@ def detect_ffprobe(path):
 
     for stream in result["streams"]:
         s = detect_stream(stream)
-        t = s[0]
+        t = s['type']
         if not s or not t:
             unknown_streams += 1
         else:
@@ -79,9 +83,25 @@ def detect_ffprobe(path):
             else:
                 unknown_streams += 1
     if audio_streams == 1 and video_streams == 0:
-        return 'audio', { 'has_audio': True, 'has_video': False }
+        return {
+            'type': 'audio',
+            'extra': { 'has_audio': True, 'has_video': False },
+            'flags': {
+                'autoplay': False,
+                'loop': False,
+                'mute': False,
+            }
+        }
     if video_streams > 0:
-        return 'video', { 'has_audio': audio_streams > 0, 'has_video': True }
+        return {
+            'type': 'video',
+            'extra': { 'has_audio': audio_streams > 0, 'has_video': True },
+            'flags': {
+                'autoplay': False,
+                'loop': False,
+                'mute': False,
+            }
+        }
     return None
 
 def detect_stream(stream):
@@ -94,30 +114,70 @@ def detect_stream(stream):
     if not "codec_name" in stream:
         if "tags" in stream and "mimetype" in stream["tags"]:
             if stream["tags"]["mimetype"] == 'application/x-truetype-font':
-                return 'font', stream["tags"]["filename"]
+                return {
+                    'type': 'font', 
+                    'extra': stream["tags"]["filename"],
+                    'flags': None
+                }
     else:
         if stream["codec_name"] == 'mjpeg':
-            return 'image/jpeg', None
+            return {
+                'type': 'image/jpeg',
+                'extra': None,
+                'flags': None
+            }
         if stream["codec_name"] == 'png':
-            return 'image/png', None
+            return {
+                'type': 'image/png',
+                'extra': None,
+                'flags': None
+            }
         if stream["codec_name"] == 'bmp':
-            return None, None
+            return None
         if stream["codec_name"] == 'gif':
-            return 'video', { 'has_audio': False, 'has_video': True }
+            return {
+                'type': 'video',
+                'extra': { 'has_audio': False, 'has_video': True },
+                'flags': {
+                    'autoplay': True,
+                    'loop': True,
+                    'mute': True
+                }
+            }
     if stream["codec_type"] == 'video':
-        return 'video', { 'has_audio': False, 'has_video': True }
+        return {
+            'type': 'video',
+            'extra': { 'has_audio': False, 'has_video': True },
+            'flags': {
+                'autoplay': False,
+                'loop': False,
+                'mute': False
+            }
+        }
     if stream["codec_type"] == 'audio':
-        return 'audio', { 'has_audio': True, 'has_video': False }
+        return {
+            'type': 'audio',
+            'extra': { 'has_audio': True, 'has_video': False },
+            'flags': {
+                'autoplay': False,
+                'loop': False,
+                'mute': False
+            }
+        }
     if stream["codec_type"] == 'subtitle':
-        return 'subtitle', { 'codec_name': stream['codec_name'] }
-    return None, None
+        return {
+            'type': 'subtitle',
+            'extra': { 'codec_name': stream['codec_name'] },
+            'flags': None
+        }
+    return None
 
 def detect_imagemagick(path):
     a = Invocation('identify -verbose {0}')
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None, None
+        return None
     result = a.stdout[0].split('\n')
     # Check for an actual mimetype first
     mimetype = None
@@ -126,21 +186,37 @@ def detect_imagemagick(path):
         if line.startswith('Mime type: '):
             mimetype = line[11:]
     if mimetype in [ 'image/png', 'image/jpeg' ]:
-        return mimetype, None
+        return {
+            'type': mimetype,
+            'extra': None,
+            'flags': None
+        }
     # Check for SVG, it's special
     for line in result:
         line = line.lstrip(' ')
         if line ==  'Format: SVG (Scalable Vector Graphics)':
-            return 'image/svg+xml', None
-    return 'image', None
+            return {
+                'type': 'image/svg+xml',
+                'extra': None,
+                'flags': None
+            }
+    return {
+        'type': 'image',
+        'extra': None,
+        'flags': None
+    }
 
 def detect_plaintext(path):
     a = Invocation('file -b -e elf -e tar -e compress -e cdf -e apptype -i {0}')
     a(path)
     a.run()
     if a.returncode or a.exited:
-        return None, None
+        return None
     result = a.stdout[0]
     if result.startswith('text/x-') or result == 'text/plain':
-        return result[:result.find(';')]
-    return None, None
+        return {
+            'type': result[:result.find(';')],
+            'extra': None,
+            'flags': None
+        }
+    return None
