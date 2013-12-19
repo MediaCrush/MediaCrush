@@ -81,8 +81,8 @@ def upload(f, filename):
     if not f.content_type:
         f.content_type = get_mimetype(filename) or "application/octet-stream"
 
-    if f.content_type.split("/")[0] not in ['video', 'image', 'audio']:
-        return "no", 415
+    #if f.content_type.split("/")[0] not in ['video', 'image', 'audio']:
+    #    return "no", 415
 
     if not current_app.debug:
         rate_limit_update(file_length(f))
