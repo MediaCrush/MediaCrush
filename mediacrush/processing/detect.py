@@ -132,7 +132,9 @@ def detect_imagemagick(path):
         line = line.lstrip(' ')
         if line ==  'Format: SVG (Scalable Vector Graphics)':
             return 'image/svg+xml', None
-    return 'image', None
+    if mimetype.startswith('image/'):
+        return 'image', None
+    return None, None
 
 def detect_plaintext(path):
     a = Invocation('file -b -e elf -e tar -e compress -e cdf -e apptype -i {0}')

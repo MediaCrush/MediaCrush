@@ -33,11 +33,11 @@ def convert_file(self, h, path, p, extra):
     processor.async()
 
 @app.task
-def cleanup(results, path, h):
+def cleanup(path, h):
     f = File.from_hash(h)
     os.unlink(path)
 
-    if not hasattr(f, 'status') or f.status in ["internal_error", "error", "timeout"]:
+    if f.status in ["internal_error", "error", "timeout"]:
         delete_file(f)
 
 @app.task
