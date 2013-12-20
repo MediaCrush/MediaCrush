@@ -178,6 +178,34 @@ If the file is not found, you will get a dictionary like:
       }
     }
 
+### /api/url/info
+
+*Parameters*: `list`, a comma-separated URLs to check, or a single URL.
+
+*Returns*: A dictionary mapping URLs that have been previously uploaded to MediaCrush files. 
+
+    POST /api/url/info
+    list=http://i.imgur.com/rctIj1M.jpg,http://does.not/exist.gif
+
+    {
+      "http://does.not/exist.gif": null, 
+      "http://i.imgur.com/rctIj1M.jpg": {
+        "blob_type": "image", 
+        "compression": 1.0, 
+        "extras": [], 
+        "files": [
+          {
+            "file": "/4Gt0YcGMPA7S.jpg", 
+            "type": "image/jpeg"
+          }
+        ], 
+        "hash": "4Gt0YcGMPA7S", 
+        "original": "/4Gt0YcGMPA7S.jpg", 
+        "type": "image/jpeg"
+      }
+    }
+
+
 ### /api/&lt;hash&gt;/exists
 
 *Parameters*: none.

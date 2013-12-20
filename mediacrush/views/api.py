@@ -169,7 +169,38 @@ class APIView(FlaskView):
         if not success:
             return {'error': 404}, 404
 
-        return _upload_f(f, f.filename)
+        result = _upload_f(f, f.filename)
+        if isinstance(result, dict) and 'hash' in result:
+            h = result['hash']
+        elif isinstance(result, tuple):
+            obj = result[0]
+            h = obj['result']
+
+        if h:
+            r.set(_k("url.%s" % url), h)
+
+        return result
+
+    @route("/api/url/info", methods=['POST'])
+    def urlinfo(self):
+        l = request.form['list']
+        items = l.split(",") if "," in l else [l]
+
+        result = {}
+        for item in items:
+            key = _k("url.%s" % item)
+            h = r.get(key)
+            if h:
+                f = File.from_hash(h)
+                if f:
+                    result[item] = _file_object(f)
+                else:
+                    result[item] = None
+                    r.delete(key)
+            else:
+                result[item] = None
+
+        return result
 
     @route("/api/<h>/status")
     def status(self, h):
