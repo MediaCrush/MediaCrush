@@ -331,7 +331,7 @@ function createPreview(file) {
     var wrapper = document.createElement('div');
     wrapper.className = 'img-wrapper';
     var uri;
-    if (file instanceof File) {
+    if (file instanceof File || file instanceof Blob) {
         uri = URL.createObjectURL(file);
     } else {
         uri = file.name;
