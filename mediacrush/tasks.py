@@ -33,7 +33,7 @@ def convert_file(self, h, path, p, extra):
     processor.async()
 
 @app.task
-def cleanup(path, h):
+def cleanup(results, path, h):
     f = File.from_hash(h)
     os.unlink(path)
 
