@@ -37,7 +37,7 @@ def cleanup(results, path, h):
     f = File.from_hash(h)
     os.unlink(path)
 
-    if f.status in ["internal_error", "error", "timeout"]:
+    if not hasattr(f, 'status') or f.status in ["internal_error", "error", "timeout"]:
         delete_file(f)
 
 @app.task
