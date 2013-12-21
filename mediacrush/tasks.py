@@ -43,12 +43,12 @@ def cleanup(results, path, h):
 @app.task
 def process_file(path, h):
     f = File.from_hash(h)
-    p, extra = detect(path)
+    result = detect(path)
 
-    f.processor = p
+    f.processor = result['type']
     f.save()
 
-    task = convert_file.s(h, path, p, extra)
+    task = convert_file.s(h, path, result['type'], result['extra'])
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
