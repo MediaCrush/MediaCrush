@@ -49,6 +49,11 @@ def process_file(path, h):
     extra = result['extra'] if result else {}
 
     f.processor = processor
+
+    if result and result['flags']:
+        for flag, value in result['flags'].items():
+            setattr(f.flags, flag, value)
+
     f.save()
 
     task = convert_file.s(h, path, processor, extra)

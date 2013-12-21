@@ -1,9 +1,57 @@
-from mediacrush.objects import File
 from mediacrush.config import _cfg
 from mediacrush.mimeinfo import EXTENSIONS, get_mimetype, extension
 from mediacrush.processing import get_processor
 
 import os
+
+class BitVector(object):
+    shifts = {}
+    _vec = 0
+
+    def __init__(self, names):
+        for i, name in enumerate(names):
+            self.shifts[name] = i
+
+    def __getattr__(self, name):
+        if name not in self.shifts:
+            raise AttributeError(name)
+
+        value = self._vec & (1 << self.shifts[name])
+        return True if value != 0 else False
+
+    def __setattr__(self, name, v):
+        if name == '_vec':
+            object.__setattr__(self, '_vec', v)
+            return
+
+        if name not in self.shifts:
+            raise AttributeError(name)
+
+        newvec = self._vec
+
+        currentval = getattr(self, name)
+        if currentval == v:
+            return # No change needed
+
+        if currentval == True:
+            # Turn this bit off
+            newvec &= ~(1 << self.shifts[name])
+        else:
+            # Turn it on
+            newvec |= (1 << self.shifts[name])
+
+        object.__setattr__(self, '_vec', newvec)
+
+    def __int__(self):
+        return self._vec
+
+flags_per_processor = {
+    'video': ['autoplay', 'loop', 'mute']
+}
+
+def normalise_processor(processor):
+    if not processor: return None
+    return processor.split("/")[0] if "/" in processor else processor
 
 def file_storage(f):
     return os.path.join(_cfg("storage_folder"), f)

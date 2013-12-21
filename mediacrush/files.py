@@ -24,39 +24,6 @@ FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AU
 LOOP_FORMATS = set(["image/gif"])
 AUTOPLAY_FORMATS = set(["image/gif"])
 
-class BitVector(object):
-    shifts = {}
-    _vec = 0 
-
-    def __init__(self, *names):
-        for i, name in enumerate(names):
-            self.shifts[name] = i
-        
-        print self.shifts
-
-    def __getattr__(self, name):
-        if name not in self.shifts:
-            raise AttributeError(name)
-
-        value = self._vec & (1 << self.shifts[name])
-        return True if value > 0 else False
-
-    def __setattr__(self, name, v):
-        if name not in self.shifts:
-            raise AttributeError(name)
-
-        newvec = self._vec
-        if getattr(self, name) == True:
-            # Turn this bit off
-            newvec &= ~(1 << self.shifts[name])
-        else:
-            # Turn it on
-            newvec |= (1 << self.shifts[name])
-
-        object.__setattr__(self, '_vec', newvec)
-
-    def __int__(self):
-        return self._vec
 
 class URLFile(object):
     filename = None
@@ -94,20 +61,20 @@ class URLFile(object):
 
         parsed_url = urlparse(url)
         self.filename = list(reversed(parsed_url.path.split("/")))[0]
-        
+
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
             ext = mimetypes.guess_extension(self.content_type)
             if ext:
                 self.filename = self.filename + ext
-                
+
         if "content-disposition" in r.headers:
             disposition = r.headers['content-disposition']
             parts = disposition.split(';')
             if len(parts) > 1:
                 self.filename = parts[1].strip(' ')
                 self.filename = self.filename[self.filename.find('=') + 1:].strip(' ')
-                
+
         self.filename = ''.join([c for c in self.filename if c.isalpha() or c == '.'])
 
         return True
