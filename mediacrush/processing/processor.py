@@ -6,6 +6,7 @@ import os
 
 class ProcessingException(Exception): pass
 class TimeoutException(Exception): pass
+class UnrecognisedFormatException(Exception): pass
 
 class Processor(object):
     outputs = []

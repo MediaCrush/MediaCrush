@@ -177,9 +177,10 @@ class UploadTestCase(APITestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_upload_not_media(self):
-        response = self._upload("not_media.dat")
+        h = self._get_hash("not_media.dat")
+        status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
 
-        self.assertEqual(response.status_code, 415)
+        self.assertEqual(status, 'unrecognised')
 
 class InfoTestCase(APITestCase):
     def test_list(self):
