@@ -16,15 +16,30 @@ class APITestCase(TestMixin):
     def _create_album(self, files, ip='127.0.0.1'):
         return self._post('/api/album/create', {'list': ','.join(files)}, ip=ip)
 
-    def _get_hash(self, f):
-        h = json.loads(self._upload(f).data)['hash']
-
+    def _wait(self, h):
         status = 'pending'
         while status == 'pending':
             status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
             time.sleep(0.1)
 
+
+    def _get_hash(self, f):
+        h = json.loads(self._upload(f).data)['hash']
+
+        self._wait(h)
         return h
+
+    def _get_url_hash(self, url):
+        result = self._post('/api/upload/url', {
+            'url': url,
+        }, ip='127.0.0.1')
+
+        obj = json.loads(result.data)
+        if 'hash' not in obj:
+            return obj
+
+        self._wait(obj['hash'])
+        return obj['hash']
 
 class UtilsTestCase(APITestCase):
     def test_jsonp_callbacks(self):
@@ -177,9 +192,45 @@ class UploadTestCase(APITestCase):
         self.assertEqual(response.status_code, 409)
 
     def test_upload_not_media(self):
-        response = self._upload("not_media.dat")
+        h = self._get_hash("not_media.dat")
+        status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
 
-        self.assertEqual(response.status_code, 415)
+        self.assertEqual(status, 'unrecognised')
+
+class URLUploadTestCase(APITestCase):
+    def test_upload_url(self):
+        h = self._get_url_hash('http://i.imgur.com/rctij1m.jpg')
+
+        self.assertEqual(h, u'2DWIQ3P01sjy')
+
+    def test_url_info(self):
+        urls = [
+            'http://i.imgur.com/rctij1m.jpg',
+            'http://i.imgur.com/Gr2lBwI.jpg'
+        ]
+        hashes = [self._get_url_hash(url) for url in urls]
+
+        result_single = self._post("/api/url/info", {'list': urls[0]})
+
+        self.assertEqual(result_single.status_code, 200)
+        result_single = json.loads(result_single.data)
+
+        self.assertIn(urls[0], result_single)
+        self.assertIn('hash', result_single[urls[0]])
+        self.assertEqual(result_single[urls[0]]['hash'], hashes[0])
+
+        urls.append('http://does.not/exist.gif')
+        result_multiple = self._post("/api/url/info", {'list': ','.join(urls)})
+
+        self.assertEqual(result_multiple.status_code, 200)
+        result_multiple = json.loads(result_multiple.data)
+
+        for i, url in enumerate(urls[:2]):
+            self.assertIn(url, result_multiple)
+            self.assertIn('hash', result_multiple[url])
+            self.assertEqual(result_multiple[url]['hash'], hashes[i])
+
+        self.assertEqual(result_multiple['http://does.not/exist.gif'], None)
 
 class InfoTestCase(APITestCase):
     def test_list(self):

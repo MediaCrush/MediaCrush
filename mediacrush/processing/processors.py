@@ -1,4 +1,4 @@
-from mediacrush.processing.processor import Processor
+from mediacrush.processing.processor import Processor, UnrecognisedFormatException
 
 copy = "cp {0} {1}.{extension}"
 
@@ -81,7 +81,7 @@ class SVGProcessor(Processor):
 
 class DefaultProcessor(Processor):
     def sync(self):
-        raise Exception # It shouldn't get to this point, but if it does, invalidate the file
+        raise UnrecognisedFormatException # It shouldn't get to this point, but if it does, invalidate the file
 
 processor_table = {
     'video': VideoProcessor,
