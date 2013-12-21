@@ -45,10 +45,13 @@ def process_file(path, h):
     f = File.from_hash(h)
     result = detect(path)
 
-    f.processor = result['type']
+    processor = result['type'] if result else 'default'
+    extra = result['extra'] if result else {}
+
+    f.processor = processor
     f.save()
 
-    task = convert_file.s(h, path, result['type'], result['extra'])
+    task = convert_file.s(h, path, processor, extra)
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
