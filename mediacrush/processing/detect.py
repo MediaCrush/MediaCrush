@@ -115,7 +115,7 @@ def detect_stream(stream):
         if "tags" in stream and "mimetype" in stream["tags"]:
             if stream["tags"]["mimetype"] == 'application/x-truetype-font':
                 return {
-                    'type': 'font', 
+                    'type': 'font',
                     'extra': stream["tags"]["filename"],
                     'flags': None
                 }
@@ -200,6 +200,7 @@ def detect_imagemagick(path):
                 'extra': None,
                 'flags': None
             }
+
     return {
         'type': 'image',
         'extra': None,

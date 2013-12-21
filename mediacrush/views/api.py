@@ -70,6 +70,8 @@ def _upload_f(f, filename):
     if not isinstance(result, tuple):
         return {'hash': result}
     else:
+        # It's a tuple which means it was uploaded before or it was rate limited
+        # jdiez, this is super hacky, please refactor this
         h, status = result
 
         resp = {'error': status}
@@ -169,7 +171,38 @@ class APIView(FlaskView):
         if not success:
             return {'error': 404}, 404
 
-        return _upload_f(f, f.filename)
+        result = _upload_f(f, f.filename)
+        h = None
+        if isinstance(result, dict) and 'hash' in result:
+            h = result['hash']
+        elif isinstance(result, tuple) and 'hash' in result[0]:
+            h = result[0]['hash']
+
+        if h:
+            r.set(_k("url.%s" % url), h)
+
+        return result
+
+    @route("/api/url/info", methods=['POST'])
+    def urlinfo(self):
+        l = request.form['list']
+        items = l.split(",") if "," in l else [l]
+
+        result = {}
+        for item in items:
+            key = _k("url.%s" % item)
+            h = r.get(key)
+            if h:
+                f = File.from_hash(h)
+                if f:
+                    result[item] = _file_object(f)
+                else:
+                    result[item] = None
+                    r.delete(key)
+            else:
+                result[item] = None
+
+        return result
 
     @route("/api/<h>/status")
     def status(self, h):

@@ -60,12 +60,14 @@ pre {
     border: none;
 }
 
-a[href="https://twitter.com/mediacru_sh"] {
-    background: url('/static/twitter-inverted.png') no-repeat;
-}
+.social {
+    a[href="https://twitter.com/mediacru_sh"] {
+        background: url('/static/twitter-inverted.png') no-repeat;
+    }
 
-a[href="https://pay.reddit.com/r/mediacrush"] {
-    background: url('/static/reddit-inverted.png') no-repeat;
+    a[href="https://pay.reddit.com/r/MediaCrush"] {
+        background: url('/static/reddit-inverted.png') no-repeat;
+    }
 }
 
 .pagination li:hover, .pagination li.selected {

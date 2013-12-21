@@ -1,6 +1,6 @@
 from mediacrush.config import _cfg
 from mediacrush.processing.invocation import Invocation
-from mediacrush.mimetypes import extension
+from mediacrush.mimeinfo import extension
 
 import os
 

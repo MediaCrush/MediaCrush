@@ -4,8 +4,10 @@ import hashlib
 import os
 import tempfile
 import requests
+import re
 
 from flask import current_app
+from urlparse import urlparse
 
 from mediacrush.config import _cfg
 from mediacrush.database import r, _k
@@ -47,7 +49,6 @@ class URLFile(object):
             f.flush()
             f.close()
 
-
     def download(self, url):
         r = requests.get(url, stream=True)
         for chunk in r.iter_content(chunk_size=1024):
@@ -57,9 +58,21 @@ class URLFile(object):
         if r.status_code == 404:
             return False
 
+        parsed_url = urlparse(url)
+        self.filename = list(reversed(parsed_url.path.split("/")))[0]
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
-        self.filename = list(reversed(url.split("/")))[0]
+            ext = mimetypes.guess_extension(self.content_type)
+            if ext:
+                self.filename = self.filename + ext
+        if "content-disposition" in r.headers:
+            disposition = r.headers['content-disposition']
+            parts = disposition.split(';')
+            if len(parts) > 1:
+                self.filename = parts[1].strip(' ')
+                self.filename = self.filename[self.filename.find('=') + 1:].strip(' ')
+        self.filename = ''.join([c for c in self.filename if c.isalpha() or c == '.'])
+        print self.filename
 
         return True
 
