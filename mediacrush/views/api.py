@@ -172,6 +172,7 @@ class APIView(FlaskView):
             return {'error': 404}, 404
 
         result = _upload_f(f, f.filename)
+        h = None
         if isinstance(result, dict) and 'hash' in result:
             h = result['hash']
         elif isinstance(result, tuple) and 'hash' in result[0]:
