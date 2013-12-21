@@ -255,7 +255,7 @@ function checkStatus(hash, statusUI, progressUI, text) {
             setTimeout(function() {
                 checkStatus(hash, statusUI, progressUI, text);
             }, 1000);
-        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error') {
+        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error' || responseJSON['status'] == 'unrecognised') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
             error.className = 'error';
