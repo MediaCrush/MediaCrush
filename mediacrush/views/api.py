@@ -174,9 +174,8 @@ class APIView(FlaskView):
         result = _upload_f(f, f.filename)
         if isinstance(result, dict) and 'hash' in result:
             h = result['hash']
-        elif isinstance(result, tuple):
-            obj = result[0]
-            h = obj['hash']
+        elif isinstance(result, tuple) and 'hash' in result[0]:
+            h = result[0]['hash']
 
         if h:
             r.set(_k("url.%s" % url), h)
