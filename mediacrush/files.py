@@ -4,6 +4,7 @@ import hashlib
 import os
 import tempfile
 import requests
+import re
 
 from flask import current_app
 
@@ -47,7 +48,6 @@ class URLFile(object):
             f.flush()
             f.close()
 
-
     def download(self, url):
         r = requests.get(url, stream=True)
         for chunk in r.iter_content(chunk_size=1024):
@@ -59,7 +59,13 @@ class URLFile(object):
 
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
-        self.filename = list(reversed(url.split("/")))[0]
+            self.filename = list(reversed(url.split("/")))[0]
+            self.filename = re.sub(r'\W+', '', self.filename)
+            ext = mimetypes.guess_extension(self.content_type)
+            if ext:
+                self.filename = self.filename + ext
+        else:
+            self.filename = list(reversed(url.split("/")))[0]
 
         return True
 
