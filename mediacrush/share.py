@@ -1,11 +1,9 @@
-from .config import _cfg, domain_url
-from .objects import File
-from .files import get_mimetype
+from mediacrush.config import _cfg, domain_url
+from mediacrush.objects import File
 
 def _still_image(h):
     f = File.from_hash(h)
-    mimetype = f.mimetype
-    if mimetype.startswith("image") and mimetype != "image/gif":
+    if f.processor.startswith("image"):
         return f.original
 
     return None
