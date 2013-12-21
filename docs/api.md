@@ -314,6 +314,10 @@ If the file is not found, you will get a dictionary like:
         <td>The file took too long to process.</td>
     </tr>
     <tr>
+        <td>unrecognised</td>
+        <td>MediaCrush does not support processing this media format.</td>
+    </tr>
+    <tr>
         <td>internal_error</td>
         <td>The workers died unexpectedly. The client is advised to try again.</td>
     </tr>

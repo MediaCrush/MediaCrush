@@ -120,6 +120,8 @@ class File(RedisObject):
                 return 'error'
             if 'TimeoutException' in result.traceback:
                 return 'timeout'
+            if 'UnrecognisedFormatException' in result.traceback:
+                return 'unrecognised'
 
             return 'internal_error'
 
