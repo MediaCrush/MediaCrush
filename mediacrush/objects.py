@@ -149,10 +149,7 @@ class File(RedisObject):
 
     @configvector.setter
     def configvector(self, val):
-        if not self.flags:
-            self.flags = BitVector(flags_per_processor.get(normalise_processor(self.processor), []))
-
-        self.flags._vec = int(val)
+        self._configvector = int(val)
 
     @property
     def processor(self):
@@ -161,7 +158,10 @@ class File(RedisObject):
     @processor.setter
     def processor(self, v):
         self._processor = v
-        self.flags = BitVector(flags_per_processor.get(normalise_processor(v), []))
+
+        # When the processor is changed, so is the interpretation of the flags.
+        options = flags_per_processor.get(normalise_processor(v), [])
+        self.flags = BitVector(options, iv=self._configvector)
 
 class Feedback(RedisObject):
     text = None

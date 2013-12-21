@@ -6,6 +6,7 @@ import json
 import mimetypes
 
 from mediacrush.files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file
+from mediacrush.fileutils import normalise_processor
 from mediacrush.database import r, _k
 from mediacrush.config import _cfg
 from mediacrush.objects import File, Album, RedisObject
@@ -59,9 +60,8 @@ def _template_params(f):
     return {
         'filename': f.hash,
         'original': f.original,
-        'video': mimetype in VIDEO_FORMATS,
-        'loop': mimetype in LOOP_FORMATS,
-        'autoplay': mimetype in AUTOPLAY_FORMATS,
+        'video': normalise_processor(f.processor) == 'video',
+        'flags': f.flags,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',

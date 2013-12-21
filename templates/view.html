@@ -14,7 +14,7 @@
 {% block meta %}
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
-    {% if mimetype.startswith("video") or mimetype == "image/gif" %}
+    {% if processor.startswith("video") %}
         {# Generated thumbnail #}
         <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
         <meta property="twitter:card" content="player" />
@@ -25,7 +25,7 @@
         <meta property="twitter:player:height" content="360" />
         <meta property="twitter:image" content="https://mediacru.sh/{{ filename }}.png">
 
-    {% elif mimetype.startswith("audio") %}
+    {% elif procssor.startswith("audio") %}
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
@@ -40,7 +40,7 @@
     </div>
 </div>
 <div class="center small clearfix">
-    {% if mimetype.startswith('video') %}
+    {% if processor.startswith('video') %}
     <a href="/troubleshooting">Troubleshoot video problems</a>
     {% endif %}
     <ul class="inline">

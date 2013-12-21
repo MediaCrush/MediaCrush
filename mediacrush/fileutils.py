@@ -8,9 +8,11 @@ class BitVector(object):
     shifts = {}
     _vec = 0
 
-    def __init__(self, names):
+    def __init__(self, names, iv=0):
         for i, name in enumerate(names):
             self.shifts[name] = i
+
+        self._vec = iv
 
     def __getattr__(self, name):
         if name not in self.shifts:
