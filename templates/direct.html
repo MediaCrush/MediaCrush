@@ -11,10 +11,10 @@
         {% endif %}
         <meta property="og:type" content="{{ mimetype }}" />
         <meta property="og:site_name" content="MediaCrush" />
-        {% if mimetype.startswith("video") %}
+        {% if processor.startswith("video") %}
             {# Generated thumbnail #}
             <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
-        {% elif mimetype.startswith("audio") %}
+        {% elif processor.startswith("audio") %}
             <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
         {% else %}
             <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
@@ -49,7 +49,7 @@
                 {% if embedded %}
                 var body = document.body, html = document.documentElement;
                 var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
-                {% if mimetype.startswith('audio/') %}
+                {% if processor.startswith('audio') %}
                 var height = 50;
                 {% else %}
                 var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
@@ -82,7 +82,7 @@
             {% if embedded %}
             {% endif %}
         </script>
-        {% if mimetype.startswith('audio') %}
+        {% if processor.startswith('audio') %}
         <style>
             body > div {
                 height: 45px;
