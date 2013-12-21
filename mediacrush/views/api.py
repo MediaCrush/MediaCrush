@@ -70,6 +70,8 @@ def _upload_f(f, filename):
     if not isinstance(result, tuple):
         return {'hash': result}
     else:
+        # It's a tuple which means it was uploaded before or it was rate limited
+        # jdiez, this is super hacky, please refactor this
         h, status = result
 
         resp = {'error': status}
@@ -174,7 +176,7 @@ class APIView(FlaskView):
             h = result['hash']
         elif isinstance(result, tuple):
             obj = result[0]
-            h = obj['result']
+            h = obj['hash']
 
         if h:
             r.set(_k("url.%s" % url), h)
