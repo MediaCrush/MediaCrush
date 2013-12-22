@@ -49,12 +49,16 @@ def prepare():
             for script in manifest:
                 if script == '':
                     continue
+                bare = False
+                if script.startswith('bare: '):
+                    bare = True
+                    script = script[6:]
                 with open(os.path.join('scripts', script)) as r:
                     coffee = r.read()
                     if script.endswith('.js'):
                         javascript += coffee # straight up copy
                     else:
-                        javascript += coffeescript.compile(coffee, bare=True)
+                        javascript += coffeescript.compile(coffee, bare=bare)
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
             if not app.debug:
                 javascript = minify(javascript)
