@@ -11,12 +11,14 @@ from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import flags_per_processor
 
+def _flags_dict(f):
+    possible_flags = flags_per_processor.get(f.processor, [])
+    return dict((flag, getattr(f.flags, flag)) for flag in possible_flags)
+
 def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
-
-    possible_flags = flags_per_processor.get(f.processor, [])
-    flags = dict((flag, getattr(f.flags, flag)) for flag in possible_flags)
+    flags = _flags_dict(f)
 
     ret = {
         'original': media_url(f.original),
@@ -221,6 +223,41 @@ class APIView(FlaskView):
             return {'exists': False}, 404
 
         return {'exists': True}
+
+    @route("/api/<h>/flags")
+    def flags(self, h):
+        if not File.exists(h):
+            return {'error': 404}, 404
+
+        f = File.from_hash(h)
+        return {'flags': _flags_dict(f)}
+
+    @route("/api/<h>/flags", methods=['POST'])
+    def flags_post(self, h):
+        klass = RedisObject.klass(h)
+
+        if not klass:
+            return {'error': 404}, 404
+        try:
+            o = klass.from_hash(h)
+            if not check_password_hash(o.ip, get_ip()):
+                return {'error': 401}, 401
+        except:
+            return {'error': 401}, 401
+
+        # At this point, we're authenticated and o is the object.
+        for flag, value in request.form.items():
+            v = True if value == 'true' else False
+
+            try:
+                setattr(o.flags, flag, v)
+            except AttributeError:
+                return {'error': 415}, 415
+
+        o.save()
+
+        return {"flags": _flags_dict(o)}
+
 
     @route("/api/feedback", methods=['POST'])
     def feedback(self):
