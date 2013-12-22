@@ -348,7 +348,87 @@ If the file is not found, you will get a dictionary like:
 
 The "result" object will only be included if the status is "done".
 
+### /api/&lt;hash&gt;/flags
+
+*Parameters*: none.
+
+*Returns*: the dictionary of flags pertaining to `hash`.
+
+    GET /api/Ta-nbchtCw6d/flags
+
+    {
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no file with that hash.</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The file was found.</td>
+    </tr>
+</table>
+
 ## Hash manipulation endpoints
+
+### /api/&lt;hash&gt;/flags
+
+*Parameters*: the flags that are to be changed, with a value of `true` to activate a flag and `false` to deactivate it.
+
+*Returns*: the dictionary of flags pertaining to `hash`.
+
+    POST /api/Ta-nbchtCw6d/flags
+    autoplay=false&mute=false
+
+    {
+      "flags": {
+        "autoplay": false, 
+        "loop": true, 
+        "mute": false 
+      }
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the flags have been updated.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no such hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>One of the parameters passed to this endpoint is not recognised. Ensure your form data does not contain extraneous fields.</td>
+        <td>false</td>
+    </tr>
+</table>
 
 ### /api/&lt;hash&gt;/delete
 
