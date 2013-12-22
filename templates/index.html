@@ -1,8 +1,6 @@
 {% extends "layout.html" %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='lib.js') }}?version=2" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='app.js') }}?version=2" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='history.js') }}?version=2" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='home.js') }}?version=2" type="text/javascript"></script>
 {% endblock %}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}?version=2" />

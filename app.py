@@ -54,8 +54,9 @@ def prepare():
                     if script.endswith('.js'):
                         javascript += coffee # straight up copy
                     else:
-                        javascript += minify(coffeescript.compile(coffee, bare=True))
+                        javascript += coffeescript.compile(coffee, bare=True)
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
+            javascript = minify(javascript)
             with open(os.path.join(app.static_folder, output), "w") as w:
                 w.write(javascript)
                 w.flush()
