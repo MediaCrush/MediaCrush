@@ -14,10 +14,12 @@ from mediacrush.network import get_ip
 from mediacrush.processing import get_processor
 
 def fragment(processor):
-    if processor.startswith('video') and g.mobile:
+    np = normalise_processor(processor)
+
+    if np == 'video' and g.mobile:
         return 'mobilevideo'
     else:
-        return processor if "/" not in processor else processor.split("/")[0]
+        return np
 
 def type_files(t):
     require_files = ['video', 'audio']

@@ -9,7 +9,7 @@ from mediacrush.objects import File, Album, Feedback, RedisObject
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
-from mediacrush.fileutils import flags_per_processor
+from mediacrush.fileutils import flags_per_processor, normalise_processor
 
 def _flags_dict(f):
     possible_flags = flags_per_processor.get(f.processor, [])
@@ -23,7 +23,7 @@ def _file_object(f):
     ret = {
         'original': media_url(f.original),
         'type': mimetype,
-        'blob_type': f.processor.split('/')[0] if '/' in f.processor else f.processor,
+        'blob_type': normalise_processor(f.processor),
         'hash': f.hash,
         'files': [],
         'extras': [],
