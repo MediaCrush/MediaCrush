@@ -98,6 +98,11 @@ In case of error, the response will contain an 'error' parameter and additional 
       ],
       "extras": [
       ],
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }, 
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
@@ -149,6 +154,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/CPvuR5lRhmS0.gif",
         "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
@@ -172,6 +182,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/tVWMM_ziA3nm.gif",
         "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
@@ -199,6 +214,7 @@ If the file is not found, you will get a dictionary like:
             "type": "image/jpeg"
           }
         ], 
+        "flags": {},
         "hash": "4Gt0YcGMPA7S", 
         "original": "/4Gt0YcGMPA7S.jpg", 
         "type": "image/jpeg"
@@ -249,6 +265,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/LxqXxVPAvqqB.gif",
         "hash": "LxqXxVPAvqqB",
         "type": "image/gif"
@@ -512,6 +533,11 @@ In case of error, the response will contain an 'error' parameter and additional 
       ],
       "extras": [
       ],
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }, 
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif"
@@ -521,6 +547,17 @@ When a file is uploaded to MediaCrush, several associated files may be generated
 files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
 will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
 file in the extras.
+
+Description of fields:
+
+* `blob_type`: One of `video`, `image` or `audio`. Specifies how this file should be displayed to the user.
+* `compression`: The compression ratio achieved by hosting the file on MediaCrush.
+* `files`: A list of files that are the result of converting the original file into different formats.
+* `extras`: Auxiliary files, such as a thumbnail or subtitles.
+* `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`.
+* `original`: The original file that was uploaded, as-is.
+* `hash`: A unique identifier within MediaCrush.
+* `type`: The original mimetype, provided by the user. You should not base decisions on this value.
 
 ### Album
 
