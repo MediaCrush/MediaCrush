@@ -65,21 +65,16 @@ deletion_procedures = {
     Album: lambda a: a.delete()
 }
 
-def _upload_f(f, filename):
-    result = upload(f, filename)
-    if not isinstance(result, tuple):
+def _upload_object(result, status):
+    if status == 200:
         return {'hash': result}
     else:
-        # It's a tuple which means it was uploaded before or it was rate limited
-        # jdiez, this is super hacky, please refactor this
-        h, status = result
-
         resp = {'error': status}
         if status == 409:
-            f = _file_object(File.from_hash(h))
+            f = _file_object(File.from_hash(result))
 
-            resp[h] = f
-            resp['hash'] = h
+            resp[result] = f
+            resp['hash'] = result
 
         return resp, status
 
@@ -156,7 +151,7 @@ class APIView(FlaskView):
     def upload_file(self):
         f = request.files['file']
 
-        return _upload_f(f, f.filename)
+        return _upload_object(*upload(f, f.filename))
 
     @route("/api/upload/url", methods=['POST'])
     def upload_url(self):
@@ -171,17 +166,10 @@ class APIView(FlaskView):
         if not success:
             return {'error': 404}, 404
 
-        result = _upload_f(f, f.filename)
-        h = None
-        if isinstance(result, dict) and 'hash' in result:
-            h = result['hash']
-        elif isinstance(result, tuple) and 'hash' in result[0]:
-            h = result[0]['hash']
+        result, status = upload(f, f.filename)
+        r.set(_k("url.%s" % url), result)
 
-        if h:
-            r.set(_k("url.%s" % url), h)
-
-        return result
+        return _upload_object(result, status)
 
     @route("/api/url/info", methods=['POST'])
     def urlinfo(self):

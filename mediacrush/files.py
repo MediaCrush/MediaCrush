@@ -103,7 +103,7 @@ def upload(f, filename):
     if not current_app.debug:
         rate_limit_update(file_length(f))
         if rate_limit_exceeded():
-            return "ratelimit", 420
+            return None, 420
 
     h = get_hash(f)
     identifier = to_id(h)
@@ -138,7 +138,7 @@ def upload(f, filename):
 
     file_object.save()
 
-    return identifier
+    return identifier, 200
 
 
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')
