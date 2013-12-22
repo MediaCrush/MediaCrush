@@ -256,7 +256,7 @@
         font-size: 10pt;
         color: red;
         position: absolute;
-        bottom: 3px;
+        top: 3px;
         right: 3px;
 
         &:hover {
@@ -279,7 +279,7 @@
 
     a {
         position: relative;
-        z-index: 1;
+        z-index: 0;
 
         &.full-size {
             position: absolute;
@@ -288,6 +288,17 @@
             right: 0;
             bottom: 0;
             z-index: 0;
+        }
+    }
+
+    .flags {
+        z-index: 2;
+        position: absolute;
+        left: 208px;
+        bottom: 10px;
+        h3 {
+            margin: 0;
+            display: inline;
         }
     }
 
