@@ -9,10 +9,14 @@ from mediacrush.objects import File, Album, Feedback, RedisObject
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
+from mediacrush.fileutils import flags_per_processor
 
 def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
+
+    possible_flags = flags_per_processor.get(f.processor, [])
+    flags = dict((flag, getattr(f.flags, flag)) for flag in possible_flags)
 
     ret = {
         'original': media_url(f.original),
@@ -20,7 +24,8 @@ def _file_object(f):
         'blob_type': f.processor.split('/')[0] if '/' in f.processor else f.processor,
         'hash': f.hash,
         'files': [],
-        'extras': []
+        'extras': [],
+        'flags': flags,
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -204,7 +209,7 @@ class APIView(FlaskView):
 
         f = File.from_hash(h)
         ret = {'status': f.status}
-        if ret['status'] == 'done':
+        if f.processor is not None: # When processor is available, ther rest of the information is too, even if the file might not have finished processing yet.
             ret[h] = _file_object(f)
             ret['hash'] = h
 
