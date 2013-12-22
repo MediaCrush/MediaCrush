@@ -47,7 +47,8 @@ def prepare():
                 manifest = r.read().split('\n')
             javascript = ''
             for script in manifest:
-                if script == '':
+                script = script.strip(' ')
+                if script == '' or script.startswith('#'):
                     continue
                 bare = False
                 if script.startswith('bare: '):
