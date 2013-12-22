@@ -45,13 +45,16 @@ def prepare():
         elif extension(f) == "manifest":
             with open(inputpath) as r:
                 manifest = r.read().split('\n')
-            coffee = ''
+            javascript = ''
             for script in manifest:
                 if script == '':
                     continue
                 with open(os.path.join('scripts', script)) as r:
-                    coffee += r.read()
-            javascript = minify(coffeescript.compile(coffee, bare=True))
+                    coffee = r.read()
+                    if script.endswith('.js'):
+                        javascript += coffee # straight up copy
+                    else:
+                        javascript += minify(coffeescript.compile(coffee, bare=True))
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
             with open(os.path.join(app.static_folder, output), "w") as w:
                 w.write(javascript)
