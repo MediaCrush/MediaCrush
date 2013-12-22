@@ -302,6 +302,7 @@ function finish(statusUI, hash) {
             var container = statusUI.parentElement;
             container.parentElement.removeChild(container);
             var hashIndex = -1;
+            var history = getHistory();
             for (var i = 0; i < history.length; i++) {
                 if (history[i] == hash) {
                     hashIndex = i;
@@ -309,8 +310,7 @@ function finish(statusUI, hash) {
                 }
             }
             if (history) {
-                history.remove(hashIndex);
-                window.localStorage.setItem('history', JSON.stringify(history));
+                removeHistoryAt(hashIndex);
             }
         });
     };
@@ -451,12 +451,13 @@ function forceFocus() {
 function handleHistory() {
     loadHistory();
     var statusElement = document.getElementById('historyEnabled');
-    if (historyEnabled)
+    if (getHistoryEnabled())
         statusElement.textContent = 'Disable local history';
     else
         statusElement.textContent = 'Enable local history';
     var historyElement = document.getElementById('history');
     var blurb = document.getElementById('blurb');
+    var history = getHistory();
     if (history.length != 0) {
         historyElement.classList.remove('hidden');
         blurb.classList.add('hidden');
@@ -536,14 +537,12 @@ function createHistoryItem(data) {
 
 function toggleHistory() {
     var statusElement = document.getElementById('historyEnabled');
-    if (historyEnabled) {
-        createCookie('hist-opt-out', '1', 3650);
+    if (getHistoryEnabled()) {
         statusElement.textContent = 'Enable local history';
     } else {
-        createCookie('hist-opt-out', '', 0);
         statusElement.textContent = 'Disable local history';
     }
-    historyEnabled = !historyEnabled;
+    toggleHistoryEnabled();
 }
 
 function handlePaste(e) {
