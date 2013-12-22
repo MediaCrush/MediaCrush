@@ -5,17 +5,6 @@
         this.setRequestHeader('X-Requested-With','XMLHttpRequest')
 )(XMLHttpRequest)
 
-Array.prototype.remove = (from, to) ->
-    rest = this.slice((to || from) + 1 || this.length)
-    this.length = from < 0 ? this.length + from : from
-    return this.push.apply(this, rest)
-
-Array.prototype.contains = (a) ->
-    for i in [0 .. this.length]
-        if this[i] == a
-            return true
-    return false
-
 readCookie = (name) ->
     nameEQ = name + "="
     ca = document.cookie.split(';')
@@ -36,6 +25,15 @@ createCookie = (name, value, days) ->
         expires = "; expires=Thu, 01-Jan-1970 00:00:01 GMT"
     document.cookie = name + "=" + value + expires + "; path=/"
 window.createCookie = createCookie
+
+dataURItoBlob = (uri) ->
+    byteString = atob(uri.split(',')[1])
+    mimeString = uri.split(',')[0].split(':')[1].split(':')[0]
+    ab = new Arraybuffer(byteString.length)
+    ia = new Uint8Array(ab)
+    for i in [0 .. byteString.length]
+        ia[i] = byteString.charCodeAt(i)
+    return new Blob([ ab ], { type: 'image/png' })
 
 adOptOut = (showAlert) ->
     createCookie('ad-opt-out', 1, 3650)

@@ -1,3 +1,7 @@
+shims.coffee
 global.coffee
 history.coffee
-app.js
+md5.js
+handlebars.js
+home-files.coffee
+home.coffee
