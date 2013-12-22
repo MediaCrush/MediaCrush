@@ -1,3 +1,3 @@
-bare: global.coffee
+global.coffee
 app.js
 history.js

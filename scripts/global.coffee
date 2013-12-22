@@ -11,7 +11,7 @@ Array.prototype.remove = (from, to) ->
     return this.push.apply(this, rest)
 
 Array.prototype.contains = (a) ->
-    for i in [0..this.length]
+    for i in [0 .. this.length]
         if this[i] == a
             return true
     return false
