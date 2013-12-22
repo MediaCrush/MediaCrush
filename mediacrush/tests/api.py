@@ -16,17 +16,23 @@ class APITestCase(TestMixin):
     def _create_album(self, files, ip='127.0.0.1'):
         return self._post('/api/album/create', {'list': ','.join(files)}, ip=ip)
 
-    def _wait(self, h):
-        status = 'pending'
-        while status == 'pending':
+    def _wait(self, h, wait_ready=False):
+        check = True
+        while check:
             status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
+
+            if wait_ready:
+                check = status not in ['ready', 'done']
+            else:
+                check = status in ['processing', 'pending']
+
             time.sleep(0.1)
 
 
-    def _get_hash(self, f):
+    def _get_hash(self, f, wait_ready=False):
         h = json.loads(self._upload(f).data)['hash']
 
-        self._wait(h)
+        self._wait(h, wait_ready)
         return h
 
     def _get_url_hash(self, url):
@@ -278,7 +284,7 @@ class DeleteTestCase(APITestCase):
 
 class FlagsTestCase(APITestCase):
     def test_correct_flags_gif(self):
-        h = self._get_hash('cat.gif')
+        h = self._get_hash('cat.gif', wait_ready=True)
 
         response = self.client.get('/api/%s/flags' % h)
         self.assertEqual(response.status_code, 200)
@@ -291,7 +297,7 @@ class FlagsTestCase(APITestCase):
         })
 
     def test_correct_flags_mp4(self):
-        h = self._get_hash('cat.mp4')
+        h = self._get_hash('cat.mp4', wait_ready=True)
 
         response = self.client.get('/api/%s/flags' % h)
         self.assertEqual(response.status_code, 200)
@@ -304,7 +310,7 @@ class FlagsTestCase(APITestCase):
         })
 
     def test_change_flags(self):
-        h = self._get_hash('cat.gif')
+        h = self._get_hash('cat.gif', wait_ready=True)
         response = self._post('/api/%s/flags' % h, {
             'autoplay': False
         })
@@ -315,7 +321,7 @@ class FlagsTestCase(APITestCase):
         self.assertEqual(o['flags'][u'autoplay'], False)
 
     def test_change_flags_unauthorised(self):
-        h = self._get_hash('cat.gif')
+        h = self._get_hash('cat.gif', wait_ready=True)
         response = self._post('/api/%s/flags' % h, {
             'autoplay': False
         }, ip='127.0.0.2')
@@ -323,7 +329,7 @@ class FlagsTestCase(APITestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_change_extraneous_flags(self):
-        h = self._get_hash('cat.gif')
+        h = self._get_hash('cat.gif', wait_ready=True)
         response = self._post('/api/%s/flags' % h, {
             'autoplay': False,
             'dummy': True,
