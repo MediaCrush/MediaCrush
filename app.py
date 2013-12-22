@@ -4,6 +4,8 @@ from mediacrush.files import extension
 
 import os
 import scss
+import coffeescript
+from slimit import minify
 from shutil import rmtree, copyfile
 
 app.static_folder = os.path.join(os.getcwd(), "static")
@@ -32,8 +34,30 @@ def prepare():
             with open(os.path.join(app.static_folder, css), "w") as w:
                 w.write(output)
                 w.flush()
+    
+    # Compile scripts (coffeescript)
+    d = os.walk('scripts')
+    for f in list(d)[0][2]:
+        outputpath = os.path.join(app.static_folder, os.path.basename(f))
+        inputpath = os.path.join('scripts', f)
+        if extension(f) == "js":
+            copyfile(inputpath, outputpath)
+        elif extension(f) == "manifest":
+            with open(inputpath) as r:
+                manifest = r.read().split('\n')
+            coffee = ''
+            for script in manifest:
+                if script == '':
+                    continue
+                with open(os.path.join('scripts', script)) as r:
+                    coffee += r.read()
+            javascript = minify(coffeescript.compile(coffee, bare=True))
+            output = '.'.join(f.rsplit('.')[:-1]) + '.js'
+            with open(os.path.join(app.static_folder, output), "w") as w:
+                w.write(javascript)
+                w.flush()
 
-    copy = ['images', 'scripts']
+    copy = ['images']
     preprocess = ['scripts/view.js', 'scripts/mediacrush.js']
 
     # Copy images, preprocess some JS files 
