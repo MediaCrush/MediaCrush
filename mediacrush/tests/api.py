@@ -275,3 +275,65 @@ class DeleteTestCase(APITestCase):
         response = self.client.get('/api/asdfasgdfs/delete')
 
         self.assertEqual(response.status_code, 404)
+
+class FlagsTestCase(APITestCase):
+    def test_correct_flags_gif(self):
+        h = self._get_hash('cat.gif')
+
+        response = self.client.get('/api/%s/flags' % h)
+        self.assertEqual(response.status_code, 200)
+
+        obj = json.loads(response.data)
+        self.assertEqual(obj['flags'], {
+            u'autoplay': True,
+            u'loop': True,
+            u'mute': True
+        })
+
+    def test_correct_flags_mp4(self):
+        h = self._get_hash('cat.mp4')
+
+        response = self.client.get('/api/%s/flags' % h)
+        self.assertEqual(response.status_code, 200)
+
+        obj = json.loads(response.data)
+        self.assertEqual(obj['flags'], {
+            u'autoplay': False,
+            u'loop': False,
+            u'mute': False,
+        })
+
+    def test_change_flags(self):
+        h = self._get_hash('cat.gif')
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        o = json.loads(response.data)
+        self.assertEqual(o['flags'][u'autoplay'], False)
+
+    def test_change_flags_unauthorised(self):
+        h = self._get_hash('cat.gif')
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False
+        }, ip='127.0.0.2')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_change_extraneous_flags(self):
+        h = self._get_hash('cat.gif')
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False,
+            'dummy': True,
+        })
+
+        self.assertEqual(response.status_code, 415)
+
+    def test_change_flags_404(self):
+        response = self._post('/api/%s/flags' % 'dummy', {
+            'autoplay': False,
+        })
+
+        self.assertEqual(response.status_code, 404)
