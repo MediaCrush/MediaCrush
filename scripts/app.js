@@ -295,13 +295,15 @@ function checkStatus(hash, statusUI, progressUI, text) {
             setTimeout(function() {
                 checkStatus(hash, statusUI, progressUI, text);
             }, 1000);
-        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error') {
+        } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error' || responseJSON['status'] == 'internal_error' || responseJSON['status'] == 'unrecognised') {
             progressUI.parentElement.removeChild(progressUI);
             var error = document.createElement('p');
             error.className = 'error';
             statusUI.innerHTML = '';
             if (responseJSON['status'] == 'timeout') {
                 error.textContent = 'This file took too long to process.';
+            } else if (responseJSON['status'] == 'unrecognised') {
+                error.textContent = 'MediaCrush does not process this kind of file.';
             } else {
                 error.textContent = 'There was an error processing this file.';
             }
