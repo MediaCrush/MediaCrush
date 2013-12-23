@@ -249,9 +249,6 @@ function checkStatus(hash, statusUI, progressUI, text) {
                 var flagList = document.createElement('div');
                 flagList.className = 'flags';
                 var flags = responseJSON[hash]['flags'];
-                var info = document.createElement('strong');
-                info.textContent = 'Settings:';
-                flagList.appendChild(info);
                 statusUI.parentElement.insertBefore(flagList, statusUI.nextSibling);
                 for (flag in flags) {
                     var name = flag.substr(1);
