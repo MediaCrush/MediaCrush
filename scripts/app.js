@@ -244,9 +244,49 @@ function checkStatus(hash, statusUI, progressUI, text) {
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
         responseJSON = JSON.parse(this.responseText);
+        if (hash in responseJSON) {
+            if ('flags' in responseJSON[hash] && !statusUI.parentElement.querySelector('.flags')) {
+                var flagList = document.createElement('div');
+                flagList.className = 'flags';
+                var flags = responseJSON[hash]['flags'];
+                statusUI.parentElement.insertBefore(flagList, statusUI.nextSibling);
+                for (flag in flags) {
+                    var name = flag.substr(1);
+                    name = flag[0].toUpperCase() + name;
+                    var input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.name = 'flag-' + flag + '-' + hash;
+                    input.id = 'flag-' + flag + '-' + hash;
+                    input.setAttribute('data-flag', flag);
+                    input.setAttribute('data-media', hash);
+                    input.checked = responseJSON[hash]['flags'];
+                    void function(i) {
+                        i.addEventListener('change', function() {
+                            var flag = i.getAttribute('data-flag');
+                            var xhr = new XMLHttpRequest();
+                            flags[flag] = !flags[flag];
+                            var formData = new FormData();
+                            for (f in flags) {
+                                formData.append(f, flags[f]);
+                            }
+                            xhr.open('POST', '/api/' + hash + '/flags');
+                            xhr.send(formData);
+                        }, false);
+                    }(input);
+                    var label = document.createElement('label');
+                    label.setAttribute('for', 'flag-' + flag + '-' + hash);
+                    var span = document.createElement('span');
+                    span.textContent = name;
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    flagList.appendChild(label);
+                }
+            }
+        }
         if (responseJSON['status'] == 'done' || responseJSON['status'] == 'ready') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
+            statusUI.parentElement.classList.add('done');
             updateAlbum();
         } else if (responseJSON['status'] == 'processing') {
             text.title = '';

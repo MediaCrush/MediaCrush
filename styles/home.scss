@@ -279,7 +279,7 @@
 
     a {
         position: relative;
-        z-index: 1;
+        z-index: 0;
 
         &.full-size {
             position: absolute;
@@ -288,6 +288,24 @@
             right: 0;
             bottom: 0;
             z-index: 0;
+        }
+    }
+
+    .flags {
+        z-index: 2;
+        position: absolute;
+        right: -8px;
+        top: 2px;
+        padding: 0 10px;
+        background: #fff;
+
+        label {
+            display: block;
+            text-align: right;
+
+            input {
+                float: right;
+            }
         }
     }
 
@@ -308,7 +326,7 @@
 
 .img-wrapper {
     float: left;
-    margin-right: 10px;
+    margin-right: 5px;
     min-height: 113px;
     width: 200px;
 
