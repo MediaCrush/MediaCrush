@@ -53,6 +53,11 @@
     {% if compression %}
     {{ compression }}% faster on MediaCrush!
     {% endif %}
+
+    {# TODO(SirCmpwn): Make this pretty #}
+    {% for flag, value in flags.items() %}
+    {{ flag }}: {{ value }}
+    {% endfor %}
 </div>
 <div class="hidden" id="embed">
     <div class="center">
