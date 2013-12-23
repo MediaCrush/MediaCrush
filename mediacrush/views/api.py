@@ -9,16 +9,11 @@ from mediacrush.objects import File, Album, Feedback, RedisObject
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
-from mediacrush.fileutils import flags_per_processor, normalise_processor
-
-def _flags_dict(f):
-    possible_flags = flags_per_processor.get(f.processor, [])
-    return dict((flag, getattr(f.flags, flag)) for flag in possible_flags)
+from mediacrush.fileutils import normalise_processor
 
 def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
-    flags = _flags_dict(f)
 
     ret = {
         'original': media_url(f.original),
@@ -27,7 +22,7 @@ def _file_object(f):
         'hash': f.hash,
         'files': [],
         'extras': [],
-        'flags': flags,
+        'flags': f.flags.as_dict(),
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -230,7 +225,7 @@ class APIView(FlaskView):
             return {'error': 404}, 404
 
         f = File.from_hash(h)
-        return {'flags': _flags_dict(f)}
+        return {'flags': f.flags.as_dict()}
 
     @route("/api/<h>/flags", methods=['POST'])
     def flags_post(self, h):
@@ -256,7 +251,7 @@ class APIView(FlaskView):
 
         o.save()
 
-        return {"flags": _flags_dict(o)}
+        return {"flags": o.flags.as_dict()}
 
 
     @route("/api/feedback", methods=['POST'])

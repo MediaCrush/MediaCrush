@@ -63,7 +63,7 @@ def _template_params(f):
         'filename': f.hash,
         'original': f.original,
         'video': normalise_processor(f.processor) == 'video',
-        'flags': f.flags,
+        'flags': f.flags.as_dict(),
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',

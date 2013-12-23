@@ -15,7 +15,7 @@
     <div class="controls">
         <div class="pull-left">
             {# Play/pause and current time #}
-            <a href="#" class="control {% if flags.autoplay %}pause{% else %}play{% endif %}" data-audio="audio-{{ filename }}"></a>
+            <a href="#" class="control {% if flags['autoplay'] %}pause{% else %}play{% endif %}" data-audio="audio-{{ filename }}"></a>
             <span class="time" data-audio="audio-{{ filename }}">0:00</span>
         </div>
         <div class="pull-right">

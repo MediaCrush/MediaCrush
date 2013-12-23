@@ -44,6 +44,9 @@ class BitVector(object):
 
         object.__setattr__(self, '_vec', newvec)
 
+    def as_dict(self):
+        return dict((flag, getattr(self, flag)) for flag in self.shifts)
+
     def __int__(self):
         return self._vec
 
