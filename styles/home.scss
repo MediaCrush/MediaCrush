@@ -294,8 +294,10 @@
     .flags {
         z-index: 2;
         position: absolute;
-        right: 2px;
+        right: -8px;
         top: 2px;
+        padding: 0 10px;
+        background: #fff;
 
         label {
             display: block;
