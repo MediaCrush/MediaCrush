@@ -108,7 +108,7 @@ def upload(f, filename):
     h = get_hash(f)
     identifier = to_id(h)
     if "." not in filename:
-        ext = mimetypes.guess_extension(f.content_type) # This not very scientific, but it works
+        ext = mimetypes.guess_extension(f.content_type)[1:] # This not very scientific, but it works
     else:
         ext = extension(filename)
 

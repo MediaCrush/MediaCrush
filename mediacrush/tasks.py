@@ -37,7 +37,7 @@ def cleanup(results, path, h):
     f = File.from_hash(h)
     os.unlink(path)
 
-    if f.status in ["internal_error", "error", "timeout"]:
+    if f.status in ["internal_error", "error", "timeout", "unrecognised"]:
         delete_file(f)
 
 @app.task
