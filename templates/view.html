@@ -8,7 +8,7 @@
         window.filename = '{{ filename }}';
         window.can_delete = '{{ can_delete }}';
         window.embedded = '{{ embedded }}';
-        window.flags = JSON.parse('{{ json_flags | safe }}');
+        window.flags = {{ flags | tojson }}; 
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
 {% endblock %}
