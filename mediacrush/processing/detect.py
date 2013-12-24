@@ -154,11 +154,7 @@ def detect_stream(stream):
         return {
             'type': 'audio',
             'extra': { 'has_audio': True, 'has_video': False },
-            'flags': {
-                'autoplay': False,
-                'loop': False,
-                'mute': False
-            }
+            'flags': None
         }
     if stream["codec_type"] == 'subtitle':
         return {
