@@ -275,6 +275,7 @@ function checkStatus(hash, statusUI, progressUI, text) {
                     }(input);
                     var label = document.createElement('label');
                     label.setAttribute('for', 'flag-' + flag + '-' + hash);
+                    label.className = 'checkbox';
                     var span = document.createElement('span');
                     span.textContent = name;
                     label.appendChild(input);

@@ -8,6 +8,7 @@
         window.filename = '{{ filename }}';
         window.can_delete = '{{ can_delete }}';
         window.embedded = '{{ embedded }}';
+        window.flags = JSON.parse('{{ json_flags | safe }}');
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
 {% endblock %}
@@ -40,9 +41,15 @@
     </div>
 </div>
 <div class="center small clearfix">
-    {% if processor.startswith('video') %}
-    <a href="/troubleshooting">Troubleshoot video problems</a>
-    {% endif %}
+    <div id="flags" class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}">
+        <strong>Settings:</strong>
+        {% for flag, value in flags.items() %}
+        <label for="{{ flag }}" class="checkbox">
+            <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} />
+            {{ flag }}
+        </label>
+        {% endfor %}
+    </div>
     <ul class="inline">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
@@ -53,11 +60,6 @@
     {% if compression %}
     {{ compression }}% faster on MediaCrush!
     {% endif %}
-
-    {# TODO(SirCmpwn): Make this pretty #}
-    {% for flag, value in flags.items() %}
-    {{ flag }}: {{ value }}
-    {% endfor %}
 </div>
 <div class="hidden" id="embed">
     <div class="center">
