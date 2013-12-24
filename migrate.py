@@ -283,6 +283,8 @@ if __name__ == '__main__':
 
     for f in files:
         h = f.hash
+        configvector = 0
+
         try:
             path = file_storage(f.original)
             result = detect(path)
@@ -293,11 +295,13 @@ if __name__ == '__main__':
                 for flag, value in result['flags'].items():
                     setattr(bv, flag, value)
 
-                k = _k("file.%s" % h)
-                r.hset(k, "configvector", int(bv))
+                configvector = int(bv)
                 print h, result['type'], int(bv)
             done += 1
         except Exception, e:
             errors.append(h)
+
+        k = _k("file.%s" % h)
+        r.hset(k, "configvector", configvector)
 
     print "%d/%d files processed, errors:" % (done, count), errors
