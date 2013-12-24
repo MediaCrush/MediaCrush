@@ -21,6 +21,15 @@ window.addEventListener('load', function() {
             updateVideo({ target: videos[i] });
         }
         videos[i].addEventListener('timeupdate', updateVideo, false);
+        if (window.flags) {
+            if (window.flags.mute) {
+                videos[i].muted = true;
+                // Note: this probably won't work in the subtitles branch
+                var muteControl = videos[i].parentElement.querySelector('.control.mute');
+                muteControl.classList.add('unmute');
+                muteControl.classList.remove('mute');
+            }
+        }
     }
     var hovers = document.querySelectorAll('.video .hover');
     for (var i = 0; i < hovers.length; i++) {
