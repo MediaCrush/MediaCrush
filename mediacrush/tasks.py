@@ -22,6 +22,7 @@ def convert_file(self, h, path, p, extra):
     processor.sync()
 
     # Save compression information
+    f = File.from_hash(h) # Reload file; user might have changed the config vector while processing
     f.compression = compression_rate(path, f)
     f.save()
 
