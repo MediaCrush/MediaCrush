@@ -25,8 +25,7 @@
         <meta property="twitter:player:width" content="640" />
         <meta property="twitter:player:height" content="360" />
         <meta property="twitter:image" content="https://mediacru.sh/{{ filename }}.png">
-
-    {% elif procssor.startswith("audio") %}
+    {% elif processor.startswith("audio") %}
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
         <meta property="og:image" content="https://mediacru.sh/{{ original }}" />

@@ -86,11 +86,7 @@ def detect_ffprobe(path):
         return {
             'type': 'audio',
             'extra': { 'has_audio': True, 'has_video': False },
-            'flags': {
-                'autoplay': False,
-                'loop': False,
-                'mute': False,
-            }
+            'flags': None
         }
     if video_streams > 0:
         return {
