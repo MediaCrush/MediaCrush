@@ -44,6 +44,10 @@ body {
 
 .image-loading {
     background: #333;
+
+    .flags {
+        background: #333;
+    }
 }
 
 a:hover {
@@ -88,4 +92,8 @@ pre {
 
 .media .audio {
     box-shadow: 0 0 3px 3px #ccc;
+}
+
+.dialog {
+    color: #000 !important;
 }
