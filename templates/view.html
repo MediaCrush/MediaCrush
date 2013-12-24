@@ -45,7 +45,7 @@
         <strong>Settings:</strong>
         {% for flag, value in flags.items() %}
         <label for="{{ flag }}" class="checkbox">
-            <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} />
+            <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} autocomplete="off" />
             {{ flag }}
         </label>
         {% endfor %}
