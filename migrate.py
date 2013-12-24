@@ -1,7 +1,7 @@
 from mediacrush.objects import File
 from mediacrush.database import r, _k
 from mediacrush.processing.detect import detect
-from mediacrush.mimetypes import get_mimetype, extension
+from mediacrush.mimeinfo import get_mimetype, extension
 from mediacrush.files import file_storage
 
 if __name__ == '__main__':
