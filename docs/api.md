@@ -98,6 +98,11 @@ In case of error, the response will contain an 'error' parameter and additional 
       ],
       "extras": [
       ],
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }, 
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
@@ -149,6 +154,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/CPvuR5lRhmS0.gif",
         "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
@@ -172,6 +182,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/tVWMM_ziA3nm.gif",
         "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
@@ -199,6 +214,7 @@ If the file is not found, you will get a dictionary like:
             "type": "image/jpeg"
           }
         ], 
+        "flags": {},
         "hash": "4Gt0YcGMPA7S", 
         "original": "/4Gt0YcGMPA7S.jpg", 
         "type": "image/jpeg"
@@ -249,6 +265,11 @@ If the file is not found, you will get a dictionary like:
         ],
         "extras": [
         ],
+        "flags": {
+          "autoplay": true, 
+          "loop": true, 
+          "mute": true
+        }, 
         "original": "/LxqXxVPAvqqB.gif",
         "hash": "LxqXxVPAvqqB",
         "type": "image/gif"
@@ -327,7 +348,87 @@ If the file is not found, you will get a dictionary like:
 
 The "result" object will only be included if the status is "done".
 
+### /api/&lt;hash&gt;/flags
+
+*Parameters*: none.
+
+*Returns*: the dictionary of flags pertaining to `hash`.
+
+    GET /api/Ta-nbchtCw6d/flags
+
+    {
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no file with that hash.</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The file was found.</td>
+    </tr>
+</table>
+
 ## Hash manipulation endpoints
+
+### /api/&lt;hash&gt;/flags
+
+*Parameters*: the flags that are to be changed, with a value of `true` to activate a flag and `false` to deactivate it.
+
+*Returns*: the dictionary of flags pertaining to `hash`.
+
+    POST /api/Ta-nbchtCw6d/flags
+    autoplay=false&mute=false
+
+    {
+      "flags": {
+        "autoplay": false, 
+        "loop": true, 
+        "mute": false 
+      }
+    }
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the flags have been updated.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no such hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>415</td>
+        <td>One of the parameters passed to this endpoint is not recognised. Ensure your form data does not contain extraneous fields.</td>
+        <td>false</td>
+    </tr>
+</table>
 
 ### /api/&lt;hash&gt;/delete
 
@@ -487,11 +588,9 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
 </table>
 
-# Appendix A
+# Appendix A - Example objects
 
-## Example objects
-
-### File
+## File
 
     {
       "blob_type": "video",
@@ -512,6 +611,11 @@ In case of error, the response will contain an 'error' parameter and additional 
       ],
       "extras": [
       ],
+      "flags": {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+      }, 
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif"
@@ -522,7 +626,18 @@ files, two video files are generated - one with h.264/mpeg and another with theo
 will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
 file in the extras.
 
-### Album
+Description of fields:
+
+* `blob_type`: One of `video`, `image` or `audio`. Specifies how this file should be displayed to the user.
+* `compression`: The compression ratio achieved by hosting the file on MediaCrush.
+* `files`: A list of files that are the result of converting the original file into different formats.
+* `extras`: Auxiliary files, such as a thumbnail or subtitles.
+* `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`. Note that the flags shown here are an example set and the list of available flags may vary. Consult Appendix B for more information.
+* `original`: The original file that was uploaded, as-is.
+* `hash`: A unique identifier within MediaCrush.
+* `type`: The original mimetype, provided by the user. You should not base decisions on this value.
+
+## Album
 
     {
       "files": [
@@ -569,3 +684,19 @@ file in the extras.
       "hash": "6ecd2bbd34ec",
       "type": "application/album"
     }
+
+# Appendix B - Flags by `blob_type`
+
+These flag listings specify all the possible flags that may be returned in an object. However, some or all of the flags may be unavailable.
+
+## `video`
+
+    {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+    }
+    
+* `autoplay`: Whether this file should play automatically, without user input.
+* `loop`: Whether this file restarts playback after finishing.
+* `mute`: Whether audio volume is set to zero.

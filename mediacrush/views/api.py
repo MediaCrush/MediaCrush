@@ -9,6 +9,7 @@ from mediacrush.objects import File, Album, Feedback, RedisObject
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
+from mediacrush.fileutils import normalise_processor
 
 def _file_object(f):
     mimetype = f.mimetype
@@ -17,10 +18,11 @@ def _file_object(f):
     ret = {
         'original': media_url(f.original),
         'type': mimetype,
-        'blob_type': f.processor.split('/')[0] if '/' in f.processor else f.processor,
+        'blob_type': normalise_processor(f.processor),
         'hash': f.hash,
         'files': [],
-        'extras': []
+        'extras': [],
+        'flags': f.flags.as_dict(),
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -65,21 +67,16 @@ deletion_procedures = {
     Album: lambda a: a.delete()
 }
 
-def _upload_f(f, filename):
-    result = upload(f, filename)
-    if not isinstance(result, tuple):
+def _upload_object(result, status):
+    if status == 200:
         return {'hash': result}
     else:
-        # It's a tuple which means it was uploaded before or it was rate limited
-        # jdiez, this is super hacky, please refactor this
-        h, status = result
-
         resp = {'error': status}
         if status == 409:
-            f = _file_object(File.from_hash(h))
+            f = _file_object(File.from_hash(result))
 
-            resp[h] = f
-            resp['hash'] = h
+            resp[result] = f
+            resp['hash'] = result
 
         return resp, status
 
@@ -156,7 +153,7 @@ class APIView(FlaskView):
     def upload_file(self):
         f = request.files['file']
 
-        return _upload_f(f, f.filename)
+        return _upload_object(*upload(f, f.filename))
 
     @route("/api/upload/url", methods=['POST'])
     def upload_url(self):
@@ -171,17 +168,10 @@ class APIView(FlaskView):
         if not success:
             return {'error': 404}, 404
 
-        result = _upload_f(f, f.filename)
-        h = None
-        if isinstance(result, dict) and 'hash' in result:
-            h = result['hash']
-        elif isinstance(result, tuple) and 'hash' in result[0]:
-            h = result[0]['hash']
+        result, status = upload(f, f.filename)
+        r.set(_k("url.%s" % url), result)
 
-        if h:
-            r.set(_k("url.%s" % url), h)
-
-        return result
+        return _upload_object(result, status)
 
     @route("/api/url/info", methods=['POST'])
     def urlinfo(self):
@@ -216,7 +206,7 @@ class APIView(FlaskView):
 
         f = File.from_hash(h)
         ret = {'status': f.status}
-        if ret['status'] == 'done':
+        if f.processor is not None: # When processor is available, ther rest of the information is too, even if the file might not have finished processing yet.
             ret[h] = _file_object(f)
             ret['hash'] = h
 
@@ -228,6 +218,41 @@ class APIView(FlaskView):
             return {'exists': False}, 404
 
         return {'exists': True}
+
+    @route("/api/<h>/flags")
+    def flags(self, h):
+        if not File.exists(h):
+            return {'error': 404}, 404
+
+        f = File.from_hash(h)
+        return {'flags': f.flags.as_dict()}
+
+    @route("/api/<h>/flags", methods=['POST'])
+    def flags_post(self, h):
+        klass = RedisObject.klass(h)
+
+        if not klass:
+            return {'error': 404}, 404
+        try:
+            o = klass.from_hash(h)
+            if not check_password_hash(o.ip, get_ip()):
+                return {'error': 401}, 401
+        except:
+            return {'error': 401}, 401
+
+        # At this point, we're authenticated and o is the object.
+        for flag, value in request.form.items():
+            v = True if value == 'true' else False
+
+            try:
+                setattr(o.flags, flag, v)
+            except AttributeError:
+                return {'error': 415}, 415
+
+        o.save()
+
+        return {"flags": o.flags.as_dict()}
+
 
     @route("/api/feedback", methods=['POST'])
     def feedback(self):

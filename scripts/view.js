@@ -48,6 +48,25 @@ window.addEventListener('load', function() {
             }
             if (canDelete) {
                 document.getElementById('delete').parentElement.classList.remove('hidden');
+                var flags = document.getElementById('flags');
+                flags.classList.remove('hidden');
+                var checkboxes = flags.querySelectorAll('input');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    void function(i) {
+                        i.addEventListener('change', function(e) {
+                            var flag = i.getAttribute('data-flag');
+                            var xhr = new XMLHttpRequest();
+                            window.flags[flag] = !window.flags[flag];
+                            var formData = new FormData();
+                            for (f in window.flags) {
+                                formData.append(f, window.flags[f]);
+                            }
+                            xhr.open('POST', '/api/' + window.filename + '/flags');
+                            xhr.send(formData);
+                            updateFlag(flag, window.flags[flag]);
+                        }, false);
+                    }(checkboxes[i]);
+                }
             }
         }
     }
@@ -107,5 +126,10 @@ function handleHash(hash) {
     } else {
         if (window.mediaHashHandler)
             window.mediaHashHandler(hash.substr(1));
+    }
+}
+function updateFlag(flag, value) {
+    if (window.mediaFlagHandler) {
+        window.mediaFlagHandler(flag, value);
     }
 }

@@ -1,3 +1,7 @@
+from mediacrush.objects import File, RedisObject
+from mediacrush.database import r, _k
+from mediacrush.fileutils import file_storage
+
 from mediacrush.processing.invocation import Invocation
 from mediacrush.config import _cfg, _cfgi
 import sys
@@ -154,7 +158,11 @@ def detect_stream(stream):
         return {
             'type': 'audio',
             'extra': { 'has_audio': True, 'has_video': False },
-            'flags': None
+            'flags': {
+                'autoplay': False,
+                'loop': False,
+                'mute': False
+            }
         }
     if stream["codec_type"] == 'subtitle':
         return {
@@ -213,3 +221,87 @@ def detect_plaintext(path):
             'flags': None
         }
     return None
+
+class BitVector(object):
+    shifts = {}
+    _vec = 0
+
+    def __init__(self, names, iv=0):
+        for i, name in enumerate(names):
+            self.shifts[name] = i
+
+        self._vec = iv
+
+    def __getattr__(self, name):
+        if name not in self.shifts:
+            raise AttributeError(name)
+
+        value = self._vec & (1 << self.shifts[name])
+        return True if value != 0 else False
+
+    def __setattr__(self, name, v):
+        if name == '_vec':
+            object.__setattr__(self, '_vec', v)
+            return
+
+        if name not in self.shifts:
+            raise AttributeError(name)
+
+        newvec = self._vec
+
+        currentval = getattr(self, name)
+        if currentval == v:
+            return # No change needed
+
+        if currentval == True:
+            # Turn this bit off
+            newvec &= ~(1 << self.shifts[name])
+        else:
+            # Turn it on
+            newvec |= (1 << self.shifts[name])
+
+        object.__setattr__(self, '_vec', newvec)
+
+    def as_dict(self):
+        return dict((flag, getattr(self, flag)) for flag in self.shifts)
+
+    def __int__(self):
+        return self._vec
+
+flags_per_processor = {
+    'video': ['autoplay', 'loop', 'mute']
+}
+
+if __name__ == '__main__':
+    files = File.get_all()
+    count = len(files)
+
+    print "About to process %d files." % count
+
+    done = 0
+    errors = []
+
+    for f in files:
+        h = f.hash
+        configvector = 0
+
+        try:
+            path = file_storage(f.original)
+            result = detect(path)
+
+            if result and result['flags']:
+                bv = BitVector(flags_per_processor.get(result['type'], []))
+
+                for flag, value in result['flags'].items():
+                    setattr(bv, flag, value)
+
+                configvector = int(bv)
+                print h, result['type'], int(bv)
+            done += 1
+        except Exception, e:
+            errors.append(h)
+
+        k = _k("file.%s" % h)
+        r.hset(k, "configvector", configvector)
+
+    print "%d/%d files processed, errors:" % (done, count), errors

@@ -21,6 +21,15 @@ window.addEventListener('load', function() {
             updateVideo({ target: videos[i] });
         }
         videos[i].addEventListener('timeupdate', updateVideo, false);
+        if (window.flags) {
+            if (window.flags.mute) {
+                videos[i].muted = true;
+                // Note: this probably won't work in the subtitles branch
+                var muteControl = videos[i].parentElement.querySelector('.control.mute');
+                muteControl.classList.add('unmute');
+                muteControl.classList.remove('mute');
+            }
+        }
     }
     var hovers = document.querySelectorAll('.video .hover');
     for (var i = 0; i < hovers.length; i++) {
@@ -270,6 +279,35 @@ function mediaHashHandler(hash) {
         } else if (parts[i] == 'nobrand') {
             video.parentElement.classList.add('nobrand');
         }
+    }
+}
+function mediaFlagHandler(flag, value) {
+    var video = document.getElementById('video-' + window.filename);
+    var loopControl = document.querySelector('.video .control.loop');
+    var muteControl = document.querySelector('.video .control.mute') || document.querySelector('.video .control.unmute');
+    switch (flag) {
+        case 'loop':
+            video.loop = !video.loop;
+            if (video.loop) {
+                loopControl.classList.add('enabled');
+                if (video.ended) {
+                    video.currentTime = 0;
+                    video.play();
+                }
+            } else {
+                loopControl.classList.remove('enabled');
+            }
+            break;
+        case 'mute':
+            video.muted = !video.muted;
+            if (video.muted) {
+                muteControl.classList.add('unmute');
+                muteControl.classList.remove('mute');
+            } else {
+                muteControl.classList.add('mute');
+                muteControl.classList.remove('unmute');
+            }
+            break;
     }
 }
 function mediaSizeReporter() {

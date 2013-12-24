@@ -16,17 +16,23 @@ class APITestCase(TestMixin):
     def _create_album(self, files, ip='127.0.0.1'):
         return self._post('/api/album/create', {'list': ','.join(files)}, ip=ip)
 
-    def _wait(self, h):
-        status = 'pending'
-        while status == 'pending':
+    def _wait(self, h, wait_ready=False):
+        check = True
+        while check:
             status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
+
+            if wait_ready:
+                check = status not in ['ready', 'done']
+            else:
+                check = status in ['processing', 'pending']
+
             time.sleep(0.1)
 
 
-    def _get_hash(self, f):
+    def _get_hash(self, f, wait_ready=False):
         h = json.loads(self._upload(f).data)['hash']
 
-        self._wait(h)
+        self._wait(h, wait_ready)
         return h
 
     def _get_url_hash(self, url):
@@ -273,5 +279,67 @@ class DeleteTestCase(APITestCase):
 
     def test_delete_bad_hash(self):
         response = self.client.get('/api/asdfasgdfs/delete')
+
+        self.assertEqual(response.status_code, 404)
+
+class FlagsTestCase(APITestCase):
+    def test_correct_flags_gif(self):
+        h = self._get_hash('cat.gif', wait_ready=True)
+
+        response = self.client.get('/api/%s/flags' % h)
+        self.assertEqual(response.status_code, 200)
+
+        obj = json.loads(response.data)
+        self.assertEqual(obj['flags'], {
+            u'autoplay': True,
+            u'loop': True,
+            u'mute': True
+        })
+
+    def test_correct_flags_mp4(self):
+        h = self._get_hash('cat.mp4', wait_ready=True)
+
+        response = self.client.get('/api/%s/flags' % h)
+        self.assertEqual(response.status_code, 200)
+
+        obj = json.loads(response.data)
+        self.assertEqual(obj['flags'], {
+            u'autoplay': False,
+            u'loop': False,
+            u'mute': False,
+        })
+
+    def test_change_flags(self):
+        h = self._get_hash('cat.gif', wait_ready=True)
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+        o = json.loads(response.data)
+        self.assertEqual(o['flags'][u'autoplay'], False)
+
+    def test_change_flags_unauthorised(self):
+        h = self._get_hash('cat.gif', wait_ready=True)
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False
+        }, ip='127.0.0.2')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_change_extraneous_flags(self):
+        h = self._get_hash('cat.gif', wait_ready=True)
+        response = self._post('/api/%s/flags' % h, {
+            'autoplay': False,
+            'dummy': True,
+        })
+
+        self.assertEqual(response.status_code, 415)
+
+    def test_change_flags_404(self):
+        response = self._post('/api/%s/flags' % 'dummy', {
+            'autoplay': False,
+        })
 
         self.assertEqual(response.status_code, 404)
