@@ -40,6 +40,7 @@
     </div>
 </div>
 <div class="center small clearfix">
+    {% if flags %}
     <div id="flags" class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}">
         <strong>Settings:</strong>
         {% for flag, value in flags.items() %}
@@ -49,6 +50,7 @@
         </label>
         {% endfor %}
     </div>
+    {% endif %}
     <ul class="inline">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
