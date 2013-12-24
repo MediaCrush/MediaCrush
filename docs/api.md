@@ -588,11 +588,9 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
 </table>
 
-# Appendix A
+# Appendix A - Example objects
 
-## Example objects
-
-### File
+## File
 
     {
       "blob_type": "video",
@@ -634,12 +632,12 @@ Description of fields:
 * `compression`: The compression ratio achieved by hosting the file on MediaCrush.
 * `files`: A list of files that are the result of converting the original file into different formats.
 * `extras`: Auxiliary files, such as a thumbnail or subtitles.
-* `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`.
+* `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`. Note that the flags shown here are an example set and the list of available flags may vary. Consult Appendix B for more information.
 * `original`: The original file that was uploaded, as-is.
 * `hash`: A unique identifier within MediaCrush.
 * `type`: The original mimetype, provided by the user. You should not base decisions on this value.
 
-### Album
+## Album
 
     {
       "files": [
@@ -686,3 +684,19 @@ Description of fields:
       "hash": "6ecd2bbd34ec",
       "type": "application/album"
     }
+
+# Appendix B - Flags by `blob_type`
+
+These flag listings specify all the possible flags that may be returned in an object. However, some or all of the flags may be unavailable.
+
+## `video`
+
+    {
+        "autoplay": true, 
+        "loop": true, 
+        "mute": true
+    }
+    
+* `autoplay`: Whether this file should play automatically, without user input.
+* `loop`: Whether this file restarts playback after finishing.
+* `mute`: Whether audio volume is set to zero.
