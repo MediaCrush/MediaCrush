@@ -9,6 +9,8 @@ class BitVector(object):
     _vec = 0
 
     def __init__(self, names, iv=0):
+        self.shifts = {} # Turns out, this is important >_>
+
         for i, name in enumerate(names):
             self.shifts[name] = i
 
@@ -22,8 +24,8 @@ class BitVector(object):
         return True if value != 0 else False
 
     def __setattr__(self, name, v):
-        if name == '_vec':
-            object.__setattr__(self, '_vec', v)
+        if name in ['_vec', 'shifts']:
+            object.__setattr__(self, name, v)
             return
 
         if name not in self.shifts:
