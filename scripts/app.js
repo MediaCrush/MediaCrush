@@ -259,7 +259,7 @@ function checkStatus(hash, statusUI, progressUI, text) {
                     input.id = 'flag-' + flag + '-' + hash;
                     input.setAttribute('data-flag', flag);
                     input.setAttribute('data-media', hash);
-                    input.checked = responseJSON[hash]['flags'];
+                    input.checked = responseJSON[hash]['flags'][flag];
                     void function(i) {
                         i.addEventListener('change', function() {
                             var flag = i.getAttribute('data-flag');
