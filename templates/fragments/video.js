@@ -281,6 +281,35 @@ function mediaHashHandler(hash) {
         }
     }
 }
+function mediaFlagHandler(flag, value) {
+    var video = document.getElementById('video-' + window.filename);
+    var loopControl = document.querySelector('.video .control.loop');
+    var muteControl = document.querySelector('.video .control.mute') || document.querySelector('.video .control.unmute');
+    switch (flag) {
+        case 'loop':
+            video.loop = !video.loop;
+            if (video.loop) {
+                loopControl.classList.add('enabled');
+                if (video.ended) {
+                    video.currentTime = 0;
+                    video.play();
+                }
+            } else {
+                loopControl.classList.remove('enabled');
+            }
+            break;
+        case 'mute':
+            video.muted = !video.muted;
+            if (video.muted) {
+                muteControl.classList.add('unmute');
+                muteControl.classList.remove('mute');
+            } else {
+                muteControl.classList.add('mute');
+                muteControl.classList.remove('unmute');
+            }
+            break;
+    }
+}
 function mediaSizeReporter() {
     var video = document.querySelector('video');
     return { width: video.videoWidth, height: video.videoHeight };
