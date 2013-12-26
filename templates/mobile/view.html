@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block mobile_responsive %}
-{% if mimetype.startswith('image/') %}
+{% if processor.startswith('image') %}
 <meta name="viewport" content="width=device-width, user-scalable=yes" />
 {% else %}
 <meta name="viewport" content="width=device-width, user-scalable=no" />

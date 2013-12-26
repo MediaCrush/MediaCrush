@@ -291,3 +291,11 @@ img.centered {
 .bold {
     font-weight: bold;
 }
+
+label.checkbox {
+    cursor: pointer;
+
+    input {
+        cursor: pointer;
+    }
+}

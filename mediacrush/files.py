@@ -24,6 +24,7 @@ FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AU
 LOOP_FORMATS = set(["image/gif"])
 AUTOPLAY_FORMATS = set(["image/gif"])
 
+
 class URLFile(object):
     filename = None
     content_type = None
@@ -60,19 +61,21 @@ class URLFile(object):
 
         parsed_url = urlparse(url)
         self.filename = list(reversed(parsed_url.path.split("/")))[0]
+
         if "content-type" in r.headers:
             self.content_type = r.headers['content-type']
             ext = mimetypes.guess_extension(self.content_type)
             if ext:
                 self.filename = self.filename + ext
+
         if "content-disposition" in r.headers:
             disposition = r.headers['content-disposition']
             parts = disposition.split(';')
             if len(parts) > 1:
                 self.filename = parts[1].strip(' ')
                 self.filename = self.filename[self.filename.find('=') + 1:].strip(' ')
+
         self.filename = ''.join([c for c in self.filename if c.isalpha() or c == '.'])
-        print self.filename
 
         return True
 
@@ -100,12 +103,12 @@ def upload(f, filename):
     if not current_app.debug:
         rate_limit_update(file_length(f))
         if rate_limit_exceeded():
-            return "ratelimit", 420
+            return None, 420
 
     h = get_hash(f)
     identifier = to_id(h)
     if "." not in filename:
-        ext = mimetypes.guess_extension(f.content_type) # This not very scientific, but it works
+        ext = mimetypes.guess_extension(f.content_type)[1:] # This not very scientific, but it works
     else:
         ext = extension(filename)
 
@@ -135,7 +138,7 @@ def upload(f, filename):
 
     file_object.save()
 
-    return identifier
+    return identifier, 200
 
 
 to_id = lambda h: base64.b64encode(h)[:12].replace('/', '_').replace('+', '-')

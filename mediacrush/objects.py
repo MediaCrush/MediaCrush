@@ -1,6 +1,8 @@
 from mediacrush.database import r, _k
 from mediacrush.celery import app
 
+from mediacrush.fileutils import normalise_processor, flags_per_processor, BitVector
+
 import hashlib
 import uuid
 
@@ -90,7 +92,7 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector']
 
     original = None
     mimetype = None
@@ -98,7 +100,8 @@ class File(RedisObject):
     reports = 0
     ip = None
     taskid = None
-    processor = None
+    _processor = None
+    flags = None
 
     def add_report(self):
         self.reports = int(self.reports)
@@ -137,6 +140,28 @@ class File(RedisObject):
             self.save()
 
         return status
+
+    @property
+    def configvector(self):
+        if not self.flags:
+            return 0
+        return self.flags._vec
+
+    @configvector.setter
+    def configvector(self, val):
+        self._configvector = int(val)
+
+    @property
+    def processor(self):
+        return self._processor
+
+    @processor.setter
+    def processor(self, v):
+        self._processor = v
+
+        # When the processor is changed, so is the interpretation of the flags.
+        options = flags_per_processor.get(normalise_processor(v), [])
+        self.flags = BitVector(options, iv=self._configvector)
 
 class Feedback(RedisObject):
     text = None
