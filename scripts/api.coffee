@@ -39,6 +39,14 @@ API = (->
             callback(response.exists) if callback
         xhr.send()
 
+    self.checkStatus = (files, callback) ->
+        xhr = new XMLHttpRequest()
+        xhr.open('GET', "/api/status?list=#{files}")
+        xhr.onload = ->
+            response = JSON.parse(this.responseText)
+            callback(response) if callback
+        xhr.send()
+
     return self
 )()
-window.API = API
+window.API = API if window?

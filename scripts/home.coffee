@@ -29,6 +29,9 @@ handleWorkerMessage = (e) ->
     console.log(JSON.stringify(e.data))
     if e.data.execute?
         eval(e.data.execute)
+    if e.data.event?
+        switch e.data.event
+            when 'file-status-change' then fileStatusChanged(e.data)
 
 dragNop = (e) ->
     e.stopPropagation()
@@ -81,7 +84,7 @@ uploadFile = (file) ->
         API.uploadFile(file, (e) ->
             if e.lengthComputable
                 file.updateProgress(e.loaded / e.total)
-        , (file) ->
+        , ->
             if file.hash != oldHash # for larger files, the server does the hashing for us
                 delete uploadedFiles[oldHash]
                 uploadedFiles[file.hash] = file
@@ -89,14 +92,20 @@ uploadFile = (file) ->
                 file.finish()
             else
                 file.isUserOwned = true
-                # todo
+                worker.postMessage({ action: 'monitor-status', hash: file.hash })
         )
     if file.isHashed
         API.checkExists(file, (exists) ->
             if exists
                 file.isUserOwned = false
+                file.updateStatus('done')
                 file.finish()
                 return
             else
                 upload()
         )
+
+fileStatusChanged = (e) ->
+    uploadedFiles[e.hash].updateStatus(e.status)
+    if e.status in ['ready', 'done']
+        uploadedFiles[e.hash].finish()

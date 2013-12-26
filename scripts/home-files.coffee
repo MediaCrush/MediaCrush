@@ -12,6 +12,7 @@ class MediaFile
             when 'uploading' then "Uploading..."
             when 'pending' then "Waiting to process..."
             when 'processing' then "Processing..."
+            when 'ready' then "Upload complete!"
             when 'done' then "Upload complete!"
         progress = @preview.querySelector('.progress')
         if status in ['preparing', 'pending']
@@ -20,7 +21,7 @@ class MediaFile
         else if status == 'uploading'
             progress.className = 'progress'
             progress.style.width = '0%'
-        else if status == 'processing'
+        else if status in 'processing'
             progress.className = 'progress progress-green'
             progress.style.width = '100%'
         else if status == 'done'
@@ -57,7 +58,6 @@ class MediaFile
         @preview.querySelector('.progress').style.width = (amount * 100) + '%'
 
     finish: ->
-        @updateStatus('done')
         largeLink = @preview.querySelector('.full-size')
         link = @preview.querySelector('.link')
         link.textContent = window.location.origin + "/#{@hash}"
