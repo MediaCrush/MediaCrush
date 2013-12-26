@@ -26,7 +26,9 @@ window.onbeforeunload = ->
         return 'If you leave this page, your uploads will be cancelled.'
 
 handleWorkerMessage = (e) ->
-    console.log(e.data)
+    console.log(JSON.stringify(e.data))
+    if e.data.execute?
+        eval(e.data.execute)
 
 dragNop = (e) ->
     e.stopPropagation()
@@ -44,7 +46,7 @@ handleFiles = (files) ->
     dropArea.style.overflowY = 'scroll'
     dropArea.classList.add('files')
     fileList = document.getElementById('files')
-    if uploadedFiles.length == 0
+    if Object.keys(uploadedFiles).length == 0
         document.getElementById('files').innerHTML = ''
     for file in files
         mediaFile = new MediaFile(file)
@@ -53,5 +55,18 @@ handleFiles = (files) ->
         mediaFile.preview = fileList.lastElementChild
         mediaFile.updateStatus('uploading')
         mediaFile.loadPreview(file)
-        uploadedFiles.push(mediaFile)
+        mediaFile.hash = new String(guid())
+        mediaFile.file = file
+        uploadedFiles[mediaFile.hash] = mediaFile
         reader = new FileReader()
+        reader.onloadend = (e) ->
+            data = e.target.result
+            worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
+        reader.readAsBinaryString(file)
+
+hashCompleted = (id, result) ->
+    file = uploadedFiles[id]
+    delete uploadedFiles[id]
+    file.hash = result
+    uploadedFiles[result] = file
+    # Upload file to MediaCrush

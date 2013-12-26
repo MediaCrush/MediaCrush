@@ -105,3 +105,8 @@ confirm = (callback) ->
     confirmCallback = callback
     document.querySelector('.dialog').classList.remove('hidden')
 window.confirm = confirm
+
+s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+
+guid = -> s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
+window.guid = guid

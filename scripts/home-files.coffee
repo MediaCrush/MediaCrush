@@ -2,6 +2,7 @@ class MediaFile
     constructor: (file) ->
         @name = file.name
         @status = 'none'
+        @hash = guid() # Replaced with actual hash once computed
     
     updateStatus: (status) ->
         @status = status
@@ -41,4 +42,4 @@ class MediaFile
         
 
 window.MediaFile = MediaFile
-window.uploadedFiles = []
+window.uploadedFiles = {}
