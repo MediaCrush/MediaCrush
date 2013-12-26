@@ -53,9 +53,8 @@ handleFiles = (files) ->
         mediaFile.preview = templates.preview(mediaFile).toDOM()
         fileList.appendChild(mediaFile.preview)
         mediaFile.preview = fileList.lastElementChild
-        mediaFile.loadPreview(file)
+        mediaFile.loadPreview()
         mediaFile.hash = new String(guid())
-        mediaFile.file = file
         mediaFile.updateStatus('preparing')
         uploadedFiles[mediaFile.hash] = mediaFile
         reader = new FileReader()
@@ -64,7 +63,6 @@ handleFiles = (files) ->
                 data = e.target.result
                 worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
             catch e # Too large
-                mediaFile.updateStatus('uploading')
                 uploadFile(mediaFile)
         reader.readAsBinaryString(file)
 
@@ -74,8 +72,31 @@ hashCompleted = (id, result) ->
     file.hash = result
     uploadedFiles[result] = file
     file.isHashed = true
-    file.updateStatus('uploading')
     uploadFile(file)
 
 uploadFile = (file) ->
-    # TODO
+    oldHash = file.hash
+    upload = ->
+        file.updateStatus('uploading')
+        API.uploadFile(file, (e) ->
+            if e.lengthComputable
+                file.updateProgress(e.loaded / e.total)
+        , (file) ->
+            if file.hash != oldHash # for larger files, the server does the hashing for us
+                delete uploadedFiles[oldHash]
+                uploadedFiles[file.hash] = file
+            if file.status == 'done'
+                file.finish()
+            else
+                file.isUserOwned = true
+                # todo
+        )
+    if file.isHashed
+        API.checkExists(file, (exists) ->
+            if exists
+                file.isUserOwned = false
+                file.finish()
+                return
+            else
+                upload()
+        )

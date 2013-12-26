@@ -1,6 +1,6 @@
 class MediaFile
-    constructor: (file) ->
-        @name = file.name
+    constructor: (@file) ->
+        @name = @file.name
         @status = 'none'
         @hash = guid() # Replaced with actual hash once computed
         @isHashed = false
@@ -26,18 +26,18 @@ class MediaFile
         else if status == 'done'
             progress.style.display = 'none'
     
-    loadPreview: (file) ->
-        uri = file.name
-        if file instanceof File or file instanceof Blob
-            uri = URL.createObjectURL(file)
+    loadPreview: ->
+        uri = @file.name
+        if @file instanceof File or @file instanceof Blob
+            uri = URL.createObjectURL(@file)
         _ = null
-        if file.type.indexOf('image/') == 0
+        if @file.type.indexOf('image/') == 0
             _ = document.createElement('img')
             _.src = uri
-        else if file.type.indexOf('audio/') == 0
+        else if @file.type.indexOf('audio/') == 0
             _ = document.createElement('img')
             _.src = '/static/audio.png'
-        else if file.type.indexOf('video/') == 0
+        else if @file.type.indexOf('video/') == 0
             _ = document.createElement('video')
             _.setAttribute('loop', 'true')
             source = document.createElement('source')
@@ -47,12 +47,31 @@ class MediaFile
                 _.parentElement.replaceChild(fallback, _)
             , false)
             source.setAttribute('src', uri)
-            source.setAttribute('type', file.type)
+            source.setAttribute('type', @file.type)
             _.appendChild(source)
             _.volume = 0
             _.play()
         @preview.querySelector('.preview').appendChild(_)
-        
+    
+    updateProgress: (amount) ->
+        @preview.querySelector('.progress').style.width = (amount * 100) + '%'
 
+    finish: ->
+        @updateStatus('done')
+        largeLink = @preview.querySelector('.full-size')
+        link = @preview.querySelector('.link')
+        link.textContent = window.location.origin + "/#{@hash}"
+        largeLink.href = link.href = "/#{@hash}"
+        link.classList.remove('hidden')
+        largeLink.classList.remove('hidden')
+        if @userOwned
+            deleteLink = @preview.querySelector('.delete')
+            deleteLink.href = "/api/#{@hash}/delete"
+            deleteLink.addEventListener('click', (e) ->
+                e.preventDefault()
+                # todo
+            , false)
+            deleteLink.classList.remove('hidden')
+        
 window.MediaFile = MediaFile
 window.uploadedFiles = {}
