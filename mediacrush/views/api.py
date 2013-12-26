@@ -222,6 +222,25 @@ class APIView(FlaskView):
 
         return ret
 
+    @route("/api/status")
+    def status(self):
+        if not "list" in request.args:
+            return {'error': 400}, 400
+        items = request.args['list'].split(',')
+
+        res = {}
+        for i in items:
+            klass = RedisObject.klass(i)
+            if not klass:
+                res[i] = None
+            else:
+                o = klass.from_hash(i)
+                res[i] = {'status': o.status}
+                if res[i]['status'] == 'done':
+                    res[i]['file'] = _file_object(o)
+
+        return res
+
     @route("/api/<h>/exists")
     def exists(self, h):
         if not File.exists(h):
