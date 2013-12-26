@@ -21,7 +21,7 @@ class MediaFile
         else if status == 'uploading'
             progress.className = 'progress'
             progress.style.width = '0%'
-        else if status in 'processing'
+        else if status == 'processing'
             progress.className = 'progress progress-green'
             progress.style.width = '100%'
         else if status == 'done'
@@ -56,6 +56,41 @@ class MediaFile
     
     updateProgress: (amount) ->
         @preview.querySelector('.progress').style.width = (amount * 100) + '%'
+
+    setFlags: (flags) ->
+        return if @flags?
+        @flags = flags
+        list = @preview.querySelector('.flags')
+
+        self = this
+        updateFlag = (e) ->
+            flag = e.target.getAttribute('data-flag')
+            xhr = new XMLHttpRequest()
+            self.flags[flag] = !self.flags[flag]
+            formData = new FormData()
+            formData.append(flag, value) for flag, value of self.flags
+            xhr.open('POST', "/api/#{self.hash}/flags")
+            xhr.send(formData)
+
+        for flag, value of flags
+            name = flag.substr(1)
+            name = flag[0].toUpperCase() + name
+            input = document.createElement('input')
+            input.type = 'checkbox'
+            input.name = input.id = "flag-#{flag}-#{@hash}"
+            input.setAttribute('data-flag', flag)
+            input.setAttribute('data-media', @hash)
+            input.checked = value
+            input.addEventListener('change', updateFlag, false)
+            label = document.createElement('label')
+            label.for = "flag-#{flag}-#{@hash}"
+            label.className = 'checkbox'
+            span = document.createElement('span')
+            span.textContent = flag
+            label.appendChild(input)
+            label.appendChild(span)
+            list.appendChild(label)
+        list.classList.remove('hidden')
 
     finish: ->
         largeLink = @preview.querySelector('.full-size')

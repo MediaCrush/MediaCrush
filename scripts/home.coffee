@@ -107,5 +107,7 @@ uploadFile = (file) ->
 
 fileStatusChanged = (e) ->
     uploadedFiles[e.hash].updateStatus(e.status)
+    if e.file? and e.file.flags?
+        uploadedFiles[e.hash].setFlags(e.file.flags)
     if e.status in ['ready', 'done']
         uploadedFiles[e.hash].finish()
