@@ -93,6 +93,7 @@ class MediaFile
         list.classList.remove('hidden')
 
     finish: ->
+        addItemToHistory(@hash)
         largeLink = @preview.querySelector('.full-size')
         link = @preview.querySelector('.link')
         link.textContent = window.location.origin + "/#{@hash}"
