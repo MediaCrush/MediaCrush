@@ -7,6 +7,14 @@ window.addEventListener('load', ->
     window.addEventListener('dragleave', dragNop, false)
     window.addEventListener('dragover', dragNop, false)
     window.addEventListener('drop', handleDragDrop, false)
+    document.getElementById('browse-link').addEventListener('click', (e) ->
+        e.preventDefault()
+        document.getElementById('browse').click()
+    , false)
+    document.getElementById('browse').addEventListener('change', (e) ->
+        handleFiles(e.target.files)
+    , false)
+
     worker.addEventListener('message', handleWorkerMessage)
     worker.postMessage({ action: 'load' })
     compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
@@ -44,3 +52,6 @@ handleFiles = (files) ->
         fileList.appendChild(mediaFile.preview)
         mediaFile.preview = fileList.lastElementChild
         mediaFile.updateStatus('uploading')
+        mediaFile.loadPreview(file)
+        uploadedFiles.push(mediaFile)
+        reader = new FileReader()
