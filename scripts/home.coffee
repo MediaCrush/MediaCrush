@@ -53,15 +53,19 @@ handleFiles = (files) ->
         mediaFile.preview = templates.preview(mediaFile).toDOM()
         fileList.appendChild(mediaFile.preview)
         mediaFile.preview = fileList.lastElementChild
-        mediaFile.updateStatus('uploading')
         mediaFile.loadPreview(file)
         mediaFile.hash = new String(guid())
         mediaFile.file = file
+        mediaFile.updateStatus('preparing')
         uploadedFiles[mediaFile.hash] = mediaFile
         reader = new FileReader()
         reader.onloadend = (e) ->
-            data = e.target.result
-            worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
+            try
+                data = e.target.result
+                worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
+            catch e # Too large
+                mediaFile.updateStatus('uploading')
+                uploadFile(mediaFile)
         reader.readAsBinaryString(file)
 
 hashCompleted = (id, result) ->
@@ -69,4 +73,9 @@ hashCompleted = (id, result) ->
     delete uploadedFiles[id]
     file.hash = result
     uploadedFiles[result] = file
-    # Upload file to MediaCrush
+    file.isHashed = true
+    file.updateStatus('uploading')
+    uploadFile(file)
+
+uploadFile = (file) ->
+    # TODO

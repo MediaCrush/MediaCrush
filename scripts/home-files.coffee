@@ -3,6 +3,7 @@ class MediaFile
         @name = file.name
         @status = 'none'
         @hash = guid() # Replaced with actual hash once computed
+        @isHashed = false
     
     updateStatus: (status) ->
         @status = status
@@ -12,6 +13,18 @@ class MediaFile
             when 'pending' then "Waiting to process..."
             when 'processing' then "Processing..."
             when 'done' then "Upload complete!"
+        progress = @preview.querySelector('.progress')
+        if status in ['preparing', 'pending']
+            progress.className = 'progress progress-grey'
+            progress.style.width = '100%'
+        else if status == 'uploading'
+            progress.className = 'progress'
+            progress.style.width = '0%'
+        else if status == 'processing'
+            progress.className = 'progress progress-green'
+            progress.style.width = '100%'
+        else if status == 'done'
+            progress.style.display = 'none'
     
     loadPreview: (file) ->
         uri = file.name
