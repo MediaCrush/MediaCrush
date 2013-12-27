@@ -213,7 +213,7 @@ class APIView(FlaskView):
         return ret
 
     @route("/api/status")
-    def status(self):
+    def status_bulk(self):
         if not "list" in request.args:
             return {'error': 400}, 400
         items = request.args['list'].split(',')
