@@ -61,7 +61,7 @@ def process_file(path, h):
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
-    c = task | cleanup.s(path, h)
+    c = chord(task, cleanup.s(path, h))
     c.apply_async()
 
     f.taskid = task_result.id

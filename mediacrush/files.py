@@ -18,13 +18,6 @@ from mediacrush.tasks import process_file
 from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
 from mediacrush.celery import app
 
-VIDEO_FORMATS = set(["image/gif", "video/ogg", "video/mp4"])
-AUDIO_FORMATS = set(["audio/mpeg", "audio/ogg"])
-FORMATS = set(["image/png", "image/jpeg", "image/svg+xml"]) | VIDEO_FORMATS | AUDIO_FORMATS
-LOOP_FORMATS = set(["image/gif"])
-AUTOPLAY_FORMATS = set(["image/gif"])
-
-
 class URLFile(object):
     filename = None
     content_type = None

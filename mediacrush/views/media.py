@@ -5,7 +5,7 @@ import os
 import json
 import mimetypes
 
-from mediacrush.files import extension, VIDEO_FORMATS, LOOP_FORMATS, AUTOPLAY_FORMATS, get_mimetype, delete_file
+from mediacrush.files import extension, get_mimetype, delete_file
 from mediacrush.fileutils import normalise_processor
 from mediacrush.database import r, _k
 from mediacrush.config import _cfg
