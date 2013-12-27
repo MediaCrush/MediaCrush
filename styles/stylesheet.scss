@@ -249,12 +249,20 @@ table {
     width: 50%;
 }
 
+.progress-stalled {
+    background-image: none;
+}
+
 .progress-grey {
     background-color: #888;
 }
 
 .progress-green {
     background-color: #5eb95e;
+}
+
+.progress-red {
+    background-color: #ff0000;
 }
 
 @-webkit-keyframes progressbar {

@@ -15,7 +15,10 @@ class MediaFile
             when 'ready' then "Upload complete!"
             when 'done' then "Upload complete!"
         progress = @preview.querySelector('.progress')
-        if status in ['preparing', 'pending']
+        if status == 'preparing'
+            progress.className = 'progress progress-grey'
+            progress.style.width = '100%'
+        else if status == 'pending'
             progress.className = 'progress progress-grey'
             progress.style.width = '100%'
         else if status == 'uploading'
@@ -24,8 +27,23 @@ class MediaFile
         else if status == 'processing'
             progress.className = 'progress progress-green'
             progress.style.width = '100%'
+        else if status == 'ready'
+            progress.className = 'progress progress-green progress-stalled'
+            progress.style.width = '100%'
         else if status == 'done'
             progress.style.display = 'none'
+        else if status == 'unrecognized'
+            @preview.querySelector('.status').style.display = 'none'
+            error = @preview.querySelector('.error')
+            error.classList.remove('hidden')
+            error.textContent = 'MediaCrush does not accept this kind of file.'
+            progress.className = 'progress progress-stalled progress-red'
+        else
+            @preview.querySelector('.status').style.display = 'none'
+            error = @preview.querySelector('.error')
+            error.classList.remove('hidden')
+            error.textContent = 'There was a problem with this file.'
+            progress.className = 'progress progress-stalled progress-red'
     
     loadPreview: ->
         uri = @file.name
@@ -96,6 +114,7 @@ class MediaFile
         list.classList.remove('hidden')
 
     finish: ->
+        finishedFiles++
         addItemToHistory(@hash)
         largeLink = @preview.querySelector('.full-size')
         link = @preview.querySelector('.link')
@@ -114,3 +133,4 @@ class MediaFile
         
 window.MediaFile = MediaFile
 window.uploadedFiles = {}
+window.finishedFiles = 0

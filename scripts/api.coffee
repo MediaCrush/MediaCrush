@@ -24,7 +24,7 @@ API = (->
                     file.isHashed = true
                     file.updateStatus('pending')
             if error?
-                callback({ error: error })
+                callback({ error: error }) if callback
             else
                 callback({ file: file }) if callback
         formData = new FormData()

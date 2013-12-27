@@ -31,7 +31,7 @@ updateMonitoredFiles = ->
             if trackedFiles[hash].status != item.status
                 trackedFiles[hash].status = item.status
                 self.postMessage({ event: 'file-status-change', hash: hash, status: item.status, file: item.file })
-                if item.status == 'done'
+                if item.status not in [ 'preparing', 'uploading', 'pending', 'processing', 'ready' ]
                     delete trackedFiles[hash]
         if Object.keys(trackedFiles).length > 0
             setTimeout(updateMonitoredFiles, 1000)
