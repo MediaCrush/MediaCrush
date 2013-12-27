@@ -1,5 +1,5 @@
 from mediacrush.config import _cfgi
-from mediacrush.objects import RedisObject, File
+from mediacrush.objects import RedisObject, File, FailedFile
 from mediacrush.celery import app, get_task_logger, chord
 from mediacrush.processing import processor_table, detect
 from mediacrush.fileutils import compression_rate, delete_file
@@ -39,6 +39,9 @@ def cleanup(results, path, h):
     os.unlink(path)
 
     if f.status in ["internal_error", "error", "timeout", "unrecognised"]:
+        failed = FailedFile(hash=h, status=f.status) # Create a "failed file" record
+        failed.save()
+
         delete_file(f)
 
 @app.task

@@ -5,7 +5,7 @@ from flask import request, current_app
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
 from mediacrush.database import r, _k
-from mediacrush.objects import File, Album, Feedback, RedisObject
+from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
@@ -125,7 +125,7 @@ class APIView(FlaskView):
         res = {}
         for i in items:
             klass = RedisObject.klass(i)
-            if not klass:
+            if not klass or klass not in objects:
                 res[i] = None
             else:
                 o = klass.from_hash(i)
@@ -200,6 +200,10 @@ class APIView(FlaskView):
 
         if not klass:
             return {'error': 404}, 404
+
+        if klass is FailedFile:
+            ff = klass.from_hash(h)
+            return {'status': ff.status}
 
         if klass is not File:
             return {'error': 415}, 415

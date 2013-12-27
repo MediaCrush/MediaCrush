@@ -44,9 +44,13 @@ class RedisObject(object):
                 return subclass
         return None
 
-    @staticmethod
-    def exists(hash):
-        return RedisObject.klass(hash) is not None
+    @classmethod
+    def exists(cls, hash):
+        klass = RedisObject.klass(hash)
+        if cls == RedisObject:
+            return klass is not None
+        else:
+            return klass == cls
 
     @classmethod
     def get_key(cls, hash):
@@ -198,6 +202,10 @@ class Album(RedisObject):
     @items.setter
     def items(self, l):
         self._items = ','.join(l)
+
+class FailedFile(RedisObject):
+    hash = None
+    status = None
 
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")
