@@ -26,13 +26,13 @@ window.addEventListener('load', ->
     historyList = historyContainer.querySelector('ul')
     blurb = document.getElementById('blurb')
     if history.length != 0
-        blurb.classList.add('hidden')
-        historyContainer.classList.remove('hidden')
-    loadDetailedHistory(items, (result) ->
-        for item in items
-            if result[item]
-                historyList.appendChild(createHistoryItem({ item: result[item], hash: item }))
-    )
+        loadDetailedHistory(items, (result) ->
+            blurb.classList.add('hidden')
+            historyContainer.classList.remove('hidden')
+            for item in items
+                if result[item]
+                    historyList.appendChild(createHistoryItem({ item: result[item], hash: item }))
+        )
 , false)
 
 createHistoryItem = (h) ->
