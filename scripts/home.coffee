@@ -19,7 +19,66 @@ window.addEventListener('load', ->
     worker.postMessage({ action: 'load' })
     compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
     templates.preview = compile 'preview'
+
+    loadHistory()
+    items = getHistory()[..4].reverse()
+    historyContainer = document.getElementById('history')
+    historyList = historyContainer.querySelector('ul')
+    blurb = document.getElementById('blurb')
+    if history.length != 0
+        blurb.classList.add('hidden')
+        historyContainer.classList.remove('hidden')
+    loadDetailedHistory(items, (result) ->
+        for item in items
+            if result[item]
+                historyList.appendChild(createHistoryItem({ item: result[item], hash: item }))
+    )
 , false)
+
+createHistoryItem = (h) ->
+    item = h.item
+    container = null
+    if h.base?
+        container = document.createElement(data.base)
+    else
+        container = document.createElement('li')
+    if item.blob_type == 'video'
+        preview = document.createElement('video')
+        preview.setAttribute('loop', 'true')
+        for file in item.files
+            if file.type.indexOf('video/') == 0
+                source = document.createElement('source')
+                source.src = file.file
+                source.type = file.type
+                preview.appendChild(source)
+        preview.volume = 0
+        preview.className = 'item-view'
+        preview.onmouseenter = (e) ->
+            e.target.play()
+        preview.onmouseleave = (e) ->
+            e.target.pause()
+    else if item.blob_type == 'image'
+        preview = document.createElement('img')
+        for file in item.files
+            if not file.type.indexOf('image/') == 0
+                continue
+            preview.src = file.file
+            break
+        preview.className = 'item-view'
+    else if item.blob_type == 'audio'
+        preview = document.createElement('img')
+        preview.src = '/static/audio-player-narrow.png'
+        preview.className = 'item-view'
+    else if item.type == 'application/album'
+        console.log('album')
+    if preview
+        if not h.nolink
+            a = document.createElement('a')
+            a.href = '/' + h.hash
+            a.target = '_blank'
+            a.appendChild(preview)
+            container.appendChild(a)
+    return container
 
 window.onbeforeunload = ->
     if false
