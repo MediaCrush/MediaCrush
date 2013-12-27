@@ -52,6 +52,9 @@ class MediaFile
             _.appendChild(source)
             _.volume = 0
             _.play()
+        else
+            _ = document.createElement('img')
+            _.src = '/static/video.png'
         @preview.querySelector('.preview').appendChild(_)
     
     updateProgress: (amount) ->
