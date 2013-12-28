@@ -30,7 +30,11 @@ def _file_object(f):
     ret['files'].append(_file_entry(f.original, mimetype=f.mimetype))
 
     for f_ext in processor.outputs:
-        ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+        name = "%s.%s" % (f.hash, f_ext)
+        if name == f.original:
+            continue
+
+        ret['files'].append(_file_entry(name))
     for f_ext in processor.extras:
         ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
