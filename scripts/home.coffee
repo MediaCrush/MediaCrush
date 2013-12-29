@@ -20,6 +20,10 @@ window.addEventListener('load', ->
     compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
     templates.preview = compile 'preview'
 
+    pasteTarget = document.getElementById('paste-target')
+    pasteTarget.addEventListener('paste', handlePaste, false)
+    forceFocus()
+
     loadHistory()
     items = getHistory()[..4].reverse()
     historyContainer = document.getElementById('history')
@@ -38,6 +42,14 @@ window.addEventListener('load', ->
                     historyList.appendChild(createHistoryItem({ item: result[item], hash: item }))
         )
 , false)
+
+forceFocus = ->
+    if document.activeElement.tagName in ['TEXTAREA', 'INPUT']
+        setTimeout(forceFocus, 250)
+        return
+    pasteTarget = document.getElementById('paste-target')
+    pasteTarget.focus()
+    setTimeout(forceFocus, 250)
 
 createHistoryItem = (h) ->
     item = h.item
@@ -139,6 +151,9 @@ hashCompleted = (id, result) ->
     uploadedFiles[result] = file
     file.isHashed = true
     uploadFile(file)
+
+handlePaste = (e) ->
+    return
 
 uploadFile = (file) ->
     oldHash = file.hash
