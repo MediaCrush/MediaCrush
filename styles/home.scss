@@ -264,6 +264,7 @@
         position: absolute;
         bottom: 3px;
         right: 3px;
+        z-index: 1;
 
         &:hover {
             text-decoration: underline;

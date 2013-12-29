@@ -27,10 +27,7 @@ class MediaFile
         else if status == 'processing'
             progress.className = 'progress progress-green'
             progress.style.width = '100%'
-        else if status == 'ready'
-            progress.className = 'progress progress-green progress-stalled'
-            progress.style.width = '100%'
-        else if status == 'done'
+        else if status == 'done' or status == 'ready'
             progress.style.display = 'none'
         else if status == 'unrecognized'
             @preview.querySelector('.status').style.display = 'none'
@@ -122,7 +119,7 @@ class MediaFile
         largeLink.href = link.href = "/#{@hash}"
         link.classList.remove('hidden')
         largeLink.classList.remove('hidden')
-        if @userOwned
+        if @isUserOwned
             deleteLink = @preview.querySelector('.delete')
             deleteLink.href = "/api/#{@hash}/delete"
             deleteLink.addEventListener('click', (e) ->
