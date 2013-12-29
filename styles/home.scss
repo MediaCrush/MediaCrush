@@ -252,6 +252,12 @@
 }
 
 .media-preview {
+    .progress {
+        bottom: 0;
+        position: absolute;
+        width: 50%;
+    }
+
     a.delete {
         font-size: 10pt;
         color: red;

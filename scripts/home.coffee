@@ -26,9 +26,13 @@ window.addEventListener('load', ->
     historyList = historyContainer.querySelector('ul')
     blurb = document.getElementById('blurb')
     if history.length != 0
+        spinner = document.createElement('div')
+        spinner.className = 'progress'
+        blurb.appendChild(spinner)
         loadDetailedHistory(items, (result) ->
             blurb.classList.add('hidden')
             historyContainer.classList.remove('hidden')
+            spinner.parentElement.removeChild(spinner)
             for item in items
                 if result[item]
                     historyList.appendChild(createHistoryItem({ item: result[item], hash: item }))
