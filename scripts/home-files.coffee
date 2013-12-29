@@ -122,6 +122,7 @@ class MediaFile
             label.appendChild(span)
             list.appendChild(label)
         list.classList.remove('hidden')
+        window.statusHook(this) if window.statusHook
 
     finish: ->
         addItemToHistory(@hash)
@@ -141,9 +142,11 @@ class MediaFile
                     if result
                         API.deleteFile(self.hash)
                         self.preview.parentElement.removeChild(self.preview)
+                        self.status = 'deleted'
                         delete uploadedFiles[self.hash]
                         if Object.keys(uploadedFiles).length == 0
                             document.getElementById('droparea').classList.remove('files')
+                        window.statusHook(self) if window.statusHook
                 )
             , false)
             deleteLink.classList.remove('hidden')

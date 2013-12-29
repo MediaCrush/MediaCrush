@@ -203,7 +203,7 @@ uploadUrl = (url) ->
             return
         uploadedFiles[file.hash] = file
         if file.status == 'done'
-            file.finish()
+            finish(file)
         else
             worker.postMessage({ action: 'monitor-status', hash: file.hash })
     )
@@ -223,7 +223,7 @@ uploadFile = (file) ->
                 delete uploadedFiles[oldHash]
                 uploadedFiles[file.hash] = file
             if file.status == 'done'
-                file.finish()
+                finish(file)
             else
                 file.isUserOwned = true
                 worker.postMessage({ action: 'monitor-status', hash: file.hash })
@@ -233,7 +233,7 @@ uploadFile = (file) ->
             if exists
                 file.isUserOwned = false
                 file.updateStatus('done')
-                file.finish()
+                finish(file)
                 return
             else
                 upload()
@@ -244,4 +244,26 @@ fileStatusChanged = (e) ->
     if e.file? and e.file.flags?
         uploadedFiles[e.hash].setFlags(e.file.flags)
     if e.status in ['ready', 'done']
-        uploadedFiles[e.hash].finish()
+        finish(uploadedFiles[e.hash])
+
+finish = (file) ->
+    file.finish()
+    updateAlbumUI()
+
+albumAttached = false
+updateAlbumUI = ->
+    if not albumAttached
+        keys = []
+        for f, v of uploadedFiles
+            if v.status in ['processing', 'pending', 'ready', 'done', 'uploading']
+                keys.push(f)
+        albumUI = document.getElementById('albumUI')
+        if keys.length >= 2
+            albumUI.querySelector('.button').classList.remove('hidden')
+        else
+            albumUI.querySelector('.button').classList.add('hidden')
+    else
+        # Recreate album with new files
+
+window.statusHook = (file) ->
+    updateAlbumUI()
