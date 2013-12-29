@@ -22,7 +22,7 @@ Example:
 
 ## Albums
 
-### /api/album/create
+### POST /api/album/create
 
 *Parameters*: `list`, a list of MediaCrush hashes.
 
@@ -69,7 +69,7 @@ In case of error, the response will contain an 'error' parameter and additional 
 
 ## Hash information endpoints
 
-### /api/&lt;hash&gt;
+### GET /api/&lt;hash&gt;
 
 *Note*: this method is equivalent to `/<hash>.json`.
 
@@ -126,7 +126,7 @@ If the file is not found, you will get a dictionary like:
       "error": 404
     }
 
-### /api/info?list=&lt;hash&gt;,...
+### GET /api/info?list=&lt;hash&gt;,...
 
 *Parameters*: `list`, a comma-separated list of hashes.
 
@@ -193,7 +193,7 @@ If the file is not found, you will get a dictionary like:
       }
     }
 
-### /api/url/info
+### GET /api/url/info
 
 *Parameters*: `list`, a comma-separated URLs to check, or a single URL.
 
@@ -222,7 +222,7 @@ If the file is not found, you will get a dictionary like:
     }
 
 
-### /api/&lt;hash&gt;/exists
+### GET /api/&lt;hash&gt;/exists
 
 *Parameters*: none.
 
@@ -235,7 +235,7 @@ If the file is not found, you will get a dictionary like:
     }
 
 
-### /api/&lt;hash&gt;/status
+### GET /api/&lt;hash&gt;/status
 
 *Parameters*: none.
 
@@ -348,7 +348,7 @@ If the file is not found, you will get a dictionary like:
 
 The "result" object will only be included if the status is "done".
 
-### /api/&lt;hash&gt;/flags
+### GET /api/&lt;hash&gt;/flags
 
 *Parameters*: none.
 
@@ -383,7 +383,7 @@ The "result" object will only be included if the status is "done".
 
 ## Hash manipulation endpoints
 
-### /api/&lt;hash&gt;/flags
+### POST /api/&lt;hash&gt;/flags
 
 *Parameters*: the flags that are to be changed, with a value of `true` to activate a flag and `false` to deactivate it.
 
@@ -430,13 +430,13 @@ The "result" object will only be included if the status is "done".
     </tr>
 </table>
 
-### /api/&lt;hash&gt;/delete
+### DELETE /api/&lt;hash&gt; 
 
 *Parameters*: none.
 
 *Returns*: a dictionary describing whether the delete operation succeeded. In most cases it is easier to check the HTTP status code.
 
-    GET /api/CPvuR5lRhmS0/delete
+    DELETE /api/CPvuR5lRhmS0
 
     {
       "status": "success"
@@ -444,7 +444,7 @@ The "result" object will only be included if the status is "done".
 
 If the request is unsuccessful, you will get a response like:
 
-    GET /api/CPvuR5lRhmS0/delete
+    DELETE /api/CPvuR5lRhmS0/delete
 
     {
       "error": 401
@@ -476,7 +476,7 @@ If the request is unsuccessful, you will get a response like:
     </tr>
 </table>
 
-### /api/upload/file
+### POST /api/upload/file
 
 *Parameters*: `file`, the file to upload.
 
@@ -542,7 +542,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
 </table>
 
-### /api/upload/url
+### POST /api/upload/url
 
 *Parameters*: `url`, the URL from where to fetch the file to upload.
 

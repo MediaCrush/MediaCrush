@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
+{% endblock %}
+{% block content %}
+<script>
+window.addEventListener('load', function() {
+    confirm(function(a) {
+        if (!a) {
+            window.location.href = '/{{ h }}';
+            return
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', '/api/{{ h }}');
+        xhr.onloadend = function() {
+            window.location.href = '/';
+        };
+        xhr.send();
+    });
+});
+</script>
+{% endblock %}

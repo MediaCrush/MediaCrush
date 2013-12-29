@@ -77,7 +77,7 @@ window.addEventListener('load', function() {
         confirm(function(a) {
             if (!a) return;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/api/' + window.filename + '/delete');
+            xhr.open('DELETE', '/api/' + window.filename);
             xhr.send();
             document.getElementById('delete').parentElement.innerHTML = 'Deleted';
             if (history) {

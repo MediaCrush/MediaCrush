@@ -183,7 +183,7 @@ window.MediaCrush = (function() {
      * Deletes the specified media blob from MediaCrush, if the user is allowed to.
      */
     self.delete = function(hash, callback) {
-        var xhr = createRequest('GET', '/api/' + hash + '/delete');
+        var xhr = createRequest('DELETE', '/api/' + hash);
         xhr.onload = function() {
             var result = JSON.parse(this.responseText);
             if (callback)
