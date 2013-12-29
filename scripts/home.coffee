@@ -25,7 +25,7 @@ window.addEventListener('load', ->
     historyContainer = document.getElementById('history')
     historyList = historyContainer.querySelector('ul')
     blurb = document.getElementById('blurb')
-    if history.length != 0
+    if items.length != 0
         spinner = document.createElement('div')
         spinner.className = 'progress'
         blurb.appendChild(spinner)
