@@ -11,7 +11,7 @@ API = (->
                     error = "This media format is not supported."
                 when 420
                     error = "You're uploading too much! Try again later."
-                when 209
+                when 409
                     response = JSON.parse(this.responseText)
                     file.isUserOwned = false
                     file.hash = response['hash']
@@ -29,6 +29,40 @@ API = (->
                 callback({ file: file }) if callback
         formData = new FormData()
         formData.append('file', file.file)
+        xhr.send(formData)
+
+    self.uploadUrl = (file, callback) ->
+        xhr = new XMLHttpRequest()
+        xhr.open('POST', '/api/upload/url')
+        file.updateStatus('uploading')
+        file.preview.querySelector('.progress').style.width = '100%'
+        xhr.onload = ->
+            switch this.status
+                when 400
+                    error = "This URL is not valid."
+                when 404
+                    error = "That URL does not exist, so far as we can tell."
+                when 409
+                    response = JSON.parse(this.responseText)
+                    file.isUserOwned = false
+                    file.hash = response['hash']
+                    file.isHashed = true
+                    file.updateStatus('done')
+                when 415
+                    error = "This filetype is not supported."
+                when 420
+                    error = "You're uploading too much! Try again later."
+                when 200
+                    response = JSON.parse(this.responseText)
+                    file.isUserOwned = true
+                    file.hash = response['hash']
+                    file.isHashed = true
+                    file.updateStatus('pending')
+            if error
+                callback({ file: file, error: error }) if callback
+            callback({ file: file }) if callback
+        formData = new FormData()
+        formData.append('url', file.file)
         xhr.send(formData)
 
     self.checkExists = (file, callback) ->

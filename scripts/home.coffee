@@ -183,7 +183,30 @@ handlePaste = (e) ->
                 check()
 
 uploadUrl = (url) ->
-    return
+    dropArea = document.getElementById('droparea')
+    dropArea.style.overflowY = 'scroll'
+    dropArea.classList.add('files')
+    fileList = document.getElementById('files')
+    if Object.keys(uploadedFiles).length == 0
+        document.getElementById('files').innerHTML = ''
+
+    file = new MediaFile(url)
+    fileList = document.getElementById('files')
+    file.preview = templates.preview(file).toDOM()
+    fileList.appendChild(file.preview)
+    file.preview = fileList.lastElementChild
+    file.loadPreview()
+    API.uploadUrl(file, (result) ->
+        file = result.file
+        if result.error?
+            file.setError(result.error)
+            return
+        uploadedFiles[file.hash] = file
+        if file.status == 'done'
+            file.finish()
+        else
+            worker.postMessage({ action: 'monitor-status', hash: file.hash })
+    )
 
 uploadFile = (file) ->
     oldHash = file.hash
@@ -192,7 +215,10 @@ uploadFile = (file) ->
         API.uploadFile(file, (e) ->
             if e.lengthComputable
                 file.updateProgress(e.loaded / e.total)
-        , ->
+        , (result) ->
+            if result.error?
+                file.setError(result.error)
+                return
             if file.hash != oldHash # for larger files, the server does the hashing for us
                 delete uploadedFiles[oldHash]
                 uploadedFiles[file.hash] = file

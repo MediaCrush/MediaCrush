@@ -2,10 +2,19 @@ window.uploadedFiles = {}
 
 class MediaFile
     constructor: (@file) ->
-        @name = @file.name
+        if @file instanceof Blob or @file instanceof File
+            @isUrl = false
+            @name = @file.name
+        else
+            @name = @file
+            @isUrl = true
         @status = 'none'
         @hash = guid() # Replaced with actual hash once computed
         @isHashed = false
+
+    setError: (error) ->
+        @updateStatus('error')
+        @preview.querySelector('.error').textContent = error
     
     updateStatus: (status) ->
         @status = status
@@ -45,9 +54,10 @@ class MediaFile
             progress.className = 'progress progress-stalled progress-red'
     
     loadPreview: ->
-        uri = @file.name
-        if @file instanceof File or @file instanceof Blob
-            uri = URL.createObjectURL(@file)
+        if @isUrl
+            @loadUrlPreview()
+            return
+        uri = URL.createObjectURL(@file)
         _ = null
         if @file.type.indexOf('image/') == 0
             _ = document.createElement('img')
@@ -72,6 +82,11 @@ class MediaFile
         else
             _ = document.createElement('img')
             _.src = '/static/video.png'
+        @preview.querySelector('.preview').appendChild(_)
+
+    loadUrlPreview: ->
+        _ = document.createElement('img')
+        _.src = @file
         @preview.querySelector('.preview').appendChild(_)
     
     updateProgress: (amount) ->
