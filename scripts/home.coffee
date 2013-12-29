@@ -153,6 +153,35 @@ hashCompleted = (id, result) ->
     uploadFile(file)
 
 handlePaste = (e) ->
+    target = document.getElementById('paste-target')
+    if e.clipboardData
+        text = e.clipboardData.getData('text/plain')
+        if text
+            if text.indexOf('http://') == 0 or text.indexOf('https://') == 0
+                uploadUrl(text)
+            else
+                # todo: plaintext
+        else
+            if e.clipboardData.items # webkit
+                for item in e.clipboardData.items
+                    if item.type.indexOf('image/') == 0
+                        file = item.getAsFile
+                        file.name = 'Clipboard'
+                        handleFiles([ file ])
+            else # not webkit
+                check = ->
+                    if target.innerHTML != ''
+                        img = target.firstChild.src
+                        if img.indexOf('data:image/png;base64,') == 0
+                            blob = dataURItoBlob(img)
+                            blob.name = 'Clipboard'
+                            handleFiles([ blob ])
+                        target.innerHTML = ''
+                    else
+                        setTimeout(check, 100)
+                check()
+
+uploadUrl = (url) ->
     return
 
 uploadFile = (file) ->

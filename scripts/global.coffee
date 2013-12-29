@@ -29,11 +29,12 @@ window.createCookie = createCookie
 dataURItoBlob = (uri) ->
     byteString = atob(uri.split(',')[1])
     mimeString = uri.split(',')[0].split(':')[1].split(':')[0]
-    ab = new Arraybuffer(byteString.length)
+    ab = new ArrayBuffer(byteString.length)
     ia = new Uint8Array(ab)
     for i in [0 .. byteString.length]
         ia[i] = byteString.charCodeAt(i)
     return new Blob([ ab ], { type: 'image/png' })
+window.dataURItoBlob = dataURItoBlob
 
 adOptOut = (showAlert) ->
     createCookie('ad-opt-out', 1, 3650)
