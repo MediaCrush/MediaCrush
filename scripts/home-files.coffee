@@ -125,7 +125,7 @@ class MediaFile
         window.statusHook(this) if window.statusHook
 
     finish: ->
-        addItemToHistory(@hash)
+        UserHistory.add(@hash)
         largeLink = @preview.querySelector('.full-size')
         link = @preview.querySelector('.link')
         link.textContent = window.location.origin + "/#{@hash}"

@@ -24,8 +24,7 @@ window.addEventListener('load', ->
     pasteTarget.addEventListener('paste', handlePaste, false)
     forceFocus()
 
-    loadHistory()
-    items = getHistory()[..4].reverse()
+    items = UserHistory.getHistory()[..4].reverse()
     historyContainer = document.getElementById('history')
     historyList = historyContainer.querySelector('ul')
     blurb = document.getElementById('blurb')
@@ -33,7 +32,7 @@ window.addEventListener('load', ->
         spinner = document.createElement('div')
         spinner.className = 'progress'
         blurb.appendChild(spinner)
-        loadDetailedHistory(items, (result) ->
+        UserHistory.loadDetailedHistory(items, (result) ->
             blurb.classList.add('hidden')
             historyContainer.classList.remove('hidden')
             spinner.parentElement.removeChild(spinner)

@@ -85,7 +85,7 @@ API = (->
         xhr = new XMLHttpRequest()
         xhr.open('GET', "/api/#{file}/delete")
         xhr.send()
-        removeItemFromHistory(file)
+        UserHistory.remove(file)
 
     self.setFlags = (file, flags) ->
         xhr = new XMLHttpRequest()

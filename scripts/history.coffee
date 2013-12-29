@@ -1,62 +1,57 @@
-history = []
-historyEnabled = true
-window.getHistory = -> history
-window.getHistoryEnabled = -> historyEnabled
+UserHistory = (->
+    self = this
 
-loadHistory = ->
+    userHistory = []
+    historyEnabled = true
+    
+    self.getHistory = -> userHistory
+    self.getHistoryEnabled = -> historyEnabled
+
     historyEnabled = readCookie('hist-opt-out') == null
-    history = JSON.parse(window.localStorage.getItem('history'))
-    history = [] if not history
-window.loadHistory = loadHistory
+    userHistory = JSON.parse(window.localStorage.getItem('history'))
+    userHistory = [] if not userHistory
 
-saveHistory = ->
-    window.localStorage.setItem('history', JSON.stringify(history))
-window.saveHistory = saveHistory
+    self.save = ->
+        window.localStorage.setItem('history', JSON.stringify(userHistory))
 
-addItemToHistory = (hash) ->
-    return unless historyEnabled
-    for item in history
-        return item if item == hash
-    history.push(hash)
-    saveHistory()
-window.addItemToHistory = addItemToHistory
+    self.add = (hash) ->
+        return unless historyEnabled
+        for item in userHistory
+            return item if item == hash
+        userHistory.push(hash)
+        self.save()
 
-clearHistory = ->
-    history = []
-    saveHistory()
-window.clearHistory = clearHistory
+    self.clear = ->
+        userHistory = []
+        self.save()
 
-removeItemFromHistory = (hash) ->
-    for i in [0 .. history.length]
-        if history[i] == hash
-            history.splice(i, 1)
-            break
-    saveHistory()
-window.removeItemFromHistory = removeItemFromHistory
+    self.remove = (hash) ->
+        for i in [0 .. userHistory.length]
+            if userHistory[i] == hash
+                userHistory.splice(i, 1)
+                break
+        self.save()
 
-removeHistoryAt = (index) ->
-    history.remove(index)
-    saveHistory()
-window.removeHistoryAt = removeHistoryAt
+    self.toggleHistoryEnabled = ->
+        if historyEnabled
+            createCookie('hist-opt-out', '1', 3650)
+        else
+            createCookie('hist-opt-out', '', 0)
+        historyEnabled = !historyEnabled
 
-toggleHistoryEnabled = ->
-    if historyEnabled
-        createCookie('hist-opt-out', '1', 3650)
-    else
-        createCookie('hist-opt-out', '', 0)
-    historyEnabled = !historyEnabled
-window.toggleHistoryEnabled = toggleHistoryEnabled
+    self.loadDetailedHistory = (items, callback) ->
+        callback([]) if items.length == 0
+        hashes = items.join(',')
+        xhr = new XMLHttpRequest()
+        xhr.open('GET', '/api/info?list=' + hashes)
+        xhr.onload = ->
+            if xhr.status != 200
+                document.getElementById('items').innerHTML = 'There was an error showing your history, sorry.'
+                return
+            if callback
+                callback(JSON.parse(this.response))
+        xhr.send()
 
-loadDetailedHistory = (items, callback) ->
-    callback([]) if items.length == 0
-    hashes = items.join(',')
-    xhr = new XMLHttpRequest()
-    xhr.open('GET', '/api/info?list=' + hashes)
-    xhr.onload = ->
-        if xhr.status != 200
-            document.getElementById('items').innerHTML = 'There was an error showing your history, sorry.'
-            return
-        if callback
-            callback(JSON.parse(this.response))
-    xhr.send()
-window.loadDetailedHistory = loadDetailedHistory
+    return self
+)()
+window.UserHistory = UserHistory if window?
