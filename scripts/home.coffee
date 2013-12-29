@@ -97,8 +97,9 @@ createHistoryItem = (h) ->
     return container
 
 window.onbeforeunload = ->
-    if false
-        return 'If you leave this page, your uploads will be cancelled.'
+    for f of uploadedFiles
+        if uploadedFiles[f].status not in ['done', 'error', 'ready']
+            return 'If you leave this page, your uploads will be cancelled.'
 
 handleWorkerMessage = (e) ->
     console.log(JSON.stringify(e.data))
