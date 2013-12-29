@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import request, current_app, render_template
+from flask import request, current_app, redirect
 
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
@@ -140,7 +140,8 @@ class APIView(FlaskView):
     @route("/api/<h>/delete")
     def delete_human(self, h):
         # TODO(jdiez): remove this when it's safe to do so
-        return render_template("confirm_delete.html", h=h)
+        return redirect('/%s/delete' % h)
+
 
     @route("/api/info")
     def info(self):

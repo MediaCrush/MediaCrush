@@ -20,13 +20,13 @@ def json_output(f):
             return jsonification
 
         result = f(*args, **kwargs)
-        # NOTE: Change this to `str` for py3 compat
-        if isinstance(result, unicode): # This is a fully fleshed out  response, return it immediately
-            return result
         if isinstance(result, tuple):
             return jsonify_wrap(result[0]), result[1]
         if isinstance(result, dict):
             return jsonify_wrap(result)
+
+        # This is a fully fleshed out  response, return it immediately
+        return result
 
     return wrapper
 
