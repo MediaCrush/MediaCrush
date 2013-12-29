@@ -6,12 +6,16 @@
 <script>
 window.addEventListener('load', function() {
     confirm(function(a) {
-        if (!a) return;
+        if (!a) {
+            window.location.href = '/{{ h }}';
+            return
+        }
         var xhr = new XMLHttpRequest();
         xhr.open('DELETE', '/api/{{ h }}');
+        xhr.onloadend = function() {
+            window.location.href = '/';
+        };
         xhr.send();
-
-        // TODO(SirCmpwn): tell the user that it was deleted
     });
 });
 </script>
