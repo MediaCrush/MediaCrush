@@ -11,7 +11,7 @@ def json_output(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         def jsonify_wrap(obj):
-            callback = request.args.get('callback', False) 
+            callback = request.args.get('callback', False)
             jsonification = jsonify(obj)
             if callback:
                 jsonification.data = "%s(%s);\n%s" % (callback, jsonification.data, jsonp_notice) # Alter the response
@@ -22,7 +22,11 @@ def json_output(f):
         result = f(*args, **kwargs)
         if isinstance(result, tuple):
             return jsonify_wrap(result[0]), result[1]
-        return jsonify_wrap(result)
+        if isinstance(result, dict):
+            return jsonify_wrap(result)
+
+        # This is a fully fleshed out  response, return it immediately
+        return result
 
     return wrapper
 
@@ -36,10 +40,10 @@ def cors(f):
                 code = res[1]
             else:
                 json_text = res.data
-                code = 200 
+                code = 200
 
             o = json.loads(json_text)
-            o['x-status'] = code 
+            o['x-status'] = code
 
             return jsonify(o)
 

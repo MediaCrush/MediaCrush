@@ -330,14 +330,14 @@ function finish(statusUI, hash) {
     a.href = '/' + hash;
     var deleteLink = document.createElement('a');
     deleteLink.textContent = 'Delete';
-    deleteLink.href = '/api/' + hash + '/delete';
+    deleteLink.href = '/api/' + hash + '/delete'; // TODO: Do we want to keep this?
     deleteLink.className = 'delete';
     deleteLink.onclick = function(e) {
         e.preventDefault();
         confirm(function(a) {
             if (!a) return;
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/api/' + hash + '/delete');
+            xhr.open('DELETE', '/api/' + hash);
             files.remove(files.indexOf(hash));
             xhr.send();
             var container = statusUI.parentElement;

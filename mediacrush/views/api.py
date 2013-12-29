@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import request, current_app
+from flask import request, current_app, redirect
 
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
@@ -121,6 +121,28 @@ class APIView(FlaskView):
         o = klass.from_hash(id)
         return objects[klass](o)
 
+    @route("/api/<h>", methods=['DELETE'])
+    def delete(self, h):
+        klass = RedisObject.klass(h)
+
+        if not klass:
+            return {'error': 404}, 404
+        try:
+            o = klass.from_hash(h)
+            if not check_password_hash(o.ip, get_ip()):
+                return {'error': 401}, 401
+        except:
+            return {'error': 401}, 401
+
+        deletion_procedures[klass](o)
+        return {'status': 'success'}
+
+    @route("/api/<h>/delete")
+    def delete_human(self, h):
+        # TODO(jdiez): remove this when it's safe to do so
+        return redirect('/%s/delete' % h)
+
+
     @route("/api/info")
     def info(self):
         if not "list" in request.args:
@@ -137,24 +159,6 @@ class APIView(FlaskView):
                 res[i] = objects[klass](o)
 
         return res
-
-    @route("/api/<h>/delete")
-    def delete(self, h):
-        if request.referrer == None or not request.referrer.startswith(_cfg('protocol') + "://" + _cfg('domain')):
-            return {'error': 401}, 401
-        klass = RedisObject.klass(h)
-
-        if not klass:
-            return {'error': 404}, 404
-        try:
-            o = klass.from_hash(h)
-            if not check_password_hash(o.ip, get_ip()):
-                return {'error': 401}, 401
-        except:
-            return {'error': 401}, 401
-
-        deletion_procedures[klass](o)
-        return {'status': 'success'}
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
