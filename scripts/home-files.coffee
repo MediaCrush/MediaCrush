@@ -1,3 +1,5 @@
+window.uploadedFiles = {}
+
 class MediaFile
     constructor: (@file) ->
         @name = @file.name
@@ -83,12 +85,8 @@ class MediaFile
         self = this
         updateFlag = (e) ->
             flag = e.target.getAttribute('data-flag')
-            xhr = new XMLHttpRequest()
             self.flags[flag] = !self.flags[flag]
-            formData = new FormData()
-            formData.append(flag, value) for flag, value of self.flags
-            xhr.open('POST', "/api/#{self.hash}/flags")
-            xhr.send(formData)
+            API.setFlags(self.hash, self.flags)
 
         for flag, value of flags
             name = flag.substr(1)
@@ -111,7 +109,6 @@ class MediaFile
         list.classList.remove('hidden')
 
     finish: ->
-        finishedFiles++
         addItemToHistory(@hash)
         largeLink = @preview.querySelector('.full-size')
         link = @preview.querySelector('.link')
@@ -122,12 +119,18 @@ class MediaFile
         if @isUserOwned
             deleteLink = @preview.querySelector('.delete')
             deleteLink.href = "/api/#{@hash}/delete"
+            self = this
             deleteLink.addEventListener('click', (e) ->
                 e.preventDefault()
-                # todo
+                confirm((result) ->
+                    if result
+                        API.deleteFile(self.hash)
+                        self.preview.parentElement.removeChild(self.preview)
+                        delete uploadedFiles[self.hash]
+                        if Object.keys(uploadedFiles).length == 0
+                            document.getElementById('droparea').classList.remove('files')
+                )
             , false)
             deleteLink.classList.remove('hidden')
         
 window.MediaFile = MediaFile
-window.uploadedFiles = {}
-window.finishedFiles = 0

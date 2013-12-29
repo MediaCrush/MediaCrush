@@ -47,6 +47,19 @@ API = (->
             callback(response) if callback
         xhr.send()
 
+    self.deleteFile = (file) ->
+        xhr = new XMLHttpRequest()
+        xhr.open('GET', "/api/#{file}/delete")
+        xhr.send()
+        removeItemFromHistory(file)
+
+    self.setFlags = (file, flags) ->
+        xhr = new XMLHttpRequest()
+        formData = new FormData()
+        formData.append(flag, value) for flag, value of flags
+        xhr.open('POST', "/api/#{file}/flags")
+        xhr.send(formData)
+
     return self
 )()
 window.API = API if window?

@@ -56,6 +56,7 @@ switchTheme = ->
     window.location.href = window.location.href
 window.switchTheme = switchTheme
 
+confirmCallback = null
 window.addEventListener('load', ->
     feedback = document.getElementById('feedback').querySelector('div')
     feedbackToggle = document.getElementById('toggle-feedback')
