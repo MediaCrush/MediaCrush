@@ -128,22 +128,24 @@ handleFiles = (files) ->
     if Object.keys(uploadedFiles).length == 0
         document.getElementById('files').innerHTML = ''
     for file in files
-        mediaFile = new MediaFile(file)
-        mediaFile.preview = templates.preview(mediaFile).toDOM()
-        fileList.appendChild(mediaFile.preview)
-        mediaFile.preview = fileList.lastElementChild
-        mediaFile.loadPreview()
-        mediaFile.hash = new String(guid())
-        mediaFile.updateStatus('preparing')
-        uploadedFiles[mediaFile.hash] = mediaFile
-        reader = new FileReader()
-        reader.onloadend = (e) ->
-            try
-                data = e.target.result
-                worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
-            catch e # Too large
-                uploadFile(mediaFile)
-        reader.readAsBinaryString(file)
+        ((file) ->
+            mediaFile = new MediaFile(file)
+            mediaFile.preview = templates.preview(mediaFile).toDOM()
+            fileList.appendChild(mediaFile.preview)
+            mediaFile.preview = fileList.lastElementChild
+            mediaFile.loadPreview()
+            mediaFile.hash = new String(guid())
+            mediaFile.updateStatus('preparing')
+            uploadedFiles[mediaFile.hash] = mediaFile
+            reader = new FileReader()
+            reader.onloadend = (e) ->
+                try
+                    data = e.target.result
+                    worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
+                catch e # Too large
+                    uploadFile(mediaFile)
+            reader.readAsBinaryString(file)
+        )(file)
 
 hashCompleted = (id, result) ->
     file = uploadedFiles[id]
