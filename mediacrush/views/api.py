@@ -10,6 +10,7 @@ from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
+from mediacrush.config import _cfg
 
 def _file_object(f):
     mimetype = f.mimetype
@@ -139,6 +140,8 @@ class APIView(FlaskView):
 
     @route("/api/<h>/delete")
     def delete(self, h):
+        if request.referrer == None or not request.referrer.startswith(_cfg('protocol') + "://" + _cfg('domain')):
+            return {'error': 401}, 401
         klass = RedisObject.klass(h)
 
         if not klass:
