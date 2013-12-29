@@ -29,7 +29,7 @@ window.clearHistory = clearHistory
 removeItemFromHistory = (hash) ->
     for i in [0 .. history.length]
         if history[i] == hash
-            history.remove(i)
+            history.splice(i, 1)
             break
     saveHistory()
 window.removeItemFromHistory = removeItemFromHistory
