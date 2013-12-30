@@ -38,6 +38,7 @@ UserHistory = (->
         else
             createCookie('hist-opt-out', '', 0)
         historyEnabled = !historyEnabled
+        return historyEnabled
 
     self.loadDetailedHistory = (items, callback) ->
         callback([]) if items.length == 0

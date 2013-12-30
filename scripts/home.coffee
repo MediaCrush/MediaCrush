@@ -34,6 +34,17 @@ window.addEventListener('load', ->
     pasteTarget.addEventListener('paste', handlePaste, false)
     forceFocus()
 
+    historyEnabled = document.getElementById('historyEnabled')
+    if not UserHistory.getHistoryEnabled()
+        historyEnabled.textContent = 'Enable local history'
+    historyEnabled.addEventListener('click', (e) ->
+        e.preventDefault()
+        if UserHistory.toggleHistoryEnabled()
+            historyEnabled.textContent = 'Disable local history'
+        else
+            historyEnabled.textContent = 'Enable local history'
+    , false)
+
     items = UserHistory.getHistory()[..4].reverse()
     historyContainer = document.getElementById('history')
     historyList = historyContainer.querySelector('ul')
