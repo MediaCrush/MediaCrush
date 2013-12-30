@@ -94,6 +94,20 @@ API = (->
         xhr.open('POST', "/api/#{file}/flags")
         xhr.send(formData)
 
+    self.createAlbum = (files, callback) ->
+        xhr = new XMLHttpRequest()
+        formData = new FormData()
+        formData.append('list', files.join(','))
+        xhr.open('POST', '/api/album/create')
+        xhr.onload = ->
+            if this.status isnt 200
+                callback({ error: true }) if callback
+            result = JSON.parse(this.responseText)
+            if result.error?
+                callback({ error: true }) if callback
+            callback({ hash: result.hash }) if callback
+        xhr.send(formData)
+
     return self
 )()
 window.API = API if window?

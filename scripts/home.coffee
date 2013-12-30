@@ -1,6 +1,7 @@
 worker = new Worker('/static/worker.js')
 templates = { }
 window.templates = templates
+albumAttached = false
 
 window.addEventListener('load', ->
     window.addEventListener('dragenter', dragNop, false)
@@ -13,6 +14,15 @@ window.addEventListener('load', ->
     , false)
     document.getElementById('browse').addEventListener('change', (e) ->
         handleFiles(e.target.files)
+    , false)
+    albumUI = document.getElementById('albumUI')
+    albumUI.querySelector('.button').addEventListener('click', (e) ->
+        e.preventDefault()
+        albumUI.querySelector('.button').classList.add('hidden')
+        albumUI.querySelector('.status').classList.remove('hidden')
+        albumUI.querySelector('.status').textContent = 'Processing, please wait...'
+        albumAttached = true
+        createAlbum()
     , false)
 
     worker.addEventListener('message', handleWorkerMessage)
@@ -120,6 +130,11 @@ handleDragDrop = (e) ->
     handleFiles(files) if files.length > 0
 
 handleFiles = (files) ->
+    if albumAttached
+        albumUI.querySelector('.button').classList.add('hidden')
+        albumUI.querySelector('.status').classList.remove('hidden')
+        albumUI.querySelector('.status').textContent = 'Processing, please wait...'
+        albumUI.querySelector('.result').classList.add('hidden')
     dropArea = document.getElementById('droparea')
     dropArea.style.overflowY = 'scroll'
     dropArea.classList.add('files')
@@ -184,6 +199,11 @@ handlePaste = (e) ->
                 check()
 
 uploadUrl = (url) ->
+    if albumAttached
+        albumUI.querySelector('.button').classList.add('hidden')
+        albumUI.querySelector('.status').classList.remove('hidden')
+        albumUI.querySelector('.status').textContent = 'Processing, please wait...'
+        albumUI.querySelector('.result').classList.add('hidden')
     dropArea = document.getElementById('droparea')
     dropArea.style.overflowY = 'scroll'
     dropArea.classList.add('files')
@@ -251,9 +271,10 @@ finish = (file) ->
     file.finish()
     updateAlbumUI()
 
-albumAttached = false
 updateAlbumUI = ->
-    if not albumAttached
+    if albumAttached
+        createAlbum()
+    else
         keys = []
         for f, v of uploadedFiles
             if v.status in ['processing', 'pending', 'ready', 'done', 'uploading']
@@ -263,8 +284,35 @@ updateAlbumUI = ->
             albumUI.querySelector('.button').classList.remove('hidden')
         else
             albumUI.querySelector('.button').classList.add('hidden')
-    else
-        # Recreate album with new files
 
-window.statusHook = (file) ->
+createAlbum = ->
+    keys = []
+    for f, v of uploadedFiles
+        if v.status in ['done', 'ready']
+            keys.push(v)
+        else
+            return
+    return unless keys.length >= 2
+    keys.sort((a, b) -> a.index - b.index)
+    keys = (a.hash for a in keys)
+    API.createAlbum(keys, (result) ->
+        albumUI = document.getElementById('albumUI')
+        if result.error?
+            albumUI.querySelector('.status').classList.remove('hidden')
+            albumUI.querySelector('.status').textContent = 'An error occured creating this album.'
+            albumUI.querySelector('.button').classList.remove('hidden')
+            albumUI.querySelector('.button').textContent = 'Try again'
+        else
+            albumUI.querySelector('.status').classList.add('hidden')
+            albumUI.querySelector('.result a').textContent = window.location.origin + "/#{result.hash}"
+            albumUI.querySelector('.result a').href = window.location.origin + "/#{result.hash}"
+            albumUI.querySelector('.result').classList.remove('hidden')
+    )
+
+window.statusHook = (file, status, oldStatus) ->
+    console.log(file)
+    console.log(status)
+    console.log(oldStatus)
+    if oldStatus?
+        return if status == 'ready' and oldStatus == 'done'
     updateAlbumUI()

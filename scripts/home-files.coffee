@@ -1,4 +1,5 @@
 window.uploadedFiles = {}
+index = 0
 
 class MediaFile
     constructor: (@file) ->
@@ -11,12 +12,14 @@ class MediaFile
         @status = 'none'
         @hash = guid() # Replaced with actual hash once computed
         @isHashed = false
+        @index = index++
 
     setError: (error) ->
         @updateStatus('error')
         @preview.querySelector('.error').textContent = error
     
     updateStatus: (status) ->
+        oldStatus = @status
         @status = status
         @preview.querySelector('.status').textContent = switch status
             when 'preparing' then "Preparing..."
@@ -122,7 +125,6 @@ class MediaFile
             label.appendChild(span)
             list.appendChild(label)
         list.classList.remove('hidden')
-        window.statusHook(this) if window.statusHook
 
     finish: ->
         UserHistory.add(@hash)
@@ -142,11 +144,12 @@ class MediaFile
                     if result
                         API.deleteFile(self.hash)
                         self.preview.parentElement.removeChild(self.preview)
+                        oldStatus = self.status
                         self.status = 'deleted'
                         delete uploadedFiles[self.hash]
                         if Object.keys(uploadedFiles).length == 0
                             document.getElementById('droparea').classList.remove('files')
-                        window.statusHook(self) if window.statusHook
+                        window.statusHook(self, self.status, oldStatus) if window.statusHook
                 )
             , false)
             deleteLink.classList.remove('hidden')
