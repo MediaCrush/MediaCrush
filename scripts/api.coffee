@@ -108,6 +108,9 @@ API = (->
             callback({ hash: result.hash }) if callback
         xhr.send(formData)
 
+    self.reportFile = (file) ->
+        #todo
+
     return self
 )()
 window.API = API if window?
