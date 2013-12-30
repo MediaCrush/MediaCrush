@@ -25,23 +25,113 @@ loadCurrentPage = ->
     first = page * itemsPerPage
     last = page * itemsPerPage + itemsPerPage
     last = reversedHistory.length if last > reversedHistory.length
-    itemsToLoad = reversedHistory[first...last]
+    itemsToLoad = reversedHistory[first...last].reverse()
 
     itemsToFetch = (i for i in itemsToLoad when not detailedHistory[i]?)
     if itemsToFetch.length > 0
         UserHistory.loadDetailedHistory(itemsToFetch, (result) ->
             detailedHistory[k] = v for k, v of result
+            itemsToLoad = (detailedHistory[k] or k for k in itemsToLoad)
             loadPage(itemsToLoad)
+            document.getElementById('progress').classList.add('hidden')
         )
     else
+        itemsToLoad = (detailedHistory[k] for k in itemsToLoad)
         loadPage(itemsToLoad)
+        document.getElementById('progress').classList.add('hidden')
 
 loadPage = (items) ->
     container = document.getElementById('items')
     container.appendChild(createView(item)) for item in items
 
-createView = (item) ->
-    # todo
+createView = (item, noLink = false) ->
+    container = document.createElement('div')
+    if not item.hash
+        container.id = item
+        container.className = 'missing-item'
+        text = document.createElement('div')
+        text.textContent = 'This item no longer exists.'
+        container.appendChild(text)
+        forget = document.createElement('a')
+        forget.textContent = 'Remove from history'
+        forget.href = '/forget/' + item
+        forget.addEventListener('click', (e) ->
+            e.preventDefault()
+            confirm((a) ->
+                return if not a
+                UserHistory.remove(item.hash)
+                container.parentElement.removeChild(container)
+                # todo: don't reload the entire page for this
+                loadCurrentPage()
+            )
+        )
+        container.appendChild(forget)
+        return container
+    else
+        preview = null
+        if item.type == 'image/gif' or item.type.indexOf('video/') == 0
+            preview = document.createElement('video')
+            preview.loop = true
+            for file in item.files
+                continue if file.type == 'image/gif'
+                source = document.createElement('source')
+                source.src = file.file
+                source.type = file.type
+                preview.appendChild(source)
+            preview.volume = 0
+            preview.play()
+        else if item.type.indexOf('image/') == 0
+            preview = document.createElement('img')
+            preview.src = item.files[0].file
+        else if item.type.indexOf('audio/') == 0
+            preview = document.createElement('img')
+            preview.src = '/static/audio-player.png'
+            preview.style.marginTop = '23px'
+        else if item.type == 'application/album'
+            preview = document.createElement('div')
+            preview.className = 'album-preview'
+            for file in item.files[..3]
+                preview.appendChild(createView(file, true))
+        preview.classList.add('item')
+        if not noLink
+            outerContainer = document.createElement('div')
+            bar = document.createElement('div')
+            bar.className = 'bar'
+
+            forgetLink = document.createElement('a')
+            forgetLink.textContent = 'Forget'
+            forgetLink.className = 'left'
+            forgetLink.href = '/forget/' + item.hash
+            forgetLink.addEventListener('click', (e) ->
+                e.preventDefault()
+                # toto
+            )
+            forgetLink.title = 'Remove this item from your history'
+            bar.appendChild(forgetLink)
+
+            deleteLink = document.createElement('a')
+            deleteLink.textContent = 'Delete'
+            deleteLink.className = 'right'
+            deleteLink.href = '/delete/' + item.hash
+            deleteLink.addEventListener('click', (e) ->
+                e.preventDefault()
+                # toto
+            )
+            deleteLink.title = 'Delete this item from the site'
+            bar.appendChild(deleteLink)
+
+            a = document.createElement('a')
+            a.href = '/' + item.hash
+            a.target = '_blank'
+            a.appendChild(preview)
+            container.appendChild(a)
+            container.appendChild(bar)
+            outerContainer.appendChild(container)
+            outerContainer.className = 'item-wrapper'
+            return outerContainer
+        else
+            container.appendChild(preview)
+            return container
 
 createPagination = ->
     history = UserHistory.getHistory()
