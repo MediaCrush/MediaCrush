@@ -71,7 +71,7 @@ forceFocus = ->
     pasteTarget.focus()
     setTimeout(forceFocus, 250)
 
-createHistoryItem = (h) ->
+createHistoryItem = (h, noLink = false) ->
     item = h.item
     container = null
     if h.base?
@@ -106,9 +106,12 @@ createHistoryItem = (h) ->
         preview.src = '/static/audio-player-narrow.png'
         preview.className = 'item-view'
     else if item.type == 'application/album'
-        console.log('album')
+        preview = document.createElement('div')
+        preview.className = 'album-preview'
+        for file in item.files
+            preview.appendChild(createHistoryItem(file, true))
     if preview
-        if not h.nolink
+        if not nolink
             a = document.createElement('a')
             a.href = '/' + h.hash
             a.target = '_blank'
@@ -122,7 +125,6 @@ window.onbeforeunload = ->
             return 'If you leave this page, your uploads will be cancelled.'
 
 handleWorkerMessage = (e) ->
-    console.log(JSON.stringify(e.data))
     if e.data.execute?
         eval(e.data.execute)
     if e.data.event?
@@ -321,9 +323,6 @@ createAlbum = ->
     )
 
 window.statusHook = (file, status, oldStatus) ->
-    console.log(file)
-    console.log(status)
-    console.log(oldStatus)
     if oldStatus?
         return if status == 'ready' and oldStatus == 'done'
     updateAlbumUI()
