@@ -1,6 +1,5 @@
 shims.coffee
 global.coffee
 history.coffee
-handlebars.js
 api.coffee
 mine.coffee

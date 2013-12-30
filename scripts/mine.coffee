@@ -14,6 +14,7 @@ window.addEventListener('load', ->
 , false)
 
 loadCurrentPage = ->
+    # TODO: When things are forgotten/deleted, don't reload the whole page for it
     document.getElementById('progress').classList.remove('hidden')
     createPagination()
     container = document.getElementById('items')
@@ -25,7 +26,7 @@ loadCurrentPage = ->
     first = page * itemsPerPage
     last = page * itemsPerPage + itemsPerPage
     last = reversedHistory.length if last > reversedHistory.length
-    itemsToLoad = reversedHistory[first...last].reverse()
+    itemsToLoad = reversedHistory[first...last]
 
     itemsToFetch = (i for i in itemsToLoad when not detailedHistory[i]?)
     if itemsToFetch.length > 0
@@ -61,7 +62,6 @@ createView = (item, noLink = false) ->
                 return if not a
                 UserHistory.remove(item.hash)
                 container.parentElement.removeChild(container)
-                # todo: don't reload the entire page for this
                 loadCurrentPage()
             )
         )
@@ -104,7 +104,12 @@ createView = (item, noLink = false) ->
             forgetLink.href = '/forget/' + item.hash
             forgetLink.addEventListener('click', (e) ->
                 e.preventDefault()
-                # toto
+                confirm((a) ->
+                    return if not a
+                    UserHistory.remove(item.hash)
+                    container.parentElement.removeChild(container)
+                    loadCurrentPage()
+                )
             )
             forgetLink.title = 'Remove this item from your history'
             bar.appendChild(forgetLink)
@@ -115,7 +120,13 @@ createView = (item, noLink = false) ->
             deleteLink.href = '/delete/' + item.hash
             deleteLink.addEventListener('click', (e) ->
                 e.preventDefault()
-                # toto
+                confirm((a) ->
+                    return if not a
+                    UserHistory.remove(item.hash)
+                    container.parentElement.removeChild(container)
+                    API.deleteFile(item.hash)
+                    loadCurrentPage()
+                )
             )
             deleteLink.title = 'Delete this item from the site'
             bar.appendChild(deleteLink)

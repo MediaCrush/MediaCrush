@@ -45,7 +45,7 @@ window.addEventListener('load', ->
             historyEnabled.textContent = 'Enable local history'
     , false)
 
-    items = UserHistory.getHistory()[..4].reverse()
+    items = UserHistory.getHistory()[..].reverse()[..4]
     historyContainer = document.getElementById('history')
     historyList = historyContainer.querySelector('ul')
     blurb = document.getElementById('blurb')
