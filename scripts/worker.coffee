@@ -9,7 +9,9 @@ self.addEventListener('message', (e) ->
 , false)
 
 computeHash = (e) ->
-    hash = btoa(rstr_md5(e.data)).substr(0, 12).replace('+', '-', 'g').replace('/', '_', 'g')
+    hash = btoa(rstr_md5(e.data)).substr(0, 12)
+    hash = hash.replace(/\+/g, '-')
+    hash = hash.replace(/\//g, '_')
     self.postMessage({
         execute: "#{ e.callback }('#{ e.id }', '#{ hash }')"
     })
