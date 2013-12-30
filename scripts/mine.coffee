@@ -4,9 +4,28 @@ itemsPerPage = 10
 maxPagesInPagination = 6
 
 window.addEventListener('load', ->
+    historyEnabled = document.getElementById('history-toggle')
+    disabledText = document.getElementById('disabledText')
     if not UserHistory.getHistoryEnabled()
-        document.getElementById('disabledText').classList.remove('hidden')
-        document.getElementById('history-toggle').textContent = 'enable local history'
+        disabledText.classList.remove('hidden')
+        historyEnabled.textContent = 'enable local history'
+    historyEnabled.addEventListener('click', (e) ->
+        e.preventDefault()
+        if UserHistory.toggleHistoryEnabled()
+            disabledText.classList.add('hidden')
+            historyEnabled.textContent = 'disable local history'
+        else
+            disabledText.classList.remove('hidden')
+            historyEnabled.textContent = 'enable local history'
+    , false)
+    document.getElementById('forget-all').addEventListener('click', (e) ->
+        e.preventDefault()
+        confirm((a) ->
+            return if not a
+            UserHistory.clear()
+            window.location = '/mine'
+        )
+    , false)
     loadCurrentPage()
     window.onhashchange = ->
         window.scrollTo(0, 0)
@@ -64,7 +83,7 @@ createView = (item, noLink = false) ->
                 container.parentElement.removeChild(container)
                 loadCurrentPage()
             )
-        )
+        , false)
         container.appendChild(forget)
         return container
     else
@@ -110,7 +129,7 @@ createView = (item, noLink = false) ->
                     container.parentElement.removeChild(container)
                     loadCurrentPage()
                 )
-            )
+            , false)
             forgetLink.title = 'Remove this item from your history'
             bar.appendChild(forgetLink)
 
@@ -127,7 +146,7 @@ createView = (item, noLink = false) ->
                     API.deleteFile(item.hash)
                     loadCurrentPage()
                 )
-            )
+            , false)
             deleteLink.title = 'Delete this item from the site'
             bar.appendChild(deleteLink)
 
