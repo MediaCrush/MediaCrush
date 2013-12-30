@@ -1,4 +1,5 @@
 detailedHistory = {}
+itemsToLoad = []
 itemsPerPage = 10
 maxPagesInPagination = 6
 
@@ -14,9 +15,37 @@ window.addEventListener('load', ->
 
 loadCurrentPage = ->
     document.getElementById('progress').classList.remove('hidden')
+    createPagination()
+    container = document.getElementById('items')
+    container.removeChild(container.lastChild) while container.hasChildNodes()
+
+    page = getCurrentPage()
+    itemsToLoad = []
+    reversedHistory = UserHistory.getHistory()[..].reverse()
+    first = page * itemsPerPage
+    last = page * itemsPerPage + itemsPerPage
+    last = reversedHistory.length if last > reversedHistory.length
+    itemsToLoad = reversedHistory[first...last]
+
+    itemsToFetch = (i for i in itemsToLoad when not detailedHistory[i]?)
+    if itemsToFetch.length > 0
+        UserHistory.loadDetailedHistory(itemsToFetch, (result) ->
+            detailedHistory[k] = v for k, v of result
+            loadPage(itemsToLoad)
+        )
+    else
+        loadPage(itemsToLoad)
+
+loadPage = (items) ->
+    container = document.getElementById('items')
+    container.appendChild(createView(item)) for item in items
+
+createView = (item) ->
+    # todo
 
 createPagination = ->
-    return if history = UserHistory.getHistory().length < itemsPerPage
+    history = UserHistory.getHistory()
+    return if history.length < itemsPerPage
     for pagination in document.querySelectorAll('.pagination')
         pagination.removeChild(pagination.lastChild) while pagination.hasChildNodes()
 
@@ -40,19 +69,19 @@ createPagination = ->
             createButton("##{page - 1}", "< Prev")
 
         adjacent = Math.floor(maxPagesInPagination / 2)
-        for i in [0..pages]
+        for i in [0...pages]
             wrapped = pages > maxPagesInPagination and i >= adjacent and i <= pages - adjacent - 1 and i != page - 1 and i != page and i != page + 1
             if page == i
                 createButton(null, i + 1, 'selected')
             else
                 createButton("##{i}", i + 1, wrapped ? 'wrapped' : null)
-            
+
             if wrapped and i == adjacent and page >= adjacent
                 createButton(null, '...', 'smart-pagination')
 
             if wrapped and i == pages - adjacent and page < pages - adjacent
                 createButton(null, '...', 'smart-pagination')
-        
+
         if page < Math.floor(UserHistory.getHistory().length / itemsPerPage)
             createButton("##{page + 1}", "Next >")
 
