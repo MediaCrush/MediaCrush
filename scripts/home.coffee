@@ -210,8 +210,8 @@ uploadPendingFiles = ->
 
 hashCompleted = (id, result) ->
     file = uploadedFiles[id]
-    delete uploadedFiles[id]
     file.hash = result
+    delete uploadedFiles[id]
     uploadedFiles[result] = file
     file.isHashed = true
     uploadFile(file)
