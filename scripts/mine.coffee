@@ -1,7 +1,7 @@
 detailedHistory = {}
 itemsToLoad = []
 itemsPerPage = 10
-maxPagesInPagination = 6
+paginationLimit = 4
 
 window.addEventListener('load', ->
     historyEnabled = document.getElementById('history-toggle')
@@ -188,19 +188,22 @@ createPagination = ->
         if page > 0
             createButton("##{page - 1}", "< Prev")
 
-        adjacent = Math.floor(maxPagesInPagination / 2)
+        left = paginationLimit - 1
+        right = pages - paginationLimit
+        if right < left + 2 or left > pages
+            right = history.length
+            left = 0
         for i in [0...pages]
-            wrapped = pages > maxPagesInPagination and i >= adjacent and i <= pages - adjacent - 1 and i != page - 1 and i != page and i != page + 1
-            if page == i
-                createButton(null, i + 1, 'selected')
+            if i < left or i > right or Math.abs(page - i) < paginationLimit
+                if page == i
+                    createButton(null, i + 1, 'selected')
+                else
+                    createButton("##{i}", i + 1, null)
             else
-                createButton("##{i}", i + 1, wrapped ? 'wrapped' : null)
-
-            if wrapped and i == adjacent and page >= adjacent
-                createButton(null, '...', 'smart-pagination')
-
-            if wrapped and i == pages - adjacent and page < pages - adjacent
-                createButton(null, '...', 'smart-pagination')
+                if left < page < right
+                    createButton(null, '...', 'smart-pagination') if Math.abs(page - i) == paginationLimit
+                else
+                    createButton(null, '...', 'smart-pagination') if i == left
 
         if page < Math.floor(UserHistory.getHistory().length / itemsPerPage)
             createButton("##{page + 1}", "Next >")
