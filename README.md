@@ -25,12 +25,13 @@ in on dev chatter. We can help you sort out your ideas and we'll work with you d
 
 Here's a quick overview of installation:
 
-1. Install Python 2, virtualenv, redis, ffmpeg, tidy, jhead, and optipng.
+1. Install Python 2, virtualenv, redis, ffmpeg, tidy, jhead, node.js, and optipng.
 2. Clone the MediaCrush git repository.
 3. Activate the virtualenv.
 4. Install pip requirements.
-5. Configure MediaCrush.
-6. Start the services and you're done!
+5. Install coffeescript.
+6. Configure MediaCrush.
+7. Start the services and you're done!
 
 Your milage may vary, be prepared to deal with unforeseen complications.
 
@@ -39,7 +40,7 @@ Here it is again, in more detail.
 **Install the requirements**
 
 Our servers and our dev machines both run Arch Linux, which makes getting updated packages a little easier. We need to
-install a few things: `sudo pacman -S redis jhead tidyhtml optipng imagemagick python2 python-virtualenv`. You also
+install a few things: `sudo pacman -S redis jhead tidyhtml optipng imagemagick python2 python-virtualenv nodejs`. You also
 need to install `ffmpeg-full` from the AUR. If you aren't on Arch Linux, you should be able to use your distribution
 packages, with the exception of ffmpeg, which you *must* compile yourself. Make sure you enable libtheora, libvorbis,
 libx264, and libvpx when you configure it.
@@ -62,6 +63,10 @@ Note: you'll need to use Python 2. If Python 3 is your default python interprete
 **Install pip requirements**
 
     pip install -r requirements.txt
+
+**Install coffeescript**
+
+    npm install -g coffee-script
 
 **Configure MediaCrush**
 
