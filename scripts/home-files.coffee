@@ -21,7 +21,9 @@ class MediaFile
     updateStatus: (status) ->
         oldStatus = @status
         @status = status
+        window.statusChanged(this, @status, oldStatus) if window.statusChanged
         @preview.querySelector('.status').textContent = switch status
+            when 'local-pending' then "Pending..."
             when 'preparing' then "Preparing..."
             when 'uploading' then "Uploading..."
             when 'pending' then "Waiting to process..."
@@ -29,7 +31,7 @@ class MediaFile
             when 'ready' then "Upload complete!"
             when 'done' then "Upload complete!"
         progress = @preview.querySelector('.progress')
-        if status == 'preparing'
+        if status == 'preparing' or status == 'local-pending'
             progress.className = 'progress progress-grey'
             progress.style.width = '100%'
         else if status == 'pending'

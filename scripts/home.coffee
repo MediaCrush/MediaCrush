@@ -2,6 +2,7 @@ worker = new Worker('/static/worker.js')
 templates = { }
 window.templates = templates
 albumAttached = false
+maxConcurrentUploads = 3
 
 window.addEventListener('load', ->
     window.addEventListener('dragenter', dragNop, false)
@@ -27,6 +28,10 @@ window.addEventListener('load', ->
 
     worker.addEventListener('message', handleWorkerMessage)
     worker.postMessage({ action: 'load' })
+    window.statusChange = (file, status, oldStatus) ->
+        if oldStatus == 'uploading'
+            uploadPendingItems()
+
     compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
     templates.preview = compile 'preview'
 
@@ -111,7 +116,7 @@ createHistoryItem = (h, noLink = false) ->
         for file in item.files
             preview.appendChild(createHistoryItem(file, true))
     if preview
-        if not nolink
+        if not noLink
             a = document.createElement('a')
             a.href = '/' + h.hash
             a.target = '_blank'
@@ -142,18 +147,10 @@ handleDragDrop = (e) ->
     files = e.dataTransfer.files
     handleFiles(files) if files.length > 0
 
-handleFiles = (files) ->
-    if albumAttached
-        albumUI.querySelector('.button').classList.add('hidden')
-        albumUI.querySelector('.status').classList.remove('hidden')
-        albumUI.querySelector('.status').textContent = 'Processing, please wait...'
-        albumUI.querySelector('.result').classList.add('hidden')
-    dropArea = document.getElementById('droparea')
-    dropArea.style.overflowY = 'scroll'
-    dropArea.classList.add('files')
+pendingFiles = []
+updateQueue = ->
+    files = pendingFiles.splice(0, 5)
     fileList = document.getElementById('files')
-    if Object.keys(uploadedFiles).length == 0
-        document.getElementById('files').innerHTML = ''
     for file in files
         ((file) ->
             mediaFile = new MediaFile(file)
@@ -162,16 +159,51 @@ handleFiles = (files) ->
             mediaFile.preview = fileList.lastElementChild
             mediaFile.loadPreview()
             mediaFile.hash = new String(guid())
-            mediaFile.updateStatus('preparing')
+            mediaFile.updateStatus('local-pending')
             uploadedFiles[mediaFile.hash] = mediaFile
+        )(file)
+    if pendingFiles.length > 0
+        setTimeout(updateQueue, 500)
+    if files.length > 0
+        uploadPendingFiles()
+
+handleFiles = (files) ->
+    if albumAttached
+        albumUI.querySelector('.button').classList.add('hidden')
+        albumUI.querySelector('.status').classList.remove('hidden')
+        albumUI.querySelector('.status').textContent = 'Processing, please wait...'
+        albumUI.querySelector('.result').classList.add('hidden')
+    if Object.keys(uploadedFiles).length == 0
+        document.getElementById('files').innerHTML = ''
+        dropArea = document.getElementById('droparea')
+        dropArea.style.overflowY = 'scroll'
+        dropArea.classList.add('files')
+    pendingFiles.push(file) for file in files
+    updateQueue()
+
+uploadPendingFiles = ->
+    toUpload = []
+    uploading = 0
+    for hash, file of uploadedFiles
+        if file.status in ['preparing', 'uploading']
+            uploading++
+            if uploading >= maxConcurrentUploads
+                setTimeout(uploadPendingFiles, 1000)
+                return
+        else if file.status == 'local-pending' and toUpload.length < 5
+            toUpload.push(file)
+    for file in toUpload
+        console.log("Handling #{file.hash}")
+        ((file) ->
             reader = new FileReader()
             reader.onloadend = (e) ->
                 try
                     data = e.target.result
-                    worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: mediaFile.hash })
+                    file.updateStatus('preparing')
+                    worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: file.hash })
                 catch e # Too large
-                    uploadFile(mediaFile)
-            reader.readAsBinaryString(file)
+                    uploadFile(file)
+            reader.readAsBinaryString(file.file)
         )(file)
 
 hashCompleted = (id, result) ->
@@ -250,6 +282,7 @@ uploadFile = (file) ->
             if e.lengthComputable
                 file.updateProgress(e.loaded / e.total)
         , (result) ->
+            file.file = null
             if result.error?
                 file.setError(result.error)
                 return
@@ -265,6 +298,7 @@ uploadFile = (file) ->
     if file.isHashed
         API.checkExists(file, (exists) ->
             if exists
+                file.file = null
                 file.isUserOwned = false
                 file.updateStatus('done')
                 finish(file)
