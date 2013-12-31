@@ -151,11 +151,14 @@ pendingFiles = []
 updateQueue = ->
     files = pendingFiles.splice(0, 5)
     fileList = document.getElementById('files')
+    scrollingContainer = document.getElementById('droparea')
     for file in files
         ((file) ->
             mediaFile = new MediaFile(file)
             mediaFile.preview = templates.preview(mediaFile).toDOM()
+            _ = scrollingContainer.scrollTop
             fileList.appendChild(mediaFile.preview)
+            scrollingContainer.scrollTop = _
             mediaFile.preview = fileList.lastElementChild
             mediaFile.loadPreview()
             mediaFile.hash = new String(guid())
@@ -193,7 +196,6 @@ uploadPendingFiles = ->
         else if file.status == 'local-pending' and toUpload.length < 5
             toUpload.push(file)
     for file in toUpload
-        console.log("Handling #{file.hash}")
         ((file) ->
             reader = new FileReader()
             reader.onloadend = (e) ->
