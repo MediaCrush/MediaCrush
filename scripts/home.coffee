@@ -31,6 +31,8 @@ window.addEventListener('load', ->
     window.statusChange = (file, status, oldStatus) ->
         if oldStatus == 'uploading'
             uploadPendingItems()
+    # We kick this manually every so often to make sure nothing gets abandoned in the 'Pending' state
+    setInterval(uploadPendingFiles, 10000)
 
     compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
     templates.preview = compile 'preview'
@@ -190,9 +192,7 @@ uploadPendingFiles = ->
     for hash, file of uploadedFiles
         if file.status in ['preparing', 'uploading']
             uploading++
-            if uploading >= maxConcurrentUploads
-                setTimeout(uploadPendingFiles, 1000)
-                return
+            return if uploading >= maxConcurrentUploads
         else if file.status == 'local-pending' and toUpload.length < 5
             toUpload.push(file)
     for file in toUpload
