@@ -50,8 +50,7 @@ window.addEventListener('load', ->
         size = mediaSizeReporter()
         size.height += 5
         embed = document.getElementById('embed-value')
-        # TODO: fix {{ protocol }} and {{ domain }}
-        embed.value = '<iframe src="{{ protocol }}://{{ domain }}/' + window.filename + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
+        embed.value = '<iframe src="' + window.location.href + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
 
     if window.can_delete == 'check'
         history = UserHistory.getHistory()
