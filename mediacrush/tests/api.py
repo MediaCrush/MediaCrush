@@ -101,7 +101,7 @@ class AlbumTestCase(APITestCase):
         ]
 
         album = json.loads(self._create_album(h).data)["hash"]
-        self.client.get('/api/%s/delete' % h[0], environ_base={
+        self.client.delete('/api/%s' % h[0], environ_base={
             'REMOTE_ADDR': '127.0.0.1'
         })
 
@@ -119,7 +119,7 @@ class AlbumTestCase(APITestCase):
         ]
 
         album = json.loads(self._create_album(h).data)["hash"]
-        self.client.get('/api/%s/delete' % h[0], environ_base={
+        self.client.delete('/api/%s' % h[0], environ_base={
             'REMOTE_ADDR': '127.0.0.1'
         })
 
@@ -175,7 +175,7 @@ class AlbumTestCase(APITestCase):
         ]
 
         album = json.loads(self._create_album(h).data)["hash"]
-        response = self.client.get('/api/%s/delete' % album, environ_base={
+        response = self.client.delete('/api/%s' % album, environ_base={
             'REMOTE_ADDR': '127.0.0.1'
         })
         self.assertEqual(response.status_code, 200)
@@ -263,7 +263,7 @@ class InfoTestCase(APITestCase):
 class DeleteTestCase(APITestCase):
     def test_delete(self):
         h = self._get_hash('cat.png')
-        response = self.client.get('/api/%s/delete' % h, environ_base={
+        response = self.client.delete('/api/%s' % h, environ_base={
             'REMOTE_ADDR': '127.0.0.1'
         })
 
@@ -271,14 +271,14 @@ class DeleteTestCase(APITestCase):
 
     def test_delete_bad_ip(self):
         h = self._get_hash('cat.png')
-        response = self.client.get('/api/%s/delete' % h, environ_base={
+        response = self.client.delete('/api/%s' % h, environ_base={
             'REMOTE_ADDR': '127.0.0.2'
         })
 
         self.assertEqual(response.status_code, 401)
 
     def test_delete_bad_hash(self):
-        response = self.client.get('/api/asdfasgdfs/delete')
+        response = self.client.delete('/api/asdfasgdfs')
 
         self.assertEqual(response.status_code, 404)
 

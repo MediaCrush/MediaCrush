@@ -1,15 +1,16 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import request, current_app
+from flask import request, current_app, redirect
 
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
 from mediacrush.database import r, _k
-from mediacrush.objects import File, Album, Feedback, RedisObject
+from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
+from mediacrush.config import _cfg
 
 def _file_object(f):
     mimetype = f.mimetype
@@ -30,7 +31,11 @@ def _file_object(f):
     ret['files'].append(_file_entry(f.original, mimetype=f.mimetype))
 
     for f_ext in processor.outputs:
-        ret['files'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
+        name = "%s.%s" % (f.hash, f_ext)
+        if name == f.original:
+            continue
+
+        ret['files'].append(_file_entry(name))
     for f_ext in processor.extras:
         ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
@@ -116,24 +121,7 @@ class APIView(FlaskView):
         o = klass.from_hash(id)
         return objects[klass](o)
 
-    @route("/api/info")
-    def info(self):
-        if not "list" in request.args:
-            return {'error': 400}, 400
-        items = request.args['list'].split(',')
-
-        res = {}
-        for i in items:
-            klass = RedisObject.klass(i)
-            if not klass:
-                res[i] = None
-            else:
-                o = klass.from_hash(i)
-                res[i] = objects[klass](o)
-
-        return res
-
-    @route("/api/<h>/delete")
+    @route("/api/<h>", methods=['DELETE'])
     def delete(self, h):
         klass = RedisObject.klass(h)
 
@@ -148,6 +136,29 @@ class APIView(FlaskView):
 
         deletion_procedures[klass](o)
         return {'status': 'success'}
+
+    @route("/api/<h>/delete")
+    def delete_human(self, h):
+        # TODO(jdiez): remove this when it's safe to do so
+        return redirect('/%s/delete' % h)
+
+
+    @route("/api/info")
+    def info(self):
+        if not "list" in request.args:
+            return {'error': 400}, 400
+        items = request.args['list'].split(',')
+
+        res = {}
+        for i in items:
+            klass = RedisObject.klass(i)
+            if not klass or klass not in objects:
+                res[i] = None
+            else:
+                o = klass.from_hash(i)
+                res[i] = objects[klass](o)
+
+        return res
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
@@ -200,6 +211,10 @@ class APIView(FlaskView):
 
         if not klass:
             return {'error': 404}, 404
+
+        if klass is FailedFile:
+            ff = klass.from_hash(h)
+            return {'status': ff.status}
 
         if klass is not File:
             return {'error': 415}, 415

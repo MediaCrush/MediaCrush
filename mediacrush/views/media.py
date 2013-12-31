@@ -133,6 +133,10 @@ class MediaView(FlaskView):
         f.add_report()
         return "ok"
 
+    @route("/<id>/delete")
+    def delete(self, id):
+        return render_template("confirm_delete.html", h=id)
+
     @route("/<id>/direct")
     def direct(self, id):
         send = self._send_file(id)
