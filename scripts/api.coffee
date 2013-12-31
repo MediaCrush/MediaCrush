@@ -109,7 +109,9 @@ API = (->
         xhr.send(formData)
 
     self.reportFile = (file) ->
-        #todo
+        xhr = new XMLHttpRequest()
+        xhr.open('POST', "/report/#{window.filename}")
+        xhr.send()
 
     return self
 )()
