@@ -203,7 +203,7 @@ createPagination = ->
                 if left < page < right
                     createButton(null, '...', 'smart-pagination') if Math.abs(page - i) == paginationLimit
                 else
-                    createButton(null, '...', 'smart-pagination') if i == left
+                    createButton(null, '...', 'smart-pagination') if i == left or i == right
 
         if page < Math.floor(UserHistory.getHistory().length / itemsPerPage)
             createButton("##{page + 1}", "Next >")
