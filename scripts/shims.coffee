@@ -8,15 +8,6 @@ Array.prototype.contains = (a) ->
         if this[i] == a
             return true
     return false
-
-String.prototype.toDOM = ->
-    div = document.createElement('div')
-    div.innerHTML = this
-    fragment = document.createDocumentFragment()
-    while div.firstChild
-        fragment.appendChild(div.firstChild)
-    return fragment
-
 `
 if (!("classList" in document.documentElement) && Object.defineProperty && typeof HTMLElement !== 'undefined') {
     Object.defineProperty(HTMLElement.prototype, 'classList', {

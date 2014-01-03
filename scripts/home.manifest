@@ -1,7 +1,6 @@
 shims.coffee
 global.coffee
 history.coffee
-handlebars.js
 api.coffee
 home-files.coffee
 home.coffee

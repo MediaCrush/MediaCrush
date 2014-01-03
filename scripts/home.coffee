@@ -1,6 +1,4 @@
 worker = new Worker('/static/worker.js')
-templates = { }
-window.templates = templates
 albumAttached = false
 maxConcurrentUploads = 3
 
@@ -33,9 +31,6 @@ window.addEventListener('load', ->
             uploadPendingItems()
     # We kick this manually every so often to make sure nothing gets abandoned in the 'Pending' state
     setInterval(uploadPendingFiles, 10000)
-
-    compile = (name) -> Handlebars.compile(document.getElementById(name + '-template').innerHTML)
-    templates.preview = compile 'preview'
 
     pasteTarget = document.getElementById('paste-target')
     pasteTarget.addEventListener('paste', handlePaste, false)
@@ -157,7 +152,7 @@ updateQueue = ->
     for file in files
         ((file) ->
             mediaFile = new MediaFile(file)
-            mediaFile.preview = templates.preview(mediaFile).toDOM()
+            mediaFile.preview = createPreview(file.name)
             _ = scrollingContainer.scrollTop
             fileList.appendChild(mediaFile.preview)
             scrollingContainer.scrollTop = _
@@ -362,3 +357,35 @@ window.statusHook = (file, status, oldStatus) ->
     if oldStatus?
         return if status == 'ready' and oldStatus == 'done'
     updateAlbumUI()
+
+createPreview = (name) ->
+    create = (element, className) ->
+        _ = document.createElement(element)
+        _.className = className
+        return _
+    container = create('div', 'media-preview')
+    preview = create('div', 'preview')
+    fade = create('div', 'respondive-fade')
+    title = create('h2', null)
+    title.title = name
+    title.textContent = name
+    flags = create('div', 'flags hidden')
+    status = create('div', 'status')
+    error = create('div', 'error hidden')
+    link = create('a', 'link hidden')
+    deleteLink = create('a', 'delete hidden')
+    deleteLink.textContent = 'Delete'
+    fullSize = create('a', 'full-size hidden')
+    progress = create('div', 'progress')
+    progress.style.width = 0
+    container.appendChild(preview)
+    container.appendChild(fade)
+    container.appendChild(title)
+    container.appendChild(flags)
+    container.appendChild(status)
+    container.appendChild(error)
+    container.appendChild(link)
+    container.appendChild(deleteLink)
+    container.appendChild(fullSize)
+    container.appendChild(progress)
+    return container
