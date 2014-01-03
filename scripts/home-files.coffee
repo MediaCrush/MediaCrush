@@ -63,7 +63,6 @@ class MediaFile
             @loadUrlPreview()
             return
         uri = URL.createObjectURL(@file)
-        _ = null
         if @file.type.indexOf('image/') == 0
             _ = document.createElement('img')
             _.src = uri
