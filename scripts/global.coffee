@@ -1,10 +1,3 @@
-((xhr) ->
-    open = XMLHttpRequest.prototype.open
-    xhr.prototype.open = () ->
-        open.apply(this, arguments)
-        this.setRequestHeader('X-Requested-With','XMLHttpRequest')
-)(XMLHttpRequest)
-
 readCookie = (name) ->
     nameEQ = name + "="
     ca = document.cookie.split(';')
