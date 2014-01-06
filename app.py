@@ -45,19 +45,19 @@ def prepare():
         if extension(f) == "js":
             if inputpath in preprocess:
                 with open(inputpath) as r:
-                    output = r.read()
+                    output = r.read().decode("utf-8")
                     output = output.replace("{{ protocol }}", _cfg("protocol"))
                     output = output.replace("{{ domain }}", _cfg("domain"))
 
                 with open(outputpath, "w") as w:
-                    w.write(output)
+                    w.write(output.encode("utf-8"))
                     w.flush()
             else:
                 copyfile(inputpath, outputpath)
 
         elif extension(f) == "manifest":
             with open(inputpath) as r:
-                manifest = r.read().split('\n')
+                manifest = r.read().decode("utf-8").split('\n')
 
             javascript = ''
             for script in manifest:
@@ -83,7 +83,7 @@ def prepare():
                 javascript = minify(javascript)
 
             with open(os.path.join(app.static_folder, output), "w") as w:
-                w.write(javascript)
+                w.write(javascript.encode("utf-8"))
                 w.flush()
 
     copy = ['images']
