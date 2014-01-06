@@ -34,51 +34,17 @@ def prepare():
             with open(os.path.join(app.static_folder, css), "w") as w:
                 w.write(output)
                 w.flush()
-    
+
     # Compile scripts (coffeescript)
     d = os.walk('scripts')
+    preprocess = ['scripts/mediacrush.js']
     for f in list(d)[0][2]:
         outputpath = os.path.join(app.static_folder, os.path.basename(f))
         inputpath = os.path.join('scripts', f)
+
         if extension(f) == "js":
-            copyfile(inputpath, outputpath)
-        elif extension(f) == "manifest":
-            with open(inputpath) as r:
-                manifest = r.read().split('\n')
-            javascript = ''
-            for script in manifest:
-                script = script.strip(' ')
-                if script == '' or script.startswith('#'):
-                    continue
-                bare = False
-                if script.startswith('bare: '):
-                    bare = True
-                    script = script[6:]
-                with open(os.path.join('scripts', script)) as r:
-                    coffee = r.read()
-                    if script.endswith('.js'):
-                        javascript += coffee # straight up copy
-                    else:
-                        javascript += coffeescript.compile(coffee, bare=bare)
-            output = '.'.join(f.rsplit('.')[:-1]) + '.js'
-            if not app.debug:
-                javascript = minify(javascript)
-            with open(os.path.join(app.static_folder, output), "w") as w:
-                w.write(javascript)
-                w.flush()
-
-    copy = ['images']
-    preprocess = ['scripts/view.js', 'scripts/mediacrush.js']
-
-    # Copy images, preprocess some JS files 
-    for folder in copy:
-        for f in list(os.walk(folder))[0][2]:
-            outputpath = os.path.join(app.static_folder, os.path.basename(f))
-            inputpath = os.path.join(folder, f)
-
             if inputpath in preprocess:
                 with open(inputpath) as r:
-                    # Using Jinja here is overkill
                     output = r.read()
                     output = output.replace("{{ protocol }}", _cfg("protocol"))
                     output = output.replace("{{ domain }}", _cfg("domain"))
@@ -88,6 +54,39 @@ def prepare():
                     w.flush()
             else:
                 copyfile(inputpath, outputpath)
+
+        elif extension(f) == "manifest":
+            with open(inputpath) as r:
+                manifest = r.read().split('\n')
+
+            javascript = ''
+            for script in manifest:
+                script = script.strip(' ')
+
+                if script == '' or script.startswith('#'):
+                    continue
+
+                bare = False
+                if script.startswith('bare: '):
+                    bare = True
+                    script = script[6:]
+
+                with open(os.path.join('scripts', script)) as r:
+                    coffee = r.read()
+                    if script.endswith('.js'):
+                        javascript += coffee # straight up copy
+                    else:
+                        javascript += coffeescript.compile(coffee, bare=bare)
+            output = '.'.join(f.rsplit('.')[:-1]) + '.js'
+
+            if not app.debug:
+                javascript = minify(javascript)
+
+            with open(os.path.join(app.static_folder, output), "w") as w:
+                w.write(javascript)
+                w.flush()
+
+    copy = ['images']
 
 @app.before_first_request
 def compile_first():
