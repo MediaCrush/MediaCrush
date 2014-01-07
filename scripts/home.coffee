@@ -255,7 +255,7 @@ uploadUrl = (url) ->
 
     file = new MediaFile(url)
     fileList = document.getElementById('files')
-    file.preview = templates.preview(file).toDOM()
+    file.preview = createPreview(file.name)
     fileList.appendChild(file.preview)
     file.preview = fileList.lastElementChild
     file.loadPreview()
