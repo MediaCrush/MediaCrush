@@ -86,7 +86,11 @@ def prepare():
                 w.write(javascript.encode("utf-8"))
                 w.flush()
 
-    copy = ['images']
+    d = os.walk('images')
+    for f in list(d)[0][2]:
+        outputpath = os.path.join(app.static_folder, os.path.basename(f))
+        inputpath = os.path.join('images', f)
+        copyfile(inputpath, outputpath)
 
 @app.before_first_request
 def compile_first():
