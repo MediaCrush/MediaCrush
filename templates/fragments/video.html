@@ -1,62 +1,12 @@
-<div class="video" data-video="video-{{ filename }}">
-    <video id="video-{{ filename }}" {% if flags['autoplay'] and not mobile %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %}>
-        {% if 'video/mp4' in types %}
-        <source src="/{{ filename }}.mp4" type='video/mp4;'>
-        {% endif %}
-        {% if 'video/webm' in types %}
-        <source src="/{{ filename }}.webm" type='video/webm;'>
-        {% endif %}
-        {% if 'video/ogg' in types %}
-        <source src="/{{ filename }}.ogv" type='video/ogg'>
-        {% endif %}
-        <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
-    </video>
-    <div class="hover">
-        {% if embedded %}
-        <h1 class="brand">
-            <a href="/{{filename}}" target="_blank">
-                <span>
-                    <img src="/static/logo-bg.png" class="bg" alt="logo" />
-                    <img src="/static/logo-fg.png" alt="logo" />
-                </span>
-            </a>
-        </h1>
-        {% endif %}
-        {% if album %}
-        <a href="/{{filename}}" class="album-direct">Direct Link</a>
-        {% endif %}
-        <div class="downloads">
-            <a href="/download/{{ original }}">Download</a>
-        </div>
-        <div class="side">
-            <a href="#" class="control loop {% if flags['loop'] %}enabled{% endif %}" data-video="video-{{ filename }}">Loop</a>
-        </div>
-        <div class="controls">
-            <div class="pull-left">
-                {# Play/pause and current time #}
-                <a href="#" class="control {% if flags['autoplay'] %}pause{% else %}play{% endif %}" data-video="video-{{ filename }}"></a>
-                <span class="time" data-video="video-{{ filename }}">0:00</span>
-            </div>
-            <div class="pull-right">
-                {# Volume and full screen #}
-                <a href="#" class="control mute" data-video="video-{{ filename }}"></a>
-                <div class="volume" data-video="video-{{ filename }}">
-                    <div class="amount" style="width: 100%;"></div>
-                </div>
-                <a href="#" class="control full" data-video="video-{{ filename }}"></a>
-            </div>
-            <div class="seek" data-video="video-{{ filename }}">
-                {# Seeking
-                   "unbuffered" is a 100% wide thing that's just there to seek with
-                   "buffered" is as wide as the video has buffered
-                   "progress" is as wide as the video has played
-                   "indicator" is as left as the video has played #}
-                <div class="bar unbuffered"></div>
-                <div class="bar buffering"></div>
-                <div class="bar progress" style="width: 0%;"></div>
-                <div class="indicator" style="left: 0%;"></div>
-            </div>
-        </div>
-    </div>
-    <a href="#" class="control play large {% if flags['autoplay'] %}hidden{% endif %}" data-video="video-{{ filename }}"><img src="/static/play-large.png" /></a>
-</div>
+<video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} controls>
+    {% if 'video/mp4' in types %}
+    <source src="/{{ filename }}.mp4" type='video/mp4;'>
+    {% endif %}
+    {% if 'video/webm' in types %}
+    <source src="/{{ filename }}.webm" type='video/webm;'>
+    {% endif %}
+    {% if 'video/ogg' in types %}
+    <source src="/{{ filename }}.ogv" type='video/ogg'>
+    {% endif %}
+    <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
+</video>

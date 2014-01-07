@@ -2,4 +2,5 @@ global.coffee
 shims.coffee
 history.coffee
 api.coffee
+players.coffee
 view.coffee

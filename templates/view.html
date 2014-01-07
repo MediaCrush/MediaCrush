@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block mobile_responsive %}{% endblock %}
 {% block styles %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}?version=2" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}" />
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript">
@@ -83,8 +83,6 @@
         <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
-
-{{ type_files(processor) | safe }} {# Very important - include files for the type #}
 
 {% if ads and adsense_client != "CHANGEME" and False %}
 <div id="gad">
