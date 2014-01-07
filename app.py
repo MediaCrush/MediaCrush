@@ -10,7 +10,7 @@ from shutil import rmtree, copyfile
 
 app.static_folder = os.path.join(os.getcwd(), "static")
 scss.config.LOAD_PATHS = [
-    './styles/'
+    os.path.join(os.getcwd(), 'styles')
 ]
 
 def prepare():
@@ -18,7 +18,7 @@ def prepare():
         rmtree(app.static_folder)
     os.makedirs(app.static_folder)
     compiler = scss.Scss(scss_opts = {
-        'style': 'compressed'
+        'style': 'compressed' if not app.debug else None
     })
 
     # Compile styles (scss)

@@ -1,0 +1,20 @@
+.player.video {
+    position: relative;
+
+    video {
+    }
+
+    .controls {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: red;
+        opacity: 0.5;
+    }
+}
+
+body {
+    background: red !important;
+}
