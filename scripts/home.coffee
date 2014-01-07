@@ -147,6 +147,7 @@ handleDragDrop = (e) ->
 pendingFiles = []
 updateQueue = ->
     files = pendingFiles.splice(0, 5)
+    urls = pendingUrls.splice(0, 5)
     fileList = document.getElementById('files')
     scrollingContainer = document.getElementById('droparea')
     for file in files
@@ -162,7 +163,20 @@ updateQueue = ->
             mediaFile.updateStatus('local-pending')
             uploadedFiles[mediaFile.hash] = mediaFile
         )(file)
-    if pendingFiles.length > 0
+    for url in urls
+        ((url) ->
+            mediaFile = new MediaFile(url)
+            mediaFile.preview = createPreview(mediaFile.name)
+            _ = scrollingContainer.scrollTop
+            fileList.appendChild(mediaFile.preview)
+            scrollingContainer.scrollTop = _
+            mediaFile.preview = fileList.lastElementChild
+            mediaFile.loadPreview()
+            mediaFile.hash = new String(guid())
+            mediaFile.updateStatus('local-pending')
+            uploadedFiles[mediaFile.hash] = mediaFile
+        )(url)
+    if pendingFiles.length + pendingUrls.length > 0
         setTimeout(updateQueue, 500)
     if files.length > 0
         uploadPendingFiles()
@@ -192,15 +206,18 @@ uploadPendingFiles = ->
             toUpload.push(file)
     for file in toUpload
         ((file) ->
-            reader = new FileReader()
-            reader.onloadend = (e) ->
-                try
-                    data = e.target.result
-                    file.updateStatus('preparing')
-                    worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: file.hash })
-                catch e # Too large
-                    uploadFile(file)
-            reader.readAsBinaryString(file.file)
+            if file.isUrl
+                uploadUrlFile(file)
+            else
+                reader = new FileReader()
+                reader.onloadend = (e) ->
+                    try
+                        data = e.target.result
+                        file.updateStatus('preparing')
+                        worker.postMessage({ action: 'compute-hash', data: data, callback: 'hashCompleted', id: file.hash })
+                    catch e # Too large
+                        uploadFile(file)
+                reader.readAsBinaryString(file.file)
         )(file)
 
 hashCompleted = (id, result) ->
@@ -217,7 +234,8 @@ handlePaste = (e) ->
         text = e.clipboardData.getData('text/plain')
         if text
             if text.indexOf('http://') == 0 or text.indexOf('https://') == 0
-                uploadUrl(text)
+                urls = text.split('\n')
+                uploadUrls(url.trim() for url in urls when url.indexOf('http://') == 0 or url.indexOf('https://') == 0)
             else
                 # todo: plaintext
         else
@@ -240,34 +258,36 @@ handlePaste = (e) ->
                         setTimeout(check, 100)
                 check()
 
-uploadUrl = (url) ->
+pendingUrls = []
+uploadUrls = (urls) ->
     if albumAttached
         albumUI.querySelector('.button').classList.add('hidden')
         albumUI.querySelector('.status').classList.remove('hidden')
         albumUI.querySelector('.status').textContent = 'Processing, please wait...'
         albumUI.querySelector('.result').classList.add('hidden')
-    dropArea = document.getElementById('droparea')
-    dropArea.style.overflowY = 'scroll'
-    dropArea.classList.add('files')
-    fileList = document.getElementById('files')
     if Object.keys(uploadedFiles).length == 0
         document.getElementById('files').innerHTML = ''
+        dropArea = document.getElementById('droparea')
+        dropArea.style.overflowY = 'scroll'
+        dropArea.classList.add('files')
+        fileList = document.getElementById('files')
+    pendingUrls.push(url) for url in urls
+    updateQueue()
 
-    file = new MediaFile(url)
-    fileList = document.getElementById('files')
-    file.preview = createPreview(file.name)
-    fileList.appendChild(file.preview)
-    file.preview = fileList.lastElementChild
-    file.loadPreview()
+uploadUrlFile = (file) ->
+    oldHash = file.hash
     API.uploadUrl(file, (result) ->
-        file = result.file
+        uploadedFiles[file.hash] = file
         if result.error?
             file.setError(result.error)
             return
+        file = result.file
+        delete uploadedFiles[oldHash]
         uploadedFiles[file.hash] = file
         if file.status == 'done'
             finish(file)
         else
+            file.isUserOwned = true
             worker.postMessage({ action: 'monitor-status', hash: file.hash })
     )
 
