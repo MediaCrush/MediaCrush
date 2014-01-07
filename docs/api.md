@@ -99,10 +99,10 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "flags": {
-        "autoplay": true, 
-        "loop": true, 
+        "autoplay": true,
+        "loop": true,
         "mute": true
-      }, 
+      },
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
@@ -130,7 +130,7 @@ If the file is not found, you will get a dictionary like:
 
 *Parameters*: `list`, a comma-separated list of hashes.
 
-*Returns*: an array of objects. Please see Appendix A for reference objects for each possible type.
+*Returns*: a dictionary of objects. Please see Appendix A for reference objects for each possible type.
 
     GET /api/info?list=tVWMM_ziA3nm,CPvuR5lRhmS0
 
@@ -155,10 +155,10 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "flags": {
-          "autoplay": true, 
-          "loop": true, 
+          "autoplay": true,
+          "loop": true,
           "mute": true
-        }, 
+        },
         "original": "/CPvuR5lRhmS0.gif",
         "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
@@ -183,10 +183,10 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "flags": {
-          "autoplay": true, 
-          "loop": true, 
+          "autoplay": true,
+          "loop": true,
           "mute": true
-        }, 
+        },
         "original": "/tVWMM_ziA3nm.gif",
         "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
@@ -197,26 +197,26 @@ If the file is not found, you will get a dictionary like:
 
 *Parameters*: `list`, a comma-separated URLs to check, or a single URL.
 
-*Returns*: A dictionary mapping URLs that have been previously uploaded to MediaCrush files. 
+*Returns*: A dictionary mapping URLs that have been previously uploaded to MediaCrush files.
 
     POST /api/url/info
     list=http://i.imgur.com/rctIj1M.jpg,http://does.not/exist.gif
 
     {
-      "http://does.not/exist.gif": null, 
+      "http://does.not/exist.gif": null,
       "http://i.imgur.com/rctIj1M.jpg": {
-        "blob_type": "image", 
-        "compression": 1.0, 
-        "extras": [], 
+        "blob_type": "image",
+        "compression": 1.0,
+        "extras": [],
         "files": [
           {
-            "file": "/4Gt0YcGMPA7S.jpg", 
+            "file": "/4Gt0YcGMPA7S.jpg",
             "type": "image/jpeg"
           }
-        ], 
+        ],
         "flags": {},
-        "hash": "4Gt0YcGMPA7S", 
-        "original": "/4Gt0YcGMPA7S.jpg", 
+        "hash": "4Gt0YcGMPA7S",
+        "original": "/4Gt0YcGMPA7S.jpg",
         "type": "image/jpeg"
       }
     }
@@ -232,6 +232,23 @@ If the file is not found, you will get a dictionary like:
 
     {
       "exists": true
+    }
+
+### GET /api/status?list=&lt;hash&gt;,...
+
+*Parameters*: `list`, a comma-separated list of hashes.
+
+*Returns*: a dictionary of objects and the status of each.
+
+    GET /api/status?list=tVWMM_ziA3nm,CPvuR5lRhmS0
+
+    {
+        "tVWMM_ziA3nm": {
+          "status": "processing"
+        },
+        "CPvuR5lRhmS0": {
+          "status": "pending"
+        }
     }
 
 
@@ -266,10 +283,10 @@ If the file is not found, you will get a dictionary like:
         "extras": [
         ],
         "flags": {
-          "autoplay": true, 
-          "loop": true, 
+          "autoplay": true,
+          "loop": true,
           "mute": true
-        }, 
+        },
         "original": "/LxqXxVPAvqqB.gif",
         "hash": "LxqXxVPAvqqB",
         "type": "image/gif"
@@ -358,8 +375,8 @@ The "result" object will only be included if the status is "done".
 
     {
       "flags": {
-        "autoplay": true, 
-        "loop": true, 
+        "autoplay": true,
+        "loop": true,
         "mute": true
       }
     }
@@ -394,9 +411,9 @@ The "result" object will only be included if the status is "done".
 
     {
       "flags": {
-        "autoplay": false, 
-        "loop": true, 
-        "mute": false 
+        "autoplay": false,
+        "loop": true,
+        "mute": false
       }
     }
 
@@ -430,7 +447,7 @@ The "result" object will only be included if the status is "done".
     </tr>
 </table>
 
-### DELETE /api/&lt;hash&gt; 
+### DELETE /api/&lt;hash&gt;
 
 *Parameters*: none.
 
@@ -612,10 +629,10 @@ In case of error, the response will contain an 'error' parameter and additional 
       "extras": [
       ],
       "flags": {
-        "autoplay": true, 
-        "loop": true, 
+        "autoplay": true,
+        "loop": true,
         "mute": true
-      }, 
+      },
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif"
@@ -692,11 +709,11 @@ These flag listings specify all the possible flags that may be returned in an ob
 ## `video`
 
     {
-        "autoplay": true, 
-        "loop": true, 
+        "autoplay": true,
+        "loop": true,
         "mute": true
     }
-    
+
 * `autoplay`: Whether this file should play automatically, without user input.
 * `loop`: Whether this file restarts playback after finishing.
 * `mute`: Whether audio volume is set to zero.

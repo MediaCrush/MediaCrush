@@ -120,6 +120,8 @@ audio {
         border-right: none;
         display: inline-block;
         min-width: 34px;
+        position: relative;
+        left: -15px;
 
         &:first-child {
             border-radius: 3px 0 0 3px;

@@ -17,20 +17,20 @@
     <meta property="og:site_name" content="MediaCrush" />
     {% if processor.startswith("video") %}
         {# Generated thumbnail #}
-        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        <meta property="og:image" content="/{{ filename }}.png" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />
         <meta property="twitter:player" content="{{ share('frame', filename) }}" />
         <meta property="twitter:player:width" content="640" />
         <meta property="twitter:player:height" content="360" />
-        <meta property="twitter:image" content="https://mediacru.sh/{{ filename }}.png">
+        <meta property="twitter:image" content="/{{ filename }}.png">
     {% elif processor.startswith("audio") %}
-        <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+        <meta property="og:image" content="/static/audio.png" />
     {% else %}
-        <meta property="og:image" content="https://mediacru.sh/{{ original }}" />
+        <meta property="og:image" content="/{{ original }}" />
         <meta name="twitter:card" content="photo">
-        <meta name="twitter:image" content="https://mediacru.sh/{{ original }}">
+        <meta name="twitter:image" content="/{{ original }}">
     {% endif %}
 {% endblock %}
 {% block content %}

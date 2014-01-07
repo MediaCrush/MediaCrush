@@ -13,7 +13,7 @@
         font-weight: bold;
     }
 
-    #createAlbum {
+    .button {
         color: #fff;
         background: #00b200;
 
@@ -251,13 +251,20 @@
     }
 }
 
-.image-loading {
+.media-preview {
+    .progress {
+        bottom: 0;
+        position: absolute;
+        width: 50%;
+    }
+
     a.delete {
         font-size: 10pt;
         color: red;
         position: absolute;
         bottom: 3px;
         right: 3px;
+        z-index: 1;
 
         &:hover {
             text-decoration: underline;
@@ -275,6 +282,25 @@
 
     &:last-child {
         margin-bottom: 0;
+    }
+
+    .preview {
+        float: left;
+        margin-right: 10px;
+        min-height: 113px;
+        width: 200px;
+
+        & {
+            img {
+                max-height: 113px;
+                max-width: 200px;
+            }
+
+            video {
+                max-height: 113px;
+                max-width: 200px;
+            }
+        }
     }
 
     a {

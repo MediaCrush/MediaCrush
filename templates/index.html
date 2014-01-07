@@ -1,11 +1,9 @@
 {% extends "layout.html" %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='lib.js') }}?version=2" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='app.js') }}?version=2" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='history.js') }}?version=2" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='home.js') }}" type="text/javascript"></script>
 {% endblock %}
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}?version=2" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}" />
 {% endblock %}
 {% block content %}
 <div class="psuedohidden" id="paste-target" contenteditable></div>
@@ -17,10 +15,10 @@
         <div id="droparea">
             <input type="file" id="browse" class="hidden" multiple />
             <div id="albumUI">
-                <div class="hidden" id="albumPending">Processing, please wait...</div>
-                <a href="#" id="createAlbum" class="hidden">Create Album</a>
-                <div class="hidden">
-                    Album: <a href="#" id="albumUrl"></a>
+                <div class="status hidden">Processing, please wait...</div>
+                <a href="#" class="button hidden">Create Album</a>
+                <div class="result hidden">
+                    Album: <a href="#" target="_blank"></a>
                 </div>
             </div>
             <div id="files">
@@ -57,7 +55,7 @@
             <div class="hint">
                 {# Things in here stay in here past the first upload #}
                 <div id="droptext">
-                    <a href="#" id="browseLink">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
+                    <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
                 </div>
             </div>
         </div>
@@ -81,9 +79,27 @@
             </ul>
             <div>
                 <a href="/mine" class="small pull-left" id="histView">View full history</a>
-                <a href="javascript:toggleHistory();" class="small pull-right" id="historyEnabled">Disable local history</a>
+                <a href="#" class="small pull-right" id="historyEnabled">Disable local history</a>
             </div>
         </div>
     </div>
 </div>
+{# templates #}
+<script id="preview-template" type="text/x-handlebars-template">
+{% raw %}
+<div class="media-preview">
+    <div class="preview">
+    </div>
+    <div class="responsive-fade"></div>
+    <h2 title="{{ name }}">{{ name }}</h2>
+    <div class="flags hidden"></div>
+    <div class="status"></div>
+    <div class="error hidden"></div>
+    <a class="link hidden"></a>
+    <a class="delete hidden">Delete</a>
+    <a class="full-size hidden"></a>
+    <div class="progress" style="width: 0"></div>
+</div>
+{% endraw %}
+</script>
 {% endblock %}

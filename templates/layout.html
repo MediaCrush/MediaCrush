@@ -12,7 +12,11 @@
         {% block meta %}{% endblock %} 
         <title>MediaCrush</title>
         <script type="text/javascript">
-            {% include 'global.js' %}
+            {% if mobile %}
+            window.mobile = true;
+            {% else %}
+            window.mobile = false;
+            {% endif %}
         </script>
         {% block scripts %}
         {% endblock %}

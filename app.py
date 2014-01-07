@@ -4,6 +4,8 @@ from mediacrush.files import extension
 
 import os
 import scss
+import coffeescript
+from slimit import minify
 from shutil import rmtree, copyfile
 
 app.static_folder = os.path.join(os.getcwd(), "static")
@@ -33,27 +35,62 @@ def prepare():
                 w.write(output)
                 w.flush()
 
-    copy = ['images', 'scripts']
-    preprocess = ['scripts/view.js', 'scripts/mediacrush.js']
+    # Compile scripts (coffeescript)
+    d = os.walk('scripts')
+    preprocess = ['scripts/mediacrush.js']
+    for f in list(d)[0][2]:
+        outputpath = os.path.join(app.static_folder, os.path.basename(f))
+        inputpath = os.path.join('scripts', f)
 
-    # Copy images, preprocess some JS files 
-    for folder in copy:
-        for f in list(os.walk(folder))[0][2]:
-            outputpath = os.path.join(app.static_folder, os.path.basename(f))
-            inputpath = os.path.join(folder, f)
-
+        if extension(f) == "js":
             if inputpath in preprocess:
                 with open(inputpath) as r:
-                    # Using Jinja here is overkill
-                    output = r.read()
+                    output = r.read().decode("utf-8")
                     output = output.replace("{{ protocol }}", _cfg("protocol"))
                     output = output.replace("{{ domain }}", _cfg("domain"))
 
                 with open(outputpath, "w") as w:
-                    w.write(output)
+                    w.write(output.encode("utf-8"))
                     w.flush()
             else:
                 copyfile(inputpath, outputpath)
+
+        elif extension(f) == "manifest":
+            with open(inputpath) as r:
+                manifest = r.read().decode("utf-8").split('\n')
+
+            javascript = ''
+            for script in manifest:
+                script = script.strip(' ')
+
+                if script == '' or script.startswith('#'):
+                    continue
+
+                bare = False
+                if script.startswith('bare: '):
+                    bare = True
+                    script = script[6:]
+
+                with open(os.path.join('scripts', script)) as r:
+                    coffee = r.read()
+                    if script.endswith('.js'):
+                        javascript += coffee # straight up copy
+                    else:
+                        javascript += coffeescript.compile(coffee, bare=bare)
+            output = '.'.join(f.rsplit('.')[:-1]) + '.js'
+
+            if not app.debug:
+                javascript = minify(javascript)
+
+            with open(os.path.join(app.static_folder, output), "w") as w:
+                w.write(javascript.encode("utf-8"))
+                w.flush()
+
+    d = os.walk('images')
+    for f in list(d)[0][2]:
+        outputpath = os.path.join(app.static_folder, os.path.basename(f))
+        inputpath = os.path.join('images', f)
+        copyfile(inputpath, outputpath)
 
 @app.before_first_request
 def compile_first():
@@ -61,7 +98,7 @@ def compile_first():
 
 @app.before_request
 def compile_if_debug():
-    if app.debug:
+    if app.debug and _cfg("debug-static-recompile") == 'true':
         prepare()
 
 if __name__ == '__main__':

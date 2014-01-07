@@ -3,9 +3,9 @@
     <a href="{{ share('directlink', filename) }}" target="_blank" id="img-a-{{ filename }}">
         {% if processor.startswith('image/') %}
             {# This means that we have custom support for this type, with the full mimetype and all #}
-            <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+            <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" />
         {% else %}
-            <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" id="image" />
+            <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" />
         {% endif %}
     </a>
     <div class="bar">
@@ -17,9 +17,9 @@
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
     {% if processor.startswith('image/') %}
         {# This means that we have custom support for this type, with the full mimetype and all #}
-        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" id="image" />
+        <img id="img-{{filename}}" src="/{{ original }}" alt="MediaCrush" />
     {% else %}
-        <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" id="image" />
+        <img id="img-{{filename}}" src="/{{ filename }}.png" alt="MediaCrush" />
     {% endif %}
 </a>
 {% endif %}
@@ -35,7 +35,7 @@ function resizeMedia(x, y) {
 }
 window.addEventListener('load', function() {
     if (window.album) {
-    document.querySelector('#img-a-{{ filename }}').href = '/{{ filename }}';
+        document.querySelector('#img-a-{{ filename }}').href = '/{{ filename }}';
         return;
     }
     var image = document.getElementById('img-{{filename}}');
