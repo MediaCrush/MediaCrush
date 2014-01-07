@@ -1,4 +1,38 @@
 @import 'feedback.scss'
+@font-face{
+    font-family: Batch;
+    src: url('/static/batch.eot');
+    src: url('/static/batch.eot?#iefix') format('embedded-opentype'),
+         url('/static/batch.woff') format('woff'),
+         url('/static/batch.ttf') format('truetype'),
+         url('/static/batch.svg#batchregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.icon {
+    font-family: "Batch";
+    line-height: 1;
+    display: inline-block;
+    font-size: 16px;
+
+    &.icon-32 {
+        font-size: 32px;
+    }
+
+    &.icon-64 {
+        font-size: 64px;
+    }
+
+    &.icon-128 {
+        font-size: 128px;
+    }
+
+    &::before {
+        content: attr(data-icon);
+    }
+}
+
 /*
  * Element styles and UI components
  */
