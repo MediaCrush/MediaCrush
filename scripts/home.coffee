@@ -236,6 +236,7 @@ handlePaste = (e) ->
             if text.indexOf('http://') == 0 or text.indexOf('https://') == 0
                 urls = text.split('\n')
                 uploadUrls(url.trim() for url in urls when url.indexOf('http://') == 0 or url.indexOf('https://') == 0)
+                target.innerHTML = ''
             else
                 # todo: plaintext
         else
@@ -270,7 +271,6 @@ uploadUrls = (urls) ->
         dropArea = document.getElementById('droparea')
         dropArea.style.overflowY = 'scroll'
         dropArea.classList.add('files')
-        fileList = document.getElementById('files')
     pendingUrls.push(url) for url in urls
     updateQueue()
 
