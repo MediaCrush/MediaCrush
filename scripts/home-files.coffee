@@ -157,6 +157,7 @@ class MediaFile
             deleteLink.classList.remove('hidden')
 
     preload: ->
+        return if not @blob?
         for file in @blob.files
             if file.type.startsWith('image/') and file.type != 'image/gif'
                 _ = document.createElement('img')
