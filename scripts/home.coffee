@@ -329,6 +329,7 @@ fileStatusChanged = (e) ->
     if e.file? and e.file.flags?
         uploadedFiles[e.hash].setFlags(e.file.flags)
     if e.status in ['ready', 'done']
+        uploadedFiles[e.hash].blob = e.file
         finish(uploadedFiles[e.hash])
 
 finish = (file) ->
