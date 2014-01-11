@@ -75,5 +75,6 @@ a.album-direct {
     }
 }
 
-@import 'media-players.scss'
 @import 'view-responsive.scss'
+.scss-fix {}
+@import 'media-players.scss'
