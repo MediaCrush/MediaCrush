@@ -3,7 +3,7 @@ itemsToLoad = []
 itemsPerPage = 10
 paginationLimit = 4
 
-window.addEventListener('DOMContentReady', ->
+window.addEventListener('DOMContentLoaded', ->
     historyEnabled = document.getElementById('history-toggle')
     disabledText = document.getElementById('disabledText')
     if not UserHistory.getHistoryEnabled()

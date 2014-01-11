@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentReady', ->
+window.addEventListener('DOMContentLoaded', ->
     inputs = document.querySelectorAll('input.selectall')
     input.addEventListener('mouseenter', (e) ->
         e.target.focus()
