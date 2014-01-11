@@ -2,7 +2,7 @@ worker = new Worker('/static/worker.js')
 albumAttached = false
 maxConcurrentUploads = 3
 
-window.addEventListener('load', ->
+window.addEventListener('DOMContentReady', ->
     window.addEventListener('dragenter', dragNop, false)
     window.addEventListener('dragleave', dragNop, false)
     window.addEventListener('dragover', dragNop, false)
