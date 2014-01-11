@@ -11,6 +11,31 @@
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
-    <div class="controls">
+    <div class="controls {% if flags['mute'] %}muted{% endif %}">
+        <a href="#" class="icon play-pause play" data-icon="&#xF16C;"></a>
+        <div class="seek">
+            <div class="background"></div>
+            <div class="loaded"></div>
+            <div class="played"></div>
+            <div class="clickable"></div>
+        </div>
+        <div class="right">
+            {% if not flags['mute'] %}
+            <span class="toggleable volume">
+                <span class="icon" data-icon="&#xF03B;"></span>
+                <div>
+                </div>
+            </span>
+            {% endif %}
+            <a href="#" class="icon fullscreen disabled"></a>
+            <span class="toggleable settings">
+                <span class="icon" data-icon="&#xF04E;"></span>
+                <div>
+                    <div><a href="#" class="loop"><span class="text">Loop ON</span><span class="icon loop" data-icon="&#xF0B2;"></span></a></div>
+                    {#<div><a href="#" class="subtitles">Subtitles<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
+                    <div><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
+                </div>
+            </span>
+        </div>
     </div>
 </div>
