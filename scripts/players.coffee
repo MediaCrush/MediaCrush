@@ -27,6 +27,13 @@ VideoPlayer = (container) ->
             loaded = video.buffered.end(video.buffered.length - 1) / video.duration * 100
         seek.querySelector('.loaded').style.width = loaded + '%'
         seek.querySelector('.played').style.width = video.currentTime / video.duration * 100 + '%'
+        if video.paused
+            # ensure video UI is paused
+            playPause.classList.remove('pause')
+            playPause.classList.add('play')
+        else
+            playPause.classList.remove('play')
+            playPause.classList.add('pause')
     updateVideo()
 
     video.addEventListener(event, (e) ->
