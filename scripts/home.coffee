@@ -1,4 +1,5 @@
 worker = new Worker('/static/worker.js')
+window.backgroundWorker = worker
 albumAttached = false
 maxConcurrentUploads = 3
 
@@ -194,6 +195,7 @@ handleFiles = (files) ->
         dropArea.classList.add('files')
     pendingFiles.push(file) for file in files
     updateQueue()
+window.handleFiles = handleFiles
 
 uploadPendingFiles = ->
     toUpload = []
