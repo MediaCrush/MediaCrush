@@ -43,7 +43,7 @@ MediaPlayer = (container) ->
     updateMedia()
 
     media.addEventListener(event, (e) ->
-        if media.readyState > 0
+        if media.readyState >= 3 # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
