@@ -1,11 +1,25 @@
 .player.video {
     position: relative;
 
-    a {
-        outline-style: none;
+    &.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-width: none;
+            width: 100%;
+        }
     }
 
-    video {
+    a {
+        outline-style: none;
     }
 
     .controls {
@@ -110,12 +124,12 @@
                 top: -1px;
 
                 &::before {
-                    content: '\F0A6';
+                    content: '\F0A4';
                 }
 
                 &.disabled::before {
                     color: #fff;
-                    content: '\F0A4';
+                    content: '\F0A6';
                 }
             }
 
@@ -220,14 +234,14 @@
                                 }
 
                                 &:hover {
-                                    background: rgba(0, 0, 0, 1);
+                                    background: rgba(0, 0, 0, 0.5);
                                 }
                             }
                         }
                     }
                     
                     &.highlight:hover {
-                        background: rgba(0, 0, 0, 1);
+                        background: rgba(0, 0, 0, 0.5);
                     }
 
                     a {

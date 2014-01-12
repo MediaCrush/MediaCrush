@@ -1,7 +1,13 @@
+document.cancelFullScreen = document.cancelFullScreen ||
+                   document.mozCancelFullScreen ||
+                   document.webkitCancelFullScreen ||
+                   document.msExitFullscreen # Thanks for that last one, Microsoft, well done
+
 VideoPlayer = (container) ->
     video = container.querySelector('video')
     playPause = container.querySelector('.play-pause')
     fullscreen = container.querySelector('.fullscreen')
+    isFullscreen = false
     toggleLoop = container.querySelector('.loop')
     rates = container.querySelectorAll('.speeds a')
     seek = container.querySelector('.seek')
@@ -25,6 +31,40 @@ VideoPlayer = (container) ->
         if video.readyState > 0
             updateVideo()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
+
+    debounce = true
+    document.addEventListener(prefix + 'fullscreenchange', (e) ->
+        if debounce
+            debounce = false
+            return
+        debounce = true
+        leaveFullscreen() if isFullscreen
+    , false) for prefix in ['', 'moz', 'webkit', 'ms']
+    fullscreen.addEventListener('click', (e) ->
+        e.preventDefault()
+        if not isFullscreen
+            isFullscreen = true
+            fullscreen.classList.add('disabled')
+            container.requestFullScreen() if container.requestFullScreen?
+            container.mozRequestFullScreen() if container.mozRequestFullScreen?
+            container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
+            container.msRequestFullscreen() if container.msRequestFullscreen?
+            container.classList.add('fullscreen')
+        else
+            leaveFullscreen()
+    , false)
+
+    leaveFullscreen = ->
+        isFullscreen = false
+        container.classList.remove('fullscreen')
+        fullscreen.classList.remove('disabled')
+        document.cancelFullScreen()
+        # Chrome hack to fix positioning when leaving full screen
+        media = document.querySelector('.media')
+        media.style.right = 0
+        window.setTimeout(->
+            media.style.right = '-50%'
+        , 100)
 
     playPause.addEventListener('click', (e) ->
         e.preventDefault()
