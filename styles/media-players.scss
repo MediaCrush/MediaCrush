@@ -18,6 +18,10 @@
         }
     }
 
+    video.idle {
+        cursor: none;
+    }
+
     a {
         outline-style: none;
     }
@@ -47,13 +51,19 @@
     }
 
     .controls {
+        opacity: 0;
+        &.idle {
+            opacity: 0 !important;
+        }
+        &.fixed {
+            opacity: 1 !important;
+        }
+        transition: opacity linear 0.2s;
         position: absolute;
         left: 0;
         bottom: 0;
         right: 0;
         height: 22px;
-        //opacity: 0;
-        transition: opacity linear 0.2s;
         background: rgba(0, 0, 0, 0.6);
         padding: 2px;
 

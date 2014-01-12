@@ -5,6 +5,7 @@ document.cancelFullScreen = document.cancelFullScreen ||
 
 VideoPlayer = (container) ->
     video = container.querySelector('video')
+    controls = container.querySelector('.controls')
     playPause = container.querySelector('.play-pause')
     startButton = container.querySelector('.start')
     fullscreen = container.querySelector('.fullscreen')
@@ -28,12 +29,15 @@ VideoPlayer = (container) ->
         seek.querySelector('.loaded').style.width = loaded + '%'
         seek.querySelector('.played').style.width = video.currentTime / video.duration * 100 + '%'
         if video.paused
-            # ensure video UI is paused
+            controls.classList.add('fixed')
             playPause.classList.remove('pause')
             playPause.classList.add('play')
         else
+            controls.classList.remove('fixed')
             playPause.classList.remove('play')
             playPause.classList.add('pause')
+            if startButton.parentElement?
+                startButton.parentElement.removeChild(startButton)
     updateVideo()
 
     video.addEventListener(event, (e) ->
@@ -61,7 +65,18 @@ VideoPlayer = (container) ->
                 iconSymbol = '\uF039'
             volumeIcon.setAttribute('data-icon', iconSymbol)
     , false)
-    
+
+    idleUI = ->
+        controls.classList.add('idle')
+        video.classList.add('idle')
+    timeout = null
+    video.addEventListener('mousemove', (e) ->
+        clearTimeout(timeout)
+        controls.classList.remove('idle')
+        video.classList.remove('idle')
+        timeout = setTimeout(idleUI, 3000)
+    , false)
+
     seeking = false
     wasPaused = true
     beginSeek = (e) ->
@@ -112,7 +127,7 @@ VideoPlayer = (container) ->
     endAdjustVolume = (e) ->
         e.preventDefault()
         adjustingVolume = false
-    
+
     try
         video.volume = window.localStorage.volume
         volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
@@ -163,14 +178,8 @@ VideoPlayer = (container) ->
         e.preventDefault()
         if video.paused
             video.play()
-            playPause.classList.remove('play')
-            playPause.classList.add('pause')
-            if startButton.parentElement?
-                startButton.parentElement.removeChild(startButton)
         else
             video.pause()
-            playPause.classList.remove('pause')
-            playPause.classList.add('play')
     , false)
 
     startButton.addEventListener('click', (e) ->
