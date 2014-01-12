@@ -12,6 +12,7 @@ VideoPlayer = (container) ->
     toggleLoop = container.querySelector('.loop')
     rates = container.querySelectorAll('.speeds a')
     seek = container.querySelector('.seek')
+    volume = container.querySelector('.volume > div')
     ready = false
 
     updateVideo = ->
@@ -36,7 +37,6 @@ VideoPlayer = (container) ->
     seeking = false
     wasPaused = true
     beginSeek = (e) ->
-        console.log('begin seek')
         e.preventDefault()
         seeking = true
         wasPaused = video.paused
@@ -61,6 +61,41 @@ VideoPlayer = (container) ->
     seekClick.addEventListener('mouseup', endSeek, false)
     seekClick.addEventListener('mousemove', seekProgress, false)
     seekClick.addEventListener('mouseleave', endSeek, false)
+
+    adjustingVolume = false
+    beginAdjustVolume = (e) ->
+        e.preventDefault()
+        adjustingVolume = true
+        adjustVolumeProgress(e)
+    adjustVolumeProgress = (e) ->
+        e.preventDefault()
+        return if not adjustingVolume
+        height = volume.querySelector('.background').clientHeight
+        if e.offsetY?
+            amount = (height - e.offsetY) / height
+        else
+            amount = (height - e.layerY) / height
+        video.volume = amount
+        volume.querySelector('.amount').style.height = amount * 100 + '%'
+        try
+            window.localStorage.volume = amount
+        catch ex
+            # This doesn't work in iframes, and this prevents everything from breaking
+    endAdjustVolume = (e) ->
+        e.preventDefault()
+        adjustingVolume = false
+    
+    try
+        video.volume = window.localStorage.volume
+        volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+    catch ex
+        # This doesn't work in iframes, and this prevents everything from breaking
+
+    volumeClick = volume.querySelector('.clickable')
+    volumeClick.addEventListener('mousedown', beginAdjustVolume, false)
+    volumeClick.addEventListener('mouseup', endAdjustVolume, false)
+    volumeClick.addEventListener('mousemove', adjustVolumeProgress, false)
+    volumeClick.addEventListener('mouseleave', endAdjustVolume, false)
 
     debounce = true
     document.addEventListener(prefix + 'fullscreenchange', (e) ->
