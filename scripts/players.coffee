@@ -4,6 +4,27 @@ VideoPlayer = (container) ->
     fullscreen = container.querySelector('.fullscreen')
     toggleLoop = container.querySelector('.loop')
     rates = container.querySelectorAll('.speeds a')
+    seek = container.querySelector('.seek')
+    ready = false
+
+    updateVideo = ->
+        if not ready
+            ready = true
+            for s in seek.querySelectorAll('.hidden')
+                s.classList.remove('hidden')
+            seek.querySelector('.progress').classList.add('hidden')
+        if video.buffered.length == 0
+            loaded = 100
+        else
+            loaded = video.buffered.end(video.buffered.length - 1) / video.duration * 100
+        seek.querySelector('.loaded').style.width = loaded + '%'
+        seek.querySelector('.played').style.width = video.currentTime / video.duration * 100 + '%'
+    updateVideo()
+
+    video.addEventListener(event, (e) ->
+        if video.readyState > 0
+            updateVideo()
+    , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
     playPause.addEventListener('click', (e) ->
         e.preventDefault()

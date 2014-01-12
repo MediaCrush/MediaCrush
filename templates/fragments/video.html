@@ -15,8 +15,9 @@
         <a href="#" class="icon play-pause {% if flags['autoplay'] %}pause{% else %}play{% endif %}"></a>
         <div class="seek">
             <div class="background"></div>
-            <div class="loaded"></div>
-            <div class="played"></div>
+            <div class="loading progress"></div>
+            <div class="hidden loaded"></div>
+            <div class="hidden played"></div>
             <div class="clickable"></div>
         </div>
         <div class="right">
@@ -39,7 +40,7 @@
                     <div class="playback-speed">
                         <div class="header">Playback Speed</div>
                         <div class="speeds">
-                            <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="2">200%</a>
+                            <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="1.5">150%</a>
                         </div>
                     </div>
                     <div class="highlight">

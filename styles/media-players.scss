@@ -44,16 +44,20 @@
                 left: 0;
                 height: 4px;
 
+                &.progress {
+                    width: 100%;
+                }
+
                 &.loaded {
                     background: rgb(0, 136, 204);
                     height: 2px;
                     top: 13px;
-                    width: 80%;
+                    width: 0;
                 }
 
                 &.played {
                     background: #fff;
-                    width: 40%;
+                    width: 0;
                     position: relative;
 
                     &::after {
@@ -87,6 +91,8 @@
         .icon {
             color: #fff;
             font-size: 21px;
+            width: 21px;
+            height: 21px;
             font-weight: normal;
             line-height: 21px;
             cursor: pointer;
@@ -102,7 +108,6 @@
                 font-size: 18px;
                 position: relative;
                 top: -1px;
-                margin-right: 2px;
 
                 &::before {
                     content: '\F0A6';
@@ -128,6 +133,8 @@
 
             &.settings > div {
                 width: 120px;
+                right: auto;
+                left: -97px;
             }
             
             &.volume > div {

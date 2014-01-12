@@ -6,6 +6,9 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}?version=2" />
     {% endif %}
 {% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
+{% endblock %}
 {% block meta %}
 {% for item in [ items[0] ] %}
 {% set type = item.processor %}
