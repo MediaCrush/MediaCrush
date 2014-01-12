@@ -24,6 +24,11 @@
             <span class="toggleable volume">
                 <span class="icon" data-icon="&#xF03B;"></span>
                 <div>
+                    <span>
+                        <span class="background"></span>
+                        <span class="amount"></span>
+                        <span class="clickable"></span>
+                    </span>
                 </div>
             </span>
             {% endif %}
@@ -31,7 +36,11 @@
             <span class="toggleable settings">
                 <span class="icon" data-icon="&#xF04E;"></span>
                 <div>
-                    <div><a href="#" class="loop"><span class="text">Loop ON</span><span class="icon loop" data-icon="&#xF0B2;"></span></a></div>
+                    <div>
+                        <a href="#" class="loop">
+                            <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
+                        </a>
+                    </div>
                     {#<div><a href="#" class="subtitles">Subtitles<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
                     <div><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
                 </div>

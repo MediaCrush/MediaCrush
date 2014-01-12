@@ -23,10 +23,14 @@
             color: #fff;
         }
 
+        &.muted .seek {
+            right: 55px;
+        }
+
         .seek {
             position: absolute;
             left: 27px;
-            right: 55px;
+            right: 55px + 22;
             top: 0;
             bottom: 0;
 
@@ -46,18 +50,6 @@
                 &.played {
                     background: #fff;
                     width: 40%;
-
-                    &::after {
-                        font-family: "Batch";
-                        line-height: 1;
-                        display: inline-block;
-                        font-size: 16px;
-                        content: '\F16B';
-                        color: #fff;
-                        position: absolute;
-                        right: -7px;
-                        top: -7px;
-                    }
                 }
 
                 &.background {
@@ -78,14 +70,16 @@
 
         .icon {
             color: #fff;
-            font-size: 22px;
+            font-size: 21px;
             font-weight: normal;
+            line-height: 21px;
             cursor: pointer;
 
             &.fullscreen { // Gets special styles
-                font-size: 20px;
+                font-size: 18px;
                 position: relative;
                 top: -1px;
+                margin-right: 2px;
 
                 &::before {
                     content: '\F0A6';
@@ -114,8 +108,42 @@
             }
             
             &.volume > div {
+                position: absolute;
                 width: 25px;
                 height: 100px;
+
+                & > span {
+                    position: absolute;
+                    left: 7px;
+                    bottom: 7px;
+                    top: 3px;
+                    width: 10px;
+
+                    & > span {
+                        position: absolute;
+                        left: 0;
+                        bottom: 0;
+                        width: 100%;
+
+                        &.background {
+                            background: rgba(0, 0, 0, 0.5);
+                            height: 100%;
+                        }
+
+                        &.amount {
+                            background: #fff;
+                            height: 80%;
+                        }
+
+                        &.clickable {
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            cursor: pointer;
+                        }
+                    }
+                }
             }
 
             & > div {
@@ -125,7 +153,7 @@
                 background: rgba(0, 0, 0, 0.8);
                 position: absolute;
                 right: 2px;
-                bottom: 27px;
+                bottom: 26px;
                 font-size: 10pt;
                 text-align: right;
 
