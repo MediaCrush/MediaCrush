@@ -68,7 +68,7 @@ history = JSON.parse(history);
 if (history == null) {
     history = [];
 }
-window.addEventListener('load', function() {
+window.addEventListener('DOMContentLoaded', function() {
     var inputs = document.querySelectorAll('input.selectall');
     for (var i = 0; i < inputs.length; i++) {
         inputs[i].addEventListener('mouseenter', function(e) {

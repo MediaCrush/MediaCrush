@@ -90,7 +90,7 @@ API = (->
 
     self.deleteFile = (file) ->
         xhr = new XMLHttpRequest()
-        xhr.open('GET', "/api/#{file}/delete")
+        xhr.open('DELETE', "/api/#{file}")
         xhr.send()
         UserHistory.remove(file)
 

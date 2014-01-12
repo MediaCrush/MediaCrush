@@ -135,6 +135,7 @@ class MediaFile
         largeLink.href = link.href = "/#{@hash}"
         link.classList.remove('hidden')
         largeLink.classList.remove('hidden')
+        @preload()
         if @isUserOwned
             deleteLink = @preview.querySelector('.delete')
             deleteLink.href = "/api/#{@hash}/delete"
@@ -154,5 +155,20 @@ class MediaFile
                 )
             , false)
             deleteLink.classList.remove('hidden')
+
+    preload: ->
+        return if not @blob?
+        for file in @blob.files
+            if file.type.startsWith('image/') and file.type != 'image/gif'
+                _ = document.createElement('img')
+                _.src = file.file
+            else if file.type.startsWith('video/')
+                _ = document.createElement('video')
+                _.preload = 'auto'
+                _.src = file.file
+            else if file.type.startsWith('audio/')
+                _ = document.createElement('audio')
+                _.preload = 'auto'
+                _.src = file.file
         
 window.MediaFile = MediaFile

@@ -2,6 +2,9 @@
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
 {% endblock %}
+{% block scripts %}
+<script src="/static/global.js"></script>
+{% endblock %}
 {% block content %}
 <script>
 window.addEventListener('load', function() {

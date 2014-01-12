@@ -2,7 +2,7 @@ worker = new Worker('/static/worker.js')
 albumAttached = false
 maxConcurrentUploads = 3
 
-window.addEventListener('load', ->
+window.addEventListener('DOMContentLoaded', ->
     window.addEventListener('dragenter', dragNop, false)
     window.addEventListener('dragleave', dragNop, false)
     window.addEventListener('dragover', dragNop, false)
@@ -236,6 +236,7 @@ handlePaste = (e) ->
             if text.indexOf('http://') == 0 or text.indexOf('https://') == 0
                 urls = text.split('\n')
                 uploadUrls(url.trim() for url in urls when url.indexOf('http://') == 0 or url.indexOf('https://') == 0)
+                target.innerHTML = ''
             else
                 # todo: plaintext
         else
@@ -270,7 +271,6 @@ uploadUrls = (urls) ->
         dropArea = document.getElementById('droparea')
         dropArea.style.overflowY = 'scroll'
         dropArea.classList.add('files')
-        fileList = document.getElementById('files')
     pendingUrls.push(url) for url in urls
     updateQueue()
 
@@ -329,6 +329,7 @@ fileStatusChanged = (e) ->
     if e.file? and e.file.flags?
         uploadedFiles[e.hash].setFlags(e.file.flags)
     if e.status in ['ready', 'done']
+        uploadedFiles[e.hash].blob = e.file
         finish(uploadedFiles[e.hash])
 
 finish = (file) ->

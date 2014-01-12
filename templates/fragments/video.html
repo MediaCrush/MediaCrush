@@ -1,5 +1,5 @@
 <div class="player video" id="player-{{ filename }}">
-    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %}>
+    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload>
         {% if 'video/mp4' in types %}
         <source src="/{{ filename }}.mp4" type='video/mp4;'>
         {% endif %}

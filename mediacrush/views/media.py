@@ -167,6 +167,7 @@ class MediaView(FlaskView):
             album = klass.from_hash(id)
             v = _album_params(album)
             v['embedded'] = True
+            v['filename'] = id
             return render_template("album-embedded.html", **v)
 
         if klass is not File:

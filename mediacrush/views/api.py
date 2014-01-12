@@ -163,7 +163,7 @@ class APIView(FlaskView):
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
         f = request.files['file']
-        filename = ''.join(c for c in f.filename if c.isalpha() or c == '.')
+        filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
 
         return _upload_object(*upload(f, filename))
 
