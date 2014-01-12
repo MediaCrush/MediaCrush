@@ -36,8 +36,8 @@ VideoPlayer = (container) ->
             controls.classList.remove('fixed')
             playPause.classList.remove('play')
             playPause.classList.add('pause')
-            if startButton.parentElement?
-                startButton.parentElement.removeChild(startButton)
+            if startButton?
+                startButton.parentElement.removeChild(startButton) if startButton.parentElement?
     updateVideo()
 
     video.addEventListener(event, (e) ->
@@ -45,26 +45,62 @@ VideoPlayer = (container) ->
             updateVideo()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
-    volumeIcon = volume.parentElement.querySelector('.icon')
-    volumeIcon.addEventListener('click', (e) ->
-        e.preventDefault()
-        video.muted = !video.muted
-    , false)
-    video.addEventListener('volumechange', (e) ->
-        # Adjust volume accordingly
-        if video.muted
-            volume.parentElement.classList.add('muted')
-            volumeIcon.setAttribute('data-icon', '\uF038')
-        else
-            volume.parentElement.classList.remove('muted')
-            if video.volume > 0.66
-                iconSymbol = '\uF03B'
-            else if 0.33 < video.volume <= 0.66
-                iconSymbol = '\uF03A'
+    if volume != null
+        volumeIcon = volume.parentElement.querySelector('.icon')
+        volumeIcon.addEventListener('click', (e) ->
+            e.preventDefault()
+            video.muted = !video.muted
+        , false)
+        video.addEventListener('volumechange', (e) ->
+            # Adjust volume accordingly
+            if video.muted
+                volume.parentElement.classList.add('muted')
+                volumeIcon.setAttribute('data-icon', '\uF038')
             else
-                iconSymbol = '\uF039'
-            volumeIcon.setAttribute('data-icon', iconSymbol)
-    , false)
+                volume.parentElement.classList.remove('muted')
+                if video.volume > 0.66
+                    iconSymbol = '\uF03B'
+                else if 0.33 < video.volume <= 0.66
+                    iconSymbol = '\uF03A'
+                else
+                    iconSymbol = '\uF039'
+                volumeIcon.setAttribute('data-icon', iconSymbol)
+        , false)
+
+        adjustingVolume = false
+        beginAdjustVolume = (e) ->
+            e.preventDefault()
+            adjustingVolume = true
+            adjustVolumeProgress(e)
+        adjustVolumeProgress = (e) ->
+            e.preventDefault()
+            return if not adjustingVolume
+            height = volume.querySelector('.background').clientHeight
+            if e.offsetY?
+                amount = (height - e.offsetY) / height
+            else
+                amount = (height - e.layerY) / height
+            video.volume = amount
+            volume.querySelector('.amount').style.height = amount * 100 + '%'
+            try
+                window.localStorage.volume = amount
+            catch ex
+                # This doesn't work in iframes, and catching it prevents everything from breaking
+        endAdjustVolume = (e) ->
+            e.preventDefault()
+            adjustingVolume = false
+
+        try
+            video.volume = window.localStorage.volume
+            volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+        catch ex
+            # This doesn't work in iframes, and catching it prevents everything from breaking
+
+        volumeClick = volume.querySelector('.clickable')
+        volumeClick.addEventListener('mousedown', beginAdjustVolume, false)
+        volumeClick.addEventListener('mouseup', endAdjustVolume, false)
+        volumeClick.addEventListener('mousemove', adjustVolumeProgress, false)
+        volumeClick.addEventListener('mouseleave', endAdjustVolume, false)
 
     idleUI = ->
         controls.classList.add('idle')
@@ -107,41 +143,6 @@ VideoPlayer = (container) ->
     seekClick.addEventListener('mouseup', endSeek, false)
     seekClick.addEventListener('mousemove', seekProgress, false)
     seekClick.addEventListener('mouseleave', endSeek, false)
-
-    adjustingVolume = false
-    beginAdjustVolume = (e) ->
-        e.preventDefault()
-        adjustingVolume = true
-        adjustVolumeProgress(e)
-    adjustVolumeProgress = (e) ->
-        e.preventDefault()
-        return if not adjustingVolume
-        height = volume.querySelector('.background').clientHeight
-        if e.offsetY?
-            amount = (height - e.offsetY) / height
-        else
-            amount = (height - e.layerY) / height
-        video.volume = amount
-        volume.querySelector('.amount').style.height = amount * 100 + '%'
-        try
-            window.localStorage.volume = amount
-        catch ex
-            # This doesn't work in iframes, and catching it prevents everything from breaking
-    endAdjustVolume = (e) ->
-        e.preventDefault()
-        adjustingVolume = false
-
-    try
-        video.volume = window.localStorage.volume
-        volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
-    catch ex
-        # This doesn't work in iframes, and catching it prevents everything from breaking
-
-    volumeClick = volume.querySelector('.clickable')
-    volumeClick.addEventListener('mousedown', beginAdjustVolume, false)
-    volumeClick.addEventListener('mouseup', endAdjustVolume, false)
-    volumeClick.addEventListener('mousemove', adjustVolumeProgress, false)
-    volumeClick.addEventListener('mouseleave', endAdjustVolume, false)
 
     debounce = true
     document.addEventListener(prefix + 'fullscreenchange', (e) ->
@@ -186,13 +187,11 @@ VideoPlayer = (container) ->
             video.pause()
     , false)
 
-    startButton.addEventListener('click', (e) ->
-        e.preventDefault()
-        video.play()
-        playPause.classList.remove('play')
-        playPause.classList.add('pause')
-        startButton.parentElement.removeChild(startButton)
-    , false)
+    if startButton?
+        startButton.addEventListener('click', (e) ->
+            e.preventDefault()
+            video.play()
+        , false)
 
     toggleLoop.addEventListener('click', (e) ->
         e.preventDefault()
