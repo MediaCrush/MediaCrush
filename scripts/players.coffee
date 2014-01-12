@@ -102,17 +102,23 @@ VideoPlayer = (container) ->
         volumeClick.addEventListener('mousemove', adjustVolumeProgress, false)
         volumeClick.addEventListener('mouseleave', endAdjustVolume, false)
 
+    idleDebounce = false
     idleUI = ->
+        idleDebounce = true
         controls.classList.add('idle')
         video.classList.add('idle')
     timeout = null
     idleEvent = (e) ->
+        if idleDebounce
+            idleDebounce = false
+            return false
         clearTimeout(timeout)
         controls.classList.remove('idle')
         video.classList.remove('idle')
+        return true
     video.addEventListener('mousemove', (e) ->
-        idleEvent(e)
-        timeout = setTimeout(idleUI, 3000)
+        if idleEvent(e)
+            timeout = setTimeout(idleUI, 3000)
     , false)
     controls.addEventListener('mousemove', idleEvent, false)
 
