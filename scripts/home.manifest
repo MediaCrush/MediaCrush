@@ -2,5 +2,6 @@ shims.coffee
 global.coffee
 history.coffee
 api.coffee
+microphone.coffee
 home-files.coffee
 home.coffee
