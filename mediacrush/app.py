@@ -10,7 +10,7 @@ import subprocess
 from .views import HookView, APIView, MediaView, DocsView
 from .config import _cfg, _cfgi
 from .files import extension, get_mimetype
-from .views.media import render_media, type_files
+from .views.media import render_media
 from .share import share
 
 app = Flask(__name__)
@@ -68,7 +68,6 @@ def inject():
         'notice_enabled': notice_enabled,
         'share': share,
         'render_media': render_media,
-        'type_files': type_files,
         'len': len,
         'get_mimetype': get_mimetype
     }
