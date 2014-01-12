@@ -32,6 +32,31 @@ VideoPlayer = (container) ->
             updateVideo()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
+    seeking = false
+    beginSeek = (e) ->
+        e.preventDefault()
+        seeking = true
+        video.pause()
+        seekProgress(e)
+    seekProgress = (e) ->
+        e.preventDefault()
+        return if not seeking
+        if e.offsetX?
+            amount = e.offsetX / seek.clientWidth
+        else
+            amount = e.layerX / seek.clientWidth
+        video.currentTime = video.duration * amount
+    endSeek = (e) ->
+        e.preventDefault()
+        video.play()
+        seeking = false
+
+    seekClick = seek.querySelector('.clickable')
+    seekClick.addEventListener('mousedown', beginSeek, false)
+    seekClick.addEventListener('mouseup', endSeek, false)
+    seekClick.addEventListener('mousemove', seekProgress, false)
+    seekClick.addEventListener('mouseleave', endSeek, false)
+
     debounce = true
     document.addEventListener(prefix + 'fullscreenchange', (e) ->
         if debounce
