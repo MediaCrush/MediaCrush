@@ -161,6 +161,7 @@ VideoPlayer = (container) ->
             container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
             container.msRequestFullscreen() if container.msRequestFullscreen?
             container.classList.add('fullscreen')
+            timeout = setTimeout(idleUI, 3000)
         else
             leaveFullscreen()
     , false)
