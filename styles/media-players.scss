@@ -1,6 +1,10 @@
 .player.video {
     position: relative;
 
+    a {
+        outline-style: none;
+    }
+
     video {
     }
 
@@ -75,7 +79,14 @@
             line-height: 21px;
             cursor: pointer;
 
-            &.fullscreen { // Gets special styles
+            &.play::before {
+                content: '\F16B'
+            }
+            &.pause::before {
+                content: '\F16C'
+            }
+
+            &.fullscreen {
                 font-size: 18px;
                 position: relative;
                 top: -1px;
