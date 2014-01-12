@@ -36,13 +36,19 @@
             <span class="toggleable settings">
                 <span class="icon" data-icon="&#xF04E;"></span>
                 <div>
-                    <div>
+                    <div class="playback-speed">
+                        <div class="header">Playback Speed</div>
+                        <div class="speeds">
+                            <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="2">200%</a>
+                        </div>
+                    </div>
+                    <div class="highlight">
                         <a href="#" class="loop">
                             <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
                         </a>
                     </div>
-                    {#<div><a href="#" class="subtitles">Subtitles<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
-                    <div><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
+                    {#<div class="highlight"><a href="#" class="subtitles">Subtitles ON<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
+                    <div class="highlight"><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
                 </div>
             </span>
         </div>

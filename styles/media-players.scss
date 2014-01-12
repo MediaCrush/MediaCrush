@@ -54,6 +54,18 @@
                 &.played {
                     background: #fff;
                     width: 40%;
+                    position: relative;
+
+                    &::after {
+                        position: absolute;
+                        right: -3px;
+                        top: -6px;
+                        display: block;
+                        width: 3px;
+                        height: 15px;
+                        background: #fff;
+                        content: '';
+                    }
                 }
 
                 &.background {
@@ -125,10 +137,10 @@
 
                 & > span {
                     position: absolute;
-                    left: 7px;
+                    left: 10px;
                     bottom: 7px;
                     top: 3px;
-                    width: 10px;
+                    width: 5px;
 
                     & > span {
                         position: absolute;
@@ -142,14 +154,25 @@
                         }
 
                         &.amount {
-                            background: #fff;
+                            background: rgb(0, 136, 204);
                             height: 80%;
+
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: -3px;
+                                width: 11px;
+                                height: 2px;
+                                background: #fff;
+                                display: block;
+                            }
                         }
 
                         &.clickable {
                             top: 0;
-                            left: 0;
-                            right: 0;
+                            left: -5px;
+                            width: 20px;
                             bottom: 0;
                             cursor: pointer;
                         }
@@ -161,7 +184,7 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.2s linear;
-                background: rgba(0, 0, 0, 0.8);
+                background: rgba(0, 0, 0, 0.6);
                 position: absolute;
                 right: 2px;
                 bottom: 26px;
@@ -169,9 +192,34 @@
                 text-align: right;
 
                 div {
-                    padding: 2px 0;
+                    color: #fff;
+                    &.playback-speed {
+                        text-align: left;
+                        .header {
+                            padding-left: 2px;
+                            margin-bottom: 2px;
+                        }
+
+                        .speeds {
+                            a {
+                                display: inline-block;
+                                width: 30%;
+                                padding: 2px;
+                                text-align: center;
+
+                                &.selected, &.selected:hover {
+                                    background: #fff;
+                                    color: #000;
+                                }
+
+                                &:hover {
+                                    background: rgba(0, 0, 0, 1);
+                                }
+                            }
+                        }
+                    }
                     
-                    &:hover {
+                    &.highlight:hover {
                         background: rgba(0, 0, 0, 1);
                     }
 
@@ -180,7 +228,7 @@
                             position: relative;
                             font-size: 16px;
                             top: 1px;
-                            padding: 0 3px;
+                            padding: 3px;
                         }
                     }
                 }
