@@ -175,6 +175,10 @@
                 right: auto;
                 left: -97px;
             }
+
+            &.volume.muted > div {
+                display: none;
+            }
             
             &.volume > div {
                 position: absolute;

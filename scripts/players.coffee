@@ -41,6 +41,27 @@ VideoPlayer = (container) ->
             updateVideo()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
+    volumeIcon = volume.parentElement.querySelector('.icon')
+    volumeIcon.addEventListener('click', (e) ->
+        e.preventDefault()
+        video.muted = !video.muted
+    , false)
+    video.addEventListener('volumechange', (e) ->
+        # Adjust volume accordingly
+        if video.muted
+            volume.parentElement.classList.add('muted')
+            volumeIcon.setAttribute('data-icon', '\uF038')
+        else
+            volume.parentElement.classList.remove('muted')
+            if video.volume > 0.66
+                iconSymbol = '\uF03B'
+            else if 0.33 < video.volume <= 0.66
+                iconSymbol = '\uF03A'
+            else
+                iconSymbol = '\uF039'
+            volumeIcon.setAttribute('data-icon', iconSymbol)
+    , false)
+    
     seeking = false
     wasPaused = true
     beginSeek = (e) ->
@@ -87,7 +108,7 @@ VideoPlayer = (container) ->
         try
             window.localStorage.volume = amount
         catch ex
-            # This doesn't work in iframes, and this prevents everything from breaking
+            # This doesn't work in iframes, and catching it prevents everything from breaking
     endAdjustVolume = (e) ->
         e.preventDefault()
         adjustingVolume = false
@@ -96,7 +117,7 @@ VideoPlayer = (container) ->
         video.volume = window.localStorage.volume
         volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
     catch ex
-        # This doesn't work in iframes, and this prevents everything from breaking
+        # This doesn't work in iframes, and catching it prevents everything from breaking
 
     volumeClick = volume.querySelector('.clickable')
     volumeClick.addEventListener('mousedown', beginAdjustVolume, false)
