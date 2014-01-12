@@ -70,12 +70,13 @@ VideoPlayer = (container) ->
         controls.classList.add('idle')
         video.classList.add('idle')
     timeout = null
-    video.addEventListener('mousemove', (e) ->
+    idleEvent = (e) ->
         clearTimeout(timeout)
         controls.classList.remove('idle')
         video.classList.remove('idle')
         timeout = setTimeout(idleUI, 3000)
-    , false)
+    video.addEventListener('mousemove', idleEvent, false)
+    controls.addEventListener('mousemove', idleEvent, false)
 
     seeking = false
     wasPaused = true
