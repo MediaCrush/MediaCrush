@@ -3,8 +3,10 @@ document.cancelFullScreen = document.cancelFullScreen ||
                    document.webkitCancelFullScreen ||
                    document.msExitFullscreen # Thanks for that last one, Microsoft, well done
 
-VideoPlayer = (container) ->
-    video = container.querySelector('video')
+MediaPlayer = (container) ->
+    media = container.querySelector('video, audio')
+    isVideo = media.tagName == 'VIDEO'
+    isAudio = media.tagName == 'AUDIO'
     controls = container.querySelector('.controls')
     playPause = container.querySelector('.play-pause')
     startButton = container.querySelector('.start')
@@ -16,19 +18,19 @@ VideoPlayer = (container) ->
     volume = container.querySelector('.volume > div')
     ready = false
 
-    updateVideo = ->
+    updateMedia = ->
         if not ready
             ready = true
             for s in seek.querySelectorAll('.hidden')
                 s.classList.remove('hidden')
             seek.querySelector('.progress').classList.add('hidden')
-        if video.buffered.length == 0
+        if media.buffered.length == 0
             loaded = 100
         else
-            loaded = video.buffered.end(video.buffered.length - 1) / video.duration * 100
+            loaded = media.buffered.end(media.buffered.length - 1) / media.duration * 100
         seek.querySelector('.loaded').style.width = loaded + '%'
-        seek.querySelector('.played').style.width = video.currentTime / video.duration * 100 + '%'
-        if video.paused
+        seek.querySelector('.played').style.width = media.currentTime / media.duration * 100 + '%'
+        if media.paused
             controls.classList.add('fixed')
             playPause.classList.remove('pause')
             playPause.classList.add('play')
@@ -38,29 +40,29 @@ VideoPlayer = (container) ->
             playPause.classList.add('pause')
             if startButton?
                 startButton.parentElement.removeChild(startButton) if startButton.parentElement?
-    updateVideo()
+    updateMedia()
 
-    video.addEventListener(event, (e) ->
-        if video.readyState > 0
-            updateVideo()
+    media.addEventListener(event, (e) ->
+        if media.readyState > 0
+            updateMedia()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
     if volume != null
         volumeIcon = volume.parentElement.querySelector('.icon')
         volumeIcon.addEventListener('click', (e) ->
             e.preventDefault()
-            video.muted = !video.muted
+            media.muted = !media.muted
         , false)
-        video.addEventListener('volumechange', (e) ->
+        media.addEventListener('volumechange', (e) ->
             # Adjust volume accordingly
-            if video.muted
+            if media.muted
                 volume.parentElement.classList.add('muted')
                 volumeIcon.setAttribute('data-icon', '\uF038')
             else
                 volume.parentElement.classList.remove('muted')
-                if video.volume > 0.66
+                if media.volume > 0.66
                     iconSymbol = '\uF03B'
-                else if 0.33 < video.volume <= 0.66
+                else if 0.33 < media.volume <= 0.66
                     iconSymbol = '\uF03A'
                 else
                     iconSymbol = '\uF039'
@@ -80,7 +82,7 @@ VideoPlayer = (container) ->
                 amount = (height - e.offsetY) / height
             else
                 amount = (height - e.layerY) / height
-            video.volume = amount
+            media.volume = amount
             volume.querySelector('.amount').style.height = amount * 100 + '%'
             try
                 window.localStorage.volume = amount
@@ -91,7 +93,7 @@ VideoPlayer = (container) ->
             adjustingVolume = false
 
         try
-            video.volume = window.localStorage.volume
+            media.volume = window.localStorage.volume
             volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
         catch ex
             # This doesn't work in iframes, and catching it prevents everything from breaking
@@ -106,7 +108,7 @@ VideoPlayer = (container) ->
     idleUI = ->
         idleDebounce = true
         controls.classList.add('idle')
-        video.classList.add('idle')
+        media.classList.add('idle')
     timeout = null
     idleEvent = (e) ->
         if idleDebounce
@@ -114,9 +116,9 @@ VideoPlayer = (container) ->
             return false
         clearTimeout(timeout)
         controls.classList.remove('idle')
-        video.classList.remove('idle')
+        media.classList.remove('idle')
         return true
-    video.addEventListener('mousemove', (e) ->
+    media.addEventListener('mousemove', (e) ->
         if idleEvent(e)
             timeout = setTimeout(idleUI, 3000)
     , false)
@@ -127,8 +129,8 @@ VideoPlayer = (container) ->
     beginSeek = (e) ->
         e.preventDefault()
         seeking = true
-        wasPaused = video.paused
-        video.pause()
+        wasPaused = media.paused
+        media.pause()
         seekProgress(e)
     seekProgress = (e) ->
         e.preventDefault()
@@ -137,11 +139,11 @@ VideoPlayer = (container) ->
             amount = e.offsetX / seek.clientWidth
         else
             amount = e.layerX / seek.clientWidth
-        video.currentTime = video.duration * amount
+        media.currentTime = media.duration * amount
     endSeek = (e) ->
         e.preventDefault()
         return if not seeking
-        video.play() if not wasPaused
+        media.play() if not wasPaused
         seeking = false
 
     seekClick = seek.querySelector('.clickable')
@@ -187,31 +189,31 @@ VideoPlayer = (container) ->
 
     playPause.addEventListener('click', (e) ->
         e.preventDefault()
-        if video.paused
-            video.play()
+        if media.paused
+            media.play()
         else
-            video.pause()
+            media.pause()
     , false)
 
     if startButton?
         startButton.addEventListener('click', (e) ->
             e.preventDefault()
-            video.play()
+            media.play()
         , false)
 
     toggleLoop.addEventListener('click', (e) ->
         e.preventDefault()
-        if video.loop
-            video.loop = false
+        if media.loop
+            media.loop = false
             toggleLoop.querySelector('.icon').classList.add('disabled')
             toggleLoop.querySelector('.text').textContent = 'Loop OFF'
         else
-            video.loop = true
+            media.loop = true
             toggleLoop.querySelector('.icon').classList.remove('disabled')
             toggleLoop.querySelector('.text').textContent = 'Loop ON'
-            if video.ended
-                video.currentTime = 0
-                video.play()
+            if media.ended
+                media.currentTime = 0
+                media.play()
     , false)
 
     for rate in rates
@@ -220,6 +222,6 @@ VideoPlayer = (container) ->
             speed = parseFloat(e.target.getAttribute('data-speed'))
             container.querySelector('.speeds a.selected').classList.remove('selected')
             e.target.classList.add('selected')
-            video.playbackRate = speed
+            media.playbackRate = speed
         , false)
-window.VideoPlayer = VideoPlayer
+window.MediaPlayer = MediaPlayer
