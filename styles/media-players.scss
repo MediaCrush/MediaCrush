@@ -1,5 +1,7 @@
-.player.video {
+.player.video, .player.audio {
     position: relative;
+    min-width: 500px;
+    min-height: 100px;
 
     &.fullscreen {
         position: fixed;

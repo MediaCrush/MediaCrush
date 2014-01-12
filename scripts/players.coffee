@@ -31,11 +31,11 @@ MediaPlayer = (container) ->
         seek.querySelector('.loaded').style.width = loaded + '%'
         seek.querySelector('.played').style.width = media.currentTime / media.duration * 100 + '%'
         if media.paused
-            controls.classList.add('fixed')
+            controls.classList.add('fixed') if isVideo
             playPause.classList.remove('pause')
             playPause.classList.add('play')
         else
-            controls.classList.remove('fixed')
+            controls.classList.remove('fixed') if isVideo
             playPause.classList.remove('play')
             playPause.classList.add('pause')
             if startButton?
@@ -104,25 +104,26 @@ MediaPlayer = (container) ->
         volumeClick.addEventListener('mousemove', adjustVolumeProgress, false)
         volumeClick.addEventListener('mouseleave', endAdjustVolume, false)
 
-    idleDebounce = false
-    idleUI = ->
-        idleDebounce = true
-        controls.classList.add('idle')
-        media.classList.add('idle')
-    timeout = null
-    idleEvent = (e) ->
-        if idleDebounce
-            idleDebounce = false
-            return false
-        clearTimeout(timeout)
-        controls.classList.remove('idle')
-        media.classList.remove('idle')
-        return true
-    media.addEventListener('mousemove', (e) ->
-        if idleEvent(e)
-            timeout = setTimeout(idleUI, 3000)
-    , false)
-    controls.addEventListener('mousemove', idleEvent, false)
+    if isVideo
+        idleDebounce = false
+        idleUI = ->
+            idleDebounce = true
+            controls.classList.add('idle')
+            media.classList.add('idle')
+        timeout = null
+        idleEvent = (e) ->
+            if idleDebounce
+                idleDebounce = false
+                return false
+            clearTimeout(timeout)
+            controls.classList.remove('idle')
+            media.classList.remove('idle')
+            return true
+        media.addEventListener('mousemove', (e) ->
+            if idleEvent(e)
+                timeout = setTimeout(idleUI, 3000)
+        , false)
+        controls.addEventListener('mousemove', idleEvent, false)
 
     seeking = false
     wasPaused = true
@@ -152,40 +153,41 @@ MediaPlayer = (container) ->
     seekClick.addEventListener('mousemove', seekProgress, false)
     seekClick.addEventListener('mouseleave', endSeek, false)
 
-    debounce = true
-    document.addEventListener(prefix + 'fullscreenchange', (e) ->
-        if debounce
-            debounce = false
-            return
+    if fullscreen != null
         debounce = true
-        leaveFullscreen() if isFullscreen
-    , false) for prefix in ['', 'moz', 'webkit', 'ms']
-    fullscreen.addEventListener('click', (e) ->
-        e.preventDefault()
-        if not isFullscreen
-            isFullscreen = true
-            fullscreen.classList.add('disabled')
-            container.requestFullScreen() if container.requestFullScreen?
-            container.mozRequestFullScreen() if container.mozRequestFullScreen?
-            container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
-            container.msRequestFullscreen() if container.msRequestFullscreen?
-            container.classList.add('fullscreen')
-            timeout = setTimeout(idleUI, 3000)
-        else
-            leaveFullscreen()
-    , false)
+        document.addEventListener(prefix + 'fullscreenchange', (e) ->
+            if debounce
+                debounce = false
+                return
+            debounce = true
+            leaveFullscreen() if isFullscreen
+        , false) for prefix in ['', 'moz', 'webkit', 'ms']
+        fullscreen.addEventListener('click', (e) ->
+            e.preventDefault()
+            if not isFullscreen
+                isFullscreen = true
+                fullscreen.classList.add('disabled')
+                container.requestFullScreen() if container.requestFullScreen?
+                container.mozRequestFullScreen() if container.mozRequestFullScreen?
+                container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
+                container.msRequestFullscreen() if container.msRequestFullscreen?
+                container.classList.add('fullscreen')
+                timeout = setTimeout(idleUI, 3000)
+            else
+                leaveFullscreen()
+        , false)
 
-    leaveFullscreen = ->
-        isFullscreen = false
-        container.classList.remove('fullscreen')
-        fullscreen.classList.remove('disabled')
-        document.cancelFullScreen()
-        # Chrome hack to fix positioning when leaving full screen
-        media = document.querySelector('.media')
-        media.style.right = 0
-        window.setTimeout(->
-            media.style.right = '-50%'
-        , 100)
+        leaveFullscreen = ->
+            isFullscreen = false
+            container.classList.remove('fullscreen')
+            fullscreen.classList.remove('disabled')
+            document.cancelFullScreen()
+            # Chrome hack to fix positioning when leaving full screen
+            media = document.querySelector('.media')
+            media.style.right = 0
+            window.setTimeout(->
+                media.style.right = '-50%'
+            , 100)
 
     playPause.addEventListener('click', (e) ->
         e.preventDefault()

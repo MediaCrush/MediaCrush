@@ -65,15 +65,16 @@ window.addEventListener('load', ->
             if canDelete
                 document.getElementById('delete').parentElement.classList.remove('hidden')
                 flags = document.getElementById('flags')
-                flags.classList.remove('hidden')
-                checkboxes = flags.querySelectorAll('input')
-                for box in checkboxes
-                    ((box) ->
-                        box.addEventListener('change', (e) ->
-                            flag = box.getAttribute('data-flag')
-                            window.flags[flag] = !window.flags[flag]
-                            API.setFlags(window.filename, window.flags)
-                            updateFlag(flag, window.flags[flag])
-                        )
-                    )(box)
+                if flags
+                    flags.classList.remove('hidden')
+                    checkboxes = flags.querySelectorAll('input')
+                    for box in checkboxes
+                        ((box) ->
+                            box.addEventListener('change', (e) ->
+                                flag = box.getAttribute('data-flag')
+                                window.flags[flag] = !window.flags[flag]
+                                API.setFlags(window.filename, window.flags)
+                                updateFlag(flag, window.flags[flag])
+                            )
+                        )(box)
 , false)
