@@ -11,6 +11,11 @@
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
+    {% if not flags['autoplay'] %}
+    <a class="start" href="#">
+        <span class="icon" data-icon="&#xF16B;"></span>
+    </a>
+    {% endif %}
     <div class="controls {% if flags['mute'] %}muted{% endif %}">
         <a href="#" class="icon play-pause {% if flags['autoplay'] %}pause{% else %}play{% endif %}"></a>
         <div class="seek">
@@ -23,7 +28,7 @@
         <div class="right">
             {% if not flags['mute'] %}
             <span class="toggleable volume">
-                <span class="icon" data-icon="&#xF03B;"></span>
+                <a href="#" class="icon mute" data-icon="&#xF03B;"></a>
                 <div>
                     <span>
                         <span class="background"></span>

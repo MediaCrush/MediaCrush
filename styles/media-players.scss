@@ -22,6 +22,30 @@
         outline-style: none;
     }
 
+    .start {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        display: block;
+
+        span {
+            font-size: 128px;
+            font-weight: normal;
+            display: block;
+            width: 128px;
+            height: 128px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -64px;
+            margin-top: -64px;
+            color: #fff;
+            text-shadow: 2px 2px 5px #000;
+        }
+    }
+
     .controls {
         position: absolute;
         left: 0;

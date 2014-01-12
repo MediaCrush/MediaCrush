@@ -6,6 +6,7 @@ document.cancelFullScreen = document.cancelFullScreen ||
 VideoPlayer = (container) ->
     video = container.querySelector('video')
     playPause = container.querySelector('.play-pause')
+    startButton = container.querySelector('.start')
     fullscreen = container.querySelector('.fullscreen')
     isFullscreen = false
     toggleLoop = container.querySelector('.loop')
@@ -33,9 +34,12 @@ VideoPlayer = (container) ->
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
     seeking = false
+    wasPaused = true
     beginSeek = (e) ->
+        console.log('begin seek')
         e.preventDefault()
         seeking = true
+        wasPaused = video.paused
         video.pause()
         seekProgress(e)
     seekProgress = (e) ->
@@ -48,7 +52,8 @@ VideoPlayer = (container) ->
         video.currentTime = video.duration * amount
     endSeek = (e) ->
         e.preventDefault()
-        video.play()
+        return if not seeking
+        video.play() if not wasPaused
         seeking = false
 
     seekClick = seek.querySelector('.clickable')
@@ -97,10 +102,20 @@ VideoPlayer = (container) ->
             video.play()
             playPause.classList.remove('play')
             playPause.classList.add('pause')
+            if startButton.parentElement?
+                startButton.parentElement.removeChild(startButton)
         else
             video.pause()
             playPause.classList.remove('pause')
             playPause.classList.add('play')
+    , false)
+
+    startButton.addEventListener('click', (e) ->
+        e.preventDefault()
+        video.play()
+        playPause.classList.remove('play')
+        playPause.classList.add('pause')
+        startButton.parentElement.removeChild(startButton)
     , false)
 
     toggleLoop.addEventListener('click', (e) ->
