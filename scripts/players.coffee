@@ -77,13 +77,21 @@ MediaPlayer = (container) ->
         adjustVolumeProgress = (e) ->
             e.preventDefault()
             return if not adjustingVolume
-            height = volume.querySelector('.background').clientHeight
-            if e.offsetY?
-                amount = (height - e.offsetY) / height
+            if isVideo
+                height = volume.querySelector('.background').clientHeight
+                if e.offsetY?
+                    amount = (height - e.offsetY) / height
+                else
+                    amount = (height - e.layerY) / height
+                volume.querySelector('.amount').style.height = amount * 100 + '%'
             else
-                amount = (height - e.layerY) / height
+                width = volume.querySelector('.background').clientWidth
+                if e.offsetX?
+                    amount = e.offsetX / width
+                else
+                    amount = e.layerX / width
+                volume.querySelector('.amount').style.width = amount * 100 + '%'
             media.volume = amount
-            volume.querySelector('.amount').style.height = amount * 100 + '%'
             try
                 window.localStorage.volume = amount
             catch ex
@@ -94,7 +102,10 @@ MediaPlayer = (container) ->
 
         try
             media.volume = window.localStorage.volume
-            volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+            if isVideo
+                volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+            else
+                volume.querySelector('.amount').style.width = window.localStorage.volume * 100 + '%'
         catch ex
             # This doesn't work in iframes, and catching it prevents everything from breaking
 

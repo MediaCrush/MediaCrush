@@ -1,4 +1,4 @@
-.player.video, .player.audio {
+.player {
     position: relative;
 
     &.fullscreen {
@@ -189,7 +189,7 @@
             &.volume.muted > div {
                 display: none;
             }
-            
+
             &.volume > div {
                 position: absolute;
                 width: 25px;
@@ -199,7 +199,7 @@
                     position: absolute;
                     left: 10px;
                     bottom: 7px;
-                    top: 3px;
+                    top: 7px;
                     width: 5px;
 
                     & > span {
@@ -217,7 +217,7 @@
                             background: rgb(0, 136, 204);
                             height: 100%;
 
-                            &:after {
+                            &::after {
                                 content: '';
                                 position: absolute;
                                 top: 0;
@@ -278,7 +278,7 @@
                             }
                         }
                     }
-                    
+
                     &.highlight:hover {
                         background: rgba(50, 50, 50, 0.5);
                     }
@@ -312,5 +312,53 @@
 
 .player.audio {
     min-width: 500px;
-    min-height: 100px;
+    min-height: 25px;
+
+    // We make this stuff open to the LEFT, so that it works a bit better
+    .toggleable {
+        &.volume > div {
+            position: absolute;
+            width: 100px;
+            height: 26px;
+            right: 0;
+            bottom: 0;
+
+            & > span {
+                left: 7px;
+                right: 7px;
+                height: 5px;
+                top: 10px;
+                width: auto;
+
+                & > span {
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+
+                    &.background {
+                        width: 100%;
+                    }
+
+                    &.amount {
+                        width: 100%;
+
+                        &::after {
+                            right: 0;
+                            top: -3px;
+                            left: auto;
+                            width: 2px;
+                            height: 11px;
+                        }
+                    }
+
+                    &.clickable {
+                        width: 100%;
+                        left: 0;
+                        top: -10px;
+                        bottom: -10px;
+                    }
+                }
+            }
+        }
+    }
 }
