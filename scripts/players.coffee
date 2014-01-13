@@ -30,6 +30,8 @@ MediaPlayer = (container) ->
             loaded = media.buffered.end(media.buffered.length - 1) / media.duration * 100
         seek.querySelector('.loaded').style.width = loaded + '%'
         seek.querySelector('.played').style.width = media.currentTime / media.duration * 100 + '%'
+        if media.ended and startButton?
+            startButton.classList.remove('hidden')
         if media.paused
             controls.classList.add('fixed') if isVideo
             playPause.classList.remove('pause')
@@ -39,11 +41,11 @@ MediaPlayer = (container) ->
             playPause.classList.remove('play')
             playPause.classList.add('pause')
             if startButton?
-                startButton.parentElement.removeChild(startButton) if startButton.parentElement?
+                startButton.classList.add('hidden')
     updateMedia()
 
     media.addEventListener(event, (e) ->
-        if media.readyState >= 3 # HAVE_FUTURE_DATA (we can play now)
+        if media.readyState >= 3 or ready # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
