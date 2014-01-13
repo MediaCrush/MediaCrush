@@ -194,10 +194,10 @@ MediaPlayer = (container) ->
             fullscreen.classList.remove('disabled')
             document.cancelFullScreen()
             # Chrome hack to fix positioning when leaving full screen
-            media = document.querySelector('.media')
-            media.style.right = 0
+            _ = document.querySelector('.media')
+            _.style.right = 0
             window.setTimeout(->
-                media.style.right = '-50%'
+                _.style.right = '-50%'
             , 100)
 
     playPause.addEventListener('click', (e) ->
