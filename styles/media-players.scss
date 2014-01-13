@@ -360,5 +360,52 @@
                 }
             }
         }
+
+        &.settings > div {
+            right: 2px;
+            bottom: 0;
+            left: auto;
+            height: 26px;
+            width: 414px;
+            text-align: right;
+
+            div {
+                display: inline-block;
+                height: 100%;
+                &.playback-speed {
+                    .speeds {
+                        a {
+                            width: 35px;
+
+                            &.selected, &.selected:hover {
+                                background: #fff;
+                                color: #000;
+                                position: relative;
+                                height: 22px;
+                                top: -1px;
+                            }
+
+                            &:hover {
+                                background: rgba(0, 0, 0, 1);
+                            }
+                        }
+                    }
+                }
+
+                &.highlight {
+                    a {
+                        padding: 0 2px;
+
+                        .icon {
+                            padding: 0 3px;
+                        }
+                    }
+
+                    &:hover {
+                        background: rgba(0, 0, 0, 1);
+                    }
+                }
+            }
+        }
     }
 }
