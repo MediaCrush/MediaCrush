@@ -49,6 +49,28 @@
         }
     }
 
+    #record {
+        position: absolute;
+        right: 5px;
+        top: 9px;
+        font-size: 10pt;
+        padding: 3px;
+        z-index: 1000;
+
+        .info {
+            position: relative;
+            top: -2px;
+        }
+
+        .icon {
+            color: #000;
+
+            &:hover {
+                color: #333;
+            }
+        }
+    }
+
     #notice {
         text-align: center;
         position: absolute;

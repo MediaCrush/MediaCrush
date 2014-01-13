@@ -15,6 +15,9 @@ sh.setFormatter(formatter)
 
 logger.addHandler(sh)
 
+# scss logger
+logging.getLogger("scss").addHandler(sh)
+
 config = ConfigParser()
 config.readfp(open('config.ini'))
 env = config.get('meta', 'environment')
