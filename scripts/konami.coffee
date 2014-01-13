@@ -16,7 +16,6 @@ window.addEventListener('keydown', (e) ->
         item.classList.remove('hidden') for item in document.querySelectorAll('.konami')
         document.body.classList.add('konami')
         document.querySelector('.brand img').src = '/static/konami-brand.svg'
-        #document.querySelector('#history').classList.add('hidden')
         document.querySelector('#blurb').classList.add('hidden')
         document.querySelector('#types').classList.add('hidden')
 , false)
