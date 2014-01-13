@@ -30,6 +30,8 @@ MediaPlayer = (container) ->
             loaded = media.buffered.end(media.buffered.length - 1) / media.duration * 100
         seek.querySelector('.loaded').style.width = loaded + '%'
         seek.querySelector('.played').style.width = media.currentTime / media.duration * 100 + '%'
+        if media.ended and startButton?
+            startButton.classList.remove('hidden')
         if media.paused
             controls.classList.add('fixed') if isVideo
             playPause.classList.remove('pause')
@@ -39,11 +41,11 @@ MediaPlayer = (container) ->
             playPause.classList.remove('play')
             playPause.classList.add('pause')
             if startButton?
-                startButton.parentElement.removeChild(startButton) if startButton.parentElement?
+                startButton.classList.add('hidden')
     updateMedia()
 
     media.addEventListener(event, (e) ->
-        if media.readyState >= 3 # HAVE_FUTURE_DATA (we can play now)
+        if media.readyState >= 3 or ready # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
 
@@ -77,13 +79,21 @@ MediaPlayer = (container) ->
         adjustVolumeProgress = (e) ->
             e.preventDefault()
             return if not adjustingVolume
-            height = volume.querySelector('.background').clientHeight
-            if e.offsetY?
-                amount = (height - e.offsetY) / height
+            if isVideo
+                height = volume.querySelector('.background').clientHeight
+                if e.offsetY?
+                    amount = (height - e.offsetY) / height
+                else
+                    amount = (height - e.layerY) / height
+                volume.querySelector('.amount').style.height = amount * 100 + '%'
             else
-                amount = (height - e.layerY) / height
+                width = volume.querySelector('.background').clientWidth
+                if e.offsetX?
+                    amount = e.offsetX / width
+                else
+                    amount = e.layerX / width
+                volume.querySelector('.amount').style.width = amount * 100 + '%'
             media.volume = amount
-            volume.querySelector('.amount').style.height = amount * 100 + '%'
             try
                 window.localStorage.volume = amount
             catch ex
@@ -94,7 +104,10 @@ MediaPlayer = (container) ->
 
         try
             media.volume = window.localStorage.volume
-            volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+            if isVideo
+                volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+            else
+                volume.querySelector('.amount').style.width = window.localStorage.volume * 100 + '%'
         catch ex
             # This doesn't work in iframes, and catching it prevents everything from breaking
 
@@ -183,10 +196,10 @@ MediaPlayer = (container) ->
             fullscreen.classList.remove('disabled')
             document.cancelFullScreen()
             # Chrome hack to fix positioning when leaving full screen
-            media = document.querySelector('.media')
-            media.style.right = 0
+            _ = document.querySelector('.media')
+            _.style.right = 0
             window.setTimeout(->
-                media.style.right = '-50%'
+                _.style.right = '-50%'
             , 100)
 
     playPause.addEventListener('click', (e) ->
@@ -226,4 +239,9 @@ MediaPlayer = (container) ->
             e.target.classList.add('selected')
             media.playbackRate = speed
         , false)
+    
+    window.resizeMedia = (width, height) ->
+        return if not isVideo
+        media.width = width
+        media.height = height - 5
 window.MediaPlayer = MediaPlayer
