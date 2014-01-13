@@ -239,4 +239,9 @@ MediaPlayer = (container) ->
             e.target.classList.add('selected')
             media.playbackRate = speed
         , false)
+    
+    window.resizeMedia = (width, height) ->
+        return if not isVideo
+        media.width = width
+        media.height = height - 5
 window.MediaPlayer = MediaPlayer
