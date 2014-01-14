@@ -2,6 +2,7 @@ shims.coffee
 global.coffee
 history.coffee
 api.coffee
+konami.coffee
 microphone.coffee
 home-files.coffee
 home.coffee
