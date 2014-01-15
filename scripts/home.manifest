@@ -1,5 +1,7 @@
 shims.coffee
 global.coffee
+sjcl.js
+accounts.coffee
 history.coffee
 api.coffee
 konami.coffee
