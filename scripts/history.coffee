@@ -2,20 +2,17 @@ UserHistory = (->
     self = this
 
     userHistory = []
-    historyEnabled = true
     
-    self.getHistory = -> userHistory
-    self.getHistoryEnabled = -> historyEnabled
-
-    historyEnabled = readCookie('hist-opt-out') == null
-    userHistory = JSON.parse(window.localStorage.getItem('history'))
-    userHistory = [] if not userHistory
+    self.getHistory = -> CryptoStorage.get('history')
+    self.getHistoryEnabled = -> CryptoStorage.get('trackHistory')
 
     self.save = ->
-        window.localStorage.setItem('history', JSON.stringify(userHistory))
+        CryptoStorage.set('history', userHistory[..])
+        CryptoStorage.commit()
+        return
 
     self.add = (hash) ->
-        return unless historyEnabled
+        return unless getHistoryEnabled()
         for item in userHistory
             return item if item == hash
         userHistory.push(hash)
@@ -33,12 +30,9 @@ UserHistory = (->
         self.save()
 
     self.toggleHistoryEnabled = ->
-        if historyEnabled
-            createCookie('hist-opt-out', '1', 3650)
-        else
-            createCookie('hist-opt-out', '', 0)
-        historyEnabled = !historyEnabled
-        return historyEnabled
+        result = CryptoStorage.set('trackHistory', !getHistoryEnabled())
+        CryptoStorage.commit()
+        return result
 
     self.loadDetailedHistory = (items, callback) ->
         callback([]) if items.length == 0
