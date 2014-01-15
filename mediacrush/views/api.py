@@ -242,7 +242,7 @@ class APIView(FlaskView):
             else:
                 o = klass.from_hash(i)
                 res[i] = {'status': o.status}
-                if o.processor is not None:
+                if klass is not FailedFile:
                     res[i]['file'] = _file_object(o)
 
         return res
