@@ -1,4 +1,4 @@
-from mediacrush.config import _cfg, domain_url
+from mediacrush.config import _cfg, domain_url, cdn_url
 from mediacrush.objects import File
 
 def _still_image(h):
@@ -26,7 +26,7 @@ class Share(object):
     link_other = link_still
 
     def directlink_still(self, h):
-        return domain_url(h)
+        return cdn_url(h)
 
     def directlink_other(self, h):
         return self.link_other(h) + "/direct"
