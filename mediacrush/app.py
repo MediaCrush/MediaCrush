@@ -69,7 +69,8 @@ def inject():
         'share': share,
         'render_media': render_media,
         'len': len,
-        'get_mimetype': get_mimetype
+        'get_mimetype': get_mimetype,
+        'cdn': _cfg("cdn")
     }
 
 @app.route("/")
