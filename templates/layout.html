@@ -17,6 +17,7 @@
             {% else %}
             window.mobile = false;
             {% endif %}
+            window.cdn = "{{ cdn }}";
         </script>
         {% block scripts %}
         {% endblock %}

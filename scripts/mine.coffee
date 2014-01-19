@@ -94,14 +94,14 @@ createView = (item, noLink = false) ->
             for file in item.files
                 continue if file.type == 'image/gif'
                 source = document.createElement('source')
-                source.src = file.file
+                source.src = window.cdn + file.file
                 source.type = file.type
                 preview.appendChild(source)
             preview.volume = 0
             preview.play()
         else if item.type.indexOf('image/') == 0
             preview = document.createElement('img')
-            preview.src = item.files[0].file
+            preview.src = window.cdn + item.files[0].file
         else if item.type.indexOf('audio/') == 0
             preview = document.createElement('img')
             preview.src = '/static/audio-player.png'

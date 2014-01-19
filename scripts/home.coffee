@@ -87,7 +87,7 @@ createHistoryItem = (h, noLink = false) ->
         for file in item.files
             if file.type.indexOf('video/') == 0
                 source = document.createElement('source')
-                source.src = file.file
+                source.src = window.cdn + file.file
                 source.type = file.type
                 preview.appendChild(source)
         preview.volume = 0
@@ -101,7 +101,7 @@ createHistoryItem = (h, noLink = false) ->
         for file in item.files
             if not file.type.indexOf('image/') == 0
                 continue
-            preview.src = file.file
+            preview.src = window.cdn + file.file
             break
         preview.className = 'item-view'
     else if item.blob_type == 'audio'
