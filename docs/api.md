@@ -85,14 +85,17 @@ In case of error, the response will contain an 'error' parameter and additional 
       "files": [
         {
           "file": "/CPvuR5lRhmS0.mp4",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.mp4",
           "type": "video/mp4"
         },
         {
           "file": "/CPvuR5lRhmS0.ogv",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.ogv",
           "type": "video/ogg"
         },
         {
           "file": "/CPvuR5lRhmS0.gif",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.gif",
           "type": "image/gif"
         }
       ],
@@ -141,14 +144,17 @@ If the file is not found, you will get a dictionary like:
         "files": [
           {
             "file": "/CPvuR5lRhmS0.mp4",
+            "url": "https://mediacru.sh/CPvuR5lRhmS0.mp4",
             "type": "video/mp4"
           },
           {
             "file": "/CPvuR5lRhmS0.ogv",
+            "url": "https://mediacru.sh/CPvuR5lRhmS0.ogv",
             "type": "video/ogg"
           },
           {
             "file": "/CPvuR5lRhmS0.gif",
+            "url": "https://mediacru.sh/CPvuR5lRhmS0.gif",
             "type": "image/gif"
           }
         ],
@@ -169,14 +175,17 @@ If the file is not found, you will get a dictionary like:
         "files": [
           {
             "file": "/tVWMM_ziA3nm.mp4",
+            "url": "https://mediacru.sh/tVWMM_ziA3nm.mp4",
             "type": "video/mp4"
           },
           {
             "file": "/tVWMM_ziA3nm.ogv",
+            "url": "https://mediacru.sh/tVWMM_ziA3nm.ogv",
             "type": "video/ogg"
           },
           {
             "file": "/tVWMM_ziA3nm.gif",
+            "url": "https://mediacru.sh/tVWMM_ziA3nm.gif",
             "type": "image/gif"
           }
         ],
@@ -211,6 +220,7 @@ If the file is not found, you will get a dictionary like:
         "files": [
           {
             "file": "/4Gt0YcGMPA7S.jpg",
+            "url": "https://mediacru.sh/4Gt0YcGMPA7S.jpg",
             "type": "image/jpeg"
           }
         ],
@@ -269,14 +279,17 @@ If the file is not found, you will get a dictionary like:
         "files": [
           {
             "file": "/LxqXxVPAvqqB.mp4",
+            "url": "https://mediacru.sh/LxqXxVPAvqqB.mp4",
             "type": "video/mp4"
           },
           {
             "file": "/LxqXxVPAvqqB.ogv",
+            "url": "https://mediacru.sh/LxqXxVPAvqqB.ogv",
             "type": "video/ogg"
           },
           {
             "file": "/LxqXxVPAvqqB.gif",
+            "url": "https://mediacru.sh/LxqXxVPAvqqB.gif",
             "type": "image/gif"
           }
         ],
@@ -518,6 +531,7 @@ In case of error, the response will contain an 'error' parameter and additional 
         "files": [
           {
             "file": "/LxqXxVPAvqqB.png",
+            "url": "https://mediacru.sh/LxqXxVPAvqqB.png",
             "type": "image/png"
           }
         ],
@@ -615,14 +629,17 @@ In case of error, the response will contain an 'error' parameter and additional 
       "files": [
         {
           "file": "/CPvuR5lRhmS0.mp4",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.mp4",
           "type": "video/mp4"
         },
         {
           "file": "/CPvuR5lRhmS0.ogv",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.ogv",
           "type": "video/ogg"
         },
         {
           "file": "/CPvuR5lRhmS0.gif",
+          "url": "https://mediacru.sh/CPvuR5lRhmS0.gif",
           "type": "image/gif"
         }
       ],
@@ -641,7 +658,8 @@ In case of error, the response will contain an 'error' parameter and additional 
 When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
 files, two video files are generated - one with h.264/mpeg and another with theora/vorbis. Some media
 will also have "extra" files. In the case of uploaded videos, we'll include an `image/png` thumbnail
-file in the extras.
+file in the extras. Your application should prefer the `url` of a file over the `file`, because it
+will be loaded via our CDN (which will be much faster).
 
 Description of fields:
 
