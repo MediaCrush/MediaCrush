@@ -45,6 +45,7 @@ def _file_entry(f, mimetype=None):
     return {
         'type': mimetype if mimetype else get_mimetype(f),
         'file': media_url(f),
+        'url': _cfg("cdn") + media_url(f)
     }
 
 def _album_object(a):
