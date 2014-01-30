@@ -46,6 +46,10 @@ window.addEventListener('DOMContentLoaded', ->
         )
     , false)
 
+    if window.location.hash == '#fromExtension'
+        window.history.pushState("", document.title, window.location.pathname)
+        UserHistory.add(window.filename)
+
     if window.mediaSizeReporter
         size = mediaSizeReporter()
         size.height += 5
