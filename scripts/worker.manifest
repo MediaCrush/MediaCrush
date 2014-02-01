@@ -1,3 +1,4 @@
 bare: api.coffee
+btoa.js
 md5.js
 worker.coffee
