@@ -103,11 +103,12 @@ MediaPlayer = (container) ->
             adjustingVolume = false
 
         try
-            media.volume = window.localStorage.volume
-            if isVideo
-                volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
-            else
-                volume.querySelector('.amount').style.width = window.localStorage.volume * 100 + '%'
+            if window.localStorage.volume?
+                media.volume = window.localStorage.volume
+                if isVideo
+                    volume.querySelector('.amount').style.height = window.localStorage.volume * 100 + '%'
+                else
+                    volume.querySelector('.amount').style.width = window.localStorage.volume * 100 + '%'
         catch ex
             # This doesn't work in iframes, and catching it prevents everything from breaking
 
