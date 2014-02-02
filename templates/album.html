@@ -7,6 +7,9 @@
     {% endif %}
 {% endblock %}
 {% block scripts %}
+    <script type="text/javascript">
+        window.can_delete = '{{ can_delete }}';
+    </script>
     <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
 {% endblock %}
 {% block meta %}
@@ -30,15 +33,15 @@
 {% endfor %}
 {% endblock %}
 {% block content %}
-<h2 class="center">Album - {{ len(items) }} files</h2>
+<h2 class="center album">Album - {{ len(items) }} files</h2>
+{% if not mobile %}
 <div class="center small clearfix">
     <ul class="inline">
         <li><a href="#" id="embed-link">Embed</a></li>
-        {# <li><a href="/{{ filename }}/download">Download</a></li> TODO zip up the album for them #}
         <li><a href="#" id="report">Report</a></li>
-        <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>
 </div>
+{% endif %}
 <div class="hidden" id="embed">
     <div class="center">
         <p>Copy this HTML and paste it into your website:</p>
