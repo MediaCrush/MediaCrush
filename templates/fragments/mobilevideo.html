@@ -63,14 +63,14 @@ window.addEventListener('load', function() {
         <div>Loads more reliably</div>
     </a>
 </div>
-<video class="hidden" id="video-option-{{ filename }}" controls {% if loop %}loop {% endif %}>
+<video class="hidden" id="video-option-{{ filename }}" controls {% if flags['loop'] %}loop{% endif %}>
   <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
   <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
   <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
-<video controls {% if loop %}loop {% endif %} poster="{{ cdn }}/{{filename}}.png">
+<video controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.png">
   <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
   <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
   <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
