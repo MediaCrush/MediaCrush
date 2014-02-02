@@ -70,11 +70,9 @@ window.addEventListener('load', function() {
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
-<video controls {% if loop %}loop {% endif %}>
+<video controls {% if loop %}loop {% endif %} poster="/{{filename}}.png">
   <source src="/{{ filename }}.webm" type='video/webm;'>
   <source src="/{{ filename }}.mp4" type='video/mp4;'>
   <source src="/{{ filename }}.ogv" type='video/ogg'>
 </video>
-<div>Having playback trouble? Try <a href="{{ filename }}.mp4">downloading</a> the file and playing it directly, or
-visiting our <a href="/troubleshooting">troubleshooting</a> page.</div>
 {% endif %}
