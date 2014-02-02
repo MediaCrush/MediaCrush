@@ -1,6 +1,6 @@
 {% if album %}
 <div class="item-wrapper">
-    <a href="{{ share('directlink', filename) }}" target="_blank" id="img-a-{{ filename }}">
+    <a href="/{{ filename }}" target="_blank" id="img-a-{{ filename }}">
         {% if processor.startswith('image/') %}
         {# This means that we have custom support for this type, with the full mimetype and all #}
         <img id="img-{{filename}}" src="{{ cdn }}/{{ original }}" alt="MediaCrush" />
