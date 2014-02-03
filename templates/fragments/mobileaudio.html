@@ -2,3 +2,10 @@
   <source src="{{ cdn }}/{{ filename }}.mp3" type='audio/mp3'>
   <source src="{{ cdn }}/{{ filename }}.ogg" type='audio/ogg'>
 </audio>
+{% if album %}
+<div style="text-align: center">
+  <a href="/download/{{ filename }}.mp3">Download MP3</a>
+  &mdash;
+  <a href="/download/{{ filename }}.ogg">Download OGG</a>
+</div>
+{% endif %}
