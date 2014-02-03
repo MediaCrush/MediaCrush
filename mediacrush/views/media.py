@@ -18,6 +18,8 @@ def fragment(processor):
 
     if np == 'video' and g.mobile:
         return 'mobilevideo'
+    else if np == 'audio' and g.mobile:
+        return 'mobileaudio'
     else:
         return np
 
