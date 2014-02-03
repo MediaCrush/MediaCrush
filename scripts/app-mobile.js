@@ -179,7 +179,7 @@ function checkStatus(hash, statusUI, progressUI) {
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
         responseJSON = JSON.parse(this.responseText);
-        if (responseJSON['status'] == 'ready') {
+        if (responseJSON['status'] == 'ready' || responseJSON['status'] == 'done') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
         } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
