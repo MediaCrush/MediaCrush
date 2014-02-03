@@ -105,12 +105,16 @@ function handleFile(file) {
                 if (this.status == 200) {
                     var p = document.createElement('h3');
                     p.textContent = 'Upload complete!';
+                    var p2 = document.createElement('p');
+                    p2.className = 'small';
+                    p.textContent = 'Tap here to view';
                     var a = document.createElement('a');
                     a.setAttribute('target', '_blank');
                     a.href = '/' + hash;
                     a.className = 'full-size';
                     preview.fileStatus.appendChild(a);
                     preview.fileStatus.appendChild(p);
+                    preview.fileStatus.appendChild(p2);
                     uploads--;
                     addItemToHistory(hash);
                 } else {
@@ -175,7 +179,7 @@ function checkStatus(hash, statusUI, progressUI) {
     xhr.open('GET', '/api/' + hash + '/status');
     xhr.onload = function() {
         responseJSON = JSON.parse(this.responseText);
-        if (responseJSON['status'] == 'done') {
+        if (responseJSON['status'] == 'ready') {
             progressUI.parentElement.removeChild(progressUI);
             finish(statusUI, hash);
         } else if (responseJSON['status'] == 'timeout' || responseJSON['status'] == 'error') {
