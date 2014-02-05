@@ -2,10 +2,9 @@
 
 [meta]
 # Internal use for determining if this is the live site or not.
-# Not really used right now, just leave it be.
 environment = dev
 
-[dev]
+[config]
 # Protocol and domain are used for constructing URLs in scripts like mediacrush.js.
 # Don't worry about changing these values in unless you need to distribute a custom
 # mediacrush.js.
