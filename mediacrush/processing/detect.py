@@ -128,6 +128,12 @@ def detect_stream(stream):
                 'extra': None,
                 'flags': None
             }
+        if stream["codec_name"] == 'webp':
+            return {
+                'type': 'image',
+                'extra': None,
+                'flags': None
+            }
         if stream["codec_name"] == 'bmp':
             return None
         if stream["codec_name"] == 'gif':
