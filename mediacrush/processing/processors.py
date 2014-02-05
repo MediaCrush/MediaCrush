@@ -67,7 +67,7 @@ class JPEGProcessor(Processor):
 
     def sync(self):
         self._execute(copy)
-        self._execute("jhead -purejpg {1}.{extension}")
+        self._execute("jpegtran -optimize -perfect -copy none -outfile {1}.jpg {1}.jpg")
 
 class SVGProcessor(Processor):
     time = 5
