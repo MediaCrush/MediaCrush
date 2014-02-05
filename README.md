@@ -60,7 +60,7 @@ Optional dependencies:
 **Create a virtual environment**
 
 Note: you'll need to use Python 2. If Python 3 is your default python interpreter (`python --version`), add
-`"--python=python2"` to the `virtualenv` command.
+`--python=python2` to the `virtualenv` command.
 
     virtualenv . --no-site-packages
 
