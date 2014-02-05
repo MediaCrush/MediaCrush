@@ -40,10 +40,16 @@ Here it is again, in more detail.
 **Install the requirements**
 
 Our servers and our dev machines both run Arch Linux, which makes getting updated packages a little easier. We need to
-install a few things: `sudo pacman -S redis jhead tidyhtml optipng imagemagick python2 python-virtualenv nodejs`. You also
+install a few things: `sudo pacman -S redis optipng imagemagick python2 python-virtualenv nodejs`. You also
 need to install `ffmpeg-full` from the AUR. If you aren't on Arch Linux, you should be able to use your distribution
 packages, with the exception of ffmpeg, which you *must* compile yourself. Make sure you enable libtheora, libvorbis,
 libx264, and libvpx when you configure it.
+
+Optional dependencies:
+
+* *jhead* for JPG support
+* *tidyhtml* for SVG support
+* *xcftools* for XCF support
 
 **Clone the repository**
 

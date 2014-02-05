@@ -1,7 +1,7 @@
 {% if album %}
 <div class="item-wrapper">
     <a href="/{{ filename }}" target="_blank" id="img-a-{{ filename }}">
-        {% if processor.startswith('image/') %}
+        {% if processor in [ 'image/png', 'image/jpeg', 'image/svg+xml' ] %}
         {# This means that we have custom support for this type, with the full mimetype and all #}
         <img id="img-{{filename}}" src="{{ cdn }}/{{ original }}" alt="MediaCrush" />
         {% else %}
@@ -15,8 +15,7 @@
 </div>
 {% else %}
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
-    {% if processor.startswith('image/') %}
-    {# This means that we have custom support for this type, with the full mimetype and all #}
+    {% if processor in [ 'image/png', 'image/jpeg', 'image/svg+xml' ] %}
     <img id="img-{{filename}}" src="{{ cdn }}/{{ original }}" alt="MediaCrush" />
     {% else %}
     <img id="img-{{filename}}" src="{{ cdn }}/{{ filename }}.png" alt="MediaCrush" />

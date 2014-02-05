@@ -189,12 +189,20 @@ def detect_imagemagick(path):
             'extra': None,
             'flags': None
         }
-    # Check for SVG, it's special
+    print('checking for extra formats')
+    # Check for other formats
     for line in result:
+        print(line)
         line = line.lstrip(' ')
-        if line ==  'Format: SVG (Scalable Vector Graphics)':
+        if line == 'Format: SVG (Scalable Vector Graphics)':
             return {
                 'type': 'image/svg+xml',
+                'extra': None,
+                'flags': None
+            }
+        if line == 'Format: XCF (GIMP image)':
+            return {
+                'type': 'image/x-gimp-xcf',
                 'extra': None,
                 'flags': None
             }

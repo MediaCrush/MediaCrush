@@ -79,6 +79,17 @@ class SVGProcessor(Processor):
     def async(self):
         self._execute("tidy -asxml -xml --hide-comments 1 --wrap 0 --quiet --write-back 1 {0}")
 
+class XCFProcessor(Processor):
+    time = 5
+    outputs = ['png']
+
+    def sync(self):
+        self._execute(copy)
+        self._execute('xcf2png {0} -o {1}.png')
+    
+    def async(self):
+        self._execute('optipng -o5 {1}.png')
+
 class DefaultProcessor(Processor):
     def sync(self):
         raise UnrecognisedFormatException # It shouldn't get to this point, but if it does, invalidate the file
@@ -90,6 +101,7 @@ processor_table = {
     'image/png': PNGProcessor,
     'image/jpeg': JPEGProcessor,
     'image/svg+xml': SVGProcessor,
+    'image/x-gimp-xcf': XCFProcessor,
     'default': DefaultProcessor,
 }
 
