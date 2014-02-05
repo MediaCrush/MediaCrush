@@ -106,3 +106,11 @@ run it with gunicorn, and probably behind an nginx proxy
 To run the unit tests, simply execute `python tests.py`.
 
 Note: do **not** execute the test script on a live instance - it clears the storage and database.
+
+## Updating your Instance
+
+If you're just running an instance for development and you run into trouble, just clear things out and start over. This won't
+work so well if you're running a persistent instance, however. We don't currently have the greatest update procedure and we
+make breaking changes every now and then. I suggest you read through the git log since your last update when you perform one
+and look for any commits with [noupdate] in the extended commit message. The extended commit message on these commits will
+describe the manual intervention required to upgrade to that commit. If you run into trouble, visit us on IRC.
