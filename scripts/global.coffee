@@ -50,7 +50,7 @@ switchTheme = ->
 window.switchTheme = switchTheme
 
 confirmCallback = null
-window.addEventListener('load', ->
+window.addEventListener('DOMContentLoaded', ->
     feedback = document.getElementById('feedback').querySelector('div')
     feedbackToggle = document.getElementById('toggle-feedback')
     feedbackToggle.addEventListener('click', (e) ->
