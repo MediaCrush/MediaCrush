@@ -189,10 +189,8 @@ def detect_imagemagick(path):
             'extra': None,
             'flags': None
         }
-    print('checking for extra formats')
     # Check for other formats
     for line in result:
-        print(line)
         line = line.lstrip(' ')
         if line == 'Format: SVG (Scalable Vector Graphics)':
             return {
