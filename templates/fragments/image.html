@@ -21,7 +21,6 @@
     <img id="img-{{filename}}" src="{{ cdn }}/{{ filename }}.png" alt="MediaCrush" />
     {% endif %}
 </a>
-{% endif %}
 <script type="text/javascript">
 function mediaSizeReporter() {
     var img = document.getElementById('img-{{filename}}');
@@ -41,3 +40,4 @@ window.addEventListener('load', function() {
     dupe.src = image.src;
 }, false);
 </script>
+{% endif %}
