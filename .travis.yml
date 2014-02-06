@@ -1,0 +1,22 @@
+language: python
+python:
+    - "2.7"
+services:
+    - redis
+before_install: ./.travis.sh
+install:
+    - pip install -r requirements.txt
+    - mkdir storage
+    - cp config.ini.sample config.ini
+    - celery worker -A mediacrush -l info -c 1 -P solo -Ofair &
+script:
+    - python tests.py
+notifications:
+    email:
+        - admin@mediacru.sh
+    irc:
+        channels:
+            - "chat.freenode.net#mediacrush"
+        on_success: change
+        on_failure: always
+        skip_join: true
