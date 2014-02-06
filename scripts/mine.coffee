@@ -88,7 +88,7 @@ createView = (item, noLink = false) ->
         return container
     else
         preview = null
-        if item.type == 'image/gif' or item.type.indexOf('video/') == 0
+        if item.blob_type == 'video'
             preview = document.createElement('video')
             preview.loop = true
             for file in item.files
@@ -99,10 +99,10 @@ createView = (item, noLink = false) ->
                 preview.appendChild(source)
             preview.volume = 0
             preview.play()
-        else if item.type.indexOf('image/') == 0
+        else if item.blob_type == 'image'
             preview = document.createElement('img')
             preview.src = window.cdn + item.files[0].file
-        else if item.type.indexOf('audio/') == 0
+        else if item.blob_type == 'audio'
             preview = document.createElement('img')
             preview.src = '/static/audio-player.png'
             preview.style.marginTop = '23px'
