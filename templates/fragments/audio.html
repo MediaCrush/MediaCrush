@@ -1,9 +1,11 @@
-{% if 'title' in metadata and 'artist' in metadata %}
-<h2 class="audio-title">{{ metadata['artist'] }} - {{ metadata['title'] }}</h2>
-{% elif 'title' in metadata and 'composer' in metadata %}
-<h2 class="audio-title">{{ metadata['composer'] }} - {{ metadata['title'] }}</h2>
-{% elif 'title' in metadata %}
-<h2 class="audio-title">{{ metadata['title'] }}</h2>
+{% if metadata %}
+    {% if 'title' in metadata and 'artist' in metadata %}
+    <h2 class="audio-title">{{ metadata['artist'] }} - {{ metadata['title'] }}</h2>
+    {% elif 'title' in metadata and 'composer' in metadata %}
+    <h2 class="audio-title">{{ metadata['composer'] }} - {{ metadata['title'] }}</h2>
+    {% elif 'title' in metadata %}
+    <h2 class="audio-title">{{ metadata['title'] }}</h2>
+    {% endif %}
 {% endif %}
 <div class="player audio" id="player-{{ filename }}">
     <audio id="audio-{{ filename }}" preload>
