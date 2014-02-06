@@ -15,9 +15,10 @@ script:
     - python tests.py
 notifications:
     email:
-        - b3@blha303.com.au
+        - admin@mediacru.sh
     irc:
         channels:
-            - "chat.freenode.net##b3mediacrush"
+            - "chat.freenode.net#mediacrush"
         on_success: change
         on_failure: always
+        skip_join: true
