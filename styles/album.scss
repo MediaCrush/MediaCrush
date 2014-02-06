@@ -1,11 +1,31 @@
 @import 'view.scss'
 
+.album-header {
+    margin-bottom: 10px;
+
+    .layout-selector {
+        float: right;
+
+        a {
+            color: #888;
+
+            &:hover {
+                color: #666;
+            }
+
+            &.selected {
+                color: #000;
+
+                &:hover {
+                    color: #000;
+                }
+            }
+        }
+    }
+}
+
 h2 {
     margin: 0;
-
-    & + div {
-        margin-bottom: 10px;
-    }
 }
 
 .bar .left {

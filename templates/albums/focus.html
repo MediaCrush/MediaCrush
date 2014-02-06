@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}" />
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript">
+        window.album = true;
+        window.filename = '{{ filename }}';
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
+{% endblock %}
+{% block meta %}
+{% for item in [ items[0] ] %}
+{% set type = item.processor %}
+    <meta property="og:type" content="{{ mimetype }}" />
+    <meta property="og:site_name" content="MediaCrush" />
+    {% if type.startswith("video") %}
+        <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.png" />
+        <meta property="twitter:card" content="player" />
+        <meta property="twitter:title" content="MediaCrush" />
+        <meta property="twitter:description" content="A video shared with MediaCrush." />
+        <meta property="twitter:image" content="https://mediacru.sh/{{ item.hash }}.png">
+    {% elif type.startswith("audio") %}
+        <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
+    {% else %}
+        <meta property="og:image" content="https://mediacru.sh/{{ item.original }}" />
+        <meta name="twitter:card" content="photo">
+        <meta name="twitter:image" content="https://mediacru.sh/{{ item.original }}">
+    {% endif %}
+{% endfor %}
+{% endblock %}
+{% block content %}
+<div class="album-header">
+    <h2 class="center album">Album - {{ len(items) }} files</h2>
+    <div class="center small clearfix">
+        <ul class="inline">
+            <li><a href="#" id="embed-link">Embed</a></li>
+            <li><a href="#" id="report">Report</a></li>
+        </ul>
+    </div>
+    <div class="hidden" id="embed">
+        <div class="center">
+            <p>Copy this HTML and paste it into your website:</p>
+            <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
+            <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.
+            Albums are best embedded with <a href="/docs/mediacrush.js">mediacrush.js</a>.</p>
+        </div>
+    </div>
+    <div class="layout-selector center">
+        Layout:
+        <a href="/{{ filename }}" title="List" class="icon" data-icon="&#xF0A9;"></a>
+        <a href="/{{ filename }}/grid" title="Grid" class="icon" data-icon="&#xF027;"></a>
+        <a href="/{{ filename }}/focus" title="Focus" class="icon selected" data-icon="&#xF126;"></a>
+    </div>
+</div>
+
+<div class="clearfix album">
+    {% for hash in items %}
+    <div class="media-wrapper">
+        <div class="media">
+            {{ render_media(hash, album=True) | safe }}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    {% endfor %}
+</div>
+{% endblock %}

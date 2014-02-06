@@ -73,6 +73,7 @@ def _album_params(album):
         abort(404)
 
     types = set([f.processor for f in items])
+    filename = album.hash
 
     can_delete = None
     try:
@@ -104,7 +105,9 @@ class MediaView(FlaskView):
     def download(self, file):
         return self._send_file(file)
 
-    def get(self, id):
+    @route("/<id>", defaults = { 'layout': 'list' })
+    @route("/<id>/<layout>")
+    def get(self, id, layout):
         send = self._send_file(id)
         if send:
             return send
@@ -113,7 +116,7 @@ class MediaView(FlaskView):
         if klass is Album:
             album = klass.from_hash(id)
             v = _album_params(album)
-            return render_template("album.html", **v)
+            return render_template("albums/%s.html" % layout, **v)
 
         if klass is not File:
             abort(404)
