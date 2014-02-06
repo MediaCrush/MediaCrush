@@ -1,5 +1,7 @@
 # MediaCrush
 
+[![Build Status](https://travis-ci.org/MediaCrush/MediaCrush.png?branch=master)](https://travis-ci.org/MediaCrush/MediaCrush)
+
 A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and
 [jdiez](https://github.com/jdiez17), and several
 [other contributors](https://github.com/MediaCrush/MediaCrush/graphs/contributors).
