@@ -57,7 +57,7 @@ In case of error, the response will contain an 'error' parameter and additional 
     </tr>
     <tr>
         <td>413</td>
-        <td>Albums with more than 50 items are unsupported.</td>
+        <td>An attempt was made to create an album that was too large.</td>
         <td>false</td>
     </tr>
     <tr>
