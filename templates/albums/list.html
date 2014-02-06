@@ -9,7 +9,7 @@
 {% endblock %}
 {% block album %}
 <div class="clearfix album">
-    {% for hash in items %}
+    {% for hash in items[:3] %}
     <div class="media-wrapper">
         <div class="media">
             {{ render_media(hash, album=True) | safe }}

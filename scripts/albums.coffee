@@ -20,4 +20,9 @@ window.addEventListener('DOMContentLoaded', () ->
         xhr.send()
         report.parentElement.innerHTML = "Reported"
     , false)
+    switch window.albumType
+        when 'list' then initializeList()
 , false)
+
+initializeList = () ->
+    console.log "hello world"
