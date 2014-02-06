@@ -50,7 +50,8 @@ def detect_ffprobe(path):
     result = json.loads(a.stdout[0])
     if result["format"]["nb_streams"] == 1:
         detected = detect_stream(result["streams"][0])
-        detected['metadata'] = ffprobe_addExtraMetadata(detected['metadata'], result)
+        if detected != None:
+            detected['metadata'] = ffprobe_addExtraMetadata(detected['metadata'], result)
         return detected
     audio_streams = 0
     video_streams = 0
