@@ -10,19 +10,19 @@ class VideoProcessor(Processor):
     def sync(self):
         self._execute(copy)
         map_string = ''
-        if self.extra['has_video']:
+        if self.processor_state['has_video']:
             self._execute("ffmpeg -y -i {0} -vframes 1 -map 0:v:0 {1}.png")
             map_string += ' -map 0:v:0'
-        if self.extra['has_audio']:
+        if self.processor_state['has_audio']:
             map_string += ' -map 0:a:0'
         self._execute("ffmpeg -y -i {0} -vcodec libx264 -movflags faststart -acodec libfdk_aac -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2" + map_string  + " {1}.mp4")
         self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5" + map_string + " {1}.webm")
 
     def async(self):
         map_string = ''
-        if self.extra['has_video']:
+        if self.processor_state['has_video']:
             map_string += ' -map 0:v:0'
-        if self.extra['has_audio']:
+        if self.processor_state['has_audio']:
             map_string += ' -map 0:a:0'
         self._execute("ffmpeg -y -i {0} -q:v 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora" + map_string + " {1}.ogv")
 
