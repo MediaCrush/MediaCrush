@@ -12,6 +12,8 @@ from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.config import _cfg
 
+import json
+
 def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
@@ -23,6 +25,7 @@ def _file_object(f):
         'hash': f.hash,
         'files': [],
         'extras': [],
+        'metadata': json.loads(f.metadata) if f.metadata != 'None' else None,
         'flags': f.flags.as_dict(),
     }
     if f.compression:
