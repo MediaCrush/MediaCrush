@@ -6,6 +6,7 @@
     <script type="text/javascript">
         window.album = true;
         window.filename = '{{ filename }}';
+        window.items = {{ files | tojson | safe }};
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
 {% endblock %}

@@ -12,6 +12,7 @@ from mediacrush.config import _cfg
 from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
 from mediacrush.processing import get_processor
+from mediacrush.views.api import objects
 
 def fragment(processor):
     np = normalise_processor(processor)
@@ -71,6 +72,7 @@ def _album_params(album):
     items = album.items
     if not items:
         abort(404)
+    files = objects[Album](album)['files']
 
     types = set([f.processor for f in items])
     filename = album.hash
