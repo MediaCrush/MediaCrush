@@ -3,9 +3,7 @@ python:
     - "2.7"
 services:
     - redis
-before_install:
-    - chmod +x .travis.sh
-    - ./.travis.sh
+before_install: ./.travis.sh
 install:
     - pip install -r requirements.txt
     - mkdir storage
