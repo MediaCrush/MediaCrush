@@ -18,8 +18,8 @@ def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
 
-    metadata = None
-    if f.metadata:
+    metadata = {}
+    if not f.metadata and f.metadata != 'None':
         metadata = json.loads(f.metadata)
     ret = {
         'original': media_url(f.original),

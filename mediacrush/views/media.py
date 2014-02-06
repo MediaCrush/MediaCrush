@@ -52,7 +52,7 @@ def _template_params(f):
         except:
             pass
     metadata = {}
-    if f.metadata:
+    if not f.metadata and f.metadata != 'None':
         metadata = json.loads(f.metadata)
 
     return {
