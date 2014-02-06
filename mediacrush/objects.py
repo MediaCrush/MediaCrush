@@ -96,7 +96,7 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata']
 
     original = None
     mimetype = None
@@ -105,6 +105,7 @@ class File(RedisObject):
     ip = None
     taskid = None
     _processor = None
+    metadata = None
     flags = None
 
     def add_report(self):
@@ -166,6 +167,7 @@ class File(RedisObject):
         # When the processor is changed, so is the interpretation of the flags.
         options = flags_per_processor.get(normalise_processor(v), [])
         self.flags = BitVector(options, iv=self._configvector)
+
 
 class Feedback(RedisObject):
     text = None

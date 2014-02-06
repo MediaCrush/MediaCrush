@@ -3,37 +3,35 @@ from mediacrush.config import _cfg, _cfgi
 import sys
 import json
 
-# This does file type detection by inspection rather than extensions
-# It will return 'video' or 'audio' for anything ffmpeg supports
-# It will return the full mimetype for PNG, JPG, BMP, and SVG files, which we have
-# special procedures to optimize
-# It will return 'image' for all other images that imagemagick supports
-# It will return None for things we can't handle
-# Will also try to detect plaintext files (including various kinds of source code)
-# These will return 'text/x-python', for example, if we can detect the source code type
-# If we can't and we know that it's plaintext, we'll use 'text/plain'
+# Given a file, this will examine it to learn all of its secrets. It will identify the
+# file type, and for certain files, will gather more details about it. It works by
+# examining file contents - it does not depend on the extension or mimetype to be
+# accurate. It will return something like this:
+#
+#   {
+#       'type': '...', # video, audio, image, or a mimetype
+#       'metadata': { ... }, # metadata like image dimensions or container info
+#       'processor_state': { ... }, # info to be passed along to processors
+#       'flags': { ... } # Default flags for this media type (like autoplay or loop)
+#   }
+#
+# The type is only a full-blown mimetype for a limited number of file formats:
+#   - image/png
+#   - image/jpeg
+#   - image/svg+xml
+#   - image/x-gimp-xcf
+#   - text/plain
+#   - text/x-*** (example: text/x-python - not guaranteed to be very accurate)
+#
+# Note that MediaCrush itself doesn't actually do anything with plaintext files yet.
+#
+# Video/audio is only returned if ffmpeg can handle it. 'image' is only returned if
+# ImageMagick can handle it.
 
-# The first goal is to detect files via inspection so that we aren't dependent on
-# extensions, and so that we can catch naughty files before we even try to process them
-# The second goal is to hopefully have support for far more media types. This should
-# allow us to broaden our supported media types to support basically everything.
-# We need to convert uploaded media to browser-friendly formats. We can do videos and
-# audio with ffmpeg, and we can do images with imagemagick.
-
-# Returns:
-# {
-#   'type': 'video' | 'audio' | 'image' | full mimetype,
-#   'extra': { }, # type-specific extra data for the processor
-#   'flags': { 'autoplay': True, 'loop': True, 'mute': False } # type-specific
-# }
 def detect(path):
     result = detect_ffprobe(path)
     if result != None:
         return result
-    # ffprobe can't identify images without examining the extensions, and doesn't
-    # support SVG at all
-    # Note that ffprobe *can* confirm the integrity of images if it knows the extension
-    # first, so we allow it to resolve images if the provided extension makes sense.
     result = detect_imagemagick(path)
     if result != None:
         return result
@@ -44,8 +42,6 @@ def detect(path):
 
 # This does *not* work with any containers that only have images in them, by design.
 def detect_ffprobe(path):
-    # IMPORTANT: jdiez, this doesn't work when the path has spaces in it
-    # I tried wrapping {0} in quotes to no avail
     a = Invocation('ffprobe -print_format json -loglevel quiet -show_format -show_streams {0}')
     a(path)
     a.run()
@@ -53,9 +49,10 @@ def detect_ffprobe(path):
         return None
     result = json.loads(a.stdout[0])
     if result["format"]["nb_streams"] == 1:
-        return detect_stream(result["streams"][0])
-    # Try to guess what it is from the streams inside
-    # I've done a little more detection than we really need to, for things like subtitles
+        detected = detect_stream(result["streams"][0])
+        if detected != None:
+            detected['metadata'] = ffprobe_addExtraMetadata(detected['metadata'], result)
+        return detected
     audio_streams = 0
     video_streams = 0
     image_streams = 0
@@ -64,8 +61,16 @@ def detect_ffprobe(path):
     # We shouldn't penalize people for unknown streams, I just figured we could make a note of it
     unknown_streams = 0
 
+    metadata = dict()
+
     for stream in result["streams"]:
         s = detect_stream(stream)
+        # Set up some metadata
+        if s['metadata'] != None:
+            if 'duration' in s['metadata']:
+                metadata['duration'] = s['metadata']['duration']
+            if 'dimensions' in s['metadata']:
+                metadata['dimensions'] = s['metadata']['dimensions']
         t = s['type']
         if not s or not t:
             unknown_streams += 1
@@ -82,16 +87,23 @@ def detect_ffprobe(path):
                 font_streams += 1
             else:
                 unknown_streams += 1
+    metadata = ffprobe_addExtraMetadata(metadata, result)
     if audio_streams == 1 and video_streams == 0:
+        metadata['has_audio'] = True
+        metadata['has_video'] = False
         return {
             'type': 'audio',
-            'extra': { 'has_audio': True, 'has_video': False },
+            'processor_state': { 'has_audio': True, 'has_video': False },
+            'metadata': metadata,
             'flags': None
         }
     if video_streams > 0:
+        metadata['has_audio'] = audio_streams > 0
+        metadata['has_video'] = True
         return {
             'type': 'video',
-            'extra': { 'has_audio': audio_streams > 0, 'has_video': True },
+            'processor_state': { 'has_audio': audio_streams > 0, 'has_video': True },
+            'metadata': metadata,
             'flags': {
                 'autoplay': False,
                 'loop': False,
@@ -100,38 +112,51 @@ def detect_ffprobe(path):
         }
     return None
 
+def ffprobe_addExtraMetadata(metadata, result):
+    if 'format' in result:
+        f = result['format']
+        if 'tags' in f:
+            t = f['tags']
+            if 'ALBUM' in t:
+                metadata['album'] = t['ALBUM']
+            if 'COMPOSER' in t:
+                metadata['composer'] = t['COMPOSER']
+            if 'ARTIST' in t:
+                metadata['artist'] = t['ARTIST']
+            if 'TITLE' in t:
+                metadata['title'] = t['TITLE']
+    return metadata
+
 def detect_stream(stream):
-    # This will return None for things it doesn't recognize, or:
-    # 'image/whatever' (uses full mimetype for images)
-    # 'video'
-    # 'audio'
-    # 'subtitle'
-    # 'font'
     if not "codec_name" in stream:
         if "tags" in stream and "mimetype" in stream["tags"]:
             if stream["tags"]["mimetype"] == 'application/x-truetype-font':
                 return {
                     'type': 'font',
-                    'extra': stream["tags"]["filename"],
+                    'processor_state': stream["tags"]["filename"],
+                    'metadata': None,
                     'flags': None
                 }
     else:
         if stream["codec_name"] == 'mjpeg':
             return {
                 'type': 'image/jpeg',
-                'extra': None,
+                'metadata': { 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
+                'processor_state': None,
                 'flags': None
             }
         if stream["codec_name"] == 'png':
             return {
                 'type': 'image/png',
-                'extra': None,
+                'metadata': { 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
+                'processor_state': None,
                 'flags': None
             }
         if stream["codec_name"] == 'webp':
             return {
                 'type': 'image',
-                'extra': None,
+                'metadata': { 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
+                'processor_state': None,
                 'flags': None
             }
         if stream["codec_name"] == 'bmp':
@@ -139,7 +164,8 @@ def detect_stream(stream):
         if stream["codec_name"] == 'gif':
             return {
                 'type': 'video',
-                'extra': { 'has_audio': False, 'has_video': True },
+                'metadata': { 'has_audio': False, 'has_video': True, 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
+                'processor_state': { 'has_audio': False, 'has_video': True },
                 'flags': {
                     'autoplay': True,
                     'loop': True,
@@ -149,7 +175,8 @@ def detect_stream(stream):
     if stream["codec_type"] == 'video':
         return {
             'type': 'video',
-            'extra': { 'has_audio': False, 'has_video': True },
+            'metadata': { 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
+            'processor_state': { 'has_audio': False, 'has_video': True },
             'flags': {
                 'autoplay': False,
                 'loop': False,
@@ -159,13 +186,15 @@ def detect_stream(stream):
     if stream["codec_type"] == 'audio':
         return {
             'type': 'audio',
-            'extra': { 'has_audio': True, 'has_video': False },
+            'metadata': { 'duration': float(stream["duration"]) },
+            'processor_state': { 'has_audio': True, 'has_video': False },
             'flags': None
         }
     if stream["codec_type"] == 'subtitle':
         return {
             'type': 'subtitle',
-            'extra': { 'codec_name': stream['codec_name'] },
+            'metadata': None,
+            'processor_state': { 'codec_name': stream['codec_name'] },
             'flags': None
         }
     return None
@@ -186,7 +215,8 @@ def detect_imagemagick(path):
     if mimetype in [ 'image/png', 'image/jpeg' ]:
         return {
             'type': mimetype,
-            'extra': None,
+            'metadata': None,
+            'processor_state': None,
             'flags': None
         }
     # Check for other formats
@@ -195,19 +225,22 @@ def detect_imagemagick(path):
         if line == 'Format: SVG (Scalable Vector Graphics)':
             return {
                 'type': 'image/svg+xml',
-                'extra': None,
+                'metadata': None,
+                'processor_state': None,
                 'flags': None
             }
         if line == 'Format: XCF (GIMP image)':
             return {
                 'type': 'image/x-gimp-xcf',
-                'extra': None,
+                'metadata': None,
+                'processor_state': None,
                 'flags': None
             }
 
     return {
         'type': 'image',
-        'extra': None,
+        'metadata': None,
+        'processor_state': None,
         'flags': None
     }
 
@@ -221,7 +254,8 @@ def detect_plaintext(path):
     if result.startswith('text/x-') or result == 'text/plain':
         return {
             'type': result[:result.find(';')],
-            'extra': None,
+            'metadata': None,
+            'processor_state': None,
             'flags': None
         }
     return None

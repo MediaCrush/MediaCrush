@@ -69,6 +69,7 @@ def inject():
         'share': share,
         'render_media': render_media,
         'len': len,
+        'str': str,
         'get_mimetype': get_mimetype,
         'cdn': _cfg("cdn")
     }

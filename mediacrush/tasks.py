@@ -6,17 +6,18 @@ from mediacrush.fileutils import compression_rate, delete_file
 
 import time
 import os
+import json
 
 logger = get_task_logger(__name__)
 
 @app.task(bind=True, track_started=True)
-def convert_file(self, h, path, p, extra):
+def convert_file(self, h, path, p, metadata, processor_state):
     f = File.from_hash(h)
 
     if p not in processor_table:
         p = 'default'
 
-    processor = processor_table[p](path, f, extra)
+    processor = processor_table[p](path, f, processor_state)
 
     # Execute the synchronous step.
     processor.sync()
@@ -24,6 +25,7 @@ def convert_file(self, h, path, p, extra):
     # Save compression information
     f = File.from_hash(h) # Reload file; user might have changed the config vector while processing
     f.compression = compression_rate(path, f)
+    f.metadata = json.dumps(metadata)
     f.save()
 
     # Notify frontend: sync step is done.
@@ -50,7 +52,8 @@ def process_file(path, h):
     result = detect(path)
 
     processor = result['type'] if result else 'default'
-    extra = result['extra'] if result else {}
+    metadata = result['metadata'] if result else {}
+    processor_state = result['processor_state'] if result else {}
 
     f.processor = processor
 
@@ -60,7 +63,7 @@ def process_file(path, h):
 
     f.save()
 
-    task = convert_file.s(h, path, processor, extra)
+    task = convert_file.s(h, path, processor, metadata, processor_state)
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.

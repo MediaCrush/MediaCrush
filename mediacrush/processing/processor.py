@@ -12,10 +12,10 @@ class Processor(object):
     outputs = []
     extras = []
 
-    def __init__(self, tmppath, f, extra):
+    def __init__(self, tmppath, f, processor_state):
         self.path = tmppath
         self.output = os.path.join(_cfg("storage_folder"), f.hash)
-        self.extra = extra
+        self.processor_state = processor_state
 
         self.important = True
 
