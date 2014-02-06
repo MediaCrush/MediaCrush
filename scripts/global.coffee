@@ -105,3 +105,13 @@ s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 
 guid = -> s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
 window.guid = guid
+
+window.getPosition = (e) ->
+    x = 0
+    y = 0
+    while true
+        x += e.offsetLeft
+        y += e.offsetTop
+        break if e.offsetParent == null
+        e = e.offsetParent
+    return [x, y]

@@ -8,7 +8,7 @@
 </div>
 {% endblock %}
 {% block album %}
-<div class="clearfix album">
+<div class="clearfix album" id="album-files">
     {% for hash in items[:3] %}
     <div class="media-wrapper">
         <div class="media">
@@ -18,4 +18,5 @@
     <div class="clearfix"></div>
     {% endfor %}
 </div>
+<div class="progress hidden"></div>
 {% endblock %}
