@@ -162,11 +162,11 @@ class MediaFile
             if String(file.type).startsWith('image/') and String(file.type) != 'image/gif'
                 _ = document.createElement('img')
                 _.src = file.url
-            else if file.type.startsWith('video/')
+            else if String(file.type).startsWith('video/')
                 _ = document.createElement('video')
                 _.preload = 'auto'
                 _.src = file.url
-            else if file.type.startsWith('audio/')
+            else if String(file.type).startsWith('audio/')
                 _ = document.createElement('audio')
                 _.preload = 'auto'
                 _.src = file.url
