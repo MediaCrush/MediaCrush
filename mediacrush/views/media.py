@@ -149,6 +149,17 @@ class MediaView(FlaskView):
         template_params = _template_params(f)
         return render_template("direct.html", **template_params)
 
+    @route("/<id>/fragment")
+    def direct(self, id):
+        klass = RedisObject.klass(id)
+        if klass is not File:
+            abort(404)
+
+        f = File.from_hash(id)
+        params = _template_params(f)
+        params['album'] = True
+        return render_template(params['fragment'], **params)
+
     @route("/<id>/frame")
     def frame(self, id):
         send = self._send_file(id)
