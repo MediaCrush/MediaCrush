@@ -47,7 +47,7 @@ initializeList = () ->
     isLoading = false
 
     checkLoad = () ->
-        return if itemsLoaded == window.files.length + 1
+        return if itemsLoaded == window.files.length
         return if isLoading
         if lastItemY - getScroll() < viewPortHeight()
             isLoading = true
