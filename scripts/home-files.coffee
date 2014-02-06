@@ -159,14 +159,15 @@ class MediaFile
     preload: ->
         return if not @blob?
         for file in @blob.files
-            if String(file.type).startsWith('image/') and String(file.type) != 'image/gif'
+            console.log file.type
+            if file.type.indexOf('image/') == 0 and file.type != 'image/gif'
                 _ = document.createElement('img')
                 _.src = file.url
-            else if file.type.startsWith('video/')
+            else if file.type.indexOf('video/') == 0
                 _ = document.createElement('video')
                 _.preload = 'auto'
                 _.src = file.url
-            else if file.type.startsWith('audio/')
+            else if file.type.indexOf('audio/') == 0
                 _ = document.createElement('audio')
                 _.preload = 'auto'
                 _.src = file.url
