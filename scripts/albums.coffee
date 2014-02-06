@@ -21,27 +21,30 @@ window.addEventListener('DOMContentLoaded', () ->
         report.parentElement.innerHTML = "Reported"
     , false)
     switch window.albumType
-        when 'list' then initializeList()
+        when 'list' then initializeScrollLoading(true, 3)
+        when 'grid' then initializeScrollLoading(false, 8)
+        when 'focus' then initializeFocus()
 , false)
 
-getScroll = () ->
-    doc = document.documentElement
-    body = document.body
-    return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
-viewPortHeight = () ->
-    de = document.documentElement
-    return window.innerHeight if window.innerWidth?
-    return de.clientHeight
+initializeFocus = () ->
+    console.log 'focus'
 
-initializeList = () ->
+initializeScrollLoading = (includeClearfix, itemsLoaded) ->
+    getScroll = () ->
+        doc = document.documentElement
+        body = document.body
+        return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+    viewPortHeight = () ->
+        de = document.documentElement
+        return window.innerHeight if window.innerWidth?
+        return de.clientHeight
     getBottomOfLastItem = () ->
         items = document.querySelectorAll('.media-wrapper')
         element = items[items.length - 1]
         return getPosition(element)[1]
 
     lastItemY = getBottomOfLastItem()
-    itemsLoaded = 3
     if window.files.length < 3
         itemsLoaded = window.files.length
     isLoading = false
@@ -61,6 +64,8 @@ initializeList = () ->
                 wrapper.classList.add('media-wrapper')
                 media = document.createElement('div')
                 media.classList.add('media')
+                column = document.createElement('div')
+                column.classList.add('column')
                 clearfix = document.createElement('div')
                 clearfix.classList.add('clearfix')
                 media.innerHTML = this.responseText
@@ -74,8 +79,12 @@ initializeList = () ->
                 if nextItem.blob_type == 'audio' or nextItem.blob_type == 'video'
                     new MediaPlayer(media.querySelector('.player'))
                 wrapper.appendChild(media)
-                document.getElementById('album-files').appendChild(wrapper)
-                document.getElementById('album-files').appendChild(clearfix)
+                if includeClearfix
+                    document.getElementById('album-files').appendChild(wrapper)
+                    document.getElementById('album-files').appendChild(clearfix)
+                else
+                    column.appendChild(wrapper)
+                    document.getElementById('album-files').appendChild(column)
             xhr.send()
     checkLoad()
     window.addEventListener('scroll', checkLoad)

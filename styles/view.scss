@@ -11,6 +11,7 @@
         position: relative;
         margin-bottom: 10px;
         display: inline-block;
+        z-index: 100;
 
         img, video {
             max-width: 1000px;

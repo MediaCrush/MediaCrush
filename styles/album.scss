@@ -1,5 +1,90 @@
 @import 'view.scss'
 
+.album.grid {
+    .column {
+        width: 500px;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        float: left;
+    }
+    .media-wrapper {
+        right: 50%;
+        position: relative;
+        float: right;
+        .media {
+            float: right;
+            right: -50%;
+            position: relative;
+            margin-bottom: 10px;
+            display: inline-block;
+            img, video, audio {
+                max-width: 500px;
+            }
+            & > a, img, video, .video {
+                display: block;
+            }
+        }
+    }
+}
+
+.album.focus {
+    .item-wrapper {
+        position: relative;
+    }
+
+    & > .left {
+        width: 700px;
+        float: left;
+        padding-right: 10px;
+
+        img, video, audio {
+            max-width: 700px;
+            display: block;
+        }
+        & > a {
+            display: block;
+        }
+    }
+
+    & > .right {
+        overflow: hidden;
+        max-height: 900px;
+        position: relative;
+        .fade {
+            background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0));
+            height: 50px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .item {
+            margin-bottom: 10px;
+            position: relative;
+
+            a.target {
+                position: absolute;
+                display: block;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        }
+
+        img, video, audio {
+            max-width: 290px;
+            display: block;
+        }
+
+        & > a {
+            display: block;
+        }
+    }
+}
+
 .album-header {
     margin-bottom: 10px;
 
