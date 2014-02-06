@@ -121,6 +121,8 @@ def ffprobe_addExtraMetadata(metadata, result):
                 metadata['album'] = t['ALBUM']
             if 'COMPOSER' in t:
                 metadata['composer'] = t['COMPOSER']
+            if 'ARTIST' in t:
+                metadata['artist'] = t['ARTIST']
             if 'TITLE' in t:
                 metadata['title'] = t['TITLE']
     return metadata
