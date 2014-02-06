@@ -101,7 +101,7 @@ class APIView(FlaskView):
             if klass != File: # Wrong type
                 return {'error': 415}, 415
 
-        if len(items) > 50:
+        if len(items) > 1024:
             return {'error': 413}, 413
 
         a = Album()
