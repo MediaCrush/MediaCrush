@@ -61,6 +61,8 @@ initializeList = () ->
                 wrapper.classList.add('media-wrapper')
                 media = document.createElement('div')
                 media.classList.add('media')
+                clearfix = document.createElement('div')
+                clearfix.classList.add('clearfix')
                 media.innerHTML = this.responseText
                 update = () ->
                     lastItemY = getBottomOfLastItem()
@@ -73,6 +75,7 @@ initializeList = () ->
                     new MediaPlayer(media.querySelector('.player'))
                 wrapper.appendChild(media)
                 document.getElementById('album-files').appendChild(wrapper)
+                document.getElementById('album-files').appendChild(clearfix)
             xhr.send()
     checkLoad()
     window.addEventListener('scroll', checkLoad)
