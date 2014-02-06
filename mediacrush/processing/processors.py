@@ -63,11 +63,10 @@ class PNGProcessor(Processor):
 
 class JPEGProcessor(Processor):
     time = 5
-    outputs = []
+    outputs = ['jpg']
 
     def sync(self):
-        self._execute(copy)
-        self._execute("jpegtran -optimize -perfect -copy none -outfile {1}.jpg {1}.jpg")
+        self._execute("jpegtran -optimize -perfect -copy none -outfile {1}.{extension} {0}")
 
 class SVGProcessor(Processor):
     time = 5
