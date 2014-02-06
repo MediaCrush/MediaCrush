@@ -106,6 +106,14 @@ In case of error, the response will contain an 'error' parameter and additional 
         "loop": true,
         "mute": true
       },
+      "metadata": {
+          "dimensions": {
+              "height": 281,
+              "width": 500
+          },
+          "has_audio": false,
+          "has_video": true
+      },
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
@@ -165,6 +173,14 @@ If the file is not found, you will get a dictionary like:
           "loop": true,
           "mute": true
         },
+        "metadata": {
+            "dimensions": {
+                "height": 281,
+                "width": 500
+            },
+            "has_audio": false,
+            "has_video": true
+        },
         "original": "/CPvuR5lRhmS0.gif",
         "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
@@ -196,6 +212,14 @@ If the file is not found, you will get a dictionary like:
           "loop": true,
           "mute": true
         },
+        "metadata": {
+            "dimensions": {
+                "height": 281,
+                "width": 500
+            },
+            "has_audio": false,
+            "has_video": true
+        },
         "original": "/tVWMM_ziA3nm.gif",
         "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
@@ -225,6 +249,14 @@ If the file is not found, you will get a dictionary like:
           }
         ],
         "flags": {},
+        "metadata": {
+            "dimensions": {
+                "height": 281,
+                "width": 500
+            },
+            "has_audio": false,
+            "has_video": true
+        },
         "hash": "4Gt0YcGMPA7S",
         "original": "/4Gt0YcGMPA7S.jpg",
         "type": "image/jpeg"
@@ -299,6 +331,14 @@ If the file is not found, you will get a dictionary like:
           "autoplay": true,
           "loop": true,
           "mute": true
+        },
+        "metadata": {
+            "dimensions": {
+                "height": 281,
+                "width": 500
+            },
+            "has_audio": false,
+            "has_video": true
         },
         "original": "/LxqXxVPAvqqB.gif",
         "hash": "LxqXxVPAvqqB",
@@ -535,6 +575,14 @@ In case of error, the response will contain an 'error' parameter and additional 
             "type": "image/png"
           }
         ],
+        "metadata": {
+            "dimensions": {
+                "height": 281,
+                "width": 500
+            },
+            "has_audio": false,
+            "has_video": true
+        },
         "extras": [
         ],
         "original": "/LxqXxVPAvqqB.png",
@@ -645,6 +693,14 @@ In case of error, the response will contain an 'error' parameter and additional 
       ],
       "extras": [
       ],
+      "metadata": {
+          "dimensions": {
+              "height": 281,
+              "width": 500
+          },
+          "has_audio": false,
+          "has_video": true
+      },
       "flags": {
         "autoplay": true,
         "loop": true,
@@ -668,6 +724,7 @@ Description of fields:
 * `files`: A list of files that are the result of converting the original file into different formats.
 * `extras`: Auxiliary files, such as a thumbnail or subtitles.
 * `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`. Note that the flags shown here are an example set and the list of available flags may vary. Consult Appendix B for more information.
+* `metadata`: Various attributes that describe the media file, such as duration or resolution. Each media type will have different metadata, and some or all of it may not be present. Each media type will have different metadata, and some or all of it may not be present.
 * `original`: The original file that was uploaded, as-is.
 * `hash`: A unique identifier within MediaCrush.
 * `type`: The original mimetype, provided by the user. You should not base decisions on this value.
@@ -680,6 +737,14 @@ Description of fields:
           "blob_type": "video",
           "compression": 0.0,
           "extras": [],
+          "metadata": {
+              "dimensions": {
+                  "height": 281,
+                  "width": 500
+              },
+              "has_audio": false,
+              "has_video": true
+          },
           "files": [
             {
               "file": "/yOEHB2vDiWS-.jpe",
@@ -699,6 +764,14 @@ Description of fields:
               "type": "image/jpeg"
             }
           ],
+          "metadata": {
+              "dimensions": {
+                  "height": 281,
+                  "width": 500
+              },
+              "has_audio": false,
+              "has_video": true
+          },
           "original": "/vLGcgr9eXhsH.jpe",
           "type": "image/jpeg"
         },
@@ -712,6 +785,14 @@ Description of fields:
               "type": "image/jpeg"
             }
           ],
+          "metadata": {
+              "dimensions": {
+                  "height": 281,
+                  "width": 500
+              },
+              "has_audio": false,
+              "has_video": true
+          },
           "original": "/uEKCcQyLVci7.jpe",
           "type": "image/jpeg"
         }
