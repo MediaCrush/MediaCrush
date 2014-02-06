@@ -109,8 +109,7 @@ Note: do **not** execute the test script on a live instance - it clears the stor
 
 ## Updating your Instance
 
-If you're just running an instance for development and you run into trouble, just clear things out and start over. This won't
-work so well if you're running a persistent instance, however. We don't currently have the greatest update procedure and we
-make breaking changes every now and then. I suggest you read through the git log since your last update when you perform one
-and look for any commits with [noupdate] in the extended commit message. The extended commit message on these commits will
-describe the manual intervention required to upgrade to that commit. If you run into trouble, visit us on IRC.
+Updating a MediaCrush instance isn't pretty. We don't have a great mechanism in place for handling breaking changes. However, we will
+be posting to the mediacrush@librelist.com mailing list whenever we push noteworthy changes. Send an email to that address to subscribe
+to the list. Anyone who runs a third-party MediaCrush instance should be on that list. Feel free to send any questions related to
+maintaining your instance as well, but be sure to browse the [archives](http://librelist.com/browser/mediacrush) first.
