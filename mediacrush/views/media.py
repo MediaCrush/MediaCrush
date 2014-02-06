@@ -51,13 +51,16 @@ def _template_params(f):
                     types.remove(t)
         except:
             pass
+    metadata = {}
+    if f.metadata:
+        metadata = json.loads(f.metadata)
 
     return {
         'filename': f.hash,
         'original': f.original,
         'video': normalise_processor(f.processor) == 'video',
         'flags': f.flags.as_dict(),
-        'metadata': json.loads(f.metadata) if f.metadata is not None else None,
+        'metadata': metadata,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',

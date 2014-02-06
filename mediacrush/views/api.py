@@ -18,6 +18,9 @@ def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
 
+    metadata = None
+    if f.metadata:
+        metadata = json.loads(f.metadata)
     ret = {
         'original': media_url(f.original),
         'type': mimetype,
@@ -25,7 +28,7 @@ def _file_object(f):
         'hash': f.hash,
         'files': [],
         'extras': [],
-        'metadata': json.loads(f.metadata) if f.metadata != 'None' else None,
+        'metadata': metadata,
         'flags': f.flags.as_dict(),
     }
     if f.compression:
