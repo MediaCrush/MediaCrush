@@ -416,6 +416,10 @@
     }
 }
 
+.player.subs-off .libjass-subs {
+    display: none;
+}
+
 /**
  * libjass
  *
@@ -437,6 +441,10 @@
  */
 .libjass-wrapper {
     position: relative;
+
+    & > svg {
+        display: block;
+    }
 
     &.libjass-full-screen {
         position: static;

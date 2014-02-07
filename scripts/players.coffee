@@ -1,3 +1,5 @@
+subtitleRenderers = {}
+
 document.cancelFullScreen = document.cancelFullScreen ||
                    document.mozCancelFullScreen ||
                    document.webkitCancelFullScreen ||
@@ -5,6 +7,7 @@ document.cancelFullScreen = document.cancelFullScreen ||
 
 MediaPlayer = (container) ->
     media = container.querySelector('video, audio')
+    id = container.getAttribute('data-media')
     isVideo = media.tagName == 'VIDEO'
     isAudio = media.tagName == 'AUDIO'
     controls = container.querySelector('.controls')
@@ -13,6 +16,7 @@ MediaPlayer = (container) ->
     fullscreen = container.querySelector('.fullscreen')
     isFullscreen = false
     toggleLoop = container.querySelector('.loop')
+    toggleSubs = container.querySelector('.subtitles')
     rates = container.querySelectorAll('.speeds a')
     seek = container.querySelector('.seek')
     volume = container.querySelector('.volume > div')
@@ -48,6 +52,19 @@ MediaPlayer = (container) ->
         if media.readyState >= 3 or ready # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
     , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
+
+    if toggleSubs
+        toggleSubs.addEventListener('click', (e) ->
+            e.preventDefault()
+            if container.className.indexOf('subs-off') == -1
+                container.classList.add('subs-off')
+                toggleSubs.querySelector('.icon').classList.add('disabled')
+                toggleSubs.querySelector('.text').textContent = 'Subtitles OFF'
+            else
+                container.classList.remove('subs-off')
+                toggleSubs.querySelector('.icon').classList.remove('disabled')
+                toggleSubs.querySelector('.text').textContent = 'Subtitles ON'
+        , false)
 
     if volume != null
         volumeIcon = volume.parentElement.querySelector('.icon')
@@ -186,6 +203,8 @@ MediaPlayer = (container) ->
                 container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
                 container.msRequestFullscreen() if container.msRequestFullscreen?
                 container.classList.add('fullscreen')
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].resizeVideo(media.offsetWidth, media.offsetHeight)
                 timeout = setTimeout(idleUI, 3000)
             else
                 leaveFullscreen()
@@ -201,6 +220,8 @@ MediaPlayer = (container) ->
             _.style.right = 0
             window.setTimeout(->
                 _.style.right = '-50%'
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].resizeVideo(media.offsetWidth, media.offsetHeight)
             , 100)
 
     playPause.addEventListener('click', (e) ->
@@ -249,8 +270,9 @@ window.MediaPlayer = MediaPlayer
 
 document.addEventListener('DOMContentLoaded', () ->
     for player in document.querySelectorAll('.player.subtitled')
+        id = player.getAttribute('data-media')
         video = player.querySelector('video')
-        style = document.getElementById('font-map-' + player.getAttribute('data-media'))
+        style = document.getElementById('font-map-' + id)
         ass = null
 
         handleSubsReady = (video, ass) ->
@@ -261,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () ->
                     fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
                 })
                 renderer.resizeVideo(width, height)
+                subtitleRenderers[id] = renderer
 
         if video.readyState < HTMLMediaElement.HAVE_METADATA
             video.addEventListener('loadedmetadata', () ->

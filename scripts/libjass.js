@@ -4255,15 +4255,13 @@
                     }
                 };
                 /**
-                 * Resize the video element and subtitles to the new dimensions.
+                 * Resize the subtitles to the given new dimensions.
                  *
                  * @param {number} width
                  * @param {number} height
                  */
                 DefaultRenderer.prototype.resizeVideo = function(width, height) {
                     this._removeAllSubs();
-                    this.video.style.width = width.toFixed(3) + "px";
-                    this.video.style.height = height.toFixed(3) + "px";
                     var ratio = Math.min(width / this.ass.properties.resolutionX, height / this.ass.properties.resolutionY);
                     var subsWrapperWidth = this.ass.properties.resolutionX * ratio;
                     var subsWrapperHeight = this.ass.properties.resolutionY * ratio;
@@ -4582,7 +4580,7 @@
                     document.addEventListener("fullscreenchange", function() {
                         return _this._onFullScreenChange();
                     }, false);
-                    this.resizeVideo(parseInt(this.video.style.width), parseInt(this.video.style.height));
+                    this.resizeVideo(this.video.offsetWidth, this.video.offsetHeight);
                     this._dispatchEvent("ready");
                 };
                 DefaultRenderer.prototype._onFullScreenChange = function() {

@@ -1,4 +1,4 @@
-<div class="player video {% if has_subtitles %}subtitled{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
+<div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
     <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload>
         {% if 'video/mp4' in types %}
         <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
@@ -54,7 +54,11 @@
                             <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
                         </a>
                     </div>
-                    {#<div class="highlight"><a href="#" class="subtitles">Subtitles ON<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
+                    {% if has_subtitles %}
+                    <div class="highlight">
+                        <a href="#" class="subtitles"><span class="text">Subtitles {% if subtitles['info']['default'] %}ON{% else %}OFF{% endif %}</span><span class="icon subtitles {% if not subtitles['info']['default'] %}disabled{% endif %}" data-icon="&#xF030;"></span></a>
+                    </div>
+                    {% endif %}
                     {% if album %}
                     <div class="highlight">
                         <a href="/{{ filename }}">Direct Link<span class="icon" data-icon="&#xF159;"></span></a>
