@@ -230,7 +230,7 @@ def detect_stream(stream):
         default = False
         language = None
         if "disposition" in stream and "default" in stream["disposition"]:
-            default = stream["disposition"]["default"] == '1'
+            default = stream["disposition"]["default"] == 1
         if "tags" in stream and "language" in stream["tags"]:
             language = stream["tags"]["language"]
         return {

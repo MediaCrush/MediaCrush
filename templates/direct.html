@@ -31,6 +31,9 @@
         <script type="text/javascript">
             window.filename = "{{ filename }}";
         </script>
+        {% if has_subtitles %}
+        <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+        {% endif %}
     </head>
     <body class="view">
         <div style="display: inline-block">
