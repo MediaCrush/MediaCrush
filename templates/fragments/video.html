@@ -1,4 +1,4 @@
-<div class="player video" id="player-{{ filename }}">
+<div class="player video {% if has_subtitles %}subtitled{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
     <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload>
         {% if 'video/mp4' in types %}
         <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
@@ -8,6 +8,9 @@
         {% endif %}
         {% if 'video/ogg' in types %}
         <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+        {% endif %}
+        {% if has_subtitles %}
+        <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" />
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
@@ -68,3 +71,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));
 }, false);
 </script>
+{% if has_subtitles %}
+<link rel="stylesheet" type="text/css" href="/{{ filename }}_fonts.css" id="font-map-{{filename}}"></link>
+{% endif %}

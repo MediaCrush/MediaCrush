@@ -11,6 +11,9 @@
         window.flags = {{ flags | tojson }}; 
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+    {% if has_subtitles %}
+    <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+    {% endif %}
 {% endblock %}
 {% block meta %}
     <meta property="og:type" content="{{ mimetype }}" />

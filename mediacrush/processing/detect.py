@@ -111,6 +111,7 @@ def detect_ffprobe(path):
     if video_streams > 0:
         metadata['has_audio'] = audio_streams > 0
         metadata['has_video'] = True
+        metadata['has_subtitles'] = subtitle_streams > 0
         state['has_audio'] = audio_streams > 0
         state['has_video'] = True
         state['has_fonts'] = font_streams > 0

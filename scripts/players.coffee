@@ -246,3 +246,34 @@ MediaPlayer = (container) ->
         media.width = width
         media.height = height - 5
 window.MediaPlayer = MediaPlayer
+
+document.addEventListener('DOMContentLoaded', () ->
+    for player in document.querySelectorAll('.player.subtitled')
+        video = player.querySelector('video')
+        style = document.getElementById('font-map-' + player.getAttribute('data-media'))
+        ass = null
+
+        handleSubsReady = (video, ass) ->
+            if video.readyState >= HTMLMediaElement.HAVE_METADATA and ass
+                width = video.offsetWidth
+                height = video.offsetHeight
+                ass.dpi = 96
+                renderer = new libjass.renderers.DefaultRenderer(video, ass, {
+                    preLoadFonts: true,
+                    fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
+                })
+
+        if video.readyState < HTMLMediaElement.HAVE_METADATA
+            video.addEventListener('loadedmetadata', () ->
+                handleSubsReady(video, ass)
+            , false)
+        else
+            handleSubsReady(video, ass)
+        track = video.querySelector('track[data-format="ass"]')
+        request = new XMLHttpRequest()
+        request.open('GET', track.src || track.getAttribute('src'))
+        request.onload = () ->
+            ass = new libjass.ASS.fromString(this.responseText)
+            handleSubsReady(video, ass)
+        request.send()
+, false)
