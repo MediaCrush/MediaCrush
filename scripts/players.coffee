@@ -257,11 +257,10 @@ document.addEventListener('DOMContentLoaded', () ->
             if video.readyState >= HTMLMediaElement.HAVE_METADATA and ass
                 width = video.offsetWidth
                 height = video.offsetHeight
-                ass.dpi = 96
                 renderer = new libjass.renderers.DefaultRenderer(video, ass, {
-                    preLoadFonts: true,
                     fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
                 })
+                renderer.resizeVideo(width, height)
 
         if video.readyState < HTMLMediaElement.HAVE_METADATA
             video.addEventListener('loadedmetadata', () ->
