@@ -184,9 +184,12 @@ def detect_stream(stream):
             }
         }
     if stream["codec_type"] == 'audio':
+        duration = None
+        if "duration" in stream:
+            duration = float(stream["duration"])
         return {
             'type': 'audio',
-            'metadata': { 'duration': float(stream["duration"]) },
+            'metadata': { 'duration': duration },
             'processor_state': { 'has_audio': True, 'has_video': False },
             'flags': None
         }
