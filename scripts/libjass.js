@@ -102,7 +102,7 @@
             libjass.Set = SimpleSet;
         }
         /**
-         * Map implementation for browsers that don't support it. Only supports Number and String keys.
+         * Map implementation for browsers that don't support it. Only supports keys which are of Number or String type, or which have a property called "id".
          *
          * Keys and values are stored as properties of an object, with property names derived from the key type.
          *
@@ -146,7 +146,7 @@
             SimpleMap.prototype.set = function(key, value) {
                 var property = this._keyToProperty(key);
                 if (property === null) {
-                    throw new Error("This Map implementation only supports Number and String keys.");
+                    throw new Error("This Map implementation only supports Number and String keys, or keys with an id property.");
                 }
                 this._keys[property] = key;
                 this._values[property] = value;
@@ -197,6 +197,9 @@
                 }
                 if (typeof key === "string") {
                     return "'" + key;
+                }
+                if (key.id !== undefined) {
+                    return "!" + key.id;
                 }
                 return null;
             };
@@ -4072,11 +4075,9 @@
                 };
                 /**
                  */
-                /* tslint:disable:no-empty */
                 NullRenderer.prototype.preRender = function() {};
                 /**
                  */
-                /* tslint:disable:no-empty */
                 NullRenderer.prototype.draw = function() {};
                 NullRenderer.prototype._onVideoTimeUpdate = function() {
                     if (this._state === 2) {
@@ -4268,10 +4269,9 @@
                 DefaultRenderer.prototype.onVideoTimeUpdate = function() {
                     var _this = this;
                     _super.prototype.onVideoTimeUpdate.call(this);
-                    this._currentSubs.forEach(function(sub, dialogueId) {
-                        var dialogue = _this.ass.dialogues[dialogueId];
+                    this._currentSubs.forEach(function(sub, dialogue) {
                         if (dialogue.start > _this.currentTime || dialogue.end < _this.currentTime) {
-                            _this._currentSubs.delete(dialogueId);
+                            _this._currentSubs.delete(dialogue);
                             _this._removeSub(sub);
                         }
                     });
@@ -4492,7 +4492,7 @@
                  */
                 DefaultRenderer.prototype.draw = function(dialogue) {
                     var _this = this;
-                    if (this._currentSubs.has(dialogue.id)) {
+                    if (this._currentSubs.has(dialogue)) {
                         return;
                     }
                     if (libjass.debugMode) {
@@ -4545,7 +4545,7 @@
                         this._layerAlignmentWrappers[layer][alignment] = layerAlignmentWrapper;
                     }
                     this._layerAlignmentWrappers[layer][alignment].appendChild(result);
-                    this._currentSubs.set(dialogue.id, result);
+                    this._currentSubs.set(dialogue, result);
                 };
                 DefaultRenderer.prototype._ready = function() {
                     var _this = this;

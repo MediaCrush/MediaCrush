@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () ->
             request = new XMLHttpRequest()
             request.open('GET', track.src || track.getAttribute('src'))
             request.onload = () ->
-                ass = new libjass.ASS.fromString(this.responseText)
+                ass = libjass.ASS.fromString(this.responseText)
                 handleSubsReady(video, ass)
             request.send()
         )(player)
