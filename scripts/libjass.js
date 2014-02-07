@@ -3962,18 +3962,6 @@
                     this._timeUpdateIntervalHandle = null;
                     this._id = ++NullRenderer._lastRendererId;
                     this._settings = RendererSettings.from(settings);
-                    // Sort the dialogues array by end time and then by their original position in the script (id)
-                    this._dialogues = this._ass.dialogues.slice(0);
-                    this._dialogues.sort(function(dialogue1, dialogue2) {
-                        var result = dialogue1.end - dialogue2.end;
-                        if (result === 0) {
-                            result = dialogue1.id - dialogue2.id;
-                        }
-                        return result;
-                    });
-                    this._endTimes = this._dialogues.map(function(dialogue) {
-                        return dialogue.end;
-                    });
                     this._video.addEventListener("timeupdate", function() {
                         return _this._onVideoTimeUpdate();
                     }, false);
@@ -4044,26 +4032,16 @@
                     if (libjass.verboseMode) {
                         console.log("NullRenderer.onVideoTimeUpdate: " + this._getVideoStateLogString());
                     }
-                    var searchStart = 0;
-                    var searchEnd = this._endTimes.length;
-                    while (searchStart !== searchEnd) {
-                        var mid = (searchStart + searchEnd) / 2 | 0;
-                        if (this._endTimes[mid] < this._currentTime) {
-                            searchStart = mid + 1;
-                        } else {
-                            searchEnd = mid;
-                        }
-                    }
-                    for (var i = searchStart; i < this._endTimes.length; i++) {
-                        var dialogue = this._dialogues[i];
-                        if (dialogue.start <= this._currentTime) {
-                            // This dialogue is visible right now. Draw it.
-                            this.draw(dialogue);
-                        } else if (dialogue.start <= this._currentTime + this._settings.preRenderTime) {
-                            // This dialogue will be visible soon. Pre-render it.
-                            this.preRender(dialogue);
-                        } else {
-                            break;
+                    for (var i = 0; i < this._ass.dialogues.length; i++) {
+                        var dialogue = this._ass.dialogues[i];
+                        if (dialogue.end > this._currentTime) {
+                            if (dialogue.start <= this._currentTime) {
+                                // This dialogue is visible right now. Draw it.
+                                this.draw(dialogue);
+                            } else if (dialogue.start <= this._currentTime + this._settings.preRenderTime) {
+                                // This dialogue will be visible soon. Pre-render it.
+                                this.preRender(dialogue);
+                            }
                         }
                     }
                 };
@@ -4317,9 +4295,9 @@
                         return;
                     }
                     var sub = document.createElement("div");
-                    sub.style.marginLeft = this._scaleX * dialogue.style.marginLeft + "px";
-                    sub.style.marginRight = this._scaleX * dialogue.style.marginRight + "px";
-                    sub.style.marginTop = sub.style.marginBottom = this._scaleY * dialogue.style.marginVertical + "px";
+                    sub.style.marginLeft = (this._scaleX * dialogue.style.marginLeft).toFixed(3) + "px";
+                    sub.style.marginRight = (this._scaleX * dialogue.style.marginRight).toFixed(3) + "px";
+                    sub.style.marginTop = sub.style.marginBottom = (this._scaleY * dialogue.style.marginVertical).toFixed(3) + "px";
                     switch (dialogue.alignment) {
                       case 1:
                       case 4:

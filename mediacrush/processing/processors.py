@@ -27,7 +27,7 @@ class VideoProcessor(Processor):
                 if stream['type'] == 'font':
                     # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
                     # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
-                    self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + stream["info"] + ' -i {0}', ignoreNonZero=True)
+                    self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + len(fonts) + ' -i {0}', ignoreNonZero=True)
                     fonts.append(stream)
                 elif stream['type'] == 'subtitle' and 'info' in stream:
                     extension = None
@@ -41,9 +41,11 @@ class VideoProcessor(Processor):
                         self._execute("ffmpeg -y -i {0} -map 0:s:0 {1}" + extension)
         # Examine font files and construct some CSS to import them
         css = ''
+        i = 0
         for font in fonts:
             command = Invocation('otfinfo --info {0}')
-            command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, font["info"])))
+            command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
+            i += 1
             command.run()
             output = command.stdout[0].split('\n')
             family = None
