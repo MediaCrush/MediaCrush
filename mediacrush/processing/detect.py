@@ -62,6 +62,9 @@ def detect_ffprobe(path):
     unknown_streams = 0
 
     metadata = dict()
+    state = dict()
+    state['streams'] = list()
+    index = 0
 
     for stream in result["streams"]:
         s = detect_stream(stream)
@@ -75,6 +78,11 @@ def detect_ffprobe(path):
         if not s or not t:
             unknown_streams += 1
         else:
+            state['streams'].append({
+                'type': t,
+                'info': s['processor_state'],
+                'index': index
+            })
             if t.startswith('image'):
                 image_streams += 1
             elif t == 'video':
@@ -87,22 +95,29 @@ def detect_ffprobe(path):
                 font_streams += 1
             else:
                 unknown_streams += 1
+        index += 1
     metadata = ffprobe_addExtraMetadata(metadata, result)
     if audio_streams == 1 and video_streams == 0:
         metadata['has_audio'] = True
         metadata['has_video'] = False
+        state['has_audio'] = True
+        state['has_video'] = False
         return {
             'type': 'audio',
-            'processor_state': { 'has_audio': True, 'has_video': False },
+            'processor_state': state,
             'metadata': metadata,
             'flags': None
         }
     if video_streams > 0:
         metadata['has_audio'] = audio_streams > 0
         metadata['has_video'] = True
+        state['has_audio'] = audio_streams > 0
+        state['has_video'] = True
+        if subtitle_streams > 1:
+            metadata = addSubtitleInfo(metadata, state)
         return {
             'type': 'video',
-            'processor_state': { 'has_audio': audio_streams > 0, 'has_video': True },
+            'processor_state': state,
             'metadata': metadata,
             'flags': {
                 'autoplay': False,
@@ -111,6 +126,18 @@ def detect_ffprobe(path):
             }
         }
     return None
+
+def addSubtitleInfo(metadata, state):
+    metadata['subtitles'] = {
+        'fonts': [],
+        'streams': []
+    }
+    for stream in state['streams']:
+        if stream['type'] == 'subtitle':
+            metadata['subtitles']['streams'].append(stream)
+        if stream['type'] == 'font':
+            metadata['subtitles']['fonts'].append(stream['info'])
+    return metadata
 
 def ffprobe_addExtraMetadata(metadata, result):
     if 'format' in result:
