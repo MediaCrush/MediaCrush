@@ -113,7 +113,9 @@ def detect_ffprobe(path):
         metadata['has_video'] = True
         state['has_audio'] = audio_streams > 0
         state['has_video'] = True
-        if subtitle_streams > 1:
+        state['has_fonts'] = font_streams > 0
+        state['has_subtitles'] = subtitle_streams > 0
+        if subtitle_streams > 0:
             metadata = addSubtitleInfo(metadata, state)
         return {
             'type': 'video',
@@ -211,17 +213,29 @@ def detect_stream(stream):
             }
         }
     if stream["codec_type"] == 'audio':
+        language = None
+        if "tags" in stream and "LANGUAGE" in stream["tags"]:
+            language = stream["tags"]["LANGUAGE"]
+        duration = None
+        if "duration" in stream:
+            duration = float(stream["duration"])
         return {
             'type': 'audio',
-            'metadata': { 'duration': float(stream["duration"]) },
+            'metadata': { 'duration': duration, 'language': language },
             'processor_state': { 'has_audio': True, 'has_video': False },
             'flags': None
         }
     if stream["codec_type"] == 'subtitle':
+        default = False
+        language = None
+        if "disposition" in stream and "default" in stream["disposition"]:
+            default = stream["disposition"]["default"] == '1'
+        if "tags" in stream and "language" in stream["tags"]:
+            language = stream["tags"]["language"]
         return {
             'type': 'subtitle',
-            'metadata': None,
-            'processor_state': { 'codec_name': stream['codec_name'] },
+            'metadata': { 'default': default, 'language': language },
+            'processor_state': { 'codec_name': stream['codec_name'], 'default': default },
             'flags': None
         }
     return None
