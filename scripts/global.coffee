@@ -101,7 +101,16 @@ window.addEventListener('load', ->
 confirm = (callback) ->
     confirmCallback = callback
     document.querySelector('.dialog').classList.remove('hidden')
+    document.querySelector('.dialog .no').focus()
 window.confirm = confirm
+
+window.addEventListener('keydown', (e) ->
+    return unless confirmCallback != null
+    if e.keyCode == 27 # escape
+        confirmCallback(false) if confirmCallback
+        confirmCallback = null
+        document.querySelector('.dialog').classList.add('hidden')
+, false)
 
 s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 

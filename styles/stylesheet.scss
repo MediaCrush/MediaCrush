@@ -146,20 +146,30 @@ ul.inline {
                 width: 75px;
                 height: 30px;
                 cursor: pointer;
+                outline: none;
+                &::-moz-focus-inner {
+                    border: none; // Firefox can be a pain in the ass sometimes
+                }
+
+                &:focus, &:hover {
+                    box-shadow: 1px 1px 2px #888;
+                }
 
                 &.yes {
-                    background: #0C0;
+                    background: #07C;
 
-                    &:hover {
-                        background: #090;
+                    &:hover, &:active {
+                        background: #009;
                     }
                 }
 
                 &.no {
-                    background: #C00;
+                    background: #fff;
+                    color: #000;
+                    border: 2px solid #888;
 
                     &:hover {
-                        background: #900;
+                        background: #eee;
                     }
                 }
             }
