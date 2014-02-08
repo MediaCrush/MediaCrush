@@ -28,7 +28,7 @@ MediaPlayer = (container) ->
             for s in seek.querySelectorAll('.hidden')
                 s.classList.remove('hidden')
             seek.querySelector('.progress').classList.add('hidden')
-            window.updateSize()
+            window.updateSize() if window.updateSize?
         if media.buffered.length == 0
             loaded = 100
         else
