@@ -1,3 +1,10 @@
+window.updateSize = () ->
+    if window.mediaSizeReporter
+        size = mediaSizeReporter()
+        size.height += 5
+        embed = document.getElementById('embed-value')
+        embed.value = '<iframe src="' + window.location.href + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
+
 window.addEventListener('DOMContentLoaded', ->
     inputs = document.querySelectorAll('input.selectall')
     input.addEventListener('mouseenter', (e) ->
@@ -50,35 +57,31 @@ window.addEventListener('DOMContentLoaded', ->
         window.history.pushState("", document.title, window.location.pathname)
         UserHistory.add(window.filename)
 
-    if window.mediaSizeReporter
-        size = mediaSizeReporter()
-        size.height += 5
-        embed = document.getElementById('embed-value')
-        embed.value = '<iframe src="' + window.location.href + '/frame" frameborder="0" allowFullscreen width="' + size.width + '" height="' + size.height + '"></iframe>'
+    window.updateSize()
 
+    canDelete = window.can_delete == 'True'
     if window.can_delete == 'check'
         history = UserHistory.getHistory()
         if history
             hashIndex = null
-            canDelete = false
             for i in [0...history.length]
                 if history[i] == window.filename
                     canDelete = true
                     hashIndex = i
                     break
-            if canDelete
-                document.getElementById('delete').parentElement.classList.remove('hidden')
-                flags = document.getElementById('flags')
-                if flags
-                    flags.classList.remove('hidden')
-                    checkboxes = flags.querySelectorAll('input')
-                    for box in checkboxes
-                        ((box) ->
-                            box.addEventListener('change', (e) ->
-                                flag = box.getAttribute('data-flag')
-                                window.flags[flag] = !window.flags[flag]
-                                API.setFlags(window.filename, window.flags)
-                                updateFlag(flag, window.flags[flag])
-                            )
-                        )(box)
+    if canDelete
+        document.getElementById('delete').parentElement.classList.remove('hidden')
+        flags = document.getElementById('flags')
+        if flags
+            flags.classList.remove('hidden')
+            checkboxes = flags.querySelectorAll('input')
+            for box in checkboxes
+                ((box) ->
+                    box.addEventListener('change', (e) ->
+                        flag = box.getAttribute('data-flag')
+                        window.flags[flag] = !window.flags[flag]
+                        API.setFlags(window.filename, window.flags)
+                        updateFlag(flag, window.flags[flag])
+                    )
+                )(box)
 , false)

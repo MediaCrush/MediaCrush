@@ -18,12 +18,17 @@ MediaPlayer = (container) ->
     volume = container.querySelector('.volume > div')
     ready = false
 
+    if isVideo
+        window.mediaSizeReporter = ->
+            return { width: media.videoWidth, height: media.videoHeight }
+
     updateMedia = ->
         if not ready
             ready = true
             for s in seek.querySelectorAll('.hidden')
                 s.classList.remove('hidden')
             seek.querySelector('.progress').classList.add('hidden')
+            window.updateSize()
         if media.buffered.length == 0
             loaded = 100
         else
