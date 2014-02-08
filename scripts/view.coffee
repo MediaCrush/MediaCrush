@@ -1,5 +1,5 @@
 window.updateSize = () ->
-    if window.mediaSizeReporter
+    if window.mediaSizeReporter?
         size = mediaSizeReporter()
         size.height += 5
         embed = document.getElementById('embed-value')
@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', ->
         window.history.pushState("", document.title, window.location.pathname)
         UserHistory.add(window.filename)
 
-    window.updateSize()
+    window.updateSize() if window.updateSize?
 
     canDelete = window.can_delete == 'True'
     if window.can_delete == 'check'
