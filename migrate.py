@@ -274,21 +274,27 @@ if __name__ == '__main__':
     errors = []
 
     for f in files:
+        if f.processor != None:
+            continue
         h = f.hash
-        metadata = "{}"
+        processor = None
 
         try:
             path = file_storage(f.original)
             result = detect(path)
 
-            if result and result['metadata']:
-                metadata = json.dumps(result['metadata'])
+            if result and result['type']:
+                processor = normalise_processor(result['type'])
             done += 1
             print '\r%d/%d' % (done, count),
         except Exception, e:
             errors.append(h)
 
         k = _k("file.%s" % h)
-        r.hset(k, "metadata", metadata)
+        r.hset(k, "processor", processor)
 
     print "\n%d/%d files processed, errors:" % (done, count), errors
+
+def normalise_processor(processor):
+    if not processor: return None
+    return processor.split("/")[0] if "/" in processor else processor
