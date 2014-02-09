@@ -1,9 +1,11 @@
 from mediacrush.processing.processor import Processor, UnrecognisedFormatException
+from mediacrush.mimeinfo import extension
 from mediacrush.processing.invocation import Invocation
 from mediacrush.config import _cfg
 import os
 
 copy = "cp {0} {1}.{extension}"
+_extension = lambda f: f.rsplit('.', 1)[1].lower()
 
 class VideoProcessor(Processor):
     time = 300
@@ -27,7 +29,7 @@ class VideoProcessor(Processor):
                 if stream['type'] == 'font':
                     # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
                     # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
-                    self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + len(fonts) + ' -i {0}', ignoreNonZero=True)
+                    self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
                     fonts.append(stream)
                 elif stream['type'] == 'subtitle' and 'info' in stream:
                     extension = None
