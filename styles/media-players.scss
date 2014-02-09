@@ -461,6 +461,14 @@
         animation-fill-mode: both !important;
     }
 
+    /* Filter wrapper span */
+    .libjass-subs div[data-dialogue-id] > span {
+        -webkit-perspective-origin: center;
+        -webkit-perspective: 200px;
+        perspective-origin: center;
+        perspective: 200px;
+    }
+
     .libjass-subs > * {
         position: absolute;
         width: 100%;
@@ -487,10 +495,6 @@
 
     .an7, .an8, .an9 {
         top: 0;
-    }
-
-    .libjass-subs span {
-        white-space: pre-wrap;
     }
 
     .libjass-subs div {

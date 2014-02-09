@@ -204,7 +204,7 @@ MediaPlayer = (container) ->
                 container.msRequestFullscreen() if container.msRequestFullscreen?
                 container.classList.add('fullscreen')
                 if subtitleRenderers[id]?
-                    subtitleRenderers[id].resizeVideo(media.offsetWidth, media.offsetHeight)
+                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
                 timeout = setTimeout(idleUI, 3000)
             else
                 leaveFullscreen()
@@ -221,7 +221,7 @@ MediaPlayer = (container) ->
             window.setTimeout(->
                 _.style.right = '-50%'
                 if subtitleRenderers[id]?
-                    subtitleRenderers[id].resizeVideo(media.offsetWidth, media.offsetHeight)
+                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
             , 100)
 
     playPause.addEventListener('click', (e) ->

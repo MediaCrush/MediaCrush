@@ -2255,6 +2255,9 @@
             function parse(input, rule) {
                 var run = new ParserRun(input, rule);
                 if (run.result === null || run.result.end !== input.length) {
+                    if (libjass.debugMode) {
+                        console.error("Parse failed. %s %s %o", rule, input, run.result);
+                    }
                     throw new Error("Parse failed.");
                 }
                 return run.result.value;
@@ -3494,6 +3497,7 @@
                         parent.pop();
                         return null;
                     }
+                    while (this.read(current, " ") !== null) {}
                     var x2Part = this.parse_decimal(current);
                     if (x2Part === null) {
                         parent.pop();
@@ -3505,6 +3509,7 @@
                         parent.pop();
                         return null;
                     }
+                    while (this.read(current, " ") !== null) {}
                     var x3Part = this.parse_decimal(current);
                     if (x3Part === null) {
                         parent.pop();
@@ -4239,7 +4244,7 @@
                  * @param {number} width
                  * @param {number} height
                  */
-                DefaultRenderer.prototype.resizeVideo = function(width, height) {
+                DefaultRenderer.prototype.resize = function(width, height) {
                     this._removeAllSubs();
                     var ratio = Math.min(width / this.ass.properties.resolutionX, height / this.ass.properties.resolutionY);
                     var subsWrapperWidth = this.ass.properties.resolutionX * ratio;
@@ -4261,6 +4266,13 @@
                         this._svgDefsElement.removeChild(this._svgDefsElement.firstChild);
                     }
                     this.onVideoTimeUpdate();
+                };
+                /**
+                 * @deprecated
+                 */
+                DefaultRenderer.prototype.resizeVideo = function(width, height) {
+                    console.warn("`DefaultRenderer.resizeVideo(width, height)` has been deprecated. Use `DefaultRenderer.resize(width, height)` instead.");
+                    this.resize(width, height);
                 };
                 DefaultRenderer.prototype.onVideoSeeking = function() {
                     _super.prototype.onVideoSeeking.call(this);
@@ -4318,7 +4330,6 @@
                         break;
                     }
                     var animationCollection = new AnimationCollection(this, dialogue);
-                    var divTransformStyle = "";
                     var currentSpan = null;
                     var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._svgDefsElement);
                     var startNewSpan = function() {
@@ -4329,6 +4340,7 @@
                     };
                     startNewSpan();
                     var currentDrawing = null;
+                    var wrappingStyle = this.ass.properties.wrappingStyle;
                     dialogue.parts.forEach(function(part) {
                         if (part instanceof libjass.parts.Italic) {
                             currentSpanStyles.italic = part.value;
@@ -4365,32 +4377,39 @@
                         } else if (part instanceof libjass.parts.LetterSpacing) {
                             currentSpanStyles.letterSpacing = part.value;
                         } else if (part instanceof libjass.parts.RotateX) {
-                            divTransformStyle += " rotateX(" + part.value + "deg)";
+                            currentSpanStyles.rotationX = part.value;
                         } else if (part instanceof libjass.parts.RotateY) {
-                            divTransformStyle += " rotateY(" + part.value + "deg)";
+                            currentSpanStyles.rotationY = part.value;
                         } else if (part instanceof libjass.parts.RotateZ) {
-                            divTransformStyle += " rotateZ(" + -1 * part.value + "deg)";
+                            currentSpanStyles.rotationZ = part.value;
                         } else if (part instanceof libjass.parts.SkewX) {
-                            divTransformStyle += " skewX(" + 45 * part.value + "deg)";
+                            currentSpanStyles.skewX = part.value;
                         } else if (part instanceof libjass.parts.SkewY) {
-                            divTransformStyle += " skewY(" + 45 * part.value + "deg)";
+                            currentSpanStyles.skewY = part.value;
                         } else if (part instanceof libjass.parts.PrimaryColor) {
                             currentSpanStyles.primaryColor = part.value;
+                        } else if (part instanceof libjass.parts.SecondaryColor) {
+                            currentSpanStyles.secondaryColor = part.value;
                         } else if (part instanceof libjass.parts.OutlineColor) {
                             currentSpanStyles.outlineColor = part.value;
                         } else if (part instanceof libjass.parts.ShadowColor) {
                             currentSpanStyles.shadowColor = part.value;
                         } else if (part instanceof libjass.parts.Alpha) {
                             currentSpanStyles.primaryAlpha = part.value;
+                            currentSpanStyles.secondaryAlpha = part.value;
                             currentSpanStyles.outlineAlpha = part.value;
                             currentSpanStyles.shadowAlpha = part.value;
                         } else if (part instanceof libjass.parts.PrimaryAlpha) {
                             currentSpanStyles.primaryAlpha = part.value;
+                        } else if (part instanceof libjass.parts.SecondaryAlpha) {
+                            currentSpanStyles.secondaryAlpha = part.value;
                         } else if (part instanceof libjass.parts.OutlineAlpha) {
                             currentSpanStyles.outlineAlpha = part.value;
                         } else if (part instanceof libjass.parts.ShadowAlpha) {
                             currentSpanStyles.shadowAlpha = part.value;
-                        } else if (part instanceof libjass.parts.Alignment) {} else if (part instanceof libjass.parts.Reset) {
+                        } else if (part instanceof libjass.parts.Alignment) {} else if (part instanceof libjass.parts.WrappingStyle) {
+                            wrappingStyle = part.value;
+                        } else if (part instanceof libjass.parts.Reset) {
                             var newStyleName = part.value;
                             var newStyle = null;
                             if (newStyleName !== null) {
@@ -4455,22 +4474,31 @@
                             startNewSpan();
                         }
                     });
-                    var transformOriginParts = DefaultRenderer._getTransformOrigin(dialogue);
                     dialogue.parts.some(function(part) {
                         if (part instanceof libjass.parts.Position || part instanceof libjass.parts.Move) {
+                            var transformOriginParts = DefaultRenderer._getTransformOrigin(dialogue);
                             var translateX = -transformOriginParts[0];
                             var translateY = -transformOriginParts[1];
-                            divTransformStyle = "translate(" + translateX + "%, " + translateY + "%) translate(-" + sub.style.marginLeft + ", -" + sub.style.marginTop + ") " + divTransformStyle;
+                            var divTransformStyle = "translate(" + translateX + "%, " + translateY + "%) translate(-" + sub.style.marginLeft + ", -" + sub.style.marginTop + ")";
+                            var transformOriginString = transformOriginParts[0] + "% " + transformOriginParts[1] + "%";
+                            sub.style.webkitTransform = divTransformStyle;
+                            sub.style.webkitTransformOrigin = transformOriginString;
+                            sub.style.transform = divTransformStyle;
+                            sub.style.transformOrigin = transformOriginString;
                             return true;
                         }
                         return false;
                     });
-                    if (divTransformStyle !== "") {
-                        var transformOriginString = transformOriginParts[0] + "% " + transformOriginParts[1] + "%";
-                        sub.style.webkitTransform = divTransformStyle;
-                        sub.style.webkitTransformOrigin = transformOriginString;
-                        sub.style.transform = divTransformStyle;
-                        sub.style.transformOrigin = transformOriginString;
+                    switch (wrappingStyle) {
+                      case 0:
+                      case 3:
+                        sub.style.whiteSpace = "pre-wrap";
+                        break;
+
+                      case 1:
+                      case 2:
+                        sub.style.whiteSpace = "pre";
+                        break;
                     }
                     if (this._animationStyleElement === null) {
                         this._animationStyleElement = document.createElement("style");
@@ -4558,7 +4586,7 @@
                     document.addEventListener("fullscreenchange", function() {
                         return _this._onFullScreenChange();
                     }, false);
-                    this.resizeVideo(this.video.offsetWidth, this.video.offsetHeight);
+                    this.resize(this.video.offsetWidth, this.video.offsetHeight);
                     this._dispatchEvent("ready");
                 };
                 DefaultRenderer.prototype._onFullScreenChange = function() {
@@ -4574,7 +4602,7 @@
                     }
                     if (fullScreenElement === this.video) {
                         this._videoSubsWrapper.classList.add("libjass-full-screen");
-                        this.resizeVideo(screen.width, screen.height);
+                        this.resize(screen.width, screen.height);
                         this._videoIsFullScreen = true;
                         this._dispatchEvent("fullScreenChange", this._videoIsFullScreen);
                     } else if (fullScreenElement === null && this._videoIsFullScreen) {
@@ -4930,10 +4958,17 @@
                     this.fontScaleX = newStyle.fontScaleX;
                     this.fontScaleY = newStyle.fontScaleY;
                     this.letterSpacing = newStyle.letterSpacing;
+                    this._rotationX = null;
+                    this._rotationY = null;
+                    this._rotationZ = newStyle.rotationZ;
+                    this._skewX = null;
+                    this._skewY = null;
                     this.primaryColor = newStyle.primaryColor;
+                    this.secondaryColor = newStyle.secondaryColor;
                     this.outlineColor = newStyle.outlineColor;
                     this.shadowColor = newStyle.shadowColor;
                     this.primaryAlpha = null;
+                    this.secondaryAlpha = null;
                     this.outlineAlpha = null;
                     this.shadowAlpha = null;
                     this.blur = null;
@@ -4969,7 +5004,21 @@
                         transform += "scaleX(" + this._fontScaleX + ") ";
                     }
                     if (this._fontScaleY !== 1) {
-                        transform += "scaleY(" + this._fontScaleY + ")";
+                        transform += "scaleY(" + this._fontScaleY + ") ";
+                    }
+                    if (this._rotationY !== null) {
+                        transform += "rotateY(" + this._rotationY + "deg) ";
+                    }
+                    if (this._rotationX !== null) {
+                        transform += "rotateX(" + this._rotationX + "deg) ";
+                    }
+                    if (this._rotationZ !== 0) {
+                        transform += "rotateZ(" + -1 * this._rotationZ + "deg) ";
+                    }
+                    if (this._skewX !== null || this._skewY !== null) {
+                        var skewX = SpanStyles._valueOrDefault(this._skewX, 0);
+                        var skewY = SpanStyles._valueOrDefault(this._skewY, 0);
+                        transform += "matrix(1, " + skewY + ", " + skewX + ", 1, 0, 0) ";
                     }
                     if (transform !== "") {
                         span.style.webkitTransform = transform;
@@ -5041,6 +5090,10 @@
                     }
                     var shadowColor = this._shadowColor.withAlpha(this._shadowAlpha);
                     span.style.textShadow = shadowColor.toString() + " " + (this._shadowDepthX * this._scaleX / this._fontScaleX).toFixed(3) + "px " + (this._shadowDepthY * this._scaleY / this._fontScaleY).toFixed(3) + "px 0px";
+                    if (this._rotationZ !== null) {
+                        // Perspective needs to be set on a "transformable element"
+                        filterWrapperSpan.style.display = "inline-block";
+                    }
                     return filterWrapperSpan;
                 };
                 Object.defineProperty(SpanStyles.prototype, "italic", {
@@ -5211,6 +5264,66 @@
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(SpanStyles.prototype, "rotationX", {
+                    /**
+                     * Sets the X-axis rotation property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._rotationX = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "rotationY", {
+                    /**
+                     * Sets the Y-axis rotation property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._rotationY = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "rotationZ", {
+                    /**
+                     * Sets the Z-axis rotation property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._rotationZ = SpanStyles._valueOrDefault(value, this._defaultStyle.rotationZ);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "skewX", {
+                    /**
+                     * Sets the X-axis skew property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._skewX = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "skewY", {
+                    /**
+                     * Sets the Y-axis skew property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._skewY = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(SpanStyles.prototype, "primaryColor", {
                     /**
                      * Sets the primary color property. null defaults it to the default style's value.
@@ -5219,6 +5332,18 @@
                      */
                     set: function(value) {
                         this._primaryColor = SpanStyles._valueOrDefault(value, this._defaultStyle.primaryColor);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "secondaryColor", {
+                    /**
+                     * Sets the secondary color property. null defaults it to the default style's value.
+                     *
+                     * @type {libjass.parts.Color}
+                     */
+                    set: function(value) {
+                        this._secondaryColor = SpanStyles._valueOrDefault(value, this._defaultStyle.secondaryColor);
                     },
                     enumerable: true,
                     configurable: true
@@ -5255,6 +5380,18 @@
                      */
                     set: function(value) {
                         this._primaryAlpha = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "secondaryAlpha", {
+                    /**
+                     * Sets the secondary alpha property.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._secondaryAlpha = value;
                     },
                     enumerable: true,
                     configurable: true
@@ -5436,10 +5573,11 @@
                 if (libjass.verboseMode) {
                     console.log("Read script info: " + JSON.stringify(infoTemplate), infoTemplate);
                 }
-                // Parse the horizontal script resolution
+                // Parse the script properties
                 result.properties.resolutionX = parseInt(infoTemplate["PlayResX"]);
-                // Parse the vertical script resolution
                 result.properties.resolutionY = parseInt(infoTemplate["PlayResY"]);
+                result.properties.wrappingStyle = parseInt(infoTemplate["WrapStyle"]);
+                result.properties.scaleBorderAndShadow = infoTemplate["ScaledBorderAndShadow"] === "yes";
                 // Get styles from the styles section
                 script["V4+ Styles"].forEach(function(line) {
                     if (line.type === "Style") {
@@ -5468,6 +5606,12 @@
             return ASS;
         }();
         libjass.ASS = ASS;
+        (function(WrappingStyle) {
+            WrappingStyle[WrappingStyle["SmartWrappingWithWiderTopLine"] = 0] = "SmartWrappingWithWiderTopLine";
+            WrappingStyle[WrappingStyle["SmartWrappingWithWiderBottomLine"] = 3] = "SmartWrappingWithWiderBottomLine";
+            WrappingStyle[WrappingStyle["EndOfLineWrapping"] = 1] = "EndOfLineWrapping";
+            WrappingStyle[WrappingStyle["NoLineWrapping"] = 2] = "NoLineWrapping";
+        })(libjass.WrappingStyle || (libjass.WrappingStyle = {}));
         /**
          * This class represents the properties of an ASS script.
          *
@@ -5517,9 +5661,53 @@
                 enumerable: true,
                 configurable: true
             });
+            Object.defineProperty(ScriptProperties.prototype, "wrappingStyle", {
+                /**
+                 * The wrap style.
+                 *
+                 * @type {number}
+                 */
+                get: function() {
+                    return this._wrappingStyle;
+                },
+                /**
+                 * The wrap style.
+                 *
+                 * @type {number}
+                 */
+                set: function(value) {
+                    this._wrappingStyle = value;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(ScriptProperties.prototype, "scaleBorderAndShadow", {
+                /**
+                 * Whether to scale outline widths and shadow depths from script resolution to video resolution or not. If true, widths and depths are scaled.
+                 *
+                 * @type {boolean}
+                 */
+                get: function() {
+                    return this._scaleBorderAndShadow;
+                },
+                /**
+                 * Whether to scale outline widths and shadow depths from script resolution to video resolution or not. If true, widths and depths are scaled.
+                 *
+                 * @type {boolean}
+                 */
+                set: function(value) {
+                    this._scaleBorderAndShadow = value;
+                },
+                enumerable: true,
+                configurable: true
+            });
             return ScriptProperties;
         }();
         libjass.ScriptProperties = ScriptProperties;
+        (function(BorderStyle) {
+            BorderStyle[BorderStyle["Outline"] = 1] = "Outline";
+            BorderStyle[BorderStyle["OpaqueBox"] = 3] = "OpaqueBox";
+        })(libjass.BorderStyle || (libjass.BorderStyle = {}));
         /**
          * This class represents a single global style declaration in an ASS script. The styles can be obtained via the ASS.styles property.
          *
@@ -5559,10 +5747,13 @@
                 this._fontScaleX = parseFloat(template["ScaleX"]) / 100;
                 this._fontScaleY = parseFloat(template["ScaleY"]) / 100;
                 this._letterSpacing = parseFloat(template["Spacing"]);
+                this._rotationZ = parseFloat(template["Angle"]);
                 this._primaryColor = libjass.parser.parse(template["PrimaryColour"], "colorWithAlpha");
+                this._secondaryColor = libjass.parser.parse(template["SecondaryColour"], "colorWithAlpha");
                 this._outlineColor = libjass.parser.parse(template["OutlineColour"], "colorWithAlpha");
                 this._shadowColor = libjass.parser.parse(template["BackColour"], "colorWithAlpha");
                 this._outlineThickness = parseFloat(template["Outline"]);
+                this._borderStyle = parseInt(template["BorderStyle"]);
                 this._shadowDepth = parseFloat(template["Shadow"]);
                 this._alignment = parseInt(template["Alignment"]);
                 this._marginLeft = parseFloat(template["MarginL"]);
@@ -5689,6 +5880,18 @@
                 enumerable: true,
                 configurable: true
             });
+            Object.defineProperty(Style.prototype, "rotationZ", {
+                /**
+                 * The default Z-rotation of this style.
+                 *
+                 * @type {number}
+                 */
+                get: function() {
+                    return this._rotationZ;
+                },
+                enumerable: true,
+                configurable: true
+            });
             Object.defineProperty(Style.prototype, "primaryColor", {
                 /**
                  * The color of this style's font.
@@ -5697,6 +5900,18 @@
                  */
                 get: function() {
                     return this._primaryColor;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Style.prototype, "secondaryColor", {
+                /**
+                 * The alternate color of this style's font, used in karaoke.
+                 *
+                 * @type {!libjass.parts.Color}
+                 */
+                get: function() {
+                    return this._secondaryColor;
                 },
                 enumerable: true,
                 configurable: true
@@ -5733,6 +5948,18 @@
                  */
                 get: function() {
                     return this._outlineThickness;
+                },
+                enumerable: true,
+                configurable: true
+            });
+            Object.defineProperty(Style.prototype, "borderStyle", {
+                /**
+                 * The border style of this style.
+                 *
+                 * @type {number}
+                 */
+                get: function() {
+                    return this._borderStyle;
                 },
                 enumerable: true,
                 configurable: true
@@ -5823,7 +6050,6 @@
                 this._start = Dialogue._toTime(template["Start"]);
                 this._end = Dialogue._toTime(template["End"]);
                 this._layer = Math.max(parseInt(template["Layer"]), 0);
-                this._alignment = this._style.alignment;
                 this._rawPartsString = template["Text"];
             }
             Object.defineProperty(Dialogue.prototype, "id", {
@@ -5923,6 +6149,7 @@
             Dialogue.prototype._parsePartsString = function() {
                 var _this = this;
                 this._parts = libjass.parser.parse(this._rawPartsString, "dialogueParts");
+                this._alignment = this._style.alignment;
                 this._parts.forEach(function(part, index) {
                     if (part instanceof libjass.parts.Alignment) {
                         _this._alignment = part.value;
