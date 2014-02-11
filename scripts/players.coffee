@@ -306,8 +306,7 @@ document.addEventListener('DOMContentLoaded', () ->
                     ass = libjass.ASS.fromString(this.responseText)
                     handleSubsReady(video, ass)
                 request.send()
-            if format == 'srt'
-                # todo
-                console.log('handling srt')
+            if format == 'vtt'
+                captionator.captionify(video, "en", {})
         )(player)
 , false)

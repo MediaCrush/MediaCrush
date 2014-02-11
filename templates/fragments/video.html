@@ -10,7 +10,12 @@
         <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
         {% endif %}
         {% if has_subtitles %}
+        {% if subtitles['info']['codec_name'] == 'srt' %}
+        {# srt is converted to vtt, so it's not actually located at /filename.{codec_name} #}
+        <track src="{{ cdn }}/{{ filename }}.vtt" kind="subtitles" data-format="vtt" default />
+        {% else %}
         <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" />
+        {% endif %}
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>

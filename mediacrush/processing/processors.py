@@ -170,7 +170,10 @@ def get_processor(processor):
     return processor_table.get(processor, DefaultProcessor)
 
 def convert_to_vtt(path):
-    srt = ''
+    srt = list()
+    vtt = 'WEBVTT\n\n'
     with open(path) as f:
-        srt = f.read().decode("utf-8")
-    return "WEBVTT\n\n" + srt
+        srt = f.readlines().decode("utf-8")
+    for line in srt:
+        vtt += srt + '\n'
+    return vtt
