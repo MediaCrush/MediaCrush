@@ -12,7 +12,11 @@
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
     {% if has_subtitles %}
+    {% if subtitles['info']['codec_name'] == 'srt' or subtitles['info']['codec_name'] == 'vtt' %}
+    <script type="text/javascript" src="{{ url_for('static', filename='captionator.js') }}"></script>
+    {% else %}
     <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+    {% endif %}
     {% endif %}
 {% endblock %}
 {% block meta %}
