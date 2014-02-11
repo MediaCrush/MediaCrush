@@ -229,7 +229,6 @@ hashCompleted = (id, result) ->
     uploadedFiles[result] = file
     file.isHashed = true
     uploadFile(file)
-window.hashCompleted = hashCompleted # export so it doesn't get mangled during minification
 
 handlePaste = (e) ->
     target = document.getElementById('paste-target')

@@ -80,7 +80,7 @@ def prepare():
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
 
             if not app.debug:
-                javascript = minify(javascript, mangle=True)
+                javascript = minify(javascript)
 
             with open(os.path.join(app.static_folder, output), "w") as w:
                 w.write(javascript.encode("utf-8"))

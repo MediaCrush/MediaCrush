@@ -159,6 +159,7 @@ class MediaFile
     preload: ->
         return if not @blob?
         for file in @blob.files
+            console.log file.type
             if file.type.indexOf('image/') == 0 and file.type != 'image/gif'
                 _ = document.createElement('img')
                 _.src = file.url
