@@ -273,32 +273,36 @@ document.addEventListener('DOMContentLoaded', () ->
         ((player) ->
             id = player.getAttribute('data-media')
             video = player.querySelector('video')
-            style = document.getElementById('font-map-' + id)
-            ass = null
+            track = video.querySelector('track')
+            format = track.dataset.format
+            if format == 'ass'
+                style = document.getElementById('font-map-' + id)
+                ass = null
 
-            handleSubsReady = (video, ass) ->
-                if video.readyState >= HTMLMediaElement.HAVE_METADATA and ass
-                    width = video.offsetWidth
-                    height = video.offsetHeight
-                    renderer = new libjass.renderers.DefaultRenderer(video, ass, {
-                        fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
-                    })
-                    renderer.resizeVideo(width, height)
-                    console.log('Set up renderer for ' + id)
-                    subtitleRenderers[id] = renderer
+                handleSubsReady = (video, ass) ->
+                    if video.readyState >= HTMLMediaElement.HAVE_METADATA and ass
+                        width = video.offsetWidth
+                        height = video.offsetHeight
+                        renderer = new libjass.renderers.DefaultRenderer(video, ass, {
+                            fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
+                        })
+                        renderer.resize(width, height)
+                        subtitleRenderers[id] = renderer
 
-            if video.readyState < HTMLMediaElement.HAVE_METADATA
-                video.addEventListener('loadedmetadata', () ->
+                if video.readyState < HTMLMediaElement.HAVE_METADATA
+                    video.addEventListener('loadedmetadata', () ->
+                        handleSubsReady(video, ass)
+                    , false)
+                else
                     handleSubsReady(video, ass)
-                , false)
-            else
-                handleSubsReady(video, ass)
-            track = video.querySelector('track[data-format="ass"]')
-            request = new XMLHttpRequest()
-            request.open('GET', track.src || track.getAttribute('src'))
-            request.onload = () ->
-                ass = libjass.ASS.fromString(this.responseText)
-                handleSubsReady(video, ass)
-            request.send()
+                request = new XMLHttpRequest()
+                request.open('GET', track.src || track.getAttribute('src'))
+                request.onload = () ->
+                    ass = libjass.ASS.fromString(this.responseText)
+                    handleSubsReady(video, ass)
+                request.send()
+            if format == 'srt'
+                # todo
+                console.log('handling srt')
         )(player)
 , false)

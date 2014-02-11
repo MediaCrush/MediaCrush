@@ -10,7 +10,7 @@ _extension = lambda f: f.rsplit('.', 1)[1].lower()
 class VideoProcessor(Processor):
     time = 300
     outputs = ['mp4', 'webm', 'ogv']
-    extras = ['png']
+    extras = ['jpg']
 
     def sync(self):
         self._execute(copy)
@@ -24,6 +24,7 @@ class VideoProcessor(Processor):
         self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5" + map_string + " {1}.webm")
         # Extract extra streams if present
         fonts = []
+        extract_fonts = False
         if self.processor_state['has_fonts'] or self.processor_state['has_subtitles']:
             for stream in self.processor_state['streams']:
                 if stream['type'] == 'font':
@@ -35,40 +36,48 @@ class VideoProcessor(Processor):
                     extension = None
                     if stream['info']['codec_name'] == 'ssa':
                         extension = '.ass'
+                        extract_fonts = True
                     elif stream['info']['codec_name'] == 'srt':
                         extension = '.srt'
                     elif stream['info']['codec_name'] == 'vtt':
                         extension = '.vtt'
                     if extension != None:
                         self._execute("ffmpeg -y -i {0} -map 0:s:0 {1}" + extension)
-        # Examine font files and construct some CSS to import them
-        css = ''
-        i = 0
-        for font in fonts:
-            command = Invocation('otfinfo --info {0}')
-            command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
-            i += 1
-            command.run()
-            output = command.stdout[0].split('\n')
-            family = None
-            subfamily = None
-            for line in output:
-                if line.startswith('Family:'):
-                    family = line[7:].strip(' \t')
-                if line.startswith('Subfamily:'):
-                    subfamily = line[10:].strip(' \t')
-            css += '@font-face{font-family: "%s";' % family
-            css += 'src:url("/%s_attachment_%s");' % (self.f.hash, font["info"])
-            if subfamily == 'SemiBold':
-                css += 'font-weight: 600;'
-            elif subfamily == 'Bold':
-                css += 'font-weight: bold;'
-            elif subfamily == 'Italic':
-                css += 'font-style: italic;'
-            css += '}'
-        css_file = open(os.path.join(_cfg("storage_folder"), '%s_fonts.css' % self.f.hash), 'w')
-        css_file.write(css)
-        css_file.close()
+                        if extension == '.srt':
+                            # convert to vtt
+                            vtt = convert_to_vtt(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
+                            with open(os.path.join(_cfg("storage_folder"), '%s.vtt' % self.f.hash), 'w') as f:
+                                f.write(vtt)
+                            os.remove(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
+        if extract_fonts:
+            # Examine font files and construct some CSS to import them
+            css = ''
+            i = 0
+            for font in fonts:
+                command = Invocation('otfinfo --info {0}')
+                command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
+                i += 1
+                command.run()
+                output = command.stdout[0].split('\n')
+                family = None
+                subfamily = None
+                for line in output:
+                    if line.startswith('Family:'):
+                        family = line[7:].strip(' \t')
+                    if line.startswith('Subfamily:'):
+                        subfamily = line[10:].strip(' \t')
+                css += '@font-face{font-family: "%s";' % family
+                css += 'src:url("/%s_attachment_%s");' % (self.f.hash, font["info"])
+                if subfamily == 'SemiBold':
+                    css += 'font-weight: 600;'
+                elif subfamily == 'Bold':
+                    css += 'font-weight: bold;'
+                elif subfamily == 'Italic':
+                    css += 'font-style: italic;'
+                css += '}'
+            css_file = open(os.path.join(_cfg("storage_folder"), '%s_fonts.css' % self.f.hash), 'w')
+            css_file.write(css)
+            css_file.close()
 
     def async(self):
         map_string = ''
@@ -158,3 +167,9 @@ processor_table = {
 
 def get_processor(processor):
     return processor_table.get(processor, DefaultProcessor)
+
+def convert_to_vtt(path):
+    srt = ''
+    with open(path) as f:
+        srt = f.read().decode("utf-8")
+    return "WEBVTT\n\n" + srt

@@ -75,6 +75,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));
 }, false);
 </script>
-{% if has_subtitles %}
+{% if has_subtitles and subtitles['info']['codec_name'] == 'ass' %}
 <link rel="stylesheet" type="text/css" href="/{{ filename }}_fonts.css" id="font-map-{{filename}}"></link>
 {% endif %}

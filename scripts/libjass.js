@@ -311,7 +311,6 @@
              * @constructor
              * @param {string} value The text of this comment
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Comment = function() {
@@ -334,12 +333,11 @@
             }();
             parts.Comment = Comment;
             /**
-             * A block of text, i.e., any text not enclosed in {}. Also includes \h and \N.
+             * A block of text, i.e., any text not enclosed in {}. Also includes \h.
              *
              * @constructor
              * @param {string} value The content of this block of text
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Text = function() {
@@ -359,18 +357,29 @@
                     configurable: true
                 });
                 Text.prototype.toString = function() {
-                    return "Text { value: " + this._value.replace(/\u00A0/g, "\\h").replace(/\n/g, "\\N") + " }";
+                    return "Text { value: " + this._value.replace(/\u00A0/g, "\\h") + " }";
                 };
                 return Text;
             }();
             parts.Text = Text;
+            /**
+             * A newline character \N.
+             *
+             * @constructor
+             *
+             * @memberof libjass.parts
+             */
+            var NewLine = function() {
+                function NewLine() {}
+                return NewLine;
+            }();
+            parts.NewLine = NewLine;
             /**
              * An italic tag {\i}
              *
              * @constructor
              * @param {?boolean} value {\i1} -> true, {\i0} -> false, {\i} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Italic = function() {
@@ -398,7 +407,6 @@
              * @constructor
              * @param {*} value {\b1} -> true, {\b0} -> false, {\b###} -> weight of the bold (number), {\b} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Bold = function() {
@@ -426,7 +434,6 @@
              * @constructor
              * @param {?boolean} value {\u1} -> true, {\u0} -> false, {\u} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Underline = function() {
@@ -454,7 +461,6 @@
              * @constructor
              * @param {?boolean} value {\s1} -> true, {\s0} -> false, {\s} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var StrikeThrough = function() {
@@ -482,7 +488,6 @@
              * @constructor
              * @param {?number} value {\bord###} -> width (number), {\bord} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Border = function() {
@@ -510,7 +515,6 @@
              * @constructor
              * @param {?number} value {\xbord###} -> width (number), {\xbord} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var BorderX = function() {
@@ -538,7 +542,6 @@
              * @constructor
              * @param {?number} value {\ybord###} -> height (number), {\ybord} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var BorderY = function() {
@@ -566,7 +569,6 @@
              * @constructor
              * @param {?number} value {\shad###} -> depth (number), {\shad} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Shadow = function() {
@@ -594,7 +596,6 @@
              * @constructor
              * @param {?number} value {\xshad###} -> depth (number), {\xshad} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ShadowX = function() {
@@ -622,7 +623,6 @@
              * @constructor
              * @param {?number} value {\yshad###} -> depth (number), {\yshad} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ShadowY = function() {
@@ -650,7 +650,6 @@
              * @constructor
              * @param {?number} value {\be###} -> strength (number), {\be} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Blur = function() {
@@ -678,7 +677,6 @@
              * @constructor
              * @param {?number} value {\blur###} -> strength (number), {\blur} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var GaussianBlur = function() {
@@ -706,7 +704,6 @@
              * @constructor
              * @param {?string} value {\fn###} -> name (string), {\fn} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var FontName = function() {
@@ -734,7 +731,6 @@
              * @constructor
              * @param {?number} value {\fs###} -> size (number), {\fs} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var FontSize = function() {
@@ -762,7 +758,6 @@
              * @constructor
              * @param {?number} value {\fscx###} -> scale (number), {\fscx} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var FontScaleX = function() {
@@ -790,7 +785,6 @@
              * @constructor
              * @param {?number} value {\fscy###} -> scale (number), {\fscy} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var FontScaleY = function() {
@@ -818,7 +812,6 @@
              * @constructor
              * @param {?number} value {\fsp###} -> spacing (number), {\fsp} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var LetterSpacing = function() {
@@ -846,7 +839,6 @@
              * @constructor
              * @param {?number} value {\frx###} -> angle (number), {\frx} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var RotateX = function() {
@@ -874,7 +866,6 @@
              * @constructor
              * @param {?number} value {\fry###} -> angle (number), {\fry} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var RotateY = function() {
@@ -902,7 +893,6 @@
              * @constructor
              * @param {?number} value {\frz###} -> angle (number), {\frz} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var RotateZ = function() {
@@ -930,7 +920,6 @@
              * @constructor
              * @param {?number} value {\fax###} -> angle (number), {\fax} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var SkewX = function() {
@@ -958,7 +947,6 @@
              * @constructor
              * @param {?number} value {\fay###} -> angle (number), {\fay} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var SkewY = function() {
@@ -986,7 +974,6 @@
              * @constructor
              * @param {libjass.parts.Color} value {\1c###} -> color (Color), {\1c} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var PrimaryColor = function() {
@@ -1014,7 +1001,6 @@
              * @constructor
              * @param {libjass.parts.Color} value {\2c###} -> color (Color), {\2c} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var SecondaryColor = function() {
@@ -1042,7 +1028,6 @@
              * @constructor
              * @param {libjass.parts.Color} value {\3c###} -> color (Color), {\3c} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var OutlineColor = function() {
@@ -1070,7 +1055,6 @@
              * @constructor
              * @param {libjass.parts.Color} value {\4c###} -> color (Color), {\4c} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ShadowColor = function() {
@@ -1098,7 +1082,6 @@
              * @constructor
              * @param {?number} value {\alpha###} -> alpha (number), {\alpha} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Alpha = function() {
@@ -1126,7 +1109,6 @@
              * @constructor
              * @param {?number} value {\1a###} -> alpha (number), {\1a} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var PrimaryAlpha = function() {
@@ -1154,7 +1136,6 @@
              * @constructor
              * @param {?number} value {\2a###} -> alpha (number), {\2a} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var SecondaryAlpha = function() {
@@ -1182,7 +1163,6 @@
              * @constructor
              * @param {?number} value {\3a###} -> alpha (number), {\3a} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var OutlineAlpha = function() {
@@ -1210,7 +1190,6 @@
              * @constructor
              * @param {?number} value {\4a###} -> alpha (number), {\4a} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ShadowAlpha = function() {
@@ -1238,7 +1217,6 @@
              * @constructor
              * @param {number} value {\an###} -> alignment (number)
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Alignment = function() {
@@ -1266,7 +1244,6 @@
              * @constructor
              * @param {number} duration {\k###} -> duration (number)
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ColorKaraoke = function() {
@@ -1294,7 +1271,6 @@
              * @constructor
              * @param {number} duration {\kf###} -> duration (number)
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var SweepingColorKaraoke = function() {
@@ -1322,7 +1298,6 @@
              * @constructor
              * @param {number} duration {\ko###} -> duration (number)
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var OutlineKaraoke = function() {
@@ -1350,7 +1325,6 @@
              * @constructor
              * @param {number} value {\q###} -> style (number)
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var WrappingStyle = function() {
@@ -1378,7 +1352,6 @@
              * @constructor
              * @param {?string} value {\r###} -> style name (string), {\r} -> null
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Reset = function() {
@@ -1407,7 +1380,6 @@
              * @param {number} x
              * @param {number} y
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Position = function() {
@@ -1453,7 +1425,6 @@
              * @param {number} t1
              * @param {number} t2
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Move = function() {
@@ -1547,7 +1518,6 @@
              * @param {number} x
              * @param {number} y
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var RotationOrigin = function() {
@@ -1589,7 +1559,6 @@
              * @param {number} start
              * @param {number} end
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Fade = function() {
@@ -1636,7 +1605,6 @@
              * @param {number} t3
              * @param {number} t4
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var ComplexFade = function() {
@@ -1745,7 +1713,6 @@
              * @param {number} accel
              * @param {!Array.<!libjass.parts.Tag>} tags
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var Transform = function() {
@@ -1816,7 +1783,6 @@
              * @param {number} y2
              * @param {boolean} inside
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var RectangularClip = function() {
@@ -1898,7 +1864,6 @@
              * @param {!Array.<!libjass.parts.drawing.Instruction>} instructions
              * @param {boolean} inside
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var VectorClip = function() {
@@ -1952,7 +1917,6 @@
              * @constructor
              * @param {number} scale
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var DrawingMode = function() {
@@ -1980,7 +1944,6 @@
              * @constructor
              * @param {number} value
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var DrawingBaselineOffset = function() {
@@ -2008,7 +1971,6 @@
              * @constructor
              * @param {!Array.<!libjass.parts.drawing.Instruction>} instructions
              *
-             * @extends {libjass.parts.PartBase}
              * @memberof libjass.parts
              */
             var DrawingInstructions = function() {
@@ -2038,7 +2000,6 @@
                  * @param {number} x
                  * @param {number} y
                  *
-                 * @extends {libjass.parts.PartBase}
                  * @memberof libjass.parts.drawing
                  */
                 var MoveInstruction = function() {
@@ -2080,7 +2041,6 @@
                  * @param {number} x
                  * @param {number} y
                  *
-                 * @extends {libjass.parts.PartBase}
                  * @memberof libjass.parts.drawing
                  */
                 var LineInstruction = function() {
@@ -2126,7 +2086,6 @@
                  * @param {number} x3
                  * @param {number} y3
                  *
-                 * @extends {libjass.parts.PartBase}
                  * @memberof libjass.parts.drawing
                  */
                 var CubicBezierCurveInstruction = function() {
@@ -2449,17 +2408,23 @@
                         if (enclosedTagsNode !== null) {
                             current.value.push.apply(current.value, enclosedTagsNode.value);
                         } else {
-                            var textNode = this.parse_newline(current) || this.parse_hardspace(current) || this.parse_text(current);
-                            if (textNode !== null) {
-                                if (current.value[current.value.length - 1] instanceof libjass.parts.Text) {
-                                    // Merge consecutive text parts into one part
-                                    current.value[current.value.length - 1] = new libjass.parts.Text(current.value[current.value.length - 1].value + textNode.value.value);
-                                } else {
-                                    current.value.push(textNode.value);
-                                }
+                            var newLineNode = this.parse_newline(current);
+                            if (newLineNode !== null) {
+                                current.value.push(newLineNode.value);
                             } else {
-                                parent.pop();
-                                return null;
+                                var textNode = this.parse_newline(current) || this.parse_hardspace(current) || this.parse_text(current);
+                                if (textNode !== null) {
+                                    if (current.value[current.value.length - 1] instanceof libjass.parts.Text) {
+                                        // Merge consecutive text parts into one part
+                                        var previousTextPart = current.value[current.value.length - 1];
+                                        current.value[current.value.length - 1] = new libjass.parts.Text(previousTextPart.value + textNode.value.value);
+                                    } else {
+                                        current.value.push(textNode.value);
+                                    }
+                                } else {
+                                    parent.pop();
+                                    return null;
+                                }
                             }
                         }
                     }
@@ -2523,7 +2488,7 @@
                         parent.pop();
                         return null;
                     }
-                    current.value = new libjass.parts.Text("\n");
+                    current.value = new libjass.parts.NewLine();
                     return current;
                 };
                 /**
@@ -4310,6 +4275,7 @@
                     sub.style.marginLeft = (this._scaleX * dialogue.style.marginLeft).toFixed(3) + "px";
                     sub.style.marginRight = (this._scaleX * dialogue.style.marginRight).toFixed(3) + "px";
                     sub.style.marginTop = sub.style.marginBottom = (this._scaleY * dialogue.style.marginVertical).toFixed(3) + "px";
+                    sub.style.minWidth = (this._subsWrapper.offsetWidth - 2 * (this._scaleX * dialogue.style.marginLeft)).toFixed(3) + "px";
                     switch (dialogue.alignment) {
                       case 1:
                       case 4:
@@ -4332,13 +4298,16 @@
                     var animationCollection = new AnimationCollection(this, dialogue);
                     var currentSpan = null;
                     var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._svgDefsElement);
-                    var startNewSpan = function() {
+                    var startNewSpan = function(addNewLine) {
                         if (currentSpan !== null) {
                             sub.appendChild(currentSpanStyles.setStylesOnSpan(currentSpan));
+                            if (addNewLine) {
+                                sub.appendChild(document.createElement("br"));
+                            }
                         }
                         currentSpan = document.createElement("span");
                     };
-                    startNewSpan();
+                    startNewSpan(false);
                     var currentDrawing = null;
                     var wrappingStyle = this.ass.properties.wrappingStyle;
                     dialogue.parts.forEach(function(part) {
@@ -4468,10 +4437,12 @@
                             currentDrawing.instructions = part.instructions;
                             currentSpan.appendChild(currentDrawing.toSVG());
                             currentDrawing = null;
-                            startNewSpan();
+                            startNewSpan(false);
                         } else if (part instanceof libjass.parts.Text || libjass.debugMode && part instanceof libjass.parts.Comment) {
                             currentSpan.appendChild(document.createTextNode(part.value));
-                            startNewSpan();
+                            startNewSpan(false);
+                        } else if (part instanceof libjass.parts.NewLine) {
+                            startNewSpan(true);
                         }
                     });
                     dialogue.parts.some(function(part) {

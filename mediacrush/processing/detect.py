@@ -233,10 +233,13 @@ def detect_stream(stream):
             default = stream["disposition"]["default"] == 1
         if "tags" in stream and "language" in stream["tags"]:
             language = stream["tags"]["language"]
+        codec_name = stream["codec_name"]
+        if codec_name == "subrip":
+            codec_name = 'srt' # This one makes more sense, and is consistent with vtt
         return {
             'type': 'subtitle',
             'metadata': { 'default': default, 'language': language },
-            'processor_state': { 'codec_name': stream['codec_name'], 'default': default },
+            'processor_state': { 'codec_name': codec_name, 'default': default },
             'flags': None
         }
     return None
