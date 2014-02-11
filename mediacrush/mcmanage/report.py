@@ -14,7 +14,7 @@ import random
 TEMPLATE = """
 This is the report for %s.
 
-There are %d media blobs, and %d albums. %d files are missing from %d blobs.
+There are %d media blobs, and %d albums.
 
 File usage:
 %s
@@ -35,18 +35,13 @@ types = {}
 
 def report():
     files = File.get_all()
-    missing = 0
-    missing_blobs = 0
     for f in files:
-        blob_missing = False
+        if f.original == None:
+            continue # This is something we should think about cleaning up after at some point
         try:
             with open(os.path.join(_cfg("storage_folder"), f.original)):
                 size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
-        except IOError:
-            missing += 1
-            if not blob_missing:
-                missing_blobs += 1
-                blob_missing = True
+        except IOError: pass
         processor = get_processor(f._processor)
         for f_ext in processor.outputs:
             name = "%s.%s" % (f.hash, f_ext)
@@ -55,20 +50,12 @@ def report():
             try:
                 with open(os.path.join(_cfg("storage_folder"), name)):
                     size += os.path.getsize(os.path.join(_cfg("storage_folder"), name))
-            except IOError:
-                missing += 1
-                if not blob_missing:
-                    missing_blobs += 1
-                    blob_missing = True
+            except IOError: pass
         for f_ext in processor.extras:
             try:
                 with open(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext))):
                     size += os.path.getsize(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext)))
-            except IOError:
-                missing += 1
-                if not blob_missing:
-                    missing_blobs += 1
-                    blob_missing = True
+            except IOError: pass
         size /= float(1 << 20)
         size = round(size, 2)
 
@@ -84,7 +71,7 @@ def report():
 
     fileinfo = "" 
     for t in types:
-        fileinfo += "    -%d %ss (%0.2f MB)\n" % (types[t], t, sizes[t])
+        fileinfo += "    -%d %s blobs (%0.2f MB)\n" % (types[t], t, sizes[t])
 
     diskinfo = ''.join(["    %s\n" % s for s in subprocess.check_output(["df", "-kh"]).split("\n")])
 
@@ -115,8 +102,6 @@ def report():
         datetime.now().strftime("%d/%m/%Y"),
         blobs,
         albums,
-        missing,
-        missing_blobs,
         fileinfo,
         diskinfo,
         reportinfo,
