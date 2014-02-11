@@ -25,59 +25,60 @@ class VideoProcessor(Processor):
         # Extract extra streams if present
         fonts = []
         extract_fonts = False
-        if self.processor_state['has_fonts'] or self.processor_state['has_subtitles']:
-            for stream in self.processor_state['streams']:
-                if stream['type'] == 'font':
-                    # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
-                    # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
-                    self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
-                    fonts.append(stream)
-                elif stream['type'] == 'subtitle' and 'info' in stream:
-                    extension = None
-                    if stream['info']['codec_name'] == 'ssa':
-                        extension = '.ass'
-                        extract_fonts = True
-                    elif stream['info']['codec_name'] == 'srt':
-                        extension = '.srt'
-                    elif stream['info']['codec_name'] == 'vtt':
-                        extension = '.vtt'
-                    if extension != None:
-                        self._execute("ffmpeg -y -i {0} -map 0:s:0 {1}" + extension)
-                        if extension == '.srt':
-                            # convert to vtt
-                            vtt = convert_to_vtt(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
-                            with open(os.path.join(_cfg("storage_folder"), '%s.vtt' % self.f.hash), 'w') as f:
-                                f.write(vtt)
-                            os.remove(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
-        if extract_fonts:
-            # Examine font files and construct some CSS to import them
-            css = ''
-            i = 0
-            for font in fonts:
-                command = Invocation('otfinfo --info {0}')
-                command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
-                i += 1
-                command.run()
-                output = command.stdout[0].split('\n')
-                family = None
-                subfamily = None
-                for line in output:
-                    if line.startswith('Family:'):
-                        family = line[7:].strip(' \t')
-                    if line.startswith('Subfamily:'):
-                        subfamily = line[10:].strip(' \t')
-                css += '@font-face{font-family: "%s";' % family
-                css += 'src:url("/%s_attachment_%s");' % (self.f.hash, font["info"])
-                if subfamily == 'SemiBold':
-                    css += 'font-weight: 600;'
-                elif subfamily == 'Bold':
-                    css += 'font-weight: bold;'
-                elif subfamily == 'Italic':
-                    css += 'font-style: italic;'
-                css += '}'
-            css_file = open(os.path.join(_cfg("storage_folder"), '%s_fonts.css' % self.f.hash), 'w')
-            css_file.write(css)
-            css_file.close()
+        if 'has_fonts' in self.processor_state and 'has_subtitles' in self.processor_state:
+            if self.processor_state['has_fonts'] or self.processor_state['has_subtitles']:
+                for stream in self.processor_state['streams']:
+                    if stream['type'] == 'font':
+                        # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
+                        # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
+                        self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
+                        fonts.append(stream)
+                    elif stream['type'] == 'subtitle' and 'info' in stream:
+                        extension = None
+                        if stream['info']['codec_name'] == 'ssa':
+                            extension = '.ass'
+                            extract_fonts = True
+                        elif stream['info']['codec_name'] == 'srt':
+                            extension = '.srt'
+                        elif stream['info']['codec_name'] == 'vtt':
+                            extension = '.vtt'
+                        if extension != None:
+                            self._execute("ffmpeg -y -i {0} -map 0:s:0 {1}" + extension)
+                            if extension == '.srt':
+                                # convert to vtt
+                                vtt = convert_to_vtt(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
+                                with open(os.path.join(_cfg("storage_folder"), '%s.vtt' % self.f.hash), 'w') as f:
+                                    f.write(vtt)
+                                os.remove(os.path.join(_cfg("storage_folder"), '%s.srt' % self.f.hash))
+            if extract_fonts:
+                # Examine font files and construct some CSS to import them
+                css = ''
+                i = 0
+                for font in fonts:
+                    command = Invocation('otfinfo --info {0}')
+                    command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
+                    i += 1
+                    command.run()
+                    output = command.stdout[0].split('\n')
+                    family = None
+                    subfamily = None
+                    for line in output:
+                        if line.startswith('Family:'):
+                            family = line[7:].strip(' \t')
+                        if line.startswith('Subfamily:'):
+                            subfamily = line[10:].strip(' \t')
+                    css += '@font-face{font-family: "%s";' % family
+                    css += 'src:url("/%s_attachment_%s");' % (self.f.hash, font["info"])
+                    if subfamily == 'SemiBold':
+                        css += 'font-weight: 600;'
+                    elif subfamily == 'Bold':
+                        css += 'font-weight: bold;'
+                    elif subfamily == 'Italic':
+                        css += 'font-style: italic;'
+                    css += '}'
+                css_file = open(os.path.join(_cfg("storage_folder"), '%s_fonts.css' % self.f.hash), 'w')
+                css_file.write(css)
+                css_file.close()
 
     def async(self):
         map_string = ''
