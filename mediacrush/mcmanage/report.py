@@ -14,7 +14,7 @@ import random
 TEMPLATE = """
 This is the report for %s.
 
-There are %d media blobs, and %d albums.
+There are %d media blobs, and %d albums. %d files are missing from %d blobs.
 
 File usage:
 %s
@@ -35,8 +35,18 @@ types = {}
 
 def report():
     files = File.get_all()
+    missing = 0
+    missing_blobs = 0
     for f in files:
-        size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
+        blob_missing = False
+        try:
+            with open(os.path.join(_cfg("storage_folder"), f.original)):
+                size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
+        except IOError:
+            missing += 1
+            if not blob_missing:
+                missing_blobs += 1
+                blob_missing = True
         processor = get_processor(f._processor)
         for f_ext in processor.outputs:
             name = "%s.%s" % (f.hash, f_ext)
@@ -45,12 +55,20 @@ def report():
             try:
                 with open(os.path.join(_cfg("storage_folder"), name)):
                     size += os.path.getsize(os.path.join(_cfg("storage_folder"), name))
-            except IOError: pass
+            except IOError:
+                missing += 1
+                if not blob_missing:
+                    missing_blobs += 1
+                    blob_missing = True
         for f_ext in processor.extras:
             try:
                 with open(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext))):
                     size += os.path.getsize(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext)))
-            except IOError: pass
+            except IOError:
+                missing += 1
+                if not blob_missing:
+                    missing_blobs += 1
+                    blob_missing = True
         size /= float(1 << 20)
         size = round(size, 2)
 
@@ -97,6 +115,8 @@ def report():
         datetime.now().strftime("%d/%m/%Y"),
         blobs,
         albums,
+        missing,
+        missing_blobs,
         fileinfo,
         diskinfo,
         reportinfo,
