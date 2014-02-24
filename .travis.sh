@@ -11,6 +11,7 @@ wget https://github.com/yasm/yasm/archive/v1.2.0.tar.gz
 tar zxf v1.2.0.tar.gz
 
 cd yasm-1.2.0
+./autogen.sh
 ./configure
 make
 sudo make install
