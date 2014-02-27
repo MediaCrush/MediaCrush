@@ -1,5 +1,5 @@
 import logging
-from mediacrush.networking import is_tor
+from mediacrush.network import is_tor
 
 try:
     from configparser import ConfigParser
