@@ -30,6 +30,6 @@ def addressInNetwork(ip, net):
 
 def secure_ip():
     ip = get_ip()
-    if ip == '127.0.0.1' and not current_app.debug:
+    if ip == '127.0.0.3' and not current_app.debug:
         return 'anonymous_user'
     return generate_password_hash(ip)
