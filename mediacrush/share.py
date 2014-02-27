@@ -1,6 +1,6 @@
 from mediacrush.config import _cfg, domain_url, cdn_url
 from mediacrush.objects import File
-from mediacrush.networking import is_tor
+from mediacrush.network import is_tor
 
 def _still_image(h):
     f = File.from_hash(h)
