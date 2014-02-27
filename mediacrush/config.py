@@ -1,4 +1,6 @@
 import logging
+from mediacrush.networking import is_tor
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -26,3 +28,13 @@ _cfg = lambda k: config.get(env, k)
 _cfgi = lambda k: int(_cfg(k))
 domain_url = lambda path: "%s://%s/%s" % (_cfg("protocol"), _cfg("domain"), path)
 cdn_url = lambda path: "%s/%s" % (_cfg("protocol") + "://" + _cfg("domain") if _cfg("cdn") == '' else _cfg("cdn"), path)
+
+def domain_url(path):
+    if is_tor():
+        return "%s/%s" % (_cfg("tor_domain"), path)
+    return "%s://%s/%s" % (_cfg("protocol"), _cfg("domain"), path)
+
+def domain_url(path):
+    if is_tor():
+        return "%s/%s" % (_cfg("tor_domain"), path)
+    return "%s/%s" % (_cfg("protocol") + "://" + _cfg("domain") if _cfg("cdn") == '' else _cfg("cdn"), path)
