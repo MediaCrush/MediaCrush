@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block meta %}
+<meta http-equiv="refresh" content="5">
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mine.css') }}" />
+{% endblock %}
+{% block content %}
+<h2>Please wait while we process your file...</h2>
+<p>This may take a while.</p>
+{% endblock %}

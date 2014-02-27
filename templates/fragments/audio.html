@@ -8,48 +8,50 @@
     {% endif %}
 {% endif %}
 <div class="player audio" id="player-{{ filename }}">
-    <audio id="audio-{{ filename }}" preload>
+    <audio id="audio-{{ filename }}" preload controls>
         <source src="{{ cdn }}/{{ filename }}.mp3" type='audio/mpeg'>
         <source src="{{ cdn }}/{{ filename }}.ogg" type='audio/ogg'>
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a>page.</p>
     </audio>
-    <div class="controls muted fixed"> {# Note: 'muted' is here because we are missing the fullscreen icon and we can reuse the styles #}
-        <a href="#" class="icon play-pause play"></a>
-        <div class="seek">
-            <div class="background"></div>
-            <div class="loading progress"></div>
-            <div class="hidden loaded"></div>
-            <div class="hidden played"></div>
-            <div class="clickable"></div>
-        </div>
-        <div class="right">
-            <span class="toggleable volume">
-                <a href="#" class="icon" data-icon="&#xF03B;"></a>
-                <div>
-                    <span>
-                        <span class="background"></span>
-                        <span class="amount"></span>
-                        <span class="clickable"></span>
-                    </span>
-                </div>
-            </span>
-            <span class="toggleable settings">
-                <span class="icon" data-icon="&#xF04E;"></span>
-                <div>
-                    <div class="playback-speed">
-                        <div class="header">Playback Speed</div>
-                        <div class="speeds">
-                            <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="1.5">150%</a>
+    <div class="hidden-if-noscript">
+        <div class="controls muted fixed"> {# Note: 'muted' is here because we are missing the fullscreen icon and we can reuse the styles #}
+            <a href="#" class="icon play-pause play"></a>
+            <div class="seek">
+                <div class="background"></div>
+                <div class="loading progress"></div>
+                <div class="hidden loaded"></div>
+                <div class="hidden played"></div>
+                <div class="clickable"></div>
+            </div>
+            <div class="right">
+                <span class="toggleable volume">
+                    <a href="#" class="icon" data-icon="&#xF03B;"></a>
+                    <div>
+                        <span>
+                            <span class="background"></span>
+                            <span class="amount"></span>
+                            <span class="clickable"></span>
+                        </span>
+                    </div>
+                </span>
+                <span class="toggleable settings">
+                    <span class="icon" data-icon="&#xF04E;"></span>
+                    <div>
+                        <div class="playback-speed">
+                            <div class="header">Playback Speed</div>
+                            <div class="speeds">
+                                <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="1.5">150%</a>
+                            </div>
                         </div>
+                        <div class="highlight">
+                            <a href="#" class="loop">
+                                <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
+                            </a>
+                        </div>
+                        <div class="highlight"><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
                     </div>
-                    <div class="highlight">
-                        <a href="#" class="loop">
-                            <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
-                        </a>
-                    </div>
-                    <div class="highlight"><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
-                </div>
-            </span>
+                </span>
+            </div>
         </div>
     </div>
 </div>

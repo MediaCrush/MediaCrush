@@ -26,5 +26,8 @@ def addressInNetwork(ip, net):
     return ip & net == net
 
 def secure_ip():
-    return generate_password_hash(get_ip())
+    ip = get_ip()
+    if ip == '127.0.0.1':
+        return 'anonymous_user'
+    return generate_password_hash(ip)
 
