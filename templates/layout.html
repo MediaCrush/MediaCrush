@@ -45,7 +45,7 @@
                     <li><a href="//blog.mediacru.sh">Blog</a></li>
                     <li><a href="/about">About</a></li>
                 </ul>
-                <a href="javascript:switchTheme();" class="pull-right small">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
+                <a href="javascript:switchTheme();" class="pull-right small hidden-if-noscript">{% if dark_theme %}Light theme{% else %}Dark theme{% endif %}</a>
                 {% else %}
                 <ul>
                     <li><a href="/">Upload</a></li>
@@ -59,7 +59,7 @@
             </div>
         </div>
         {% block feedback %}
-        <div id="feedback">
+        <div id="feedback" class="hidden-if-noscript">
             <a href="#" id="toggle-feedback"><img src="/static/feedback.png" alt="How are we doing?" /></a>
             <div>
                 <textarea id="feedback-text"></textarea>
@@ -82,5 +82,13 @@
             </div>
         </div>
         {% endblock %}
+        <script type="text/javascript">
+            (function() {
+                var hidden = document.querySelectorAll('.hidden-if-noscript');
+                for (var i = 0; i < hidden.length; i++) {
+                    hidden[i].classList.remove('hidden-if-noscript');
+                }
+            })();
+        </script>
     </body>
 </html>

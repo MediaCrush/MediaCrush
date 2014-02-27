@@ -17,6 +17,7 @@ MediaPlayer = (container) ->
     seek = container.querySelector('.seek')
     volume = container.querySelector('.volume > div')
     ready = false
+    media.controls = false
 
     if isVideo
         window.mediaSizeReporter = ->

@@ -1,5 +1,5 @@
 <div class="player video" id="player-{{ filename }}">
-    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload>
+    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload controls>
         {% if 'video/mp4' in types %}
         <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
         {% endif %}
@@ -11,55 +11,57 @@
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
-    <a class="start {% if flags['autoplay'] %}hidden{% endif %}" href="#">
-        <span class="icon" data-icon="&#xF16B;"></span>
-    </a>
-    <div class="controls {% if flags['mute'] %}muted{% endif %}">
-        <a href="#" class="icon play-pause {% if flags['autoplay'] %}pause{% else %}play{% endif %}"></a>
-        <div class="seek">
-            <div class="background"></div>
-            <div class="loading progress"></div>
-            <div class="hidden loaded"></div>
-            <div class="hidden played"></div>
-            <div class="clickable"></div>
-        </div>
-        <div class="right">
-            {% if not flags['mute'] %}
-            <span class="toggleable volume">
-                <a href="#" class="icon" data-icon="&#xF03B;"></a>
-                <div>
-                    <span>
-                        <span class="background"></span>
-                        <span class="amount"></span>
-                        <span class="clickable"></span>
-                    </span>
-                </div>
-            </span>
-            {% endif %}
-            <a href="#" class="icon fullscreen"></a>
-            <span class="toggleable settings">
-                <span class="icon" data-icon="&#xF04E;"></span>
-                <div>
-                    <div class="playback-speed">
-                        <div class="header">Playback Speed</div>
-                        <div class="speeds">
-                            <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="1.5">150%</a>
+    <div class="hidden-if-noscript">
+        <a class="start {% if flags['autoplay'] %}hidden{% endif %}" href="#">
+            <span class="icon" data-icon="&#xF16B;"></span>
+        </a>
+        <div class="controls {% if flags['mute'] %}muted{% endif %}">
+            <a href="#" class="icon play-pause {% if flags['autoplay'] %}pause{% else %}play{% endif %}"></a>
+            <div class="seek">
+                <div class="background"></div>
+                <div class="loading progress"></div>
+                <div class="hidden loaded"></div>
+                <div class="hidden played"></div>
+                <div class="clickable"></div>
+            </div>
+            <div class="right">
+                {% if not flags['mute'] %}
+                <span class="toggleable volume">
+                    <a href="#" class="icon" data-icon="&#xF03B;"></a>
+                    <div>
+                        <span>
+                            <span class="background"></span>
+                            <span class="amount"></span>
+                            <span class="clickable"></span>
+                        </span>
+                    </div>
+                </span>
+                {% endif %}
+                <a href="#" class="icon fullscreen"></a>
+                <span class="toggleable settings">
+                    <span class="icon" data-icon="&#xF04E;"></span>
+                    <div>
+                        <div class="playback-speed">
+                            <div class="header">Playback Speed</div>
+                            <div class="speeds">
+                                <a href="#" data-speed="0.5">50%</a><a href="#" data-speed="1" class="selected">100%</a><a href="#" data-speed="1.5">150%</a>
+                            </div>
                         </div>
+                        <div class="highlight">
+                            <a href="#" class="loop">
+                                <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
+                            </a>
+                        </div>
+                        {#<div class="highlight"><a href="#" class="subtitles">Subtitles ON<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
+                        {% if album %}
+                        <div class="highlight">
+                            <a href="/{{ filename }}">Direct Link<span class="icon" data-icon="&#xF159;"></span></a>
+                        </div>
+                        {% endif %}
+                        <div class="highlight"><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
                     </div>
-                    <div class="highlight">
-                        <a href="#" class="loop">
-                            <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
-                        </a>
-                    </div>
-                    {#<div class="highlight"><a href="#" class="subtitles">Subtitles ON<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
-                    {% if album %}
-                    <div class="highlight">
-                        <a href="/{{ filename }}">Direct Link<span class="icon" data-icon="&#xF159;"></span></a>
-                    </div>
-                    {% endif %}
-                    <div class="highlight"><a href="/download/{{original}}" class="download">Download<span class="icon" data-icon="&#xF0BD;"></span></a></div>
-                </div>
-            </span>
+                </span>
+            </div>
         </div>
     </div>
 </div>

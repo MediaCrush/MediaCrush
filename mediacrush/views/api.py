@@ -167,6 +167,16 @@ class APIView(FlaskView):
 
         return res
 
+    @route("/api/upload/noscript", methods=['POST'])
+    def upload_noscript(self):
+        f = request.files['file']
+        filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
+
+        identifier, code = upload(f, filename)
+        if not code in [ 200, 409 ]:
+            return { 'error': code }, code
+        return redirect("/status/" + identifier)
+
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
         f = request.files['file']
