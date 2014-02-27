@@ -2,8 +2,11 @@ import json
 from flask import request
 from flaskext.bcrypt import generate_password_hash
 
-
-get_ip = lambda: request.remote_addr if "X-Real-IP" not in request.headers else request.headers.get("X-Real-IP")
+def get_ip():
+    ip = request.remote_addr
+    if ip == '127.0.0.1' and "X-Real-IP" in request.headers:
+        ip = request.headers.get("X-Real-IP")
+    return ip
 
 def makeMask(n):
     "return a mask of n bits as a long integer"
@@ -27,4 +30,3 @@ def addressInNetwork(ip, net):
 
 def secure_ip():
     return generate_password_hash(get_ip())
-
