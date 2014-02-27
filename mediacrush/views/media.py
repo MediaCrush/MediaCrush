@@ -141,7 +141,7 @@ class MediaView(FlaskView):
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()
-        return "ok"
+        return render_template("report.html")
 
     @route("/<id>/delete")
     def delete(self, id):
