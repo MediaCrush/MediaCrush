@@ -18,6 +18,12 @@
             window.mobile = false;
             {% endif %}
             window.cdn = "{{ cdn }}";
+            {% if is_tor %}
+            window.is_tor = true;
+            {% else %} 
+            window.is_tor = false;
+            {% endif %}
+            window.ip = "{{ ip }}";
         </script>
         {% block scripts %}
         {% endblock %}
