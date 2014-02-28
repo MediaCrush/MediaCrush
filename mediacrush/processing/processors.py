@@ -31,7 +31,7 @@ class VideoProcessor(Processor):
                     if stream['type'] == 'font':
                         # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
                         # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
-                        self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
+                        self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + '.' + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
                         fonts.append(stream)
                     elif stream['type'] == 'subtitle' and 'info' in stream:
                         extension = None
@@ -57,7 +57,6 @@ class VideoProcessor(Processor):
                 for font in fonts:
                     command = Invocation('otfinfo --info {0}')
                     command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
-                    i += 1
                     command.run()
                     output = command.stdout[0].split('\n')
                     family = None
@@ -68,7 +67,7 @@ class VideoProcessor(Processor):
                         if line.startswith('Subfamily:'):
                             subfamily = line[10:].strip(' \t')
                     css += '@font-face{font-family: "%s";' % family
-                    css += 'src:url("/%s_attachment_%s");' % (self.f.hash, font["info"])
+                    css += 'src:url("/%s_attachment_%s");' % (self.f.hash, i)
                     if subfamily == 'SemiBold':
                         css += 'font-weight: 600;'
                     elif subfamily == 'Bold':
@@ -76,6 +75,7 @@ class VideoProcessor(Processor):
                     elif subfamily == 'Italic':
                         css += 'font-style: italic;'
                     css += '}'
+                    i += 1
                 css_file = open(os.path.join(_cfg("storage_folder"), '%s_fonts.css' % self.f.hash), 'w')
                 css_file.write(css)
                 css_file.close()
