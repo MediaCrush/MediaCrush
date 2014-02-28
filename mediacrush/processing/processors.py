@@ -56,7 +56,7 @@ class VideoProcessor(Processor):
                 i = 0
                 for font in fonts:
                     command = Invocation('otfinfo --info {0}')
-                    command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s' % (self.f.hash, i)))
+                    command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s.%s' % (self.f.hash, i, _extension(font['info']))))
                     command.run()
                     output = command.stdout[0].split('\n')
                     family = None
@@ -67,7 +67,7 @@ class VideoProcessor(Processor):
                         if line.startswith('Subfamily:'):
                             subfamily = line[10:].strip(' \t')
                     css += '@font-face{font-family: "%s";' % family
-                    css += 'src:url("/%s_attachment_%s");' % (self.f.hash, i)
+                    css += 'src:url("/%s_attachment_%s.%s");' % (self.f.hash, i, _extension(font['info']))
                     if subfamily == 'SemiBold':
                         css += 'font-weight: 600;'
                     elif subfamily == 'Bold':
