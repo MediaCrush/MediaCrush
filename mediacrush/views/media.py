@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import send_file, render_template, abort, request, Response, g
+from flask import send_file, render_template, abort, request, Response, g, redirect
 import os
 import json
 import mimetypes
@@ -11,6 +11,7 @@ from mediacrush.database import r, _k
 from mediacrush.config import _cfg
 from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
+from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
 
 def fragment(processor):
@@ -125,6 +126,19 @@ class MediaView(FlaskView):
     @route("/download/<path:file>")
     def download(self, file):
         return self._send_file(file)
+    
+    @route("/status/<id>")
+    def status(self, id):
+        klass = RedisObject.klass(id)
+        if klass is not File:
+            abort(404)
+
+        f = File.from_hash(id)
+        template_params = _template_params(f)
+
+        if f.status in ['done', 'ready']:
+            return tor_redirect('/' + f.hash)
+        return render_template("status.html", **_template_params(f))
 
     def get(self, id):
         send = self._send_file(id)
@@ -146,7 +160,7 @@ class MediaView(FlaskView):
     def report(self, id):
         f = File.from_hash(id)
         f.add_report()
-        return "ok"
+        return render_template("report.html")
 
     @route("/<id>/delete")
     def delete(self, id):

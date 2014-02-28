@@ -62,14 +62,24 @@
             <div class="hint">
                 {# Things in here stay in here past the first upload #}
                 <div id="droptext">
-                    <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
+                    <div class="hidden-if-noscript">
+                        <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
+                    </div>
                 </div>
+                <noscript class="center" style="line-height: 25px; position: relative; top: -40px">
+                    <form method="POST" enctype="multipart/form-data" action="/api/upload/noscript">
+                        Upload video, audio, or images:<br />
+                        <input type="file" name="file" /><input type="submit" value="Upload" /><br />
+                        Anonymous users, please take special note of the <a href="/serious">terms of service</a>.
+                    </form>
+                </noscript>
             </div>
         </div>
         <div class="small">
             <ul class="inline">
                 <li><a href="/serious">Terms & Privacy</a></li>
                 <li><a href="/docs">Developers</a></li>
+                <li><a href="http://mediacrs5ujufxog.onion">Hidden Service</a></li>
                 <li><a href="mailto:support@mediacru.sh">Help</a></li>
             </ul>
         </div>

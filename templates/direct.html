@@ -27,7 +27,7 @@
         {% if dark_theme %}
         <link rel="stylesheet" type="text/css" href="/static/dark.css" />
         {% endif %}
-        <style>html,body{margin:0;padding:0}</style>
+        <style>html,body{margin:0;padding:0;overflow:hidden}</style>
         <script type="text/javascript">
             window.filename = "{{ filename }}";
         </script>
@@ -58,6 +58,9 @@
                 {% else %}
                 var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
                 {% endif %}
+                // Stupid error correction
+                width -= 15;
+                height -= 15;
                 window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
                 // This mess just gets the window width,height in x,y
                 var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;

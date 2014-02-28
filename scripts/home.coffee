@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded', ->
 , false)
 
 forceFocus = ->
-    if document.activeElement.tagName in ['TEXTAREA', 'INPUT']
+    if document.activeElement.tagName in ['TEXTAREA', 'INPUT', 'IFRAME']
         setTimeout(forceFocus, 250)
         return
     pasteTarget = document.getElementById('paste-target')

@@ -12,6 +12,7 @@ from .config import _cfg, _cfgi
 from .files import extension, get_mimetype
 from .views.media import render_media
 from .share import share
+from .network import is_tor, get_ip
 
 app = Flask(__name__)
 app.jinja_env.cache = None
@@ -71,7 +72,9 @@ def inject():
         'len': len,
         'str': str,
         'get_mimetype': get_mimetype,
-        'cdn': _cfg("cdn")
+        'cdn': _cfg("cdn"),
+        'is_tor': is_tor(),
+        'ip': get_ip()
     }
 
 @app.route("/")

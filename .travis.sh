@@ -7,10 +7,11 @@ sudo apt-get install -qq imagemagick tidy libjpeg-progs optipng libmp3lame-dev n
 
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 git clone --depth 1 git://git.code.sf.net/p/opencore-amr/fdk-aac
-wget http://www.tortall.net/projects/yasm/releases/yasm-1.2.0.tar.gz
-tar zxf yasm-1.2.0.tar.gz
+wget https://github.com/yasm/yasm/archive/v1.2.0.tar.gz
+tar zxf v1.2.0.tar.gz
 
 cd yasm-1.2.0
+./autogen.sh
 ./configure
 make
 sudo make install
