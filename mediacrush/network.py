@@ -4,7 +4,7 @@ from flaskext.bcrypt import generate_password_hash
 
 def get_ip():
     ip = request.remote_addr
-    if ip == '127.0.0.1' or ip == '127.0.0.2' and "X-Real-IP" in request.headers:
+    if (ip == '127.0.0.1' or ip == '127.0.0.2') and "X-Real-IP" in request.headers:
         ip = request.headers.get("X-Real-IP")
     return ip
 
@@ -30,8 +30,8 @@ def addressInNetwork(ip, net):
 
 def secure_ip():
     ip = get_ip()
-    if ip == '127.0.0.3' and not current_app.debug:
-        return 'anonymous_user'
+    if is_tor():
+        ip = 'anonymous_user'
     return generate_password_hash(ip)
 
 def is_tor():
