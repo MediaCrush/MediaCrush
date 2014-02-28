@@ -95,5 +95,13 @@
             }
         </style>
         {% endif %}
+        <script type="text/javascript">
+            (function() {
+                var hidden = document.querySelectorAll('.hidden-if-noscript');
+                for (var i = 0; i < hidden.length; i++) {
+                    hidden[i].classList.remove('hidden-if-noscript');
+                }
+            })();
+        </script>
     </body>
 </html>
