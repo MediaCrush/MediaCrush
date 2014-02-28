@@ -325,9 +325,10 @@ document.addEventListener('DOMContentLoaded', () ->
                     resize: () ->
                         # nop
                     disableSubs: () ->
-                        # nop
+                        video.textTracks[0].mode = 'hidden'
                     enableSubs: () ->
-                        # nop
+                        video.textTracks[0].mode = 'showing'
                 }
+                video.textTracks[0].mode = 'hidden' if video.parentElement.classList.contains('subs-off')
         )(player)
 , false)

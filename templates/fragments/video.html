@@ -14,7 +14,7 @@
         {# srt is converted to vtt, so it's not actually located at /filename.{codec_name} #}
         <track src="{{ cdn }}/{{ filename }}.vtt" kind="subtitles" data-format="vtt" default />
         {% else %}
-        <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" />
+        <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" default />
         {% endif %}
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
