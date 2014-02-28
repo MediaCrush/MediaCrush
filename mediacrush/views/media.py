@@ -11,6 +11,7 @@ from mediacrush.database import r, _k
 from mediacrush.config import _cfg
 from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
+from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
 
 def fragment(processor):
@@ -118,7 +119,7 @@ class MediaView(FlaskView):
         template_params = _template_params(f)
 
         if f.status in ['done', 'ready']:
-            return redirect('/' + f.hash)
+            return tor_redirect('/' + f.hash)
         return render_template("status.html", **_template_params(f))
 
     def get(self, id):

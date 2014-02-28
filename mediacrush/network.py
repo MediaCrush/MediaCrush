@@ -1,5 +1,5 @@
 import json
-from flask import request, current_app
+from flask import request, current_app, redirect
 from flaskext.bcrypt import generate_password_hash
 
 def get_ip():
@@ -7,9 +7,6 @@ def get_ip():
     if ip == '127.0.0.1' or ip == '127.0.0.2' and "X-Real-IP" in request.headers:
         ip = request.headers.get("X-Real-IP")
     return ip
-
-def is_tor():
-    return get_ip() == '127.0.0.3'
 
 def makeMask(n):
     "return a mask of n bits as a long integer"
@@ -36,3 +33,6 @@ def secure_ip():
     if ip == '127.0.0.3' and not current_app.debug:
         return 'anonymous_user'
     return generate_password_hash(ip)
+
+def is_tor():
+    return get_ip() == '127.0.0.3'

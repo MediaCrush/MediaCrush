@@ -11,6 +11,7 @@ from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.config import _cfg
+from mediacrush.tor import tor_redirect
 
 import json
 
@@ -175,7 +176,7 @@ class APIView(FlaskView):
         identifier, code = upload(f, filename)
         if not code in [ 200, 409 ]:
             return { 'error': code }, code
-        return redirect("/status/" + identifier)
+        return tor_redirect("/status/" + identifier)
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
