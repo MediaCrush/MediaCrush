@@ -63,10 +63,14 @@ MediaPlayer = (container) ->
         toggleSubs.addEventListener('click', (e) ->
             e.preventDefault()
             if container.className.indexOf('subs-off') == -1
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].disableSubs()
                 container.classList.add('subs-off')
                 toggleSubs.querySelector('.icon').classList.add('disabled')
                 toggleSubs.querySelector('.text').textContent = 'Subtitles OFF'
             else
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].enableSubs()
                 container.classList.remove('subs-off')
                 toggleSubs.querySelector('.icon').classList.remove('disabled')
                 toggleSubs.querySelector('.text').textContent = 'Subtitles ON'
@@ -293,7 +297,15 @@ document.addEventListener('DOMContentLoaded', () ->
                             fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
                         })
                         renderer.resize(width, height)
-                        subtitleRenderers[id] = renderer
+                        subtitleRenderers[id] = {
+                            resize: () ->
+                                renderer.resize.apply(renderer, arguments)
+                            disableSubs: () ->
+                                renderer.disable()
+                            enableSubs: () ->
+                                renderer.enable()
+                        }
+                        renderer.disable() if video.parentElement.classList.contains('subs-off')
 
                 if video.readyState < HTMLMediaElement.HAVE_METADATA
                     video.addEventListener('loadedmetadata', () ->
@@ -309,5 +321,13 @@ document.addEventListener('DOMContentLoaded', () ->
                 request.send()
             if format == 'vtt'
                 captionator.captionify(video, "en", {})
+                subtitleRenderers[id] = {
+                    resize: () ->
+                        # nop
+                    disableSubs: () ->
+                        # nop
+                    enableSubs: () ->
+                        # nop
+                }
         )(player)
 , false)

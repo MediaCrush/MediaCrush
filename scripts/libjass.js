@@ -94,6 +94,11 @@
             };
             return SimpleSet;
         }();
+        /**
+         * Set to browser's implementation of Set if it has one, else set to libjass.SimpleSet
+         *
+         * @type {function(new:Set)}
+         */
         libjass.Set = null;
         // Use this browser's implementation of Set if it has one
         if (global.Set !== undefined && typeof global.Set.prototype.forEach === "function") {
@@ -205,6 +210,11 @@
             };
             return SimpleMap;
         }();
+        /**
+         * Set to browser's implementation of Map if it has one, else set to libjass.SimpleMap
+         *
+         * @type {function(new:Map)}
+         */
         libjass.Map = null;
         // Use this browser's implementation of Map if it has one
         if (global.Map !== undefined && typeof global.Map.prototype.forEach === "function") {
@@ -300,7 +310,7 @@
                  * @return {string} The CSS representation "rgba(...)" of this color.
                  */
                 Color.prototype.toString = function() {
-                    return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + this._alpha + ")";
+                    return "rgba(" + this._red + ", " + this._green + ", " + this._blue + ", " + this._alpha.toFixed(3) + ")";
                 };
                 return Color;
             }();
@@ -2241,7 +2251,7 @@
                 }
                 Object.defineProperty(ParserRun.prototype, "result", {
                     /**
-                     * @type {!ParseNode}
+                     * @type {ParseNode}
                      */
                     get: function() {
                         return this._result;
@@ -2251,7 +2261,7 @@
                 });
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_script = function(parent) {
                     var current = new ParseNode(parent);
@@ -2269,7 +2279,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_scriptSection = function(parent) {
                     var current = new ParseNode(parent);
@@ -2324,7 +2334,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_scriptSectionHeader = function(parent) {
                     var current = new ParseNode(parent);
@@ -2349,7 +2359,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_scriptProperty = function(parent) {
                     var current = new ParseNode(parent);
@@ -2381,7 +2391,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_scriptComment = function(parent) {
                     var current = new ParseNode(parent);
@@ -2398,7 +2408,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_dialogueParts = function(parent) {
                     var current = new ParseNode(parent);
@@ -2440,7 +2450,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_enclosedTags = function(parent) {
                     var current = new ParseNode(parent);
@@ -2480,7 +2490,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_newline = function(parent) {
                     var current = new ParseNode(parent);
@@ -2493,7 +2503,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_hardspace = function(parent) {
                     var current = new ParseNode(parent);
@@ -2506,7 +2516,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_text = function(parent) {
                     var value = this._peek();
@@ -2517,7 +2527,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_comment = function(parent) {
                     var value = this._peek();
@@ -2528,7 +2538,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_a = function(parent) {
                     var current = new ParseNode(parent);
@@ -2604,14 +2614,14 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_alpha = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_an = function(parent) {
                     var current = new ParseNode(parent);
@@ -2630,7 +2640,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_b = function(parent) {
                     var current = new ParseNode(parent);
@@ -2659,42 +2669,42 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_be = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_blur = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_bord = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_c = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_clip = function(parent) {
                     return this._parse_tag_clip_or_iclip("clip", parent);
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fad = function(parent) {
                     var current = new ParseNode(parent);
@@ -2729,7 +2739,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fade = function(parent) {
                     var current = new ParseNode(parent);
@@ -2809,21 +2819,21 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fax = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fay = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fn = function(parent) {
                     var current = new ParseNode(parent);
@@ -2844,42 +2854,42 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fr = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_frx = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fry = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_frz = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fs = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fscx = function(parent) {
                     var current = new ParseNode(parent);
@@ -2897,7 +2907,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fscy = function(parent) {
                     var current = new ParseNode(parent);
@@ -2915,56 +2925,56 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_fsp = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_i = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_iclip = function(parent) {
                     return this._parse_tag_clip_or_iclip("iclip", parent);
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_k = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_K = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_kf = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_ko = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_move = function(parent) {
                     var current = new ParseNode(parent);
@@ -3035,7 +3045,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_org = function(parent) {
                     var current = new ParseNode(parent);
@@ -3070,21 +3080,21 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_p = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_pbo = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_pos = function(parent) {
                     var current = new ParseNode(parent);
@@ -3119,7 +3129,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_q = function(parent) {
                     var current = new ParseNode(parent);
@@ -3138,7 +3148,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_r = function(parent) {
                     var current = new ParseNode(parent);
@@ -3159,21 +3169,21 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_s = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_shad = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_t = function(parent) {
                     var current = new ParseNode(parent);
@@ -3248,98 +3258,98 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_u = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_xbord = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_xshad = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_ybord = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_yshad = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_1a = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_1c = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_2a = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_2c = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_3a = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_3c = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_4a = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_tag_4c = function() {
                     throw new Error("Method not implemented.");
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_drawingInstructions = function(parent) {
                     var current = new ParseNode(parent);
@@ -3404,7 +3414,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_drawingInstructionMove = function(parent) {
                     var current = new ParseNode(parent);
@@ -3425,7 +3435,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_drawingInstructionLine = function(parent) {
                     var current = new ParseNode(parent);
@@ -3446,7 +3456,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_drawingInstructionCubicBezierCurve = function(parent) {
                     var current = new ParseNode(parent);
@@ -3491,7 +3501,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_decimal = function(parent) {
                     var current = new ParseNode(parent);
@@ -3509,7 +3519,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_unsignedDecimal = function(parent) {
                     var current = new ParseNode(parent);
@@ -3538,7 +3548,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_enableDisable = function(parent) {
                     var next = this._peek();
@@ -3551,7 +3561,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_hex = function(parent) {
                     var next = this._peek();
@@ -3562,7 +3572,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_color = function(parent) {
                     var current = new ParseNode(parent);
@@ -3596,7 +3606,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_alpha = function(parent) {
                     var current = new ParseNode(parent);
@@ -3615,7 +3625,7 @@
                 };
                 /**
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.parse_colorWithAlpha = function(parent) {
                     var current = new ParseNode(parent);
@@ -3638,7 +3648,7 @@
                 /**
                  * @param {!ParseNode} parent
                  * @param {string} next
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
                  */
                 ParserRun.prototype.read = function(parent, next) {
                     if (this._peek(next.length) !== next) {
@@ -3648,6 +3658,8 @@
                 };
                 /**
                  * @param {number=1} count
+                 *
+                 * @private
                  */
                 ParserRun.prototype._peek = function(count) {
                     if (typeof count === "undefined") {
@@ -3657,6 +3669,8 @@
                 };
                 /**
                  * @return {boolean}
+                 *
+                 * @private
                  */
                 ParserRun.prototype._haveMore = function() {
                     return this._parseTree.end < this._input.length;
@@ -3664,7 +3678,9 @@
                 /**
                  * @param {string} tagName One of "clip" and "iclip"
                  * @param {!ParseNode} parent
-                 * @return {!ParseNode}
+                 * @return {ParseNode}
+                 *
+                 * @private
                  */
                 ParserRun.prototype._parse_tag_clip_or_iclip = function(tagName, parent) {
                     var current = new ParseNode(parent);
@@ -3788,7 +3804,7 @@
              * This class represents a single parse node. It has a start and end position, and an optional value object.
              *
              * @constructor
-             * @param {!ParseNode} parent The parent of this parse node. The parent's end position will be updated to the end position of this node whenever the latter changes.
+             * @param {ParseNode} parent The parent of this parse node. The parent's end position will be updated to the end position of this node whenever the latter changes.
              * @param {?string=null} value A shortcut to assign a string to the value property.
              *
              * @private
@@ -3837,7 +3853,7 @@
                 });
                 Object.defineProperty(ParseNode.prototype, "parent", {
                     /**
-                     * @type {!ParseNode}
+                     * @type {ParseNode}
                      */
                     get: function() {
                         return this._parent;
@@ -3895,6 +3911,8 @@
                  * Updates the end property of this node and its parent recursively to the root node.
                  *
                  * @param {number} newEnd
+                 *
+                 * @private
                  */
                 ParseNode.prototype._setEnd = function(newEnd) {
                     this._end = newEnd;
@@ -3932,20 +3950,18 @@
                     var _this = this;
                     this._video = video;
                     this._ass = ass;
-                    this._timeUpdateIntervalHandle = null;
+                    this._enabled = true;
+                    this._timerHandle = null;
                     this._id = ++NullRenderer._lastRendererId;
                     this._settings = RendererSettings.from(settings);
-                    this._video.addEventListener("timeupdate", function() {
-                        return _this._onVideoTimeUpdate();
-                    }, false);
-                    this._video.addEventListener("seeking", function() {
-                        return _this._onVideoSeeking();
+                    this._video.addEventListener("playing", function() {
+                        return _this._onVideoPlaying();
                     }, false);
                     this._video.addEventListener("pause", function() {
                         return _this._onVideoPause();
                     }, false);
-                    this._video.addEventListener("playing", function() {
-                        return _this._onVideoPlaying();
+                    this._video.addEventListener("seeking", function() {
+                        return _this._onVideoSeeking();
                     }, false);
                 }
                 Object.defineProperty(NullRenderer.prototype, "id", {
@@ -4000,10 +4016,77 @@
                     enumerable: true,
                     configurable: true
                 });
-                NullRenderer.prototype.onVideoTimeUpdate = function() {
-                    this._currentTime = this._video.currentTime;
+                Object.defineProperty(NullRenderer.prototype, "enabled", {
+                    get: function() {
+                        return this._enabled;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                /**
+                 * Enable the renderer.
+                 */
+                NullRenderer.prototype.enable = function() {
+                    if (this._enabled) {
+                        return;
+                    }
+                    this._enabled = true;
+                    this._onVideoPlaying();
+                };
+                /**
+                 * Disable the renderer.
+                 */
+                NullRenderer.prototype.disable = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    this._onVideoPause();
+                    this._enabled = false;
+                };
+                /**
+                 * Toggle the renderer.
+                 */
+                NullRenderer.prototype.toggle = function() {
+                    if (this._enabled) {
+                        this.disable();
+                    } else {
+                        this.enable();
+                    }
+                };
+                /**
+                 * Pre-render a dialogue. This is a no-op.
+                 *
+                 * @param {!libjass.Dialogue} dialogue
+                 */
+                NullRenderer.prototype.preRender = function() {};
+                /**
+                 * Draw a dialogue. This is a no-op.
+                 *
+                 * @param {!libjass.Dialogue} dialogue
+                 */
+                NullRenderer.prototype.draw = function() {};
+                /**
+                 * Runs when the video starts playing, or is resumed from pause.
+                 */
+                NullRenderer.prototype.onVideoPlaying = function() {
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoTimeUpdate: " + this._getVideoStateLogString());
+                        console.log("NullRenderer.onVideoPlaying: " + this._getStateLogString());
+                    }
+                };
+                /**
+                 * Runs when the video is paused.
+                 */
+                NullRenderer.prototype.onVideoPause = function() {
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer.onVideoPause: " + this._getStateLogString());
+                    }
+                };
+                /**
+                 * Runs when the video's current time changed. This might be a result of either regular playback or seeking.
+                 */
+                NullRenderer.prototype.onVideoTimeUpdate = function() {
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer.onVideoTimeUpdate: " + this._getStateLogString());
                     }
                     for (var i = 0; i < this._ass.dialogues.length; i++) {
                         var dialogue = this._ass.dialogues[i];
@@ -4018,84 +4101,99 @@
                         }
                     }
                 };
-                NullRenderer.prototype.onVideoSeeking = function() {
+                NullRenderer.prototype._timerTick = function() {
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoSeeking: " + this._getVideoStateLogString());
-                    }
-                };
-                NullRenderer.prototype.onVideoPause = function() {
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoPause: " + this._getVideoStateLogString());
-                    }
-                    if (this._timeUpdateIntervalHandle !== null) {
-                        clearInterval(this._timeUpdateIntervalHandle);
-                        this._timeUpdateIntervalHandle = null;
-                    }
-                };
-                NullRenderer.prototype.onVideoPlaying = function() {
-                    var _this = this;
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoPlaying: " + this._getVideoStateLogString());
-                    }
-                    if (this._timeUpdateIntervalHandle === null) {
-                        this._timeUpdateIntervalHandle = setInterval(function() {
-                            return _this._onVideoTimeChange();
-                        }, NullRenderer._highResolutionTimerInterval);
-                    }
-                };
-                /**
-                 */
-                NullRenderer.prototype.preRender = function() {};
-                /**
-                 */
-                NullRenderer.prototype.draw = function() {};
-                NullRenderer.prototype._onVideoTimeUpdate = function() {
-                    if (this._state === 2) {
-                        if (this._currentTime !== this._video.currentTime) {
-                            this._onVideoPlaying();
-                        }
-                    }
-                };
-                NullRenderer.prototype._onVideoTimeChange = function() {
-                    if (this._currentTime !== this._video.currentTime) {
-                        if (this._state !== 0) {
-                            this._onVideoPlaying();
-                        }
-                        this.onVideoTimeUpdate();
-                    }
-                };
-                NullRenderer.prototype._onVideoSeeking = function() {
-                    if (this._state !== 2) {
-                        this._onVideoPause();
-                        this._state = 2;
+                        console.log("NullRenderer._timerTick: " + this._getStateLogString());
                     }
                     if (this._currentTime !== this._video.currentTime) {
                         this._currentTime = this._video.currentTime;
-                        this.onVideoSeeking();
+                        if (this._state !== 0) {
+                            this._state = 0;
+                            this.onVideoPlaying();
+                        }
+                        this.onVideoTimeUpdate();
+                    } else {
+                        if (this._state !== 1) {
+                            this._state = 1;
+                            this.onVideoPause();
+                        }
                     }
                 };
-                NullRenderer.prototype._onVideoPause = function() {
-                    this._state = 1;
-                    this.onVideoPause();
-                };
                 NullRenderer.prototype._onVideoPlaying = function() {
+                    var _this = this;
+                    if (!this._enabled) {
+                        return;
+                    }
+                    if (this._state === 0) {
+                        return;
+                    }
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer._onVideoPlaying: " + this._getStateLogString());
+                    }
                     this._state = 0;
                     this.onVideoPlaying();
+                    if (this._timerHandle === null) {
+                        // video might send "playing" event after seeking even when not first paused. In this situation, _timerHandle will not be null. This is fine.
+                        this._timerHandle = setInterval(function() {
+                            return _this._timerTick();
+                        }, NullRenderer._timerInterval);
+                    }
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer._onVideoPlaying: Set NullRenderer._timeHandle to " + this._timerHandle);
+                    }
+                    this.onVideoTimeUpdate();
                 };
-                NullRenderer.prototype._getVideoStateLogString = function() {
-                    return "video.currentTime = " + this._video.currentTime + ", video.paused = " + this._video.paused + ", video.seeking = " + this._video.seeking;
+                NullRenderer.prototype._onVideoPause = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer._onVideoPause: " + this._getStateLogString());
+                    }
+                    this._state = 1;
+                    this.onVideoPause();
+                    if (this._timerHandle === null) {
+                        if (libjass.debugMode) {
+                            console.warn("NullRenderer._onVideoPause: Abnormal state detected. NullRenderer._timeHandle should not have been null");
+                        }
+                    }
+                    clearInterval(this._timerHandle);
+                    this._timerHandle = null;
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer._onVideoPause: Cleared NullRenderer._timeHandle");
+                    }
                 };
-                NullRenderer._highResolutionTimerInterval = 41;
+                NullRenderer.prototype._onVideoSeeking = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    if (libjass.verboseMode) {
+                        console.log("NullRenderer._onVideoSeeking: " + this._getStateLogString());
+                    }
+                    if (this._currentTime === this._video.currentTime) {
+                        return;
+                    }
+                    if (this._state !== 1) {
+                        return;
+                    }
+                    this._currentTime = this._video.currentTime;
+                    this.onVideoPlaying();
+                    this.onVideoTimeUpdate();
+                    this.onVideoPause();
+                };
+                NullRenderer.prototype._getStateLogString = function() {
+                    return "state = " + RendererState[this._state] + ", video.currentTime = " + this._video.currentTime + ", video.paused = " + this._video.paused + ", video.seeking = " + this._video.seeking;
+                };
+                NullRenderer._timerInterval = 41;
                 NullRenderer._lastRendererId = -1;
                 return NullRenderer;
             }();
             renderers.NullRenderer = NullRenderer;
-            var VideoState;
-            (function(VideoState) {
-                VideoState[VideoState["Playing"] = 0] = "Playing";
-                VideoState[VideoState["Paused"] = 1] = "Paused";
-                VideoState[VideoState["Seeking"] = 2] = "Seeking";
-            })(VideoState || (VideoState = {}));
+            var RendererState;
+            (function(RendererState) {
+                RendererState[RendererState["Playing"] = 0] = "Playing";
+                RendererState[RendererState["Paused"] = 1] = "Paused";
+            })(RendererState || (RendererState = {}));
             /**
              * A default renderer implementation.
              *
@@ -4239,27 +4337,13 @@
                     console.warn("`DefaultRenderer.resizeVideo(width, height)` has been deprecated. Use `DefaultRenderer.resize(width, height)` instead.");
                     this.resize(width, height);
                 };
-                DefaultRenderer.prototype.onVideoSeeking = function() {
-                    _super.prototype.onVideoSeeking.call(this);
-                    this._removeAllSubs();
+                DefaultRenderer.prototype.enable = function() {
+                    _super.prototype.enable.call(this);
+                    this._subsWrapper.style.display = "";
                 };
-                DefaultRenderer.prototype.onVideoTimeUpdate = function() {
-                    var _this = this;
-                    _super.prototype.onVideoTimeUpdate.call(this);
-                    this._currentSubs.forEach(function(sub, dialogue) {
-                        if (dialogue.start > _this.currentTime || dialogue.end < _this.currentTime) {
-                            _this._currentSubs.delete(dialogue);
-                            _this._removeSub(sub);
-                        }
-                    });
-                };
-                DefaultRenderer.prototype.onVideoPause = function() {
-                    _super.prototype.onVideoPause.call(this);
-                    this._subsWrapper.classList.add("paused");
-                };
-                DefaultRenderer.prototype.onVideoPlaying = function() {
-                    _super.prototype.onVideoPlaying.call(this);
-                    this._subsWrapper.classList.remove("paused");
+                DefaultRenderer.prototype.disable = function() {
+                    _super.prototype.disable.call(this);
+                    this._subsWrapper.style.display = "none";
                 };
                 /**
                  * The magic happens here. The subtitle div is rendered and stored. Call draw() to get a clone of the div to display.
@@ -4299,11 +4383,11 @@
                     var currentSpan = null;
                     var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._svgDefsElement);
                     var startNewSpan = function(addNewLine) {
-                        if (currentSpan !== null) {
+                        if (currentSpan !== null && currentSpan.textContent !== "") {
                             sub.appendChild(currentSpanStyles.setStylesOnSpan(currentSpan));
-                            if (addNewLine) {
-                                sub.appendChild(document.createElement("br"));
-                            }
+                        }
+                        if (addNewLine) {
+                            sub.appendChild(document.createElement("br"));
                         }
                         currentSpan = document.createElement("span");
                     };
@@ -4393,7 +4477,7 @@
                         } else if (part instanceof libjass.parts.Move) {
                             var movePart = part;
                             sub.style.position = "absolute";
-                            animationCollection.addCustom("linear", new Keyframe(0, {
+                            animationCollection.addCustom("linear", [ new Keyframe(0, {
                                 left: (_this._scaleX * movePart.x1).toFixed(3) + "px",
                                 top: (_this._scaleY * movePart.y1).toFixed(3) + "px"
                             }), new Keyframe(movePart.t1, {
@@ -4405,7 +4489,7 @@
                             }), new Keyframe(dialogue.end - dialogue.start, {
                                 left: (_this._scaleX * movePart.x2).toFixed(3) + "px",
                                 top: (_this._scaleY * movePart.y2).toFixed(3) + "px"
-                            }));
+                            }) ]);
                         } else if (part instanceof libjass.parts.Fade) {
                             var fadePart = part;
                             if (fadePart.start !== 0) {
@@ -4416,7 +4500,7 @@
                             }
                         } else if (part instanceof libjass.parts.ComplexFade) {
                             var complexFadePart = part;
-                            animationCollection.addCustom("linear", new Keyframe(0, {
+                            animationCollection.addCustom("linear", [ new Keyframe(0, {
                                 opacity: String(complexFadePart.a1)
                             }), new Keyframe(complexFadePart.t1, {
                                 opacity: String(complexFadePart.a1)
@@ -4428,7 +4512,7 @@
                                 opacity: String(complexFadePart.a3)
                             }), new Keyframe(dialogue.end, {
                                 opacity: String(complexFadePart.a3)
-                            }));
+                            }) ]);
                         } else if (part instanceof libjass.parts.DrawingMode) {
                             currentDrawing = new Drawing(part.scale, _this._scaleX, _this._scaleY);
                         } else if (part instanceof libjass.parts.DrawingBaselineOffset) {
@@ -4546,6 +4630,25 @@
                     this._layerAlignmentWrappers[layer][alignment].appendChild(result);
                     this._currentSubs.set(dialogue, result);
                 };
+                DefaultRenderer.prototype.onVideoPlaying = function() {
+                    _super.prototype.onVideoPlaying.call(this);
+                    this._removeAllSubs();
+                    this._subsWrapper.classList.remove("paused");
+                };
+                DefaultRenderer.prototype.onVideoPause = function() {
+                    _super.prototype.onVideoPause.call(this);
+                    this._subsWrapper.classList.add("paused");
+                };
+                DefaultRenderer.prototype.onVideoTimeUpdate = function() {
+                    var _this = this;
+                    _super.prototype.onVideoTimeUpdate.call(this);
+                    this._currentSubs.forEach(function(sub, dialogue) {
+                        if (dialogue.start > _this.currentTime || dialogue.end < _this.currentTime) {
+                            _this._currentSubs.delete(dialogue);
+                            _this._removeSub(sub);
+                        }
+                    });
+                };
                 DefaultRenderer.prototype._ready = function() {
                     var _this = this;
                     document.addEventListener("webkitfullscreenchange", function() {
@@ -4558,7 +4661,7 @@
                         return _this._onFullScreenChange();
                     }, false);
                     this.resize(this.video.offsetWidth, this.video.offsetHeight);
-                    this._dispatchEvent("ready");
+                    this._dispatchEvent("ready", []);
                 };
                 DefaultRenderer.prototype._onFullScreenChange = function() {
                     var fullScreenElement = document.fullscreenElement;
@@ -4575,24 +4678,20 @@
                         this._videoSubsWrapper.classList.add("libjass-full-screen");
                         this.resize(screen.width, screen.height);
                         this._videoIsFullScreen = true;
-                        this._dispatchEvent("fullScreenChange", this._videoIsFullScreen);
+                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
                     } else if (fullScreenElement === null && this._videoIsFullScreen) {
                         this._videoSubsWrapper.classList.remove("libjass-full-screen");
                         this._videoIsFullScreen = false;
-                        this._dispatchEvent("fullScreenChange", this._videoIsFullScreen);
+                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
                     }
                 };
                 /**
                  * @param {string} type
-                 * @param {...*} args
+                 * @param {!Array.<*>} args
                  *
                  * @private
                  */
-                DefaultRenderer.prototype._dispatchEvent = function(type) {
-                    var args = [];
-                    for (var _i = 0; _i < arguments.length - 1; _i++) {
-                        args[_i] = arguments[_i + 1];
-                    }
+                DefaultRenderer.prototype._dispatchEvent = function(type, args) {
                     var _this = this;
                     var listeners = this._eventListeners.get(type);
                     if (listeners !== null) {
@@ -4678,7 +4777,7 @@
                  * A convenience method to create a font map from a <style> or <link> element that contains @font-face rules.
                  *
                  * @param {!LinkStyle} linkStyle
-                 * @return {!Map<string, string[]>}
+                 * @return {!Map.<string, !Array.<string>>}
                  *
                  * @static
                  */
@@ -4747,6 +4846,7 @@
             /**
              * This class represents a single keyframe. It has a list of CSS properties (names and values) associated with a point in time. Multiple keyframes make up an animation.
              *
+             * @constructor
              * @param {number} time
              * @param {!Object.<string, string>} properties
              *
@@ -4854,11 +4954,7 @@
                  * @param {string} timingFunction One of the acceptable values for the "animation-timing-function" CSS property
                  * @param {Array.<!{time: number, properties: !Object.<string, string>}>} keyframes
                  */
-                AnimationCollection.prototype.addCustom = function(timingFunction) {
-                    var keyframes = [];
-                    for (var _i = 0; _i < arguments.length - 1; _i++) {
-                        keyframes[_i] = arguments[_i + 1];
-                    }
+                AnimationCollection.prototype.addCustom = function(timingFunction, keyframes) {
                     var _this = this;
                     var startTime = null;
                     var endTime = null;
@@ -5005,46 +5101,32 @@
                     var outlineWidth = this._scaleX * this._outlineWidth;
                     var outlineHeight = this._scaleY * this._outlineHeight;
                     var filterId = "svg-filter-" + this._id + "-" + this._nextFilterId++;
-                    var points = [];
-                    var outlineColorFilter = '	<feComponentTransfer in="SourceAlpha" result="outlineColor">\n' + '		<feFuncR type="linear" slope="0" intercept="' + (outlineColor.red / 255).toFixed(3) + '" />\n' + '		<feFuncG type="linear" slope="0" intercept="' + (outlineColor.green / 255).toFixed(3) + '" />\n' + '		<feFuncB type="linear" slope="0" intercept="' + (outlineColor.blue / 255).toFixed(3) + '" />\n' + '		<feFuncA type="linear" slope="' + outlineColor.alpha.toFixed(3) + '" intercept="0" />\n' + "	</feComponentTransfer>\n";
                     var outlineFilter = "";
                     if (outlineWidth > 0 || outlineHeight > 0) {
-                        /* Lay out outlines in an ellipse with horizontal radius = (this._scaleX * this._outlineWidth) and vertical radius = (this._scaleY * this._outlineHeight)
-                         * Outlines are laid inside the region of the ellipse, separated by 1 pixel horizontally and vertically.
-                         *
-                         * The below loop is an unrolled version of the above algorithm that only roams over one quadrant and adds
-                         * four shadows at a time.
-                         */
-                        var a = outlineWidth - 1;
-                        var b = outlineHeight - 1;
-                        for (var x = 0; x < a; x++) {
-                            for (var y = 0; x / a * (x / a) + y / b * (y / b) <= 1; y++) {
-                                if (x === 0 && y === 0) {
-                                    continue;
+                        var mergeOutlinesFilter = "";
+                        var radiiPairs = [];
+                        if (outlineWidth >= outlineHeight) {
+                            if (outlineHeight > 0) {
+                                for (var y = 0; y <= outlineHeight; y++) {
+                                    radiiPairs.push([ outlineWidth / outlineHeight * Math.sqrt(outlineHeight * outlineHeight - y * y), y ]);
                                 }
-                                points.push([ x, y ]);
-                                if (x !== 0) {
-                                    points.push([ -x, y ]);
+                            } else {
+                                radiiPairs.push([ outlineWidth, 0 ]);
+                            }
+                        } else {
+                            if (outlineWidth > 0) {
+                                for (var x = 0; x <= outlineWidth; x++) {
+                                    radiiPairs.push([ x, outlineHeight / outlineWidth * Math.sqrt(outlineWidth * outlineWidth - x * x) ]);
                                 }
-                                if (x !== 0 && y !== 0) {
-                                    points.push([ -x, -y ]);
-                                }
-                                if (y !== 0) {
-                                    points.push([ x, -y ]);
-                                }
+                            } else {
+                                radiiPairs.push([ 0, outlineHeight ]);
                             }
                         }
-                        // Add the four corner outlines
-                        points.push([ a, 0 ]);
-                        points.push([ 0, b ]);
-                        points.push([ -a, 0 ]);
-                        points.push([ 0, -b ]);
-                        var mergeOutlinesFilter = "";
-                        points.forEach(function(pair, index) {
-                            outlineFilter += '	<feOffset dx="' + pair[0].toFixed(3) + '" dy="' + pair[1].toFixed(3) + '" in="outlineColor" result="outline' + index + '" />\n';
+                        radiiPairs.forEach(function(radii, index) {
+                            outlineFilter += '	<feMorphology in="SourceAlpha" operator="dilate" radius="' + radii[0].toFixed(3) + " " + radii[1].toFixed(3) + '" result="outline' + index + '" />\n';
                             mergeOutlinesFilter += '		<feMergeNode in="outline' + index + '" />\n';
                         });
-                        outlineFilter += "	<feMerge>\n" + mergeOutlinesFilter + "	</feMerge>\n";
+                        outlineFilter = '	<feFlood flood-color="' + outlineColor.toString() + '" result="outlineColor"/>' + outlineFilter + "	<feMerge>\n" + mergeOutlinesFilter + "	</feMerge>\n" + '	<feComposite operator="in" in="outlineColor" />';
                     }
                     var blurFilter = "";
                     if (this._blur > 0) {
@@ -5053,14 +5135,16 @@
                     var filterWrapperSpan = document.createElement("span");
                     filterWrapperSpan.appendChild(span);
                     if (outlineFilter !== "" || blurFilter !== "") {
-                        var filterString = '<filter xmlns="http://www.w3.org/2000/svg" id="' + filterId + '">\n' + outlineColorFilter + outlineFilter + blurFilter + "	<feMerge>\n" + "		<feMergeNode />\n" + '		<feMergeNode in="SourceGraphic" />\n' + "	</feMerge>\n" + "</filter>\n";
+                        var filterString = '<filter xmlns="http://www.w3.org/2000/svg" id="' + filterId + '">\n' + outlineFilter + blurFilter + "	<feMerge>\n" + "		<feMergeNode />\n" + '		<feMergeNode in="SourceGraphic" />\n' + "	</feMerge>\n" + "</filter>\n";
                         var filterElement = domParser.parseFromString(filterString, "image/svg+xml").childNodes[0];
                         this._svgDefsElement.appendChild(filterElement);
                         filterWrapperSpan.style.webkitFilter = 'url("#' + filterId + '")';
                         filterWrapperSpan.style.filter = 'url("#' + filterId + '")';
                     }
-                    var shadowColor = this._shadowColor.withAlpha(this._shadowAlpha);
-                    span.style.textShadow = shadowColor.toString() + " " + (this._shadowDepthX * this._scaleX / this._fontScaleX).toFixed(3) + "px " + (this._shadowDepthY * this._scaleY / this._fontScaleY).toFixed(3) + "px 0px";
+                    if (this._shadowDepthX !== 0 || this._shadowDepthY !== 0) {
+                        var shadowColor = this._shadowColor.withAlpha(this._shadowAlpha);
+                        span.style.textShadow = shadowColor.toString() + " " + (this._shadowDepthX * this._scaleX / this._fontScaleX).toFixed(3) + "px " + (this._shadowDepthY * this._scaleY / this._fontScaleY).toFixed(3) + "px 0px";
+                    }
                     if (this._rotationZ !== null) {
                         // Perspective needs to be set on a "transformable element"
                         filterWrapperSpan.style.display = "inline-block";
@@ -5399,6 +5483,7 @@
             /**
              * This class represents an ASS drawing - a set of drawing instructions between {\p} tags.
              *
+             * @constructor
              * @param {number} drawingScale
              * @param {number} scaleX
              * @param {number} scaleY
@@ -6116,6 +6201,8 @@
             };
             /**
              * Parses this dialogue's parts from the raw parts string.
+             *
+             * @private
              */
             Dialogue.prototype._parsePartsString = function() {
                 var _this = this;
@@ -6148,7 +6235,7 @@
             /**
              * Converts this string into the number of seconds it represents. This string must be in the form of hh:mm:ss.MMM
              *
-             * @param {string} string
+             * @param {string} str
              * @return {number}
              *
              * @private
