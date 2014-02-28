@@ -29,10 +29,12 @@ class VideoProcessor(Processor):
             if self.processor_state['has_fonts'] or self.processor_state['has_subtitles']:
                 for stream in self.processor_state['streams']:
                     if stream['type'] == 'font':
-                        # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
-                        # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
-                        self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + '.' + _extension(stream["info"]) + ' -i {0}', ignoreNonZero=True)
-                        fonts.append(stream)
+                        ext = _extension(stream["info"])
+                        if ext in ['ttf', 'otf']:
+                            # Note that ffmpeg returns a nonzero exit code when dumping attachments because there's technically no output file
+                            # -dump_attachment is a mechanism completely removed from the rest of the ffmpeg workflow
+                            self._execute("ffmpeg -y -dump_attachment:" + str(stream["index"]) + ' {1}_attachment_' + str(len(fonts)) + '.' + ext + ' -i {0}', ignoreNonZero=True)
+                            fonts.append(stream)
                     elif stream['type'] == 'subtitle' and 'info' in stream:
                         extension = None
                         if stream['info']['codec_name'] == 'ssa':
@@ -55,6 +57,9 @@ class VideoProcessor(Processor):
                 css = ''
                 i = 0
                 for font in fonts:
+                    ext = _extension(font['info'])
+                    if not ext in ['ttf', 'otf']:
+                        continue
                     command = Invocation('otfinfo --info {0}')
                     command(os.path.join(_cfg("storage_folder"), '%s_attachment_%s.%s' % (self.f.hash, i, _extension(font['info']))))
                     command.run()
