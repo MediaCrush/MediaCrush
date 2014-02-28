@@ -177,8 +177,23 @@ def get_processor(processor):
 def convert_to_vtt(path):
     srt = list()
     vtt = 'WEBVTT\n\n'
+    mode = 0
     with open(path) as f:
-        srt = f.readlines().decode("utf-8")
+        srt = f.readlines()
     for line in srt:
-        vtt += srt + '\n'
+        l = line.rstrip()
+        if mode == 0: # waiting on cue
+            vtt += l + '\n'
+            try:
+                int(l.strip())
+                mode += 1
+            except: pass
+        elif mode == 1: # Parsing timecode
+            # The only difference between SRT and VTT timecodes is that VTT uses . instead of ,
+            vtt += l.replace(',', '.') + '\n'
+            mode += 1
+        else: # inside of cue
+            vtt += l + '\n'
+            if l == '':
+                mode = 0
     return vtt
