@@ -93,6 +93,9 @@ window.MediaCrush = (function() {
         if (frame) {
             var width = e.data.width;
             var height = e.data.height;
+            if (width <= 0 || height <= 0) {
+                return;
+            }
             // All albums are 720px wide and don't work well at other resolutions
             // TODO: Consider making them work well at other resolutions
             if (frame.media.mimetype != 'application/album') {
