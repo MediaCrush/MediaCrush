@@ -88,6 +88,16 @@
                     mediaHashHandler(hash.substr(1));
             }
             function updateSize() {
+                var body = document.body, html = document.documentElement;
+                var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+                {% if processor.startswith('audio') %}
+                var height = 50;
+                {% else %}
+                var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+                {% endif %}
+                // Stupid error correction
+                width -= 15;
+                height -= 15;
                 window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
             }
             {% if embedded %}
