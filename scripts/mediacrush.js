@@ -97,6 +97,7 @@ window.MediaCrush = (function() {
                 return;
             }
             var aspectRatio = width / height;
+            console.log([ width, height, aspectRatio ]);
             // All albums are 720px wide and don't work well at other resolutions
             // TODO: Consider making them work well at other resolutions
             if (frame.media.mimetype != 'application/album') {
@@ -121,6 +122,7 @@ window.MediaCrush = (function() {
                 if (self.preserveAspectRatio && aspectRatio != width / height) {
                     return;
                 }
+                console.log([ width, height, width / height ]);
                 frame.frame.width = width;
                 frame.frame.height = height;
             }
