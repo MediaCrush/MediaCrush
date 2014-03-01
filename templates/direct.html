@@ -30,6 +30,11 @@
         <style>html,body{margin:0;padding:0;overflow:hidden}</style>
         <script type="text/javascript">
             window.filename = "{{ filename }}";
+            {% if embedded %}
+            window.embedded = true;
+            {% else %}
+            window.embedded = false;
+            {% endif %}
         </script>
         {% if has_subtitles %}
         <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
@@ -87,17 +92,7 @@
                 if (mediaHashHandler)
                     mediaHashHandler(hash.substr(1));
             }
-            function updateSize() {
-                var body = document.body, html = document.documentElement;
-                var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
-                {% if processor.startswith('audio') %}
-                var height = 50;
-                {% else %}
-                var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-                {% endif %}
-                // Stupid error correction
-                width -= 15;
-                height -= 15;
+            function updateSize(width, height) {
                 window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
             }
             {% if embedded %}
