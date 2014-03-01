@@ -4141,7 +4141,7 @@
                     if (libjass.verboseMode) {
                         console.log("NullRenderer._onVideoPlaying: Set NullRenderer._timeHandle to " + this._timerHandle);
                     }
-                    this.onVideoTimeUpdate();
+                    this._timerTick();
                 };
                 NullRenderer.prototype._onVideoPause = function() {
                     if (!this._enabled) {
@@ -4211,6 +4211,7 @@
                 function DefaultRenderer(video, ass, settings) {
                     var _this = this;
                     _super.call(this, video, ass, settings);
+                    this._layerWrappers = [];
                     this._layerAlignmentWrappers = [];
                     this._animationStyleElement = null;
                     this._svgDefsElement = null;
@@ -4328,7 +4329,10 @@
                     while (this._svgDefsElement.firstChild !== null) {
                         this._svgDefsElement.removeChild(this._svgDefsElement.firstChild);
                     }
-                    this.onVideoTimeUpdate();
+                    // this.currentTime will be undefined if resize() is called before video begins playing for the first time. In this situation, there is no need to force a redraw.
+                    if (this.currentTime !== undefined) {
+                        this.onVideoTimeUpdate();
+                    }
                 };
                 /**
                  * @deprecated
@@ -4607,24 +4611,32 @@
                     var layer = dialogue.layer;
                     var alignment = result.style.position === "absolute" ? 0 : dialogue.alignment;
                     // Create the layer wrapper div and the alignment div inside it if not already created
-                    if (this._layerAlignmentWrappers[layer] === undefined) {
-                        this._layerAlignmentWrappers[layer] = new Array(9 + 1);
+                    if (this._layerWrappers[layer] === undefined) {
+                        var layerWrapper = document.createElement("div");
+                        layerWrapper.className = "layer layer" + layer;
+                        // Find the next greater layer div and insert this div before that one
+                        var insertBeforeElement = null;
+                        for (var insertBeforeLayer = layer + 1; insertBeforeLayer < this._layerWrappers.length && insertBeforeElement === null; insertBeforeLayer++) {
+                            if (this._layerWrappers[insertBeforeLayer] !== undefined) {
+                                insertBeforeElement = this._layerWrappers[insertBeforeLayer];
+                            }
+                        }
+                        this._subsWrapper.insertBefore(layerWrapper, insertBeforeElement);
+                        this._layerWrappers[layer] = layerWrapper;
+                        this._layerAlignmentWrappers[layer] = [];
                     }
                     if (this._layerAlignmentWrappers[layer][alignment] === undefined) {
                         var layerAlignmentWrapper = document.createElement("div");
-                        layerAlignmentWrapper.className = "layer" + layer + " an" + alignment;
+                        layerAlignmentWrapper.className = "an an" + alignment;
                         // Find the next greater layer,alignment div and insert this div before that one
+                        var layerWrapper = this._layerWrappers[layer];
                         var insertBeforeElement = null;
-                        for (var insertBeforeLayer = layer; insertBeforeLayer < this._layerAlignmentWrappers.length && insertBeforeElement === null; insertBeforeLayer++) {
-                            if (this._layerAlignmentWrappers[insertBeforeLayer] !== undefined) {
-                                for (var insertBeforeAlignment = insertBeforeLayer === layer ? alignment + 1 : 0; insertBeforeAlignment < 10 && insertBeforeElement === null; insertBeforeAlignment++) {
-                                    if (this._layerAlignmentWrappers[insertBeforeLayer][insertBeforeAlignment] !== undefined) {
-                                        insertBeforeElement = this._layerAlignmentWrappers[insertBeforeLayer][insertBeforeAlignment];
-                                    }
-                                }
+                        for (var insertBeforeAlignment = alignment + 1; insertBeforeAlignment < this._layerAlignmentWrappers[layer].length && insertBeforeElement === null; insertBeforeAlignment++) {
+                            if (this._layerAlignmentWrappers[layer][insertBeforeAlignment] !== undefined) {
+                                insertBeforeElement = this._layerAlignmentWrappers[layer][insertBeforeAlignment];
                             }
                         }
-                        this._subsWrapper.insertBefore(layerAlignmentWrapper, insertBeforeElement);
+                        layerWrapper.insertBefore(layerAlignmentWrapper, insertBeforeElement);
                         this._layerAlignmentWrappers[layer][alignment] = layerAlignmentWrapper;
                     }
                     this._layerAlignmentWrappers[layer][alignment].appendChild(result);
