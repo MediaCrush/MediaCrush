@@ -92,12 +92,6 @@
             }
             function updateSize(width, height) {
                 window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
-                setTimeout(function() {
-                    var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
-                    if (window.resizeMedia) {
-                        resizeMedia(x, y);
-                    }
-                }, 200);
             }
             {% if embedded %}
             {% endif %}
