@@ -228,9 +228,9 @@ MediaPlayer = (container) ->
             document.cancelFullScreen()
             # Chrome hack to fix positioning when leaving full screen
             _ = document.querySelector('.media')
-            _.style.right = 0
+            _.style.right = 0 if _
             window.setTimeout(->
-                _.style.right = '-50%'
+                _.style.right = '-50%' if _
                 if subtitleRenderers[id]?
                     subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
             , 100)
