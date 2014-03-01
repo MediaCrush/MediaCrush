@@ -87,6 +87,9 @@
                 if (mediaHashHandler)
                     mediaHashHandler(hash.substr(1));
             }
+            function updateSize() {
+                window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
+            }
             {% if embedded %}
             {% endif %}
         </script>
