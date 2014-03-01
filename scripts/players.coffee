@@ -277,6 +277,8 @@ MediaPlayer = (container) ->
         return if not isVideo
         media.width = width
         media.height = height - 5
+        if subtitleRenderers[id]?
+            subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
 window.MediaPlayer = MediaPlayer
 
 document.addEventListener('DOMContentLoaded', () ->
