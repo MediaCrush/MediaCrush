@@ -33,8 +33,8 @@ MediaPlayer = (container) ->
             for s in seek.querySelectorAll('.hidden')
                 s.classList.remove('hidden')
             seek.querySelector('.progress').classList.add('hidden')
-            if window.embedded
-                window.updateSize(media.videoWidth, media.videoHeight) if window.updateSize?
+        if window.embedded
+            window.updateSize(media.videoWidth, media.videoHeight) if window.updateSize?
         if media.buffered.length == 0
             loaded = 100
         else
@@ -58,7 +58,7 @@ MediaPlayer = (container) ->
     media.addEventListener(event, (e) ->
         if media.readyState >= 3 or ready # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
-    , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
+    , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended', 'loadedmetadata']
 
     if toggleSubs
         toggleSubs.addEventListener('click', (e) ->
