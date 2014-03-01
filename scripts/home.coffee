@@ -84,6 +84,7 @@ createHistoryItem = (h, noLink = false) ->
     if item.blob_type == 'video'
         preview = document.createElement('video')
         preview.setAttribute('loop', 'true')
+        preview.poster = '/' + item.hash + '.jpg'
         for file in item.files
             if file.type.indexOf('video/') == 0
                 source = document.createElement('source')

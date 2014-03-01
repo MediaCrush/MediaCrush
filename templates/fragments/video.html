@@ -1,5 +1,5 @@
-<div class="player video" id="player-{{ filename }}">
-    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload controls>
+<div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
+    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload poster="{{ cdn }}{{ filename }}.jpg" controls>
         {% if 'video/mp4' in types %}
         <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
         {% endif %}
@@ -8,6 +8,14 @@
         {% endif %}
         {% if 'video/ogg' in types %}
         <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+        {% endif %}
+        {% if has_subtitles %}
+        {% if subtitles['info']['codec_name'] == 'srt' %}
+        {# srt is converted to vtt, so it's not actually located at /filename.{codec_name} #}
+        <track src="{{ cdn }}/{{ filename }}.vtt" kind="subtitles" data-format="vtt" default />
+        {% else %}
+        <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" default />
+        {% endif %}
         {% endif %}
         <p>Looks like you should visit our <a href="/troubleshooting">troubleshooting</a> page.</p>
     </video>
@@ -52,7 +60,11 @@
                                 <span class="text">Loop {% if flags['loop'] %}ON{% else %}OFF{% endif %}</span><span class="icon loop {% if not flags['loop'] %}disabled{% endif %}" data-icon="&#xF0B2;"></span>
                             </a>
                         </div>
-                        {#<div class="highlight"><a href="#" class="subtitles">Subtitles ON<span class="icon subtitles" data-icon="&#xF030;"></span></a></div>#}
+                        {% if has_subtitles %}
+                        <div class="highlight">
+                            <a href="#" class="subtitles"><span class="text">Subtitles {% if subtitles['info']['default'] %}ON{% else %}OFF{% endif %}</span><span class="icon subtitles {% if not subtitles['info']['default'] %}disabled{% endif %}" data-icon="&#xF030;"></span></a>
+                        </div>
+                        {% endif %}
                         {% if album %}
                         <div class="highlight">
                             <a href="/{{ filename }}">Direct Link<span class="icon" data-icon="&#xF159;"></span></a>
@@ -70,3 +82,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));
 }, false);
 </script>
+{% if has_subtitles and subtitles['info']['codec_name'] == 'ass' %}
+<link rel="stylesheet" type="text/css" href="/{{ filename }}_fonts.css" id="font-map-{{filename}}"></link>
+{% endif %}

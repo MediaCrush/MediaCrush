@@ -89,21 +89,15 @@ def compression_rate(originalpath, f):
     return round(1/x, 2)
 
 def delete_file(f):
-    delete_file_storage(f.original)
-    processor = get_processor(f.processor)
-
-    if processor != 'default':
-        extensions = processor.outputs
-        if 'extras' in dir(processor):
-            extensions += processor.extras
-
-        for f_ext in extensions:
-            delete_file_storage("%s.%s" % (f.hash, f_ext))
-
+    delete_file_storage(f.hash)
     f.delete()
 
-def delete_file_storage(path):
+def delete_file_storage(hash):
     try:
-        os.unlink(file_storage(path))
-    except:
-        pass # It's fine if one or more files are missing - it means that the processing pipeline might not have got to them.
+        for root, dirs, files in os.walk(_cfg("storage_folder")):
+            for f in files:
+                if f.startswith(hash):
+                    try:
+                        os.unlink(os.path.join(root, f))
+                    except: pass # It's fine if one or more files are missing - it means that the processing pipeline might not have got to them.
+    except: pass

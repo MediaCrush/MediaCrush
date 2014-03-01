@@ -27,7 +27,7 @@ class MediaFile
             when 'preparing' then "Preparing..."
             when 'uploading' then "Uploading..."
             when 'pending' then "Waiting to process..."
-            when 'processing' then "Processing..."
+            when 'processing' then "Processing... (this may take a while)"
             when 'ready' then "Upload complete!"
             when 'done' then "Upload complete!"
         progress = @preview.querySelector('.progress')

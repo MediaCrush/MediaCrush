@@ -11,13 +11,20 @@
         window.flags = {{ flags | tojson }}; 
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+    {% if has_subtitles %}
+    {% if subtitles['info']['codec_name'] == 'srt' or subtitles['info']['codec_name'] == 'vtt' %}
+    <script type="text/javascript" src="{{ url_for('static', filename='captionator.js') }}"></script>
+    {% else %}
+    <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+    {% endif %}
+    {% endif %}
 {% endblock %}
 {% block meta %}
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
     {% if processor.startswith("video") %}
         {# Generated thumbnail #}
-        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.jpg" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />

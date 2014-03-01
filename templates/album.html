@@ -11,6 +11,9 @@
         window.can_delete = '{{ can_delete }}';
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
+    {% if subtitles %}
+    <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+    {% endif %}
 {% endblock %}
 {% block meta %}
 {% for item in [ items[0] ] %}

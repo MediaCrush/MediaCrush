@@ -55,6 +55,15 @@ def _template_params(f):
     metadata = {}
     if f.metadata and f.metadata != 'None':
         metadata = json.loads(f.metadata)
+    subtitles = None
+    if 'subtitles' in metadata and 'streams' in metadata['subtitles']:
+        for stream in metadata['subtitles']['streams']:
+            if stream['type'] == 'subtitle':
+                subtitles = stream
+                if subtitles['info']['codec_name'] == 'ssa':
+                    subtitles['info']['codec_name'] = 'ass'
+                subtitles['url'] = '/' + f.hash + '.' + subtitles['info']['codec_name']
+                break
 
     return {
         'filename': f.hash,
@@ -62,6 +71,8 @@ def _template_params(f):
         'video': normalise_processor(f.processor) == 'video',
         'flags': f.flags.as_dict(),
         'metadata': metadata,
+        'subtitles': subtitles,
+        'has_subtitles': subtitles != None,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
@@ -78,6 +89,13 @@ def _album_params(album):
         abort(404)
 
     types = set([f.processor for f in items])
+    subtitles = False
+    for f in items:
+        metadata = {}
+        if f.metadata and f.metadata != 'None':
+            metadata = json.loads(f.metadata)
+        if 'has_subtitles' in metadata:
+            subtitles = metadata['has_subtitles']
 
     can_delete = None
     try:
