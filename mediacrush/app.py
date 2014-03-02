@@ -54,6 +54,9 @@ def exception_catch_all(e):
 
 @app.context_processor
 def inject():
+    cdn = _cfg("cdn")
+    if is_tor():
+        cdn = _cfg("tor_domain")
     return {
         'mobile': g.mobile,
         'analytics_id': _cfg("google_analytics_id"),
