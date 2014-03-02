@@ -79,7 +79,11 @@
             <ul class="inline">
                 <li><a href="/serious">Terms & Privacy</a></li>
                 <li><a href="/docs">Developers</a></li>
+                {% if not is_tor %}
                 <li><a href="http://mediacrs5ujufxog.onion">Hidden Service</a></li>
+                {% else %}
+                <li><a href="https://mediacru.sh">Clearnet Site</a></li>
+                {% endif %}
                 <li><a href="mailto:support@mediacru.sh">Help</a></li>
             </ul>
         </div>
