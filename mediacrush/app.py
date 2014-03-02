@@ -75,7 +75,7 @@ def inject():
         'len': len,
         'str': str,
         'get_mimetype': get_mimetype,
-        'cdn': _cfg("cdn"),
+        'cdn': cdn,
         'is_tor': is_tor(),
         'ip': get_ip()
     }
