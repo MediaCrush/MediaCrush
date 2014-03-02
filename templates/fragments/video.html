@@ -65,7 +65,7 @@
                             <a href="#" class="subtitles"><span class="text">Subtitles {% if subtitles['info']['default'] %}ON{% else %}OFF{% endif %}</span><span class="icon subtitles {% if not subtitles['info']['default'] %}disabled{% endif %}" data-icon="&#xF030;"></span></a>
                         </div>
                         {% endif %}
-                        {% if album %}
+                        {% if album or embedded %}
                         <div class="highlight">
                             <a href="/{{ filename }}">Direct Link<span class="icon" data-icon="&#xF159;"></span></a>
                         </div>
