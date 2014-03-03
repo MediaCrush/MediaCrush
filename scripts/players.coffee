@@ -214,8 +214,9 @@ MediaPlayer = (container) ->
                 container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
                 container.msRequestFullscreen() if container.msRequestFullscreen?
                 container.classList.add('fullscreen')
-                if subtitleRenderers[id]?
-                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
+                window.setTimeout(() ->
+                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight) if subtitleRenderers[id]?
+                , 100)
                 timeout = setTimeout(idleUI, 3000)
             else
                 leaveFullscreen()
