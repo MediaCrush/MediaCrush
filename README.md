@@ -52,6 +52,7 @@ Optional dependencies:
 * *optipng* for PNG support
 * *tidyhtml* for SVG support
 * *xcftools* for XCF support
+* *otfinfo* for subtitle support
 
 **Clone the repository**
 
