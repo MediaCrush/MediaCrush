@@ -3357,6 +3357,9 @@
                     current.value = [];
                     while (this._haveMore()) {
                         while (this.read(current, " ") !== null) {}
+                        if (!this._haveMore()) {
+                            break;
+                        }
                         var currentType = null;
                         var typePart = this.parse_text(current);
                         if (typePart === null) {
@@ -3951,7 +3954,7 @@
                     this._video = video;
                     this._ass = ass;
                     this._enabled = true;
-                    this._timerHandle = null;
+                    this._nextAnimationFrameRequestId = null;
                     this._id = ++NullRenderer._lastRendererId;
                     this._settings = RendererSettings.from(settings);
                     this._video.addEventListener("playing", function() {
@@ -4102,6 +4105,7 @@
                     }
                 };
                 NullRenderer.prototype._timerTick = function() {
+                    var _this = this;
                     if (libjass.verboseMode) {
                         console.log("NullRenderer._timerTick: " + this._getStateLogString());
                     }
@@ -4118,9 +4122,11 @@
                             this.onVideoPause();
                         }
                     }
+                    this._nextAnimationFrameRequestId = requestAnimationFrame(function() {
+                        return _this._timerTick();
+                    });
                 };
                 NullRenderer.prototype._onVideoPlaying = function() {
-                    var _this = this;
                     if (!this._enabled) {
                         return;
                     }
@@ -4132,16 +4138,12 @@
                     }
                     this._state = 0;
                     this.onVideoPlaying();
-                    if (this._timerHandle === null) {
-                        // video might send "playing" event after seeking even when not first paused. In this situation, _timerHandle will not be null. This is fine.
-                        this._timerHandle = setInterval(function() {
-                            return _this._timerTick();
-                        }, NullRenderer._timerInterval);
-                    }
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPlaying: Set NullRenderer._timeHandle to " + this._timerHandle);
+                        console.log("NullRenderer._onVideoPlaying: Set NullRenderer._nextAnimationFrameRequestId to " + this._nextAnimationFrameRequestId);
                     }
-                    this._timerTick();
+                    if (this._nextAnimationFrameRequestId === null) {
+                        this._timerTick();
+                    }
                 };
                 NullRenderer.prototype._onVideoPause = function() {
                     if (!this._enabled) {
@@ -4152,15 +4154,15 @@
                     }
                     this._state = 1;
                     this.onVideoPause();
-                    if (this._timerHandle === null) {
+                    if (this._nextAnimationFrameRequestId === null) {
                         if (libjass.debugMode) {
-                            console.warn("NullRenderer._onVideoPause: Abnormal state detected. NullRenderer._timeHandle should not have been null");
+                            console.warn("NullRenderer._onVideoPause: Abnormal state detected. NullRenderer._nextAnimationFrameRequestId should not have been null");
                         }
                     }
-                    clearInterval(this._timerHandle);
-                    this._timerHandle = null;
+                    cancelAnimationFrame(this._nextAnimationFrameRequestId);
+                    this._nextAnimationFrameRequestId = null;
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPause: Cleared NullRenderer._timeHandle");
+                        console.log("NullRenderer._onVideoPause: Cancelled NullRenderer._nextAnimationFrameRequestId");
                     }
                 };
                 NullRenderer.prototype._onVideoSeeking = function() {
@@ -4184,7 +4186,6 @@
                 NullRenderer.prototype._getStateLogString = function() {
                     return "state = " + RendererState[this._state] + ", video.currentTime = " + this._video.currentTime + ", video.paused = " + this._video.paused + ", video.seeking = " + this._video.seeking;
                 };
-                NullRenderer._timerInterval = 41;
                 NullRenderer._lastRendererId = -1;
                 return NullRenderer;
             }();
@@ -4213,6 +4214,7 @@
                     _super.call(this, video, ass, settings);
                     this._layerWrappers = [];
                     this._layerAlignmentWrappers = [];
+                    this._fontSizeElement = null;
                     this._animationStyleElement = null;
                     this._svgDefsElement = null;
                     this._currentSubs = new libjass.Map();
@@ -4226,6 +4228,10 @@
                     this._subsWrapper = document.createElement("div");
                     this._videoSubsWrapper.appendChild(this._subsWrapper);
                     this._subsWrapper.className = "libjass-subs";
+                    this._fontSizeElement = document.createElement("div");
+                    this._videoSubsWrapper.appendChild(this._fontSizeElement);
+                    this._fontSizeElement.className = "libjass-font-measure";
+                    this._fontSizeElement.appendChild(document.createTextNode("M"));
                     var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     this._videoSubsWrapper.appendChild(svgElement);
                     svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -4385,7 +4391,7 @@
                     }
                     var animationCollection = new AnimationCollection(this, dialogue);
                     var currentSpan = null;
-                    var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._svgDefsElement);
+                    var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._fontSizeElement, this._svgDefsElement);
                     var startNewSpan = function(addNewLine) {
                         if (currentSpan !== null && currentSpan.textContent !== "") {
                             sub.appendChild(currentSpanStyles.setStylesOnSpan(currentSpan));
@@ -4523,7 +4529,7 @@
                             currentDrawing.baselineOffset = part.value;
                         } else if (part instanceof libjass.parts.DrawingInstructions) {
                             currentDrawing.instructions = part.instructions;
-                            currentSpan.appendChild(currentDrawing.toSVG());
+                            currentSpan.appendChild(currentDrawing.toSVG(currentSpanStyles.primaryColor));
                             currentDrawing = null;
                             startNewSpan(false);
                         } else if (part instanceof libjass.parts.Text || libjass.debugMode && part instanceof libjass.parts.Comment) {
@@ -5000,15 +5006,17 @@
              * @param {!libjass.Dialogue} dialogue The Dialogue that this set of styles is associated with
              * @param {number} scaleX The horizontal scaling of the subtitles
              * @param {number} scaleY The vertical scaling of the subtitles
+             * @param {!HTMLDivElement} fontSizeElement A <div> element to measure font sizes with
              * @param {!SVGDefsElement} svgDefsElement An SVG <defs> element to append filter definitions to
              *
              * @private
              * @memberof libjass.renderers
              */
             var SpanStyles = function() {
-                function SpanStyles(renderer, dialogue, scaleX, scaleY, svgDefsElement) {
+                function SpanStyles(renderer, dialogue, scaleX, scaleY, fontSizeElement, svgDefsElement) {
                     this._scaleX = scaleX;
                     this._scaleY = scaleY;
+                    this._fontSizeElement = fontSizeElement;
                     this._svgDefsElement = svgDefsElement;
                     this._nextFilterId = 0;
                     this._id = renderer.id + "-" + dialogue.id;
@@ -5068,8 +5076,9 @@
                     } else if (this._bold !== false) {
                         fontStyleOrWeight += this._bold + " ";
                     }
-                    var fontSize = (72 / 96 * this._scaleY * this._fontSize).toFixed(3);
-                    span.style.font = fontStyleOrWeight + fontSize + "px/" + fontSize + 'px "' + this._fontName + '"';
+                    var fontSize = (this._scaleY * SpanStyles._getFontSize(this._fontName, this._fontSize, this._fontSizeElement)).toFixed(3);
+                    var lineHeight = (this._scaleY * this._fontSize).toFixed(3);
+                    span.style.font = fontStyleOrWeight + fontSize + "px/" + lineHeight + 'px "' + this._fontName + '"';
                     var textDecoration = "";
                     if (this._underline) {
                         textDecoration = "underline";
@@ -5393,6 +5402,14 @@
                 });
                 Object.defineProperty(SpanStyles.prototype, "primaryColor", {
                     /**
+                     * Gets the primary color property.
+                     *
+                     * @type {!libjass.parts.Color}
+                     */
+                    get: function() {
+                        return this._primaryColor;
+                    },
+                    /**
                      * Sets the primary color property. null defaults it to the default style's value.
                      *
                      * @type {libjass.parts.Color}
@@ -5487,6 +5504,20 @@
                     enumerable: true,
                     configurable: true
                 });
+                SpanStyles._getFontSize = function(fontFamily, lineHeight, fontSizeElement) {
+                    var existingFontSizeMap = SpanStyles._fontSizeCache.get(fontFamily);
+                    if (existingFontSizeMap === undefined) {
+                        SpanStyles._fontSizeCache.set(fontFamily, existingFontSizeMap = new libjass.Map());
+                    }
+                    var existingFontSize = existingFontSizeMap.get(lineHeight);
+                    if (existingFontSize === undefined) {
+                        fontSizeElement.style.fontFamily = fontFamily;
+                        fontSizeElement.style.fontSize = lineHeight + "px";
+                        existingFontSizeMap.set(lineHeight, existingFontSize = lineHeight * lineHeight / fontSizeElement.offsetHeight);
+                    }
+                    return existingFontSize;
+                };
+                SpanStyles._fontSizeCache = new libjass.Map();
                 SpanStyles._valueOrDefault = function(newValue, defaultValue) {
                     return newValue !== null ? newValue : defaultValue;
                 };
@@ -5534,9 +5565,10 @@
                 /**
                  * Converts this drawing to an <svg> element.
                  *
+                 * @param {!libjass.parts.Color} fillColor
                  * @return {!SVGSVGElement}
                  */
-                Drawing.prototype.toSVG = function() {
+                Drawing.prototype.toSVG = function(fillColor) {
                     var _this = this;
                     var path = "";
                     var bboxWidth = 0;
@@ -5559,7 +5591,7 @@
                             bboxHeight = Math.max(bboxHeight, cubicBezierCurvePart.y1 + _this._baselineOffset, cubicBezierCurvePart.y2 + _this._baselineOffset, cubicBezierCurvePart.y3 + _this._baselineOffset);
                         }
                     });
-                    var result = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + (bboxWidth * this._scaleX).toFixed(3) + 'px" height="' + (bboxHeight * this._scaleY).toFixed(3) + 'px">\n' + '	<g transform="scale(' + this._scaleX.toFixed(3) + " " + this._scaleY.toFixed(3) + ')">\n' + '		<path d="' + path + '" />\n' + "	</g>\n" + "</svg>";
+                    var result = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + (bboxWidth * this._scaleX).toFixed(3) + 'px" height="' + (bboxHeight * this._scaleY).toFixed(3) + 'px">\n' + '	<g transform="scale(' + this._scaleX.toFixed(3) + " " + this._scaleY.toFixed(3) + ')">\n' + '		<path d="' + path + '" fill="' + fillColor.toString() + '" />\n' + "	</g>\n" + "</svg>";
                     return domParser.parseFromString(result, "image/svg+xml").childNodes[0];
                 };
                 return Drawing;
