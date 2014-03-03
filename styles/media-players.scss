@@ -496,6 +496,14 @@
     .libjass-subs div {
         line-height: 0;
     }
+
+    .libjass-font-measure {
+        position: absolute;
+        visibility: hidden;
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
 }
 
 @-webkit-keyframes fade-in {
