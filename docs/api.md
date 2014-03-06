@@ -226,7 +226,7 @@ If the file is not found, you will get a dictionary like:
       }
     }
 
-### GET /api/url/info
+### POST /api/url/info
 
 *Parameters*: `list`, a comma-separated URLs to check, or a single URL.
 
