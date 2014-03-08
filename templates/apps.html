@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% block scripts %}
+<script src="/static/global.js" type="text/javascript"></script>
+{% endblock %}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='apps.css') }}?version=2" />
 {% endblock %}
