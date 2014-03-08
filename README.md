@@ -1,4 +1,4 @@
-# MediaCrush [![Build Status](https://travis-ci.org/MediaCrush/MediaCrush.png?branch=master)](https://travis-ci.org/MediaCrush/MediaCrush)
+# MediaCrush [![Build Status](https://img.shields.io/travis/MediaCrush/MediaCrush/master.svg)](https://travis-ci.org/MediaCrush/MediaCrush)
 
 A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and
 [jdiez](https://github.com/jdiez17), and several
@@ -10,7 +10,7 @@ What is this? It's a website you can upload images, audio, and video to, and rec
 friends. This readme documents contributor guidelines and installation instructions. For information on the official
 MediaCrush instance, see https://mediacru.sh/about
 
-Support us on GitTip? https://www.gittip.com/mediacrush/
+Support us on Gittip? https://www.gittip.com/mediacrush/
 
 ## Developer Docs
 
