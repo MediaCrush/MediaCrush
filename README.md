@@ -10,7 +10,7 @@ What is this? It's a website you can upload images, audio, and video to, and rec
 friends. This readme documents contributor guidelines and installation instructions. For information on the official
 MediaCrush instance, see https://mediacru.sh/about
 
-Support us on GitTip? https://www.gittip.com/mediacrush/
+Support us on Gittip? https://www.gittip.com/mediacrush/
 
 ## Developer Docs
 
