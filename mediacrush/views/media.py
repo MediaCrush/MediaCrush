@@ -6,6 +6,7 @@ import json
 import mimetypes
 
 from mediacrush.files import extension, get_mimetype, delete_file
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.fileutils import normalise_processor
 from mediacrush.database import r, _k
 from mediacrush.config import _cfg
@@ -158,6 +159,9 @@ class MediaView(FlaskView):
         return render_template("view.html", **_template_params(f))
 
     def report(self, id):
+        if not current_app.debug and rate_limit_exceeded("report"):
+            return {'error': 413}, 413
+        rate_limit_update(1, "report")
         f = File.from_hash(id)
         f.add_report()
         return render_template("report.html")
