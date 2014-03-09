@@ -73,3 +73,8 @@ units_per_period = 250000000
 # Controls how frequently users can post feedback using the feedback tool on every page. Default is 5 times per day.
 period = 86400
 units_per_period = 5
+
+[ratelimit-report]
+# How frequently you can use the "report" feature
+period = 86400
+units_per_period = 5
