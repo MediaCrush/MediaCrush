@@ -1,6 +1,6 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import send_file, render_template, abort, request, Response, g, redirect
+from flask import send_file, render_template, abort, request, Response, g, redirect, current_app
 import os
 import json
 import mimetypes
