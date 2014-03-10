@@ -257,7 +257,7 @@ def detect_imagemagick(path):
         line = line.lstrip(' ')
         if line.startswith('Mime type: '):
             mimetype = line[11:]
-    if mimetype in [ 'image/png', 'image/jpeg' ]:
+    if mimetype in [ 'image/png', 'image/jpeg', 'image/svg+xml' ]:
         return {
             'type': mimetype,
             'metadata': None,
@@ -267,13 +267,6 @@ def detect_imagemagick(path):
     # Check for other formats
     for line in result:
         line = line.lstrip(' ')
-        if line == 'Format: SVG (Scalable Vector Graphics)':
-            return {
-                'type': 'image/svg+xml',
-                'metadata': None,
-                'processor_state': None,
-                'flags': None
-            }
         if line == 'Format: XCF (GIMP image)':
             return {
                 'type': 'image/x-gimp-xcf',
