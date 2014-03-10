@@ -205,14 +205,14 @@ class UploadTestCase(APITestCase):
 
 class URLUploadTestCase(APITestCase):
     def test_upload_url(self):
-        h = self._get_url_hash('http://i.imgur.com/rctij1m.jpg')
+        h = self._get_url_hash('https://mediacru.sh/6BRr_XmH2VRq.png')
 
-        self.assertEqual(h, u'2DWIQ3P01sjy')
+        self.assertEqual(h, u'OyDU_AfIeZts')
 
     def test_url_info(self):
         urls = [
-            'http://i.imgur.com/rctij1m.jpg',
-            'http://i.imgur.com/Gr2lBwI.jpg'
+            'https://mediacru.sh/6BRr_XmH2VRq.png',
+            'https://mediacru.sh/X4G0cguDt9kz.jpg',
         ]
         hashes = [self._get_url_hash(url) for url in urls]
 
