@@ -1,11 +1,12 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import send_file, render_template, abort, request, Response, g, redirect
+from flask import send_file, render_template, abort, request, Response, g, redirect, current_app
 import os
 import json
 import mimetypes
 
 from mediacrush.files import extension, get_mimetype, delete_file
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.fileutils import normalise_processor
 from mediacrush.database import r, _k
 from mediacrush.config import _cfg
@@ -157,7 +158,11 @@ class MediaView(FlaskView):
         f = File.from_hash(id)
         return render_template("view.html", **_template_params(f))
 
+    @route("/report/<id>", methods=['POST'])
     def report(self, id):
+        if not current_app.debug and rate_limit_exceeded(section="report"):
+            return {'error': 413}, 413
+        rate_limit_update(1, section="report")
         f = File.from_hash(id)
         f.add_report()
         return render_template("report.html")
