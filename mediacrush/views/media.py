@@ -54,7 +54,7 @@ def _template_params(f):
         except:
             pass
     metadata = {}
-    if f.metadata and f.metadata != 'None':
+    if f.metadata and f.metadata != 'null':
         metadata = json.loads(f.metadata)
     subtitles = None
     if 'subtitles' in metadata and 'streams' in metadata['subtitles']:
@@ -93,7 +93,7 @@ def _album_params(album):
     subtitles = False
     for f in items:
         metadata = {}
-        if f.metadata and f.metadata != 'None':
+        if f.metadata and f.metadata != 'null':
             metadata = json.loads(f.metadata)
         if 'has_subtitles' in metadata:
             subtitles = metadata['has_subtitles']
@@ -127,7 +127,7 @@ class MediaView(FlaskView):
     @route("/download/<path:file>")
     def download(self, file):
         return self._send_file(file)
-    
+
     @route("/status/<id>")
     def status(self, id):
         klass = RedisObject.klass(id)
