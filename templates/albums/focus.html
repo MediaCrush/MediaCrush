@@ -4,7 +4,6 @@
     Layout:
     <a href="/{{ filename }}" title="List" class="icon" data-icon="&#xF0A9;"></a>
     <a href="/{{ filename }}/focus" title="Focus" class="icon selected" data-icon="&#xF126;"></a>
-    <a href="/{{ filename }}/grid" title="Grid" class="icon" data-icon="&#xF027;"></a>
 </div>
 <script>
 window.albumType = 'focus';
@@ -12,20 +11,27 @@ window.albumType = 'focus';
 {% endblock %}
 {% block album %}
 <div class="clearfix album focus">
-    <div class="left">
+    <div class="left selected">
         {{ render_media(items[0], album=True) | safe }}
         <div class="clearfix"></div>
     </div>
     <div class="right">
-        {% for hash in items[1:6] %}
-        <div class="item">
-            <div data-hash="hash.hash">
-                {{ render_media(hash, album=True) | safe }}
-            </div>
-            <div class="clearfix"></div>
-            <a href="#" class="target"></a>
+        <div class="controls">
+            <div class="center"><span class="index">1</span>/{{ len(items) }}</div>
+            <a href="#" class="hidden previous icon icon-32" data-icon="&#xF168;"></a>
+            <a href="#" class="next icon icon-32" data-icon="&#xF16E;"></a>
         </div>
-        {% endfor %}
+        <div class="items clearfix">
+            {% for hash in items[1:6] %}
+            <div class="item">
+                <div class="media-item" data-hash="{{ hash.hash }}" data-index="{{ loop.index }}">
+                    {{ render_media(hash, album=True) | safe }}
+                </div>
+                <div class="clearfix"></div>
+                <a href="#" class="target"></a>
+            </div>
+            {% endfor %}
+        </div>
         <div class="fade"></div>
     </div>
 </div>

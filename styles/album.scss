@@ -1,34 +1,37 @@
 @import 'view.scss'
 
-.album.grid {
-    .column {
-        width: 500px;
-        margin: 0;
-        padding: 0;
-        position: relative;
-        float: left;
+.controls {
+    position: relative;
+    height: 32px;
+
+    .center {
+        font-size: 16pt;
     }
-    .media-wrapper {
-        right: 50%;
-        position: relative;
-        float: right;
-        .media {
-            float: right;
-            right: -50%;
-            position: relative;
-            margin-bottom: 10px;
-            display: inline-block;
-            img, video, audio {
-                max-width: 500px;
-            }
-            & > a, img, video, .video {
-                display: block;
-            }
+
+    a {
+        color: #000;
+        position: absolute;
+        top: 0;
+
+        &.previous {
+            left: 3px;
+        }
+
+        &.next {
+            right: 3px;
+        }
+
+        &:hover {
+            color: #333;
         }
     }
 }
 
 .album.focus {
+    .selected .media-item {
+        margin: 0 auto;
+    }
+
     .item-wrapper {
         position: relative;
     }

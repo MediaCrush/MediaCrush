@@ -36,20 +36,6 @@
 {% block content %}
 <div class="album-header">
     <h2 class="center album">Album - {{ len(items) }} files</h2>
-    <div class="center small clearfix">
-        <ul class="inline">
-            <li><a href="#" id="embed-link">Embed</a></li>
-            <li><a href="#" id="report">Report</a></li>
-        </ul>
-    </div>
-    <div class="hidden" id="embed">
-        <div class="center">
-            <p>Copy this HTML and paste it into your website:</p>
-            <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
-            <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.
-            Albums are best embedded with <a href="/docs/mediacrush.js">mediacrush.js</a>.</p>
-        </div>
-    </div>
     {% block layout %}{% endblock %}
 </div>
 
