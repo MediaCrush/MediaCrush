@@ -161,9 +161,9 @@ class AlbumTestCase(APITestCase):
         response = self._create_album(h)
         self.assertEqual(response.status_code, 415)
 
-    def test_create_album_51_files(self):
+    def test_create_album_1025_files(self):
         cat = self._get_hash('cat.png')
-        h = [cat for _ in range(51)]
+        h = [cat for _ in range(1025)]
 
         response = self._create_album(h)
         self.assertEqual(response.status_code, 413)
