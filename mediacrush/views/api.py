@@ -11,11 +11,17 @@ from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.config import _cfg
+from mediacrush.tor import tor_redirect
+
+import json
 
 def _file_object(f):
     mimetype = f.mimetype
     processor = get_processor(f.processor)
 
+    metadata = {}
+    if f.metadata and f.metadata != 'None':
+        metadata = json.loads(f.metadata)
     ret = {
         'original': media_url(f.original),
         'type': mimetype,
@@ -23,6 +29,7 @@ def _file_object(f):
         'hash': f.hash,
         'files': [],
         'extras': [],
+        'metadata': metadata,
         'flags': f.flags.as_dict(),
     }
     if f.compression:
@@ -160,6 +167,16 @@ class APIView(FlaskView):
                 res[i] = objects[klass](o)
 
         return res
+
+    @route("/api/upload/noscript", methods=['POST'])
+    def upload_noscript(self):
+        f = request.files['file']
+        filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
+
+        identifier, code = upload(f, filename)
+        if not code in [ 200, 409 ]:
+            return { 'error': code }, code
+        return tor_redirect("/status/" + identifier)
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):

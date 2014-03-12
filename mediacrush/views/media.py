@@ -1,16 +1,18 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
-from flask import send_file, render_template, abort, request, Response, g
+from flask import send_file, render_template, abort, request, Response, g, redirect, current_app
 import os
 import json
 import mimetypes
 
 from mediacrush.files import extension, get_mimetype, delete_file
+from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.fileutils import normalise_processor
 from mediacrush.database import r, _k
 from mediacrush.config import _cfg
 from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
+from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
 from mediacrush.views.api import objects
 
@@ -52,12 +54,27 @@ def _template_params(f):
                     types.remove(t)
         except:
             pass
+    metadata = {}
+    if f.metadata and f.metadata != 'null':
+        metadata = json.loads(f.metadata)
+    subtitles = None
+    if 'subtitles' in metadata and 'streams' in metadata['subtitles']:
+        for stream in metadata['subtitles']['streams']:
+            if stream['type'] == 'subtitle':
+                subtitles = stream
+                if subtitles['info']['codec_name'] == 'ssa':
+                    subtitles['info']['codec_name'] = 'ass'
+                subtitles['url'] = '/' + f.hash + '.' + subtitles['info']['codec_name']
+                break
 
     return {
         'filename': f.hash,
         'original': f.original,
         'video': normalise_processor(f.processor) == 'video',
         'flags': f.flags.as_dict(),
+        'metadata': metadata,
+        'subtitles': subtitles,
+        'has_subtitles': subtitles != None,
         'compression': compression,
         'mimetype': mimetype,
         'can_delete': can_delete if can_delete is not None else 'check',
@@ -76,6 +93,13 @@ def _album_params(album):
 
     types = set([f.processor for f in items])
     filename = album.hash
+    subtitles = False
+    for f in items:
+        metadata = {}
+        if f.metadata and f.metadata != 'null':
+            metadata = json.loads(f.metadata)
+        if 'has_subtitles' in metadata:
+            subtitles = metadata['has_subtitles']
 
     can_delete = None
     try:
@@ -107,6 +131,19 @@ class MediaView(FlaskView):
     def download(self, file):
         return self._send_file(file)
 
+    @route("/status/<id>")
+    def status(self, id):
+        klass = RedisObject.klass(id)
+        if klass is not File:
+            abort(404)
+
+        f = File.from_hash(id)
+        template_params = _template_params(f)
+
+        if f.status in ['done', 'ready']:
+            return tor_redirect('/' + f.hash)
+        return render_template("status.html", **_template_params(f))
+
     @route("/<id>", defaults = { 'layout': 'list' })
     @route("/<id>/<layout>")
     def get(self, id, layout):
@@ -126,10 +163,14 @@ class MediaView(FlaskView):
         f = File.from_hash(id)
         return render_template("view.html", **_template_params(f))
 
+    @route("/report/<id>", methods=['POST'])
     def report(self, id):
+        if not current_app.debug and rate_limit_exceeded(section="report"):
+            return {'error': 413}, 413
+        rate_limit_update(1, section="report")
         f = File.from_hash(id)
         f.add_report()
-        return "ok"
+        return render_template("report.html")
 
     @route("/<id>/delete")
     def delete(self, id):

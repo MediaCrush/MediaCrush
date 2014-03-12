@@ -2,6 +2,7 @@ from ..database import r, _k
 from ..config import _cfg
 from ..objects import File, Feedback
 from ..files import extension
+from ..processing import get_processor
 
 from .compliments import compliments
 
@@ -13,7 +14,7 @@ import random
 TEMPLATE = """
 This is the report for %s.
 
-There are %d media blobs.
+There are %d media blobs, and %d albums.
 
 File usage:
 %s
@@ -21,7 +22,7 @@ File usage:
 Disk info:
 %s
 
-Files with more than 10 reports:
+Reported files:
 %s
 
 User feedback:
@@ -30,29 +31,47 @@ User feedback:
 %s"""
 
 sizes = {}
-extensions = {}
+types = {}
 
 def report():
-    d = os.walk(_cfg("storage_folder"))    
-    for f in list(d)[0][2]: # Forgive me for this.
-        size = os.path.getsize(os.path.join(_cfg("storage_folder"), f))
-        size /= float(1 << 20) # log2(1048576) = 20
+    files = File.get_all()
+    for f in files:
+        if f.original == None:
+            continue # This is something we should think about cleaning up after at some point
+        try:
+            with open(os.path.join(_cfg("storage_folder"), f.original)):
+                size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
+        except IOError: pass
+        processor = get_processor(f._processor)
+        for f_ext in processor.outputs:
+            name = "%s.%s" % (f.hash, f_ext)
+            if name == f.original:
+                continue
+            try:
+                with open(os.path.join(_cfg("storage_folder"), name)):
+                    size += os.path.getsize(os.path.join(_cfg("storage_folder"), name))
+            except IOError: pass
+        for f_ext in processor.extras:
+            try:
+                with open(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext))):
+                    size += os.path.getsize(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext)))
+            except IOError: pass
+        size /= float(1 << 20)
         size = round(size, 2)
-        ext = extension(f)
 
-        if ext not in extensions:
-            extensions[ext] = 1
+        if f._processor not in types:
+            types[f._processor] = 1
         else:
-            extensions[ext] += 1
+            types[f._processor] += 1
 
-        if ext not in sizes:
-            sizes[ext] = size
+        if f._processor not in sizes:
+            sizes[f._processor] = size
         else:
-            sizes[ext] += size
+            sizes[f._processor] += size
 
     fileinfo = "" 
-    for ext in extensions:
-        fileinfo += "    -%d %ss (%0.2f MB)\n" % (extensions[ext], ext.upper(), sizes[ext])
+    for t in types:
+        fileinfo += "    -%d %s blobs (%0.2f MB)\n" % (types[t], t, sizes[t])
 
     diskinfo = ''.join(["    %s\n" % s for s in subprocess.check_output(["df", "-kh"]).split("\n")])
 
@@ -68,6 +87,7 @@ def report():
         reportinfo += "    No reports today. Good job!"
 
     blobs = len(r.keys(_k("file.*")))
+    albums = len(r.keys(_k("album.*")))
 
     feedback = Feedback.get_all()
     user_feedback = "" 
@@ -81,11 +101,11 @@ def report():
     report = TEMPLATE % (
         datetime.now().strftime("%d/%m/%Y"),
         blobs,
+        albums,
         fileinfo,
         diskinfo,
         reportinfo,
         user_feedback,
-
         random.choice(compliments)
     )
 

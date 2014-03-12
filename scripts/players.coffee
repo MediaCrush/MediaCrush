@@ -1,3 +1,5 @@
+subtitleRenderers = {}
+
 document.cancelFullScreen = document.cancelFullScreen ||
                    document.mozCancelFullScreen ||
                    document.webkitCancelFullScreen ||
@@ -5,6 +7,7 @@ document.cancelFullScreen = document.cancelFullScreen ||
 
 MediaPlayer = (container) ->
     media = container.querySelector('video, audio')
+    id = container.getAttribute('data-media')
     isVideo = media.tagName == 'VIDEO'
     isAudio = media.tagName == 'AUDIO'
     controls = container.querySelector('.controls')
@@ -13,10 +16,16 @@ MediaPlayer = (container) ->
     fullscreen = container.querySelector('.fullscreen')
     isFullscreen = false
     toggleLoop = container.querySelector('.loop')
+    toggleSubs = container.querySelector('.subtitles')
     rates = container.querySelectorAll('.speeds a')
     seek = container.querySelector('.seek')
     volume = container.querySelector('.volume > div')
     ready = false
+    media.controls = false
+
+    if isVideo
+        window.mediaSizeReporter = ->
+            return { width: media.videoWidth, height: media.videoHeight }
 
     updateMedia = ->
         if not ready
@@ -24,6 +33,8 @@ MediaPlayer = (container) ->
             for s in seek.querySelectorAll('.hidden')
                 s.classList.remove('hidden')
             seek.querySelector('.progress').classList.add('hidden')
+        if window.embedded
+            window.updateSize(media.videoWidth, media.videoHeight) if window.updateSize?
         if media.buffered.length == 0
             loaded = 100
         else
@@ -47,7 +58,24 @@ MediaPlayer = (container) ->
     media.addEventListener(event, (e) ->
         if media.readyState >= 3 or ready # HAVE_FUTURE_DATA (we can play now)
             updateMedia()
-    , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended']
+    , false) for event in ['progress', 'timeupdate', 'pause', 'playing', 'seeked', 'ended', 'loadedmetadata']
+
+    if toggleSubs
+        toggleSubs.addEventListener('click', (e) ->
+            e.preventDefault()
+            if container.className.indexOf('subs-off') == -1
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].disableSubs()
+                container.classList.add('subs-off')
+                toggleSubs.querySelector('.icon').classList.add('disabled')
+                toggleSubs.querySelector('.text').textContent = 'Subtitles OFF'
+            else
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].enableSubs()
+                container.classList.remove('subs-off')
+                toggleSubs.querySelector('.icon').classList.remove('disabled')
+                toggleSubs.querySelector('.text').textContent = 'Subtitles ON'
+        , false)
 
     if volume != null
         volumeIcon = volume.parentElement.querySelector('.icon')
@@ -186,6 +214,9 @@ MediaPlayer = (container) ->
                 container.webkitRequestFullScreen() if container.webkitRequestFullScreen?
                 container.msRequestFullscreen() if container.msRequestFullscreen?
                 container.classList.add('fullscreen')
+                window.setTimeout(() ->
+                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight) if subtitleRenderers[id]?
+                , 100)
                 timeout = setTimeout(idleUI, 3000)
             else
                 leaveFullscreen()
@@ -198,10 +229,12 @@ MediaPlayer = (container) ->
             document.cancelFullScreen()
             # Chrome hack to fix positioning when leaving full screen
             _ = document.querySelector('.media')
-            _.style.right = 0
-            window.setTimeout(->
-                _.style.right = '-50%'
-            , 100)
+            _.style.right = 0 if _
+            window.setTimeout(() ->
+                _.style.right = '-50%' if _
+                if subtitleRenderers[id]?
+                    subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
+            , 200)
 
     playPause.addEventListener('click', (e) ->
         e.preventDefault()
@@ -243,6 +276,65 @@ MediaPlayer = (container) ->
     
     window.resizeMedia = (width, height) ->
         return if not isVideo
+        return if not ready
+        console.log(width, height)
         media.width = width
         media.height = height - 5
+        if subtitleRenderers[id]?
+            subtitleRenderers[id].resize(media.offsetWidth, media.offsetHeight)
 window.MediaPlayer = MediaPlayer
+
+document.addEventListener('DOMContentLoaded', () ->
+    for player in document.querySelectorAll('.player.subtitled')
+        ((player) ->
+            id = player.getAttribute('data-media')
+            video = player.querySelector('video')
+            track = video.querySelector('track')
+            format = track.dataset.format
+            if format == 'ass'
+                style = document.getElementById('font-map-' + id)
+                ass = null
+
+                handleSubsReady = (video, ass) ->
+                    if video.readyState >= HTMLMediaElement.HAVE_METADATA and ass
+                        width = video.offsetWidth
+                        height = video.offsetHeight
+                        renderer = new libjass.renderers.DefaultRenderer(video, ass, {
+                            fontMap: libjass.renderers.RendererSettings.makeFontMapFromStyleElement(style)
+                        })
+                        renderer.resize(width, height)
+                        subtitleRenderers[id] = {
+                            resize: () ->
+                                renderer.resize.apply(renderer, arguments)
+                            disableSubs: () ->
+                                renderer.disable()
+                            enableSubs: () ->
+                                renderer.enable()
+                        }
+                        renderer.disable() if video.parentElement.classList.contains('subs-off')
+
+                if video.readyState < HTMLMediaElement.HAVE_METADATA
+                    video.addEventListener('loadedmetadata', () ->
+                        handleSubsReady(video, ass)
+                    , false)
+                else
+                    handleSubsReady(video, ass)
+                request = new XMLHttpRequest()
+                request.open('GET', track.src || track.getAttribute('src'))
+                request.onload = () ->
+                    ass = libjass.ASS.fromString(this.responseText)
+                    handleSubsReady(video, ass)
+                request.send()
+            if format == 'vtt'
+                captionator.captionify(video, "en", {})
+                subtitleRenderers[id] = {
+                    resize: () ->
+                        # nop
+                    disableSubs: () ->
+                        video.textTracks[0].mode = 'hidden'
+                    enableSubs: () ->
+                        video.textTracks[0].mode = 'showing'
+                }
+                video.textTracks[0].mode = 'hidden' if video.parentElement.classList.contains('subs-off')
+        )(player)
+, false)

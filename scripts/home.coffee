@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded', ->
 , false)
 
 forceFocus = ->
-    if document.activeElement.tagName in ['TEXTAREA', 'INPUT']
+    if document.activeElement.tagName in ['TEXTAREA', 'INPUT', 'IFRAME']
         setTimeout(forceFocus, 250)
         return
     pasteTarget = document.getElementById('paste-target')
@@ -84,6 +84,7 @@ createHistoryItem = (h, noLink = false) ->
     if item.blob_type == 'video'
         preview = document.createElement('video')
         preview.setAttribute('loop', 'true')
+        preview.poster = '/' + item.hash + '.jpg'
         for file in item.files
             if file.type.indexOf('video/') == 0
                 source = document.createElement('source')

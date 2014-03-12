@@ -42,6 +42,14 @@ reading this over HTTPS, for one. We never ever store anything about you when yo
 your Do Not Track settings. You can donate anonymously to our efforts with bitcoin, and we don't show any ads with
 nasty tracking code. Also, if you're wondering what we're up to, we publish
 <a href="/transparency">detailed reports</a> on what we're doing every month.</p>
+<h2>How does it work?</h2>
+<p>Warning: technical jargon ahead. When you upload a file to MediaCrush, it enters our "processing pipeline". We
+use a bunch of great open-source tools to work our magic. The job is queued up with Celery and any of our spare
+processing servers can pick it up and get to work. We detect what the file is with tools like ffprobe and ImageMagick,
+and send it off to the appropriate processing tools. Videos (and GIFs) are processed with ffmpeg, and so is audio.
+We have a few specific tools for images, but most just go through ImageMagick and get converted into something we
+can display in your web browser. You can check it all out
+<a href="https://github.com/MediaCrush/MediaCrush">at our GitHub repository</a>, and even help improve it!</p>
 <h2>How do I keep in touch?</h2>
 <p>We announce new features and respond to user feedback from our <a href="https://twitter.com/mediacru_sh">Twitter
 account</a>, and write about them on our <a href="https://blog.mediacru.sh">blog</a>. You can also get in touch

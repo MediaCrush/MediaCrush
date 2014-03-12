@@ -10,6 +10,7 @@ environment = dev
 # mediacrush.js.
 protocol = https
 domain = mediacru.sh
+tor_domain = 
 
 # URLs to media files will be prefixed with this. Do not include a trailing forward slash.
 # If you don't use a CDN, you can leave this empty.
@@ -70,5 +71,10 @@ units_per_period = 250000000
 
 [ratelimit-feedback]
 # Controls how frequently users can post feedback using the feedback tool on every page. Default is 5 times per day.
+period = 86400
+units_per_period = 5
+
+[ratelimit-report]
+# How frequently you can use the "report" feature
 period = 86400
 units_per_period = 5

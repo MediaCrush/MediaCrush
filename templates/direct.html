@@ -27,10 +27,18 @@
         {% if dark_theme %}
         <link rel="stylesheet" type="text/css" href="/static/dark.css" />
         {% endif %}
-        <style>html,body{margin:0;padding:0}</style>
+        <style>html,body{margin:0;padding:0;overflow:hidden}</style>
         <script type="text/javascript">
             window.filename = "{{ filename }}";
+            {% if embedded %}
+            window.embedded = true;
+            {% else %}
+            window.embedded = false;
+            {% endif %}
         </script>
+        {% if has_subtitles %}
+        <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+        {% endif %}
     </head>
     <body class="view">
         <div style="display: inline-block">
@@ -47,7 +55,6 @@
                 if (hash.length > 1) {
                     handleHash(hash);
                 }
-                {% if embedded %}
                 var body = document.body, html = document.documentElement;
                 var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
                 {% if processor.startswith('audio') %}
@@ -55,6 +62,9 @@
                 {% else %}
                 var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
                 {% endif %}
+                // Stupid error correction
+                width -= 15;
+                height -= 15;
                 window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
                 // This mess just gets the window width,height in x,y
                 var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
@@ -75,11 +85,13 @@
                         if (window.pauseMedia) pauseMedia();
                     }
                 });
-                {% endif %}
             }, false);
             function handleHash(hash) {
                 if (mediaHashHandler)
                     mediaHashHandler(hash.substr(1));
+            }
+            function updateSize(width, height) {
+                window.top.postMessage({ width: width, height: height, media: "{{ filename }}" }, '*');
             }
             {% if embedded %}
             {% endif %}
@@ -92,5 +104,13 @@
             }
         </style>
         {% endif %}
+        <script type="text/javascript">
+            (function() {
+                var hidden = document.querySelectorAll('.hidden-if-noscript');
+                for (var i = 0; i < hidden.length; i++) {
+                    hidden[i].classList.remove('hidden-if-noscript');
+                }
+            })();
+        </script>
     </body>
 </html>

@@ -12,16 +12,16 @@ class Processor(object):
     outputs = []
     extras = []
 
-    def __init__(self, tmppath, f, extra):
+    def __init__(self, tmppath, f, processor_state):
         self.path = tmppath
         self.output = os.path.join(_cfg("storage_folder"), f.hash)
-        self.extra = extra
+        self.processor_state = processor_state
 
         self.important = True
 
         self.f = f
 
-    def _execute(self, command):
+    def _execute(self, command, ignoreNonZero = False):
         ext = extension(self.f.original)
 
         tlc = Invocation(command)(self.path, self.output, extension=ext)
@@ -30,7 +30,7 @@ class Processor(object):
         if tlc.exited and self.important:
             raise TimeoutException
 
-        if tlc.returncode != 0 and self.important:
+        if tlc.returncode != 0 and self.important and not ignoreNonZero:
             raise ProcessingException
 
     def sync(self):

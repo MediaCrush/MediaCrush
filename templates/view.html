@@ -11,13 +11,20 @@
         window.flags = {{ flags | tojson }}; 
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='view.js') }}"></script>
+    {% if has_subtitles %}
+    {% if subtitles['info']['codec_name'] == 'srt' or subtitles['info']['codec_name'] == 'vtt' %}
+    <script type="text/javascript" src="{{ url_for('static', filename='captionator.js') }}"></script>
+    {% else %}
+    <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
+    {% endif %}
+    {% endif %}
 {% endblock %}
 {% block meta %}
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
     {% if processor.startswith("video") %}
         {# Generated thumbnail #}
-        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.png" />
+        <meta property="og:image" content="https://mediacru.sh/{{ filename }}.jpg" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />
@@ -51,15 +58,23 @@
         {% endfor %}
     </div>
     {% endif %}
-    <ul class="inline">
+    <ul class="inline hidden-if-noscript">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
         <li><a href="/download/{{ original }}">Download</a></li>
-        <li><a href="#" id="report">Report</a></li>
+        <li><a href="/report/{{ filename }}" id="report">Report</a></li>
         <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>
+    <noscript>
+    <ul class="inline">
+        <li><a href="/download/{{ original }}">Download</a></li>
+        <li><a href="#" id="report" class="red">Report</a></li>
+        <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
+    </ul>
+    <p>Anonymous users are especially encouraged to click "report" for all media that violates our <a href="/serious">terms of use</a>.</p>
+    </noscript>
     {% if compression %}
-    {{ compression }}% faster on MediaCrush!
+    {#{{ compression }}% faster on MediaCrush!#}
     {% endif %}
 </div>
 <div class="hidden" id="embed">
