@@ -1,0 +1,24 @@
+{% extends "album.html" %}
+{% block layout %}
+<div class="layout-selector center">
+    Layout:
+    <a href="/{{ filename }}" title="List" class="icon selected" data-icon="&#xF0A9;"></a>
+    <a href="/{{ filename }}/focus" title="Focus" class="icon" data-icon="&#xF126;"></a>
+</div>
+<script>
+window.albumType = 'list';
+</script>
+{% endblock %}
+{% block album %}
+<div class="clearfix album" id="album-files">
+    {% for hash in items[:3] %}
+    <div class="media-wrapper">
+        <div class="media">
+            {{ render_media(hash, album=True) | safe }}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    {% endfor %}
+</div>
+<div class="progress hidden"></div>
+{% endblock %}

@@ -14,6 +14,7 @@ from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
 from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
+from mediacrush.views.api import objects
 
 def fragment(processor):
     np = normalise_processor(processor)
@@ -88,8 +89,10 @@ def _album_params(album):
     items = album.items
     if not items:
         abort(404)
+    files = objects[Album](album)['files']
 
     types = set([f.processor for f in items])
+    filename = album.hash
     subtitles = False
     for f in items:
         metadata = {}
@@ -141,7 +144,9 @@ class MediaView(FlaskView):
             return tor_redirect('/' + f.hash)
         return render_template("status.html", **_template_params(f))
 
-    def get(self, id):
+    @route("/<id>", defaults = { 'layout': 'list' })
+    @route("/<id>/<layout>")
+    def get(self, id, layout):
         send = self._send_file(id)
         if send:
             return send
@@ -150,7 +155,7 @@ class MediaView(FlaskView):
         if klass is Album:
             album = klass.from_hash(id)
             v = _album_params(album)
-            return render_template("album.html", **v)
+            return render_template("albums/%s.html" % layout, **v)
 
         if klass is not File:
             abort(404)
@@ -189,6 +194,17 @@ class MediaView(FlaskView):
         f = File.from_hash(id)
         template_params = _template_params(f)
         return render_template("direct.html", **template_params)
+
+    @route("/<id>/fragment")
+    def direct(self, id):
+        klass = RedisObject.klass(id)
+        if klass is not File:
+            abort(404)
+
+        f = File.from_hash(id)
+        params = _template_params(f)
+        params['album'] = True
+        return render_template(params['fragment'], **params)
 
     @route("/<id>/frame")
     def frame(self, id):

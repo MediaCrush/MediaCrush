@@ -97,3 +97,23 @@ pre {
 .dialog {
     color: #000 !important;
 }
+
+.album-header {
+    .layout-selector {
+        a {
+            color: #000;
+
+            &:hover {
+                color: #888;
+            }
+
+            &.selected {
+                color: #FFF;
+
+                &:hover {
+                    color: #666;
+                }
+            }
+        }
+    }
+}

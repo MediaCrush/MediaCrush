@@ -50,7 +50,7 @@ switchTheme = ->
 window.switchTheme = switchTheme
 
 confirmCallback = null
-window.addEventListener('load', ->
+window.addEventListener('DOMContentLoaded', ->
     if document.getElementById('feedback') != null
         feedback = document.getElementById('feedback').querySelector('div')
         feedbackToggle = document.getElementById('toggle-feedback')
@@ -62,7 +62,6 @@ window.addEventListener('load', ->
             else
                 feedbackToggle.parentElement.classList.remove('active')
         , false) if feedbackToggle
-
         feedbackSend = document.getElementById('send-feedback')
         feedbackSend.addEventListener('click', (e) ->
             e.preventDefault()
@@ -116,3 +115,13 @@ s4 = -> Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 
 guid = -> s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
 window.guid = guid
+
+window.getPosition = (e) ->
+    x = 0
+    y = 0
+    while true
+        x += e.offsetLeft
+        y += e.offsetTop
+        break if e.offsetParent == null
+        e = e.offsetParent
+    return [x, y]

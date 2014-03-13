@@ -1,11 +1,119 @@
 @import 'view.scss'
 
+.controls {
+    position: relative;
+    height: 32px;
+
+    .center {
+        font-size: 16pt;
+    }
+
+    a {
+        color: #000;
+        position: absolute;
+        top: 0;
+
+        &.previous {
+            left: 3px;
+        }
+
+        &.next {
+            right: 3px;
+        }
+
+        &:hover {
+            color: #333;
+        }
+    }
+}
+
+.album.focus {
+    .selected .media-item {
+        margin: 0 auto;
+    }
+
+    .item-wrapper {
+        position: relative;
+    }
+
+    & > .left {
+        width: 700px;
+        float: left;
+        padding-right: 10px;
+
+        img, video, audio {
+            max-width: 700px;
+            display: block;
+        }
+        & > a {
+            display: block;
+        }
+    }
+
+    & > .right {
+        overflow: hidden;
+        max-height: 900px;
+        position: relative;
+        .fade {
+            background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0));
+            height: 50px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .item {
+            margin-bottom: 10px;
+            position: relative;
+
+            a.target {
+                position: absolute;
+                display: block;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        }
+
+        img, video, audio {
+            max-width: 290px;
+            display: block;
+        }
+
+        & > a {
+            display: block;
+        }
+    }
+}
+
+.album-header {
+    margin-bottom: 10px;
+
+    .layout-selector {
+        float: right;
+
+        a {
+            color: #888;
+
+            &:hover {
+                color: #666;
+            }
+
+            &.selected {
+                color: #000;
+
+                &:hover {
+                    color: #000;
+                }
+            }
+        }
+    }
+}
+
 h2 {
     margin: 0;
-
-    & + div {
-        margin-bottom: 10px;
-    }
 }
 
 .bar .left {

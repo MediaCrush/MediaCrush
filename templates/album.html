@@ -1,14 +1,12 @@
 {% extends "layout.html" %}
 {% block styles %}
-    {% if mobile %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view-mobile.css') }}?version=2" />
-    {% else %}
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}?version=2" />
-    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}" />
 {% endblock %}
 {% block scripts %}
     <script type="text/javascript">
-        window.can_delete = '{{ can_delete }}';
+        window.album = true;
+        window.filename = '{{ filename }}';
+        window.files = {{ files | tojson | safe }};
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='album.js') }}"></script>
     {% if subtitles %}
@@ -36,100 +34,10 @@
 {% endfor %}
 {% endblock %}
 {% block content %}
-<h2 class="center album">Album - {{ len(items) }} files</h2>
-{% if not mobile %}
-<div class="center small clearfix">
-    <ul class="inline">
-        <li><a href="#" id="embed-link">Embed</a></li>
-        <li><a href="#" id="report">Report</a></li>
-    </ul>
-</div>
-{% endif %}
-<div class="hidden" id="embed">
-    <div class="center">
-        <p>Copy this HTML and paste it into your website:</p>
-        <input id="embed-value" type="text" value='&lt;iframe src="https://mediacru.sh/{{ filename }}/frame" frameborder="0" allowFullscreen></iframe>' class="selectall" />
-        <p>Are you a developer? You might want to read our <a href="/docs">developer documentation</a>.
-        Albums are best embedded with <a href="/docs/mediacrush.js">mediacrush.js</a>.</p>
-    </div>
+<div class="album-header">
+    <h2 class="center album">Album - {{ len(items) }} files</h2>
+    {% block layout %}{% endblock %}
 </div>
 
-<div class="album">
-    {% for hash in items %}
-    <div class="media-wrapper">
-        <div class="media">
-            {{ render_media(hash, album=True) | safe }}
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    {% endfor %}
-</div>
-
-<script>
-window.album = true;
-window.filename = '{{ filename }}';
-window.can_delete = '{{ can_delete }}';
-var history = window.localStorage.getItem('history');
-history = JSON.parse(history);
-if (history == null) {
-    history = [];
-}
-window.addEventListener('DOMContentLoaded', function() {
-    var inputs = document.querySelectorAll('input.selectall');
-    for (var i = 0; i < inputs.length; i++) {
-        inputs[i].addEventListener('mouseenter', function(e) {
-            e.target.focus();
-            e.target.select();
-        });
-    }
-    document.getElementById('embed-link').addEventListener('click', function(e) {
-        e.preventDefault();
-        var share = document.getElementById('share');
-        var embed = document.getElementById('embed');
-        if (embed.className == 'hidden') {
-            embed.className = '';
-            share.className = 'hidden';
-        }
-        else {
-            embed.className = 'hidden';
-        }
-    });
-    if (window.can_delete == 'check') {
-        var hashIndex = null;
-        if (history) {
-            var canDelete = false;
-            for (var i = 0; i < history.length; i++) {
-                if (history[i] == window.filename) {
-                    canDelete = true;
-                    hashIndex = i;
-                    break;
-                }
-            }
-            if (canDelete) {
-                document.getElementById('delete').parentElement.classList.remove('hidden');
-            }
-        }
-    }
-    document.getElementById('delete').addEventListener('click', function(e) {
-        e.preventDefault();
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/' + window.filename + '/delete');
-        xhr.send();
-        document.getElementById('delete').parentElement.innerHTML = 'Deleted';
-        if (history) {
-            history.remove(hashIndex);
-            window.localStorage.setItem('history', JSON.stringify(history));
-        }
-    }, false);
-    var report = document.getElementById('report');
-    report.addEventListener('click', function(e) {
-        e.preventDefault();
-        var report = document.getElementById('report');
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/report/' + location.href.split('/')[3]);
-        xhr.send();
-        report.parentElement.innerHTML = "Reported";
-    }, false);
-}, false);
-</script>
+{% block album %}{% endblock %}
 {% endblock %}
