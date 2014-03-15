@@ -108,6 +108,7 @@ populateFocus = () ->
                 item.appendChild(clearfix)
                 item.appendChild(target)
                 document.querySelector('.focus .items').appendChild(item)
+                hidden.classList.remove('hidden-if-noscript')  for hidden  in document.querySelectorAll('.hidden-if-noscript')
             xhr.send()
         )(loaded)
         loaded++
@@ -182,6 +183,7 @@ initializeScrollLoading = (includeClearfix, itemsLoaded) ->
                 else
                     column.appendChild(wrapper)
                     document.getElementById('album-files').appendChild(column)
+                hidden.classList.remove('hidden-if-noscript')  for hidden  in document.querySelectorAll('.hidden-if-noscript')
             xhr.send()
     checkLoad()
     window.addEventListener('scroll', checkLoad)
