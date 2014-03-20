@@ -19,11 +19,11 @@
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
     {% if type.startswith("video") %}
-        <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.png" />
+        <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.jpg" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />
-        <meta property="twitter:image" content="https://mediacru.sh/{{ item.hash }}.png">
+        <meta property="twitter:image" content="https://mediacru.sh/{{ item.hash }}.jpg">
     {% elif type.startswith("audio") %}
         <meta property="og:image" content="https://mediacru.sh/static/audio.png" />
     {% else %}
