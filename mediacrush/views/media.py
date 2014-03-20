@@ -54,11 +54,9 @@ def _template_params(f):
                     types.remove(t)
         except:
             pass
-
     metadata = {}
-    if f.metadata and f.metadata != 'None':
+    if f.metadata and f.metadata != 'null':
         metadata = json.loads(f.metadata)
-
     subtitles = None
     if 'subtitles' in metadata and 'streams' in metadata['subtitles']:
         for stream in metadata['subtitles']['streams']:
