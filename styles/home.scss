@@ -108,6 +108,8 @@
             font-size: 18pt;
             color: #005483;
             line-height: 10px;
+            position: relative;
+            z-index: 100;
 
             &:hover {
                 text-decoration: none;
@@ -150,6 +152,8 @@
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 99;
+    pointer-events: none;
 }
 
 #history {

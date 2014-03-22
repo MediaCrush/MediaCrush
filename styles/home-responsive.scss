@@ -4,12 +4,26 @@
         margin-top: -190px;
     }
 
-    #droparea {
+    #drop-wrapper {
         height: 320px;
-        background: transparent;
 
-        #files ul {
-            display: none;
+        #droparea {
+            height: 320px;
+            background: transparent;
+
+            #droptext {
+                margin-top: 100px;
+            }
+
+            &.files {
+                #droptext {
+                    margin-top: 10px;
+                }
+            }
+
+            #files ul {
+                display: none;
+            }
         }
     }
 
@@ -35,44 +49,47 @@
         width: 705px;
     }
 
-    #droparea {
+    #drop-wrapper {
         width: 300px;
-        background: transparent;
 
-        .noads & {
-            width: 464px;
-            background: url('/static/upload.png') transparent no-repeat 100px 220px;
-        }
-
-        #droptext a {
-            font-size: 14pt;
-            font-weight: bold;
-
-            span {
-                font-weight: normal;
-            }
-        }
-
-        #files ul {
-            left: 75px;
+        #droparea {
+            background: transparent;
 
             .noads & {
-                left: 20px;
+                width: 464px;
+                background: url('/static/upload.png') transparent no-repeat 100px 220px;
+            }
 
-                li {
-                    margin-right: 10px;
+            #droptext a {
+                font-size: 14pt;
+                font-weight: bold;
+
+                span {
+                    font-weight: normal;
                 }
             }
 
-            li {
-                margin-bottom: 10px;
-            }
-        }
+            #files ul {
+                left: 75px;
 
-        .help .hover {
-            left: 0px;
-            width: 290px;
-            top: -30px;
+                .noads & {
+                    left: 20px;
+
+                    li {
+                        margin-right: 10px;
+                    }
+                }
+
+                li {
+                    margin-bottom: 10px;
+                }
+            }
+
+            .help .hover {
+                left: 0px;
+                width: 290px;
+                top: -30px;
+            }
         }
     }
 
