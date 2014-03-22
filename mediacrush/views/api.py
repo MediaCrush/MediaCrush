@@ -23,7 +23,7 @@ def _file_object(f):
     if f.metadata and f.metadata != 'None':
         metadata = json.loads(f.metadata)
     ret = {
-        'original': media_url(f.original),
+        'original': media_url(f.original, absolute=False),
         'type': mimetype,
         'blob_type': normalise_processor(f.processor),
         'hash': f.hash,
@@ -51,8 +51,8 @@ def _file_object(f):
 def _file_entry(f, mimetype=None):
     return {
         'type': mimetype if mimetype else get_mimetype(f),
-        'file': media_url(f),
-        'url': _cfg("cdn") + media_url(f)
+        'file': media_url(f, absolute=False), # This silliness will be fixed in API 2
+        'url': media_url(f)
     }
 
 def _album_object(a):

@@ -7,12 +7,12 @@ import os
 import traceback
 import subprocess
 
-from .views import HookView, APIView, MediaView, DocsView
-from .config import _cfg, _cfgi
-from .files import extension, get_mimetype
-from .views.media import render_media
-from .share import share
-from .network import is_tor, get_ip
+from mediacrush.views import HookView, APIView, MediaView, DocsView
+from mediacrush.config import _cfg, _cfgi
+from mediacrush.files import extension, get_mimetype, media_url
+from mediacrush.views.media import render_media
+from mediacrush.share import share
+from mediacrush.network import is_tor, get_ip
 
 app = Flask(__name__)
 app.jinja_env.cache = None
@@ -77,7 +77,8 @@ def inject():
         'get_mimetype': get_mimetype,
         'cdn': cdn,
         'is_tor': is_tor(),
-        'ip': get_ip()
+        'ip': get_ip(),
+        'media_url': media_url,
     }
 
 @app.route("/")
