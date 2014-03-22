@@ -3,6 +3,10 @@ body {
     color: #fff;
 }
 
+.record {
+    color: #fff !important;
+}
+
 .navigation {
     .brand a {
         color: #fff;
@@ -14,8 +18,7 @@ body {
 }
 
 #droparea {
-    background: url('/static/upload-dark.png') #666 no-repeat 230px 220px;
-    border: 2px dotted #fff;
+    background: url('/static/upload-dark.png') transparent no-repeat 230px 320px;
 
     a, #droptext a, .help {
         color: #ccc;
@@ -38,7 +41,7 @@ body {
     }
 }
 
-#history ul li.fader {
+.fader {
     background: linear-gradient(to top, rgb(50, 50, 50), rgba(50, 50, 50, 0)) repeat scroll 0% 0% transparent;
 }
 
