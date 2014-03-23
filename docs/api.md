@@ -20,6 +20,115 @@ Example:
 
 # Methods
 
+## Cryptoaccounts
+
+Note: "aes" stands for "account encrypted storage".
+
+### PUT /api/aes/&lt;userhash&gt;
+
+This method is used for account creation and account updates.
+
+*Parameters*: `blob`, the encrypted blob to store. `token`, a password used to modify the blob.
+
+    PUT /api/aes/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+    token=ANWe6HTLMfEM
+    blob=[ommitted for brevity]
+
+    {
+        "status": "success"
+    }
+
+
+*Return codes*: 
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>Either blob or token is missing.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>A cryptoaccount with this userhash already exists, and the token parameter does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>A cryptoaccount with these parameters has been successfully created.</td>
+        <td>true</td>
+    </tr>
+</table>
+
+### POST /api/aes/delete/&lt;userhash&gt;
+
+*Parameters*: `token`, the password used when creating the account.
+
+    POST /api/aes/delete/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+    token=ANWe6HTLMfEM
+
+    {
+        "status": "success"
+    }
+
+*Return codes*: 
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no cryptoaccount with that hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The token does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The cryptoaccount has been successfully deleted.</td>
+        <td>true</td>
+    </tr>
+</table>
+
+### GET /api/aes/&lt;userhash&gt;
+
+*Returns*: The blob stored for this cryptoaccount.
+
+    GET /api/aes/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+
+    {
+        "blob": [ommitted for brevity] 
+    }
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no cryptoaccount with that hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The blob associated with this cryptoaccount has been returned.</td>
+        <td>true</td>
+    </tr>
+</table>
+
+
 ## Albums
 
 ### POST /api/album/create
