@@ -336,6 +336,9 @@ class APIView(FlaskView):
         if 'blob' not in request.form or 'token' not in request.form:
             return {'error': 400}, 400
 
+        if len(userhash) != 64:
+            return {'error': 400}, 400
+
         token = request.form['token']
         blob = request.form['blob']
 

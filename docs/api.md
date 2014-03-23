@@ -24,6 +24,8 @@ Example:
 
 Note: "eas" stands for "encrypted account storage".
 
+The userhash is obtained by computing `sha256(username + password)`. The token is generated randomly by the client.
+
 ### PUT /api/eas/&lt;userhash&gt;
 
 This method is used for account creation and account updates.
@@ -49,7 +51,7 @@ This method is used for account creation and account updates.
     </tr>
     <tr>
         <td>400</td>
-        <td>Either blob or token is missing.</td>
+        <td>The blob or token are missing, or the userhash is not properly formed.</td>
         <td>false</td>
     </tr>
     <tr>
