@@ -2,9 +2,6 @@
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='album.css') }}" />
 {% endblock %}
-{% block meta %}
-<meta name="robots" content="noindex">
-{% endblock %}
 {% block scripts %}
     <script type="text/javascript">
         window.album = true;
@@ -17,6 +14,7 @@
     {% endif %}
 {% endblock %}
 {% block meta %}
+    <meta name="robots" content="noindex">
 {% for item in [ items[0] ] %}
 {% set type = item.processor %}
     <meta property="og:type" content="{{ mimetype }}" />

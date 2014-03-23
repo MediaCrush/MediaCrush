@@ -3,9 +3,6 @@
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='view.css') }}" />
 {% endblock %}
-{% block meta %}
-<meta name="robots" content="noindex">
-{% endblock %}
 {% block scripts %}
     <script type="text/javascript">
         window.filename = '{{ filename }}';
@@ -23,6 +20,7 @@
     {% endif %}
 {% endblock %}
 {% block meta %}
+    <meta name="robots" content="noindex">
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
     {% if processor.startswith("video") %}
