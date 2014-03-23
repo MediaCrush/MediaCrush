@@ -163,7 +163,7 @@ class MediaView(FlaskView):
         f = File.from_hash(id)
         return render_template("view.html", **_template_params(f))
 
-    @route("/report/<id>", methods=['POST'])
+    @route("/report/<id>", methods=['GET', 'POST'])
     def report(self, id):
         rate_limit_update(1, section="report")
         if not current_app.debug and rate_limit_exceeded(section="report"):
