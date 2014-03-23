@@ -360,3 +360,44 @@ class CryptoAccountsTestCase(APITestCase):
         o = json.loads(response.data)
         self.assertIn("blob", o)
         self.assertEqual(o['blob'], "testing")
+
+    def test_delete_aes(self):
+        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/aes/asdf")
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post("/api/aes/delete/asdf", data={'token': 'meow'})
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.post("/api/aes/delete/asdf", data={'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/aes/asdf")
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_aes(self):
+        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/aes/asdf")
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(o['blob'], "testing")
+
+        response = self.client.put("/api/aes/asdf", data={'blob': 'newblob', 'token': 'meow'})
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get("/api/aes/asdf")
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(o['blob'], "testing")
+
+        response = self.client.put("/api/aes/asdf", data={'blob': 'newblob', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/aes/asdf")
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(o['blob'], "newblob")

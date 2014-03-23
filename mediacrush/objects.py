@@ -215,8 +215,11 @@ class CryptoAccount(RedisObject):
     blob = None
     hashedtoken = None
 
+    def hash_token(self, token):
+        self.hashedtoken = generate_password_hash(token)
+
     def check_token(self, token):
-        return check_password_hash(self.hashedtoken, self.token)
+        return check_password_hash(self.hashedtoken, token)
 
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")

@@ -340,11 +340,41 @@ class APIView(FlaskView):
         blob = request.form['blob']
 
         if CryptoAccount.exists(userhash):
-            # TODO: update it
+            account = CryptoAccount.from_hash(hash=userhash)
+            if account.check_token(token):
+                account.blob = blob # TODO: blob limits
+                account.save()
+
+                return {'status': 'success'}
+            else:
+                return {'error': 401}, 401
+
             return "ok"
 
         # TODO: blob limits
-        account = CryptoAccount(hash=userhash, token=token, blob=blob)
+        account = CryptoAccount(hash=userhash, blob=blob)
+        account.hash_token(token)
         account.save()
 
-        return {'hash': userhash}
+        return {'status': 'success'}
+
+    # This is a POST method because we require a 'token' form parameter.
+    # DELETE ignores the entity body, so we can't use that.
+    # Suggestions are welcome.
+    @route("/api/aes/delete/<userhash>", methods=['POST'])
+    def delete_account(self, userhash):
+        if 'token' not in request.form:
+            return {'error': 400}, 400
+
+        token = request.form['token']
+
+        if not CryptoAccount.exists(userhash):
+            return {'error': 404}, 404
+
+        account = CryptoAccount.from_hash(userhash)
+        if account.check_token(token):
+            account.delete()
+
+            return {'status': 'success'}
+        else:
+            return {'error': 401}, 401
