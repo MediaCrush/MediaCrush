@@ -26,7 +26,9 @@ MediaPlayer = (container) ->
     if isVideo
         window.mediaSizeReporter = ->
             return { width: media.videoWidth, height: media.videoHeight }
-        window.updateSize()
+        setTimeout(() ->
+            window.updateSize() if window.updateSize?
+        , 500)
 
     updateMedia = ->
         if not ready
