@@ -346,58 +346,58 @@ class FlagsTestCase(APITestCase):
 
 class CryptoAccountsTestCase(APITestCase):
     def test_404(self):
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
 
         self.assertEqual(response.status_code, 404)
 
-    def test_create_aes(self):
-        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+    def test_create_eas(self):
+        response = self.client.put("/api/eas/asdf", data={'blob': 'testing', 'token': 'test'})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         self.assertEqual(response.status_code, 200)
 
         o = json.loads(response.data)
         self.assertIn("blob", o)
         self.assertEqual(o['blob'], "testing")
 
-    def test_delete_aes(self):
-        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+    def test_delete_eas(self):
+        response = self.client.put("/api/eas/asdf", data={'blob': 'testing', 'token': 'test'})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.post("/api/aes/delete/asdf", data={'token': 'meow'})
+        response = self.client.post("/api/eas/delete/asdf", data={'token': 'meow'})
         self.assertEqual(response.status_code, 401)
 
-        response = self.client.post("/api/aes/delete/asdf", data={'token': 'test'})
+        response = self.client.post("/api/eas/delete/asdf", data={'token': 'test'})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         self.assertEqual(response.status_code, 404)
 
-    def test_update_aes(self):
-        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+    def test_update_eas(self):
+        response = self.client.put("/api/eas/asdf", data={'blob': 'testing', 'token': 'test'})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         o = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(o['blob'], "testing")
 
-        response = self.client.put("/api/aes/asdf", data={'blob': 'newblob', 'token': 'meow'})
+        response = self.client.put("/api/eas/asdf", data={'blob': 'newblob', 'token': 'meow'})
         self.assertEqual(response.status_code, 401)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         o = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(o['blob'], "testing")
 
-        response = self.client.put("/api/aes/asdf", data={'blob': 'newblob', 'token': 'test'})
+        response = self.client.put("/api/eas/asdf", data={'blob': 'newblob', 'token': 'test'})
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get("/api/aes/asdf")
+        response = self.client.get("/api/eas/asdf")
         o = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(o['blob'], "newblob")

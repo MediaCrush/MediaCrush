@@ -22,15 +22,15 @@ Example:
 
 ## Cryptoaccounts
 
-Note: "aes" stands for "account encrypted storage".
+Note: "eas" stands for "encrypted account storage".
 
-### PUT /api/aes/&lt;userhash&gt;
+### PUT /api/eas/&lt;userhash&gt;
 
 This method is used for account creation and account updates.
 
 *Parameters*: `blob`, the encrypted blob to store. `token`, a password used to modify the blob.
 
-    PUT /api/aes/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+    PUT /api/eas/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
     token=ANWe6HTLMfEM
     blob=[ommitted for brevity]
 
@@ -64,11 +64,11 @@ This method is used for account creation and account updates.
     </tr>
 </table>
 
-### POST /api/aes/delete/&lt;userhash&gt;
+### POST /api/eas/delete/&lt;userhash&gt;
 
 *Parameters*: `token`, the password used when creating the account.
 
-    POST /api/aes/delete/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+    POST /api/eas/delete/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
     token=ANWe6HTLMfEM
 
     {
@@ -100,11 +100,11 @@ This method is used for account creation and account updates.
     </tr>
 </table>
 
-### GET /api/aes/&lt;userhash&gt;
+### GET /api/eas/&lt;userhash&gt;
 
 *Returns*: The blob stored for this cryptoaccount.
 
-    GET /api/aes/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
+    GET /api/eas/98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f
 
     {
         "blob": [ommitted for brevity] 

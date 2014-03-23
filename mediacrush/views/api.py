@@ -323,7 +323,7 @@ class APIView(FlaskView):
         feedback.save()
         return {'status': 'success'}
 
-    @route("/api/aes/<userhash>", methods=['GET'])
+    @route("/api/eas/<userhash>", methods=['GET'])
     def get_aesblob(self, userhash):
         if not CryptoAccount.exists(userhash):
             return {'error': 404}, 404
@@ -331,7 +331,7 @@ class APIView(FlaskView):
         account = CryptoAccount.from_hash(userhash)
         return {'blob': account.blob}
 
-    @route("/api/aes/<userhash>", methods=['PUT'])
+    @route("/api/eas/<userhash>", methods=['PUT'])
     def put_account(self, userhash):
         if 'blob' not in request.form or 'token' not in request.form:
             return {'error': 400}, 400
@@ -359,7 +359,7 @@ class APIView(FlaskView):
     # This is a POST method because we require a 'token' form parameter.
     # DELETE ignores the entity body, so we can't use that.
     # Suggestions are welcome.
-    @route("/api/aes/delete/<userhash>", methods=['POST'])
+    @route("/api/eas/delete/<userhash>", methods=['POST'])
     def delete_account(self, userhash):
         if 'token' not in request.form:
             return {'error': 400}, 400
