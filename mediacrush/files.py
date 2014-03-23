@@ -76,8 +76,12 @@ def get_hash(f):
     f.seek(0)
     return hashlib.md5(f.read()).digest()
 
-def media_url(f):
-    return '/%s' % f
+def media_url(f, absolute=True):
+    cdn = _cfg("cdn")
+    domain = _cfg("domain")
+    base = _cfg("protocol") + "://" + domain if len(cdn) == 0 else cdn
+
+    return '%s/%s' % (base, f) if absolute else '/%s' % f
 
 def file_length(f):
     f.seek(0, 2)
