@@ -69,7 +69,7 @@
     <noscript>
     <ul class="inline">
         <li><a href="/download/{{ original }}">Download</a></li>
-        <li><a href="#" id="report" class="red">Report</a></li>
+        <li><a href="/report/{{ filename }}" class="red">Report</a></li>
         <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>
     <p>Anonymous users are especially encouraged to click "report" for all media that violates our <a href="/serious">terms of use</a>.</p>
