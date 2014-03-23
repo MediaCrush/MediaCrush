@@ -349,8 +349,6 @@ class APIView(FlaskView):
             else:
                 return {'error': 401}, 401
 
-            return "ok"
-
         # TODO: blob limits
         account = CryptoAccount(hash=userhash, blob=blob)
         account.hash_token(token)
