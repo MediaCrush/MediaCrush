@@ -5,7 +5,7 @@ from flask import request, current_app, redirect
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
 from mediacrush.database import r, _k
-from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
+from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile, CryptoAccount
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
@@ -322,3 +322,29 @@ class APIView(FlaskView):
         feedback = Feedback(text=text, useragent=useragent)
         feedback.save()
         return {'status': 'success'}
+
+    @route("/api/aes/<userhash>", methods=['GET'])
+    def get_aesblob(self, userhash):
+        if not CryptoAccount.exists(userhash):
+            return {'error': 404}, 404
+
+        account = CryptoAccount.from_hash(userhash)
+        return {'blob': account.blob}
+
+    @route("/api/aes/<userhash>", methods=['PUT'])
+    def put_account(self, userhash):
+        if 'blob' not in request.form or 'token' not in request.form:
+            return {'error': 400}, 400
+
+        token = request.form['token']
+        blob = request.form['blob']
+
+        if CryptoAccount.exists(userhash):
+            # TODO: update it
+            return "ok"
+
+        # TODO: blob limits
+        account = CryptoAccount(hash=userhash, token=token, blob=blob)
+        account.save()
+
+        return {'hash': userhash}

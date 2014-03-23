@@ -1,6 +1,7 @@
+from flaskext.bcrypt import generate_password_hash, check_password_hash
+
 from mediacrush.database import r, _k
 from mediacrush.celery import app
-
 from mediacrush.fileutils import normalise_processor, flags_per_processor, BitVector
 
 import hashlib
@@ -208,6 +209,14 @@ class Album(RedisObject):
 class FailedFile(RedisObject):
     hash = None
     status = None
+
+class CryptoAccount(RedisObject):
+    hash = None
+    blob = None
+    hashedtoken = None
+
+    def check_token(self, token):
+        return check_password_hash(self.hashedtoken, self.token)
 
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")

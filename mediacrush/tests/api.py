@@ -343,3 +343,20 @@ class FlagsTestCase(APITestCase):
         })
 
         self.assertEqual(response.status_code, 404)
+
+class CryptoAccountsTestCase(APITestCase):
+    def test_404(self):
+        response = self.client.get("/api/aes/asdf")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_aes(self):
+        response = self.client.put("/api/aes/asdf", data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/aes/asdf")
+        self.assertEqual(response.status_code, 200)
+
+        o = json.loads(response.data)
+        self.assertIn("blob", o)
+        self.assertEqual(o['blob'], "testing")
