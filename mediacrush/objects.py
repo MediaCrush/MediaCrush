@@ -1,18 +1,22 @@
 from flaskext.bcrypt import generate_password_hash, check_password_hash
 
+from mediacrush.config import _cfg
 from mediacrush.database import r, _k
 from mediacrush.celery import app
 from mediacrush.fileutils import normalise_processor, flags_per_processor, BitVector
 
 import hashlib
 import uuid
-
+import os
 import inspect
 
 class RedisObject(object):
     hash = None
 
     def __init__(self, **kw):
+        if "before_init" in dir(self):
+            self.before_init(**kw)
+
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -93,6 +97,9 @@ class RedisObject(object):
         r.sadd(_k(self.__class__.__name__.lower()), self.hash) # Add to type-set
 
     def delete(self):
+        if "before_delete" in dir(self):
+            self.before_delete()
+
         r.srem(_k(self.__class__.__name__.lower()), self.hash)
         r.delete(self.__get_key())
 
@@ -211,15 +218,30 @@ class FailedFile(RedisObject):
     status = None
 
 class CryptoAccount(RedisObject):
+    __exclude__ = ['blob']
+
     hash = None
-    blob = None
     hashedtoken = None
+
+    def before_init(self, **kw):
+        self._path = os.path.join(_cfg("storage_folder"), kw['hash'])
+
+    def before_delete(self):
+        os.unlink(self._path)
 
     def hash_token(self, token):
         self.hashedtoken = generate_password_hash(token)
 
     def check_token(self, token):
         return check_password_hash(self.hashedtoken, token)
+
+    @property
+    def blob(self):
+        return open(self._path).read()
+
+    @blob.setter
+    def blob(self, value):
+        open(self._path, "w").write(value)
 
 if __name__ == '__main__':
     a = RedisObject.from_hash("11fcf48f2c44")
