@@ -5,6 +5,9 @@
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}" />
 {% endblock %}
+{% block meta %}
+<meta property="og:image" content="https://mediacru.sh/static/logo.png" />
+{% endblock %}
 {% block content %}
 <div class="psuedohidden" id="paste-target" contenteditable></div>
 <div class="grid">
