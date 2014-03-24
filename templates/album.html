@@ -20,7 +20,7 @@
     <meta property="og:type" content="{{ mimetype }}" />
     <meta property="og:site_name" content="MediaCrush" />
     {% if type.startswith("video") %}
-        <meta property="og:image" content="https://mediacru.sh/{{ item.hash }}.jpg" />
+        <meta property="og:image" content="{{ root }}/{{ item.hash }}.jpg" />
         <meta property="twitter:card" content="player" />
         <meta property="twitter:title" content="MediaCrush" />
         <meta property="twitter:description" content="A video shared with MediaCrush." />

@@ -79,6 +79,7 @@ def inject():
         'is_tor': is_tor(),
         'ip': get_ip(),
         'media_url': media_url,
+        'root': _cfg("protocol") + "://" + _cfg("domain")
     }
 
 @app.route("/")
