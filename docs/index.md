@@ -35,7 +35,7 @@ Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support
 Note: We're looking for a node.js version of mediacrush.js. Interested in contributing one? Join us on IRC
 for a chat: [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4).
 
-## .NET
+### .NET
 
 * [Sharus](https://github.com/diantahoc/Sharus) - API wrapper for .NET written in C# - MIT license
 
