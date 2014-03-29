@@ -36,7 +36,7 @@
 {% endblock %}
 {% block content %}
 <div class="album-header">
-    <h2 class="center album">Album - {{ len(items) }} files</h2>
+    <h2 class="center album">{% block album_header %}Album - {{ len(items) }} files{% endblock %}</h2>
     {% block layout %}{% endblock %}
 </div>
 

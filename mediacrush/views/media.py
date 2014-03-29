@@ -1,9 +1,11 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
 from flask import send_file, render_template, abort, request, Response, g, redirect, current_app
+
 import os
 import json
 import mimetypes
+import random
 
 from mediacrush.files import extension, get_mimetype, delete_file
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
@@ -144,7 +146,7 @@ class MediaView(FlaskView):
             return tor_redirect('/' + f.hash)
         return render_template("status.html", **_template_params(f))
 
-    @route("/<id>", defaults = { 'layout': 'list' })
+    @route("/<id>", defaults = {'layout': 'list'})
     @route("/<id>/<layout>")
     def get(self, id, layout):
         send = self._send_file(id)
@@ -155,6 +157,9 @@ class MediaView(FlaskView):
         if klass is Album:
             album = klass.from_hash(id)
             v = _album_params(album)
+            v['layout'] = layout
+            if layout == "random":
+                random.shuffle(v['items']) # It's in-place
             return render_template("albums/%s.html" % layout, **v)
 
         if klass is not File:
