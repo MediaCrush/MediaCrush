@@ -144,7 +144,7 @@ class MediaView(FlaskView):
             return tor_redirect('/' + f.hash)
         return render_template("status.html", **_template_params(f))
 
-    @route("/<id>", defaults = { 'layout': 'list' })
+    @route("/<id>", defaults = {'layout': 'list'})
     @route("/<id>/<layout>")
     def get(self, id, layout):
         send = self._send_file(id)
@@ -155,6 +155,7 @@ class MediaView(FlaskView):
         if klass is Album:
             album = klass.from_hash(id)
             v = _album_params(album)
+            v['layout'] = layout
             return render_template("albums/%s.html" % layout, **v)
 
         if klass is not File:
