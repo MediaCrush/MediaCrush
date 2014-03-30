@@ -6,6 +6,7 @@ from jinja2 import FileSystemLoader, ChoiceLoader
 import os
 import traceback
 import subprocess
+import random
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
@@ -13,6 +14,7 @@ from mediacrush.files import extension, get_mimetype, media_url
 from mediacrush.views.media import render_media
 from mediacrush.share import share
 from mediacrush.network import is_tor, get_ip
+from mediacrush.mcmanage.compliments import compliments
 
 app = Flask(__name__)
 app.jinja_env.cache = None
@@ -115,6 +117,10 @@ def thanks():
 def version():
     v = subprocess.check_output(["git", "log", "-1"])
     return Response(v, mimetype="text/plain")
+
+@app.route("/compliment")
+def compliment():
+    return random.choice(compliments)
 
 @app.route("/serious")
 def serious():

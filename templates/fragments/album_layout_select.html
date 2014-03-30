@@ -1,0 +1,10 @@
+<div class="layout-selector center">
+    Layout:
+    <a href="/{{ filename }}" title="List" class="icon {{ "selected" if layout == "list" }}" data-icon="&#xF0A9;"></a>
+    <a href="/{{ filename }}/focus" title="Focus" class="icon {{ "selected" if layout == "focus" }}" data-icon="&#xF126;"></a>
+    <a href="/{{ filename }}/random" title="Random" class="icon {{ "selected" if layout == "random" }}" data-icon="&#xF0B3;"></a>
+</div>
+
+<script>
+window.albumType = '{{ layout }}';
+</script>

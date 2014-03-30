@@ -3,16 +3,16 @@
 {% include "fragments/album_layout_select.html" %}
 {% endblock %}
 
+{% block album_header %}Album{% endblock %} {# Get rid of "n files" #}
+
 {% block album %}
 <div class="clearfix album" id="album-files">
-    {% for hash in items[:3] %}
     <div class="media-wrapper">
         <div class="media">
-            {{ render_media(hash, album=True) | safe }}
+            {{ render_media(items[0], album=True) | safe }}
         </div>
     </div>
     <div class="clearfix"></div>
-    {% endfor %}
 </div>
 <div class="progress hidden"></div>
 {% endblock %}
