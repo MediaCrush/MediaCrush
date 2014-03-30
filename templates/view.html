@@ -36,7 +36,7 @@
     {% elif processor.startswith("audio") %}
         <meta property="og:image" content="/static/audio.png" />
     {% else %}
-        <meta property="og:image" content="{{ media_url(original) }}" />
+    <meta property="og:image" content="{{ root }}/{{ original }}" />
         <meta name="twitter:card" content="photo">
         <meta name="twitter:image" content="{{ media_url(original) }}">
     {% endif %}
