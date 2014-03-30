@@ -5,7 +5,7 @@ from flask import request, current_app, redirect
 from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile
 from mediacrush.database import r, _k
-from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
+from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile, CryptoAccount
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
@@ -322,3 +322,60 @@ class APIView(FlaskView):
         feedback = Feedback(text=text, useragent=useragent)
         feedback.save()
         return {'status': 'success'}
+
+    @route("/api/eas/<userhash>", methods=['GET'])
+    def get_aesblob(self, userhash):
+        if not CryptoAccount.exists(userhash):
+            return {'error': 404}, 404
+
+        account = CryptoAccount.from_hash(userhash)
+        return {'blob': account.blob}
+
+    @route("/api/eas/<userhash>", methods=['PUT'])
+    def put_account(self, userhash):
+        if 'blob' not in request.form or 'token' not in request.form:
+            return {'error': 400}, 400
+
+        if len(userhash) != 64:
+            return {'error': 400}, 400
+
+        token = request.form['token']
+        blob = request.form['blob']
+
+        if CryptoAccount.exists(userhash):
+            account = CryptoAccount.from_hash(hash=userhash)
+            if account.check_token(token):
+                account.blob = blob # TODO: blob limits
+                account.save()
+
+                return {'status': 'success'}
+            else:
+                return {'error': 401}, 401
+
+        # TODO: blob limits
+        account = CryptoAccount(hash=userhash, blob=blob)
+        account.hash_token(token)
+        account.save()
+
+        return {'status': 'success'}
+
+    # This is a POST method because we require a 'token' form parameter.
+    # DELETE ignores the entity body, so we can't use that.
+    # Suggestions are welcome.
+    @route("/api/eas/delete/<userhash>", methods=['POST'])
+    def delete_account(self, userhash):
+        if 'token' not in request.form:
+            return {'error': 400}, 400
+
+        token = request.form['token']
+
+        if not CryptoAccount.exists(userhash):
+            return {'error': 404}, 404
+
+        account = CryptoAccount.from_hash(userhash)
+        if account.check_token(token):
+            account.delete()
+
+            return {'status': 'success'}
+        else:
+            return {'error': 401}, 401

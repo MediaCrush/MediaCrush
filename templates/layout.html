@@ -45,6 +45,7 @@
                 </h1>
                 {% if not mobile %}
                 <ul>
+                    <li><a href="#" id="log-in">Log In</a></li>
                     <li><a href="/">Upload</a></li>
                     <li><a href="/apps">Apps</a></li>
                     <li><a href="/donate">Donate</a></li>
@@ -77,7 +78,7 @@
         {% include "analytics.html" %}
         {% endblock %}
         {% block confirmation_dialog %}
-        <div class="dialog hidden">
+        <div class="dialog hidden" id="confirmation-dialog">
             <div>
                 <h2>Are you sure?</h2>
                 <p>This action cannot be undone.</p>
@@ -96,5 +97,22 @@
                 }
             })();
         </script>
+        <div class="dialog hidden" id="log-in-dialog">
+            <div>
+                <div class="tabs">
+                    <a href="#log-in-tab" class="active">Log In</a>
+                    <a href="#create-account-tab">Create Account</a>
+                </div>
+                <div class="tab active" id="log-in-tab">
+                    <input type="text" Placeholder="Username" /><br />
+                    <input type="password" placeholder="Password" />
+                </div>
+                <div class="tab active" id="create-account-tab">
+                    <p>Insert blurb about privacy and shit</p>
+                    <input type="text" Placeholder="Username" /><br />
+                    <input type="password" placeholder="Password" />
+                </div>
+            </div>
+        </div>
     </body>
 </html>

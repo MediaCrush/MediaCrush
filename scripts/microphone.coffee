@@ -52,9 +52,11 @@ gotMedia = (e) ->
         recorder = audioContext.createJavaScriptNode(bufferSize, 2, 2)
     sampleRate = volume.context.sampleRate
     recorder.onaudioprocess = (e) ->
-        return if not recording
         left = e.inputBuffer.getChannelData 0
         right = e.inputBuffer.getChannelData 1
+        # Steal some entropy from their mic if they've let us use it
+        sjcl.random.addEntropy(left)
+        return if not recording
         backgroundWorker.postMessage({ action: 'push-audio', left: new Float32Array(left), right: new Float32Array(right) })
     volume.connect(recorder)
     recorder.connect(audioContext.destination)

@@ -120,6 +120,14 @@ API = (->
         xhr.open('POST', "/report/#{window.filename}")
         xhr.send()
 
+    self.checkSyncTime = (userhash, token, callback) ->
+        xhr = new XMLHttpRequest()
+        xhr.open('GET', "/api/aes/check/#{userhash}?token=#{token}")
+        xhr.onload = ->
+            # TODO
+        #xhr.send()
+        callback(0) if callback
+
     return self
 )()
 window.API = API if window?

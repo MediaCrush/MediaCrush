@@ -1,7 +1,9 @@
 shims.coffee
 global.coffee
-history.coffee
+sjcl.js
 api.coffee
+accounts.coffee
+history.coffee
 konami.coffee
 microphone.coffee
 home-files.coffee

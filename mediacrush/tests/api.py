@@ -343,3 +343,67 @@ class FlagsTestCase(APITestCase):
         })
 
         self.assertEqual(response.status_code, 404)
+
+class CryptoAccountsTestCase(APITestCase):
+    hash = "98ebcb03b0f02ffa80420980b053ed47394e7e4025b2e04b122af0f89f3c8d7f"
+
+    def test_404(self):
+        response = self.client.get("/api/eas/" + self.hash)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_eas(self):
+        response = self.client.put("/api/eas/" + self.hash, data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        self.assertEqual(response.status_code, 200)
+
+        o = json.loads(response.data)
+        self.assertIn("blob", o)
+        self.assertEqual(o['blob'], "testing")
+
+    def test_delete_eas(self):
+        response = self.client.put("/api/eas/" + self.hash, data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post("/api/eas/delete/" + self.hash, data={'token': 'meow'})
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.post("/api/eas/delete/" + self.hash, data={'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        self.assertEqual(response.status_code, 404)
+
+    def test_update_eas(self):
+        response = self.client.put("/api/eas/" + self.hash, data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(o['blob'], "testing")
+
+        response = self.client.put("/api/eas/" + self.hash, data={'blob': 'newblob', 'token': 'meow'})
+        self.assertEqual(response.status_code, 401)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(o['blob'], "testing")
+
+        response = self.client.put("/api/eas/" + self.hash, data={'blob': 'newblob', 'token': 'test'})
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get("/api/eas/" + self.hash)
+        o = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_invalid_userhash(self):
+        response = self.client.put("/api/eas/asdfasd", data={'blob': 'testing', 'token': 'test'})
+        self.assertEqual(response.status_code, 400)
