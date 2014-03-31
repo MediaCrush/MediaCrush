@@ -102,7 +102,10 @@ def _album_params(album):
     for f in items:
         metadata = {}
         if f.metadata and f.metadata != 'null':
-            metadata = json.loads(f.metadata)
+            try:
+                metadata = json.loads(f.metadata)
+            except:
+                pass
         if 'has_subtitles' in metadata:
             subtitles = metadata['has_subtitles']
 
