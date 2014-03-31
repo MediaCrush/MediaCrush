@@ -75,15 +75,17 @@ createView = (item, noLink = false) ->
         forget = document.createElement('a')
         forget.textContent = 'Remove from history'
         forget.href = '/forget/' + item
-        forget.addEventListener('click', (e) ->
-            e.preventDefault()
-            confirm((a) ->
-                return if not a
-                UserHistory.remove(item.hash)
-                container.parentElement.removeChild(container)
-                loadCurrentPage()
-            )
-        , false)
+        ((item) ->
+            forget.addEventListener('click', (e) ->
+                e.preventDefault()
+                confirm((a) ->
+                    return if not a
+                    UserHistory.remove(item)
+                    container.parentElement.removeChild(container)
+                    loadCurrentPage()
+                )
+            , false)
+        )(item)
         container.appendChild(forget)
         return container
     else

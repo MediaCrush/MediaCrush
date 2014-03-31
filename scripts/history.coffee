@@ -1,4 +1,4 @@
-UserHistory = (->
+window.UserHistory = (->
     self = this
 
     userHistory = []
@@ -55,4 +55,3 @@ UserHistory = (->
 
     return self
 )()
-window.UserHistory = UserHistory if window?
