@@ -58,7 +58,10 @@ def _template_params(f):
             pass
     metadata = {}
     if f.metadata and f.metadata != 'null':
-        metadata = json.loads(f.metadata)
+        try:
+            metadata = json.loads(f.metadata)
+        except:
+            pass
     subtitles = None
     if 'subtitles' in metadata and 'streams' in metadata['subtitles']:
         for stream in metadata['subtitles']['streams']:
