@@ -50,11 +50,11 @@ libx264, libfdk_aac, and libvpx when you configure it.
 
 Optional dependencies:
 
-* *jpegtran* for JPG support
+* *jpegtran* for JPG support - via [extra/libjpeg-turbo](https://www.archlinux.org/packages/extra/x86_64/libjpeg-turbo/)
 * *optipng* for PNG support
 * *tidyhtml* for SVG support
 * *xcftools* for XCF support
-* *otfinfo* for subtitle support
+* *otfinfo* for subtitle support - via [extra/texlive-bin](https://www.archlinux.org/packages/extra/x86_64/texlive-bin/)
 
 **Clone the repository**
 

@@ -140,10 +140,15 @@ def detect_interlacing(path):
             match = re.search('TFF:([0-9]+) BFF:([0-9]+) Progressive:([0-9]+) Undetermined:([0-9]+)', line)
             if match == None:
                 return False
-            tff = float(match.group(1)) / 100.0
-            bff = float(match.group(2)) / 100.0
-            progressive = float(match.group(3)) / 100.0
-            undetermined = float(match.group(4)) / 100.0
+            tff = float(match.group(1))
+            bff = float(match.group(2))
+            progressive = float(match.group(3))
+            undetermined = float(match.group(4))
+            total = tff + bff + progressive + undetermined
+            tff = tff / total
+            bff = bff / total
+            progressive = progressive / total
+            undetermined = undetermined / total
             if undetermined < 0.05 and progressive < 0.8:
                 if tff >= 0.8 or bff >= 0.8:
                     # It's probably interlaced.
