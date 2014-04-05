@@ -2,6 +2,7 @@ from mediacrush.processing.invocation import Invocation
 from mediacrush.config import _cfg, _cfgi
 import sys
 import json
+import re
 
 # Given a file, this will examine it to learn all of its secrets. It will identify the
 # file type, and for certain files, will gather more details about it. It works by
@@ -48,11 +49,7 @@ def detect_ffprobe(path):
     if a.returncode or a.exited:
         return None
     result = json.loads(a.stdout[0])
-    if result["format"]["nb_streams"] == 1:
-        detected = detect_stream(result["streams"][0])
-        if detected != None:
-            detected['metadata'] = ffprobe_addExtraMetadata(detected['metadata'], result)
-        return detected
+
     audio_streams = 0
     video_streams = 0
     image_streams = 0
@@ -63,6 +60,7 @@ def detect_ffprobe(path):
 
     metadata = dict()
     state = dict()
+    flags = dict()
     state['streams'] = list()
     index = 0
 
@@ -87,6 +85,7 @@ def detect_ffprobe(path):
                 image_streams += 1
             elif t == 'video':
                 video_streams += 1
+                flags = s['flags']
             elif t == 'audio':
                 audio_streams += 1
             elif t == 'subtitle':
@@ -118,17 +117,38 @@ def detect_ffprobe(path):
         state['has_subtitles'] = subtitle_streams > 0
         if subtitle_streams > 0:
             metadata = addSubtitleInfo(metadata, state)
+        if detect_interlacing(path):
+            state['interlaced'] = True
         return {
             'type': 'video',
             'processor_state': state,
             'metadata': metadata,
-            'flags': {
-                'autoplay': False,
-                'loop': False,
-                'mute': False,
-            }
+            'flags': flags
         }
     return None
+
+def detect_interlacing(path):
+    a = Invocation('ffmpeg -vf idet -vframes 100 -an -f rawvideo -y /dev/null -i {0}')
+    a(path)
+    a.run()
+    if a.returncode or a.exited:
+        return False
+    result = a.stdout[1].split('\n')
+    for line in result:
+        print(line)
+        if line.startswith('[Parsed_idet_'):
+            match = re.search('TFF:([0-9]+) BFF:([0-9]+) Progressive:([0-9]+) Undetermined:([0-9]+)', line)
+            if match == None:
+                return False
+            tff = float(match.group(1)) / 100.0
+            bff = float(match.group(2)) / 100.0
+            progressive = float(match.group(3)) / 100.0
+            undetermined = float(match.group(4)) / 100.0
+            if undetermined < 0.05 and progressive < 0.8:
+                if tff >= 0.8 or bff >= 0.8:
+                    # It's probably interlaced.
+                    return True
+    return False
 
 def addSubtitleInfo(metadata, state):
     metadata['subtitles'] = {

@@ -15,13 +15,17 @@ class VideoProcessor(Processor):
     def sync(self):
         self._execute(copy)
         map_string = ''
+        filter_string = ''
         if self.processor_state['has_video']:
             self._execute("ffmpeg -y -i {0} -vframes 1 -map 0:v:0 {1}.jpg")
             map_string += ' -map 0:v:0'
         if self.processor_state['has_audio']:
             map_string += ' -map 0:a:0'
-        self._execute("ffmpeg -y -i {0} -vcodec libx264 -acodec libfdk_aac -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2" + map_string  + " {1}.mp4")
-        self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5" + map_string + " {1}.webm")
+        if 'interlaced' in self.processor_state:
+            print("WARNING: Detected interlacing on " + self.output)
+            filter_string += ' -vf yadif'
+        self._execute("ffmpeg -y -i {0} -vcodec libx264 -acodec libfdk_aac -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf scale=trunc(in_w/2)*2:trunc(in_h/2)*2" + filter_string + map_string  + " {1}.mp4")
+        self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5" + filter_string + map_string + " {1}.webm")
         # Extract extra streams if present
         fonts = []
         extract_fonts = False
