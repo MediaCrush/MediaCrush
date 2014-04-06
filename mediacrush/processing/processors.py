@@ -25,7 +25,7 @@ class VideoProcessor(Processor):
             print("WARNING: Detected interlacing on " + self.output)
             filter_string = 'yadif,' + filter_string
         self._execute("ffmpeg -y -i {0} -vcodec libx264 -acodec libfdk_aac -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf " + filter_string + map_string  + " {1}.mp4")
-        self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 2M -crf 5 -vf " + filter_string + map_string + " {1}.webm")
+        self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 5M -crf 5 -vf " + filter_string + map_string + " {1}.webm")
         # Extract extra streams if present
         fonts = []
         extract_fonts = False
