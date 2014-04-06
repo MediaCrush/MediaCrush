@@ -210,7 +210,7 @@ class MediaView(FlaskView):
         return render_template("direct.html", **template_params)
 
     @route("/<id>/fragment")
-    def direct(self, id):
+    def fragment(self, id):
         klass = RedisObject.klass(id)
         if klass is not File:
             abort(404)
