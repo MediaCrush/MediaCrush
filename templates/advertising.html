@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}?version=2" />
+{% endblock %}
+{% block content %}
+<h1>Ads on MediaCrush</h1>
+<p>This page compliments our overall <a href="/serious">privacy policy and terms of use</a>.</p>
+<p>MediaCrush has optional advertising to help cover our costs. There are a few important things you might want to know about.</p>
+<ul>
+    <li>We publish all of our finances on our <a href="https://blog.mediacru.sh">blog</a></li>
+    <li>You can <a href="#" class="ad-opt-out">opt-out</a> &mdash; you are currently <strong><span class="ad-state">{% if ads %}opted in{% else %}opted-out{% endif %}</span></strong></li>
+</ul>
+<p>We use <a href="https://www.projectwonderful.com">Project Wonderful</a> for advertising. It took us a long time to find an
+advertiser that met our needs for user privacy and had a general do-good attitude. They have an excellent <a href="https://www.projectwonderful.com/privacypolicy.php">privacy policy</a>,
+and we're glad to have finally found them. They don't track you and they have a great relationship with open software and creative commons.</p>
+<p>All of that being said, we still will not show you ads if you have <a href="http://donottrack.us/">Do Not Track</a> set. Project Wonderful is a third party, which means that
+we cannot entirely control how they may or may not track you. If you do not use Do Not Track and you are concerned about this, you
+are advised to opt-out of advertising.</p>
+<h2>How do I advertise on MediaCrush?</h2>
+<p>You can bid on ads with <a href="#">Project Wonderful</a>. If you're an open-source project or you feel like you're particularly
+in-line with the MediaCrush way, <a href="mailto:admin@mediacru.sh">drop us a line</a> and tell us about yourself. We'll consider
+showing some ads for you for free.</p>
+<h2>I hate ads but I want to support MediaCrush!</h2>
+<p>No worries! You can <a href="/donate">donate</a> to the cause. You can also just keep on using the site with ads disabled - we won't be upset.</p>
+<h2>I run my own MediaCrush instance, how do I advertise?</h2>
+<p>To those who don't understand this question: MediaCrush is <a href="https://github.com/MediaCrush/MediaCrush">open-source</a>. This means that
+any sysadmin with sufficient skill can host their own version of MediaCrush, or contribute features to ours. If you do so, and you'd like to enable
+advertising, please submit an application to Project Wonderful, then fill out the relevant details in <code>config.ini</code>. Ask about any
+problems you run into on the mailing list.</p>
+{% endblock %}

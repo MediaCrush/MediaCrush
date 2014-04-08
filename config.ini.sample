@@ -46,11 +46,6 @@ redis-port = 6379
 google_analytics_id = 
 google_analytics_domain = 
 
-# Make sure you use the 120x600 "skyscraper" ad format if you want ads
-# Leave it as "CHANGEME" to disable ads
-adsense_client = CHANGEME
-adsense_slot = CHANGEME
-
 # Leave these as "changeme" to disable them
 dwolla_id = changeme
 flattr_id = changeme

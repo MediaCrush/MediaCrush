@@ -66,8 +66,6 @@ def inject():
         'dwolla_id': _cfg("dwolla_id"),
         'coinbase_id': _cfg("coinbase_id"),
         'flattr_id': _cfg("flattr_id"),
-        'adsense_client': _cfg("adsense_client"),
-        'adsense_slot': _cfg("adsense_slot"),
         'dark_theme': "dark_theme" in request.cookies,
         'ads': not "ad-opt-out" in request.cookies,
         'notice_text': notice_text,
@@ -103,6 +101,10 @@ def about():
 @app.route('/demo')
 def demo():
     return redirect('/about', code=301)
+
+@app.route('/advertising')
+def advertising():
+    return render_template("advertising.html")
 
 @app.route("/donate")
 def donate():
