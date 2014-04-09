@@ -54,10 +54,17 @@
     <div id="flags" class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}">
         <strong>Settings:</strong>
         {% for flag, value in flags.items() %}
+        {% if flag == 'nsfw' %}
+        <label for="{{ flag }}" class="checkbox">
+            <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} autocomplete="off" />
+            NSFW?
+        </label>
+        {% else %}
         <label for="{{ flag }}" class="checkbox">
             <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} autocomplete="off" />
             {{ flag }}
         </label>
+        {% endif %}
         {% endfor %}
     </div>
     {% endif %}
