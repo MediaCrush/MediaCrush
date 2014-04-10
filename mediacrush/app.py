@@ -64,6 +64,8 @@ def inject():
         ads = False
     if g.do_not_track:
         ads = False
+    if _cfg("project_wonderful_id "):
+        ads = False
     return {
         'mobile': g.mobile,
         'analytics_id': _cfg("google_analytics_id"),
