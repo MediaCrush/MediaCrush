@@ -201,7 +201,7 @@ class UploadTestCase(APITestCase):
         h = self._get_hash("not_media.dat")
         status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
 
-        self.assertEqual(status, 'unrecognised')
+        self.assertEqual(status, 'internal_error')
 
 class URLUploadTestCase(APITestCase):
     def test_upload_url(self):
@@ -293,7 +293,8 @@ class FlagsTestCase(APITestCase):
         self.assertEqual(obj['flags'], {
             u'autoplay': True,
             u'loop': True,
-            u'mute': True
+            u'mute': True,
+            u'nsfw': False
         })
 
     def test_correct_flags_mp4(self):
@@ -306,7 +307,8 @@ class FlagsTestCase(APITestCase):
         self.assertEqual(obj['flags'], {
             u'autoplay': False,
             u'loop': False,
-            u'mute': False,
+            u'mute': False,,
+            u'nsfw': False
         })
 
     def test_change_flags(self):
