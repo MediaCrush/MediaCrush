@@ -307,7 +307,7 @@ class FlagsTestCase(APITestCase):
         self.assertEqual(obj['flags'], {
             u'autoplay': False,
             u'loop': False,
-            u'mute': False,,
+            u'mute': False,
             u'nsfw': False
         })
 
