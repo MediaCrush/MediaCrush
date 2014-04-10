@@ -8,7 +8,15 @@
 <p>MediaCrush has optional advertising to help cover our costs. There are a few important things you might want to know about.</p>
 <ul>
     <li>We publish all of our finances on our <a href="https://blog.mediacru.sh">blog</a></li>
-    <li>You can <a href="#" class="ad-opt-out">opt-out</a> &mdash; you are currently <strong><span class="ad-state">{% if ads %}opted in{% else %}opted-out{% endif %}</span></strong></li>
+    {% if ads %}
+    <li>You can <a href="#" class="ad-opt-out">opt-out</a> &mdash; you are currently <strong><span class="ad-state">opted in</span></strong></li>
+    {% else %}
+    {% if g.do_not_track %}
+    <li>You are <strong>opted-out</strong> and you cannot opt back in because you have Do Not Track set</li>
+    {% else %}
+    <li>You can <a href="#" class="ad-opt-out">opt-in</a> &mdash; you are currently <strong><span class="ad-state">opted out</span></strong></li>
+    {% endif %}
+    {% endif %}
 </ul>
 <p>We use <a href="https://www.projectwonderful.com">Project Wonderful</a> for advertising. It took us a long time to find an
 advertiser that met our needs for user privacy and had a general do-good attitude. They have an excellent <a href="https://www.projectwonderful.com/privacypolicy.php">privacy policy</a>,

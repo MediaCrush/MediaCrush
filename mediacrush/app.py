@@ -59,6 +59,11 @@ def inject():
     cdn = _cfg("cdn")
     if is_tor():
         cdn = _cfg("tor_domain")
+    ads = True
+    if 'ad-opt-out' in request.cookies:
+        ads = False
+    if g.do_not_track:
+        ads = False
     return {
         'mobile': g.mobile,
         'analytics_id': _cfg("google_analytics_id"),
@@ -67,7 +72,8 @@ def inject():
         'coinbase_id': _cfg("coinbase_id"),
         'flattr_id': _cfg("flattr_id"),
         'dark_theme': "dark_theme" in request.cookies,
-        'ads': not "ad-opt-out" in request.cookies,
+        'ads': ads,
+        'ad_id': _cfg("project_wonderful_id"),
         'notice_text': notice_text,
         'notice_enabled': notice_enabled,
         'share': share,

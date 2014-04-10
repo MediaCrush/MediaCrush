@@ -29,18 +29,6 @@ dataURItoBlob = (uri) ->
     return new Blob([ ab ], { type: 'image/png' })
 window.dataURItoBlob = dataURItoBlob
 
-adOptOut = (showAlert) ->
-    createCookie('ad-opt-out', 1, 3650)
-    gad = document.getElementById('gad')
-    lgad = document.getElementById('lgad')
-    if gad
-        gad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
-    if lgad
-        lgad.innerHTML = "You won't see any ads again. If you regret it, head over to the <a href='/donate'>donation</a> page, where you can opt-in.";
-    if showAlert
-        alert("You won't see any ads again. If you regret it, head over to the donation page, where you can opt-in.")
-window.adOptOut = adOptOut
-
 switchTheme = ->
     if readCookie('dark_theme')
         createCookie('dark_theme', '', -1)
@@ -125,3 +113,18 @@ window.getPosition = (e) ->
         break if e.offsetParent == null
         e = e.offsetParent
     return [x, y]
+
+window.addEventListener('DOMContentLoaded', (e) ->
+    link.addEventListener('click', (e) ->
+        e.preventDefault()
+        if readCookie('ad-opt-out')
+            e.target.textContent = 'opt-out'
+            a.textContent = 'opted-in' for a in document.querySelectorAll('.ad-state')
+            createCookie('ad-opt-out', '', -1)
+        else
+            e.target.textContent = 'opt-in'
+            a.textContent = 'opted-out' for a in document.querySelectorAll('.ad-state')
+            createCookie('ad-opt-out', 1, 3650)
+        ad.innerHTML = "Sorry! You won't see any ads again. If you change your mind, <a href='/advertising'>opt-in here</a>." for ad in document.querySelectorAll('.advertisement')
+    , false) for link in document.querySelectorAll('.ad-opt-out')
+, false)
