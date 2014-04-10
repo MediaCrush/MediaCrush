@@ -10,13 +10,14 @@ Usage:
     mcmanage.py report show
     mcmanage.py report email
     mcmanage.py files delete <hash>
+    mcmanage.py files nsfw <hash>
 """
 
 from docopt import docopt
 
 from mediacrush.mcmanage.database import database_clear, database_sync
 from mediacrush.mcmanage.report import report
-from mediacrush.mcmanage.files import files_delete
+from mediacrush.mcmanage.files import files_delete, files_nsfw
 
 from mediacrush.email import send_report
 
@@ -35,6 +36,7 @@ report_commands = {
 
 files_commands = {
     'delete': files_delete,
+    'nsfw': files_nsfw
 }
 
 mapping = {
