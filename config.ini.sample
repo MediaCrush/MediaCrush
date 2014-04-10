@@ -43,13 +43,11 @@ restart_command = supervisorctl reload
 redis-ip = 127.0.0.1
 redis-port = 6379
 
+# See <https://mediacru.sh/advertising> for info on setting up ads for your own instance
+project_wonderful_id = 
+
 google_analytics_id = 
 google_analytics_domain = 
-
-# Make sure you use the 120x600 "skyscraper" ad format if you want ads
-# Leave it as "CHANGEME" to disable ads
-adsense_client = CHANGEME
-adsense_slot = CHANGEME
 
 # Leave these as "changeme" to disable them
 dwolla_id = changeme

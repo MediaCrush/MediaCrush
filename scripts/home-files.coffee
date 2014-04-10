@@ -108,8 +108,12 @@ class MediaFile
             API.setFlags(self.hash, self.flags)
 
         for flag, value of flags
-            name = flag.substr(1)
-            name = flag[0].toUpperCase() + name
+            name = flag
+            if name == 'nsfw'
+                name = 'NSFW?'
+            else
+                name = flag.substr(1)
+                name = flag[0].toUpperCase() + name
             input = document.createElement('input')
             input.type = 'checkbox'
             input.name = input.id = "flag-#{flag}-#{@hash}"
@@ -120,8 +124,10 @@ class MediaFile
             label = document.createElement('label')
             label.for = "flag-#{flag}-#{@hash}"
             label.className = 'checkbox'
+            if name == 'NSFW?'
+                label.className += ' red'
             span = document.createElement('span')
-            span.textContent = flag
+            span.textContent = name
             label.appendChild(input)
             label.appendChild(span)
             list.appendChild(label)

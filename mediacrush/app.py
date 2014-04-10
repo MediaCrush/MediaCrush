@@ -59,6 +59,11 @@ def inject():
     cdn = _cfg("cdn")
     if is_tor():
         cdn = _cfg("tor_domain")
+    ads = True
+    if 'ad-opt-out' in request.cookies:
+        ads = False
+    if g.do_not_track:
+        ads = False
     return {
         'mobile': g.mobile,
         'analytics_id': _cfg("google_analytics_id"),
@@ -66,10 +71,9 @@ def inject():
         'dwolla_id': _cfg("dwolla_id"),
         'coinbase_id': _cfg("coinbase_id"),
         'flattr_id': _cfg("flattr_id"),
-        'adsense_client': _cfg("adsense_client"),
-        'adsense_slot': _cfg("adsense_slot"),
         'dark_theme': "dark_theme" in request.cookies,
-        'ads': not "ad-opt-out" in request.cookies,
+        'ads': ads,
+        'ad_id': _cfg("project_wonderful_id"),
         'notice_text': notice_text,
         'notice_enabled': notice_enabled,
         'share': share,
@@ -103,6 +107,10 @@ def about():
 @app.route('/demo')
 def demo():
     return redirect('/about', code=301)
+
+@app.route('/advertising')
+def advertising():
+    return render_template("advertising.html")
 
 @app.route("/donate")
 def donate():

@@ -54,10 +54,17 @@
     <div id="flags" class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}">
         <strong>Settings:</strong>
         {% for flag, value in flags.items() %}
+        {% if flag == 'nsfw' %}
+        <label for="{{ flag }}" class="checkbox">
+            <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} autocomplete="off" />
+            NSFW?
+        </label>
+        {% else %}
         <label for="{{ flag }}" class="checkbox">
             <input type="checkbox" data-flag="{{ flag }}" id="{{ flag }}" name="{{ flag }}" {% if value %}checked{% endif %} autocomplete="off" />
             {{ flag }}
         </label>
+        {% endif %}
         {% endfor %}
     </div>
     {% endif %}
@@ -101,19 +108,5 @@
         <dd><input type="text" value='{{ share('bbcode', filename) }}' class="selectall" /></dd>
     </dl>
 </div>
-
-{% if ads and adsense_client != "CHANGEME" and False %}
-<div id="gad">
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- View page horizontal -->
-    <ins class="adsbygoogle"
-         style="display:inline-block;width:970px;height:90px"
-         data-ad-client="{{ adsense_client }}"
-         data-ad-slot="5779334179"></ins>
-    <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-    <div><a href="javascript:adOptOut();" class="small red">Click here to disable ads</a></div>
-</div>
-{% endif %}
+{% include "advertisement.html" %}
 {% endblock %}

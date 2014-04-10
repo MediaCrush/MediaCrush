@@ -53,7 +53,13 @@ class BitVector(object):
         return self._vec
 
 flags_per_processor = {
-    'video': ['autoplay', 'loop', 'mute']
+    'video': ['nsfw', 'autoplay', 'loop', 'mute'],
+    'image': ['nsfw'],
+    'image/png': ['nsfw'],
+    'image/jpeg': ['nsfw'],
+    'image/svg+xml': ['nsfw'],
+    'image/x-gimp-xcf': ['nsfw'],
+    'audio': ['nsfw']
 }
 
 def normalise_processor(processor):

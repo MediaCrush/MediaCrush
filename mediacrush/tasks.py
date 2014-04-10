@@ -57,6 +57,7 @@ def process_file(path, h):
 
     f.processor = processor
 
+    setattr(f.flags, 'nsfw', False)
     if result and result['flags']:
         for flag, value in result['flags'].items():
             setattr(f.flags, flag, value)
