@@ -1,0 +1,37 @@
+@import "stylesheet.scss"
+
+.tester {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+
+    pre, .parameters {
+        flex: 0 1 480px;
+        padding: 10px;
+    }
+
+    pre {
+        max-height: 300px;
+        overflow: auto;
+    }
+
+    input, textarea {
+        width: 100%;
+    }
+
+    textarea {
+        height: 80px;
+    }
+
+    input[type="button"] {
+        margin-top: 10px;
+        width: 100%;
+        padding: 0 239px;
+    }
+}
+
+h4 {
+    color: #333;
+}

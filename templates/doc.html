@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block styles %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}" />
+<link rel="stylesheet" type="text/css" href="/static/documentation.css" />
 {% endblock %}
 {% block content %}
 {{ content |safe|markdown }}
