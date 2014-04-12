@@ -34,7 +34,7 @@ upload a file directly:
 
 <div class="tester" data-method="POST" data-endpoint="/api/v2/upload">
 <pre class="response">$ curl -F file=@example.png https://mediacru.sh/api/v2/upload
-{ "hash": "..." }</pre>
+{"hash": "..."}</pre>
     <div class="parameters">
         <input type="file" name="file" />
         <input type="button" class="submit" value="Submit"></button>
@@ -46,7 +46,7 @@ The second is to upload a URL:
 
 <div class="tester" data-method="POST" data-endpoint="/api/v2/upload">
 <pre class="response">$ curl -F url=http://example.com/example.png https://mediacru.sh/api/v2/upload
-{ "hash": "..." }</pre>
+{"hash": "..."} </pre>
     <div class="parameters">
         <input type="text" name="url" placeholder="URL..." />
         <input type="button" class="submit" value="Submit"></button>
@@ -86,9 +86,9 @@ Deletes one or more file objects. You must include the `userToken` cookie.
 <div class="tester" data-method="DELETE" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -X DELETE https://mediacru.sh/api/v2/hash1,hash2,hash3
 [
-    { "success": true },
-    { "success": false, "error": 404 },
-    { "success": false, "error": 403 }
+    {"state": "deleted", "hash": hash1},
+    {"state": "error", "error": "not_found", "hash": hash2},
+    {"state": "error", "error": "unauthorized", "hash": hash3}
 ]</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
@@ -103,7 +103,7 @@ Updates editable properties on file objects. Your POST body should be a JSON str
 with the properties set as you would like them to be.
 
 <div class="tester" data-method="POST" data-endpoint="/api/v2/{ list }">
-<pre class="response">$ curl -F '[ { "flags": { "loop": true } }, ... ]' https://mediacru.sh/api/v2/hash1,hash2,hash3
+<pre class="response">$ curl -F '[{"flags": {"loop": true}}, ...]' https://mediacru.sh/api/v2/hash1,hash2,hash3
 [
     { file object },
     { file object },
@@ -113,9 +113,9 @@ with the properties set as you would like them to be.
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <textarea name="__body__" placeholder="json blob...">
 [
-    { "flags": { "loop": true } },
-    { "flags": { "nsfw": true } },
-    { "flags": { "autoplay": false, "mute": true } }
+    {"flags": {"loop": true}, "hash": hash1},
+    {"flags": {"nsfw": true}, "hash": hash2},
+    {"flags": {"autoplay": false, "mute": true}, "hash": hash3}
 ]
         </textarea>
         <input type="button" class="submit" value="Submit"></button>
@@ -133,7 +133,7 @@ Creates a new album.
 
 <div class="tester" data-method="POST" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -F "items=hash,hash,hash" https://mediacru.sh/api/v2/album
-{ "hash": "..." }</pre>
+{"hash": "..."}</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <input type="button" class="submit" value="Submit"></button>
