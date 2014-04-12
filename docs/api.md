@@ -112,6 +112,7 @@ with the properties set as you would like them to be.
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <textarea name="__body__" placeholder="json blob...">
+        
 [
     {"flags": {"loop": true}, "hash": hash1},
     {"flags": {"nsfw": true}, "hash": hash2},
