@@ -8,7 +8,7 @@ copy = "cp {0} {1}.{extension}"
 _extension = lambda f: f.rsplit('.', 1)[1].lower()
 
 class VideoProcessor(Processor):
-    time = 600
+    time = 1200
     outputs = ['mp4', 'webm', 'ogv']
     extras = ['jpg']
 
