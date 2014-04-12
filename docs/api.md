@@ -86,9 +86,9 @@ Deletes one or more file objects. You must include the `userToken` cookie.
 <div class="tester" data-method="DELETE" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -X DELETE https://mediacru.sh/api/v2/hash1,hash2,hash3
 [
-    {"state": "deleted", "hash": hash1},
-    {"state": "error", "error": "not_found", "hash": hash2},
-    {"state": "error", "error": "unauthorized", "hash": hash3}
+    {"result": "success", "hash": hash1},
+    {"result": "not_found", "hash": hash2},
+    {"result": "unauthorized", "hash": hash3}
 ]</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
@@ -114,9 +114,9 @@ with the properties set as you would like them to be.
         <textarea name="__body__" placeholder="json blob...">
         
 [
-    {"flags": {"loop": true}, "hash": hash1},
-    {"flags": {"nsfw": true}, "hash": hash2},
-    {"flags": {"autoplay": false, "mute": true}, "hash": hash3}
+    {"result": "success", "flags": {"loop": true}, "hash": hash1},
+    {"result": "success", "flags": {"nsfw": true}, "hash": hash2},
+    {"result": "unauthorized", "flags": {"autoplay": false, "mute": true}, "hash": hash3}
 ]
         </textarea>
         <input type="button" class="submit" value="Submit"></button>
