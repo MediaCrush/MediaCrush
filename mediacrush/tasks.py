@@ -52,6 +52,13 @@ def process_file(path, h):
     result = detect(path)
 
     processor = result['type'] if result else 'default'
+    if processor == 'default': # Unrecognised file type
+        failed = FailedFile(hash=h, status="unrecognised")
+        failed.save()
+        
+        delete_file(f)
+        return
+    
     metadata = result['metadata'] if result else {}
     processor_state = result['processor_state'] if result else {}
 
