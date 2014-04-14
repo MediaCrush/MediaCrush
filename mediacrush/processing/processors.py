@@ -8,7 +8,7 @@ copy = "cp {0} {1}.{extension}"
 _extension = lambda f: f.rsplit('.', 1)[1].lower()
 
 class VideoProcessor(Processor):
-    time = 300
+    time = 1200
     outputs = ['mp4', 'webm', 'ogv']
     extras = ['jpg']
 
@@ -98,7 +98,7 @@ class VideoProcessor(Processor):
         self._execute("ffmpeg -y -i {0} -q:v 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora" + map_string + " {1}.ogv")
 
 class AudioProcessor(Processor):
-    time = 300
+    time = 600
     outputs = ['mp3', 'ogg']
 
     def sync(self):

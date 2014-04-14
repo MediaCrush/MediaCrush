@@ -52,8 +52,9 @@ class BitVector(object):
     def __int__(self):
         return self._vec
 
+# Note: if you want to add a flag, you must append it to the end of the list
 flags_per_processor = {
-    'video': ['nsfw', 'autoplay', 'loop', 'mute'],
+    'video': ['autoplay', 'loop', 'mute', 'nsfw'],
     'image': ['nsfw'],
     'image/png': ['nsfw'],
     'image/jpeg': ['nsfw'],
