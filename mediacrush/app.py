@@ -68,6 +68,7 @@ def inject():
         ads = False
     return {
         'mobile': g.mobile,
+        'ua_platform': request.user_agent.platform,
         'analytics_id': _cfg("google_analytics_id"),
         'analytics_domain': _cfg("google_analytics_domain"),
         'dwolla_id': _cfg("dwolla_id"),

@@ -1,5 +1,4 @@
 {% if mimetype == 'image/gif' and mobile %}
-{# @jdiez: if you can think of a better place to put these, by all means do so #}
 <style>
     .media-select {
         position: relative;
@@ -64,15 +63,27 @@ window.addEventListener('load', function() {
     </a>
 </div>
 <video class="hidden" id="video-option-{{ filename }}" controls {% if flags['loop'] %}loop{% endif %}>
-  <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
-  <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
-  <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% if ua_platform == 'android' %}
+    <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
+    <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
+    <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% else %}
+    <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
+    <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
+    <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% endif %}
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
 <video controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.png">
-  <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
-  <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
-  <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% if ua_platform == 'android' %}
+    <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
+    <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
+    <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% else %}
+    <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
+    <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
+    <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+  {% endif %}
 </video>
 {% endif %}
