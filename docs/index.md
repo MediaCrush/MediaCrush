@@ -39,6 +39,10 @@ for a chat: [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?chann
 
 * [Sharus](https://github.com/diantahoc/Sharus) - API wrapper for .NET written in C# - MIT license
 
+### Objective-C
+
+* [MediaCrush-Kit](https://github.com/DeVaukz/MediaCrush-Kit) - API wrapper written in Objective-C for Mac and iOS - MIT license
+
 ## Blob Identifiers
 
 We use MD5 hashes* to identify a media blob, which is a collection of files that make up one "media" object.
