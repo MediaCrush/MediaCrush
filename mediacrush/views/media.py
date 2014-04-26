@@ -99,7 +99,6 @@ def _album_params(album):
     items = album.items
     if not items:
         abort(404)
-    files = objects[Album](album)['files']
 
     types = set([f.processor for f in items])
     filename = album.hash
