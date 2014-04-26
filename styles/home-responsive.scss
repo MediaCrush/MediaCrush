@@ -20,11 +20,11 @@
                     margin-top: 10px;
                 }
             }
-
-            #files ul {
-                display: none;
-            }
         }
+    }
+
+    .types-collapse {
+        display: none;
     }
 
     #droptext {
@@ -61,7 +61,7 @@
             }
 
             #droptext a {
-                font-size: 14pt;
+                font-size: 13pt;
                 font-weight: bold;
 
                 span {

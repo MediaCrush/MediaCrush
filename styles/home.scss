@@ -116,31 +116,29 @@
             }
         }
     }
+}
 
-    #files ul {
-        position: absolute;
-        left: 119px;
-        bottom: 80px;
+#types {
+    text-align: center;
+    margin: 20px 0;
 
-        li {
-            margin: 0 39px;
-            width: 75px;
-            padding-top: 45px;
-            text-align: center;
-            display: block;
-            float: left;
+    li {
+        width: 75px;
+        padding-top: 45px;
+        text-align: center;
+        display: block;
+        float: left;
 
-            &.images {
-                background: url('/static/home-photo.png') no-repeat 22px 0;
-            }
+        &.images {
+            background: url('/static/home-photo.png') no-repeat 22px 0;
+        }
 
-            &.videos {
-                background: url('/static/home-video.png') no-repeat 12px 0;
-            }
+        &.videos {
+            background: url('/static/home-video.png') no-repeat 12px 0;
+        }
 
-            &.audio {
-                background: url('/static/home-audio.png') no-repeat 18px 0;
-            }
+        &.audio {
+            background: url('/static/home-audio.png') no-repeat 18px 0;
         }
     }
 }
