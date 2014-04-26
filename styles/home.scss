@@ -120,7 +120,8 @@
     #files ul {
         position: absolute;
         left: 119px;
-        bottom: 80px;
+        bottom: 30px;
+        z-index: 1;
 
         li {
             margin: 0 39px;
