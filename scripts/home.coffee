@@ -385,12 +385,12 @@ window.statusHook = (file, status, oldStatus) ->
 createPreview = (name) ->
     create = (element, className) ->
         _ = document.createElement(element)
-        _.className = className
+        _.className = className if className?
         return _
     container = create('div', 'media-preview')
     preview = create('div', 'preview')
     fade = create('div', 'respondive-fade')
-    title = create('h2', null)
+    title = create('h2')
     title.title = name
     title.textContent = name
     flags = create('div', 'flags hidden')
