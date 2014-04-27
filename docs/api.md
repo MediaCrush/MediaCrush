@@ -67,11 +67,13 @@ Returns [file objects](#file-objects) for the specified hashes.
 
 <div class="tester" data-method="GET" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl https://mediacru.sh/api/v2/hash1,hash2,hash3
-[
-    { file object },
-    { file object },
-    { file object }
-]</pre>
+{
+    'list': [
+        { file object },
+        { file object },
+        { file object }
+    ]
+}</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <input type="button" class="submit" value="Submit"></button>
@@ -85,11 +87,13 @@ Deletes one or more file objects. You must include the `userToken` cookie.
 
 <div class="tester" data-method="DELETE" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -X DELETE https://mediacru.sh/api/v2/hash1,hash2,hash3
-[
-    {"result": "success", "hash": hash1},
-    {"result": "not_found", "hash": hash2},
-    {"result": "unauthorized", "hash": hash3}
-]</pre>
+{
+    'list': [
+        {"result": "success", "hash": hash1},
+        {"result": "not_found", "hash": hash2},
+        {"result": "unauthorized", "hash": hash3}
+    ]
+}</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <input type="button" class="submit" value="Submit"></button>
@@ -104,20 +108,25 @@ with the properties set as you would like them to be.
 
 <div class="tester" data-method="POST" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -F '[{"flags": {"loop": true}}, ...]' https://mediacru.sh/api/v2/hash1,hash2,hash3
-[
-    { file object },
-    { file object },
-    { file object }
-]</pre>
+{
+    'list': [
+        { file object },
+        { file object },
+        { file object }
+    ]
+}</pre>
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <textarea name="__body__" placeholder="json blob...">
 
-[
-    {"result": "success", "flags": {"loop": true}, "hash": hash1},
-    {"result": "success", "flags": {"nsfw": true}, "hash": hash2},
-    {"result": "unauthorized", "flags": {"autoplay": false, "mute": true}, "hash": hash3}
-]
+{
+    'list': [
+        {"result": "success", "flags": {"loop": true}, "hash": hash1},
+        {"result": "success", "flags": {"nsfw": true}, "hash": hash2},
+        {"result": "unauthorized", "flags": {"autoplay": false, "mute": true}, "hash": hash3}
+    ]
+}
+
         </textarea>
         <input type="button" class="submit" value="Submit"></button>
     </div>
