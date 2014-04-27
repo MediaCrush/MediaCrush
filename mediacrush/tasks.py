@@ -11,13 +11,13 @@ import json
 logger = get_task_logger(__name__)
 
 @app.task(bind=True, track_started=True)
-def convert_file(self, h, path, p, metadata, processor_state):
+def convert_file(self, h, path, p, metadata, processor_state, ignore_limit):
     f = File.from_hash(h)
 
     if p not in processor_table:
         p = 'default'
 
-    processor = processor_table[p](path, f, processor_state)
+    processor = processor_table[p](path, f, processor_state, ignore_limit)
 
     # Execute the synchronous step.
     processor.sync()
@@ -47,7 +47,7 @@ def cleanup(results, path, h):
         delete_file(f)
 
 @app.task
-def process_file(path, h):
+def process_file(path, h, ignore_limit):
     f = File.from_hash(h)
     result = detect(path)
 
@@ -55,10 +55,10 @@ def process_file(path, h):
     if processor == 'default': # Unrecognised file type
         failed = FailedFile(hash=h, status="unrecognised")
         failed.save()
-        
+
         delete_file(f)
         return
-    
+
     metadata = result['metadata'] if result else {}
     processor_state = result['processor_state'] if result else {}
 
@@ -71,7 +71,7 @@ def process_file(path, h):
 
     f.save()
 
-    task = convert_file.s(h, path, processor, metadata, processor_state)
+    task = convert_file.s(h, path, processor, metadata, processor_state, ignore_limit)
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.

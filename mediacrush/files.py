@@ -13,7 +13,7 @@ from mediacrush.config import _cfg
 from mediacrush.database import r, _k
 from mediacrush.objects import File
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
-from mediacrush.network import secure_ip
+from mediacrush.network import secure_ip, get_ip
 from mediacrush.tasks import process_file
 from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
 from mediacrush.celery import app
@@ -97,7 +97,8 @@ def upload(f, filename):
     #if f.content_type.split("/")[0] not in ['video', 'image', 'audio']:
     #    return "no", 415
 
-    if not current_app.debug:
+    ignore_limit = current_app.debug or r.sismember(_k("whitelisted_ips"), get_ip())
+    if not ignore_limit:
         rate_limit_update(file_length(f))
         if rate_limit_exceeded():
             return None, 420
@@ -130,7 +131,7 @@ def upload(f, filename):
     file_object.mimetype = f.content_type
     file_object.ip = secure_ip()
 
-    result = process_file.delay(path, identifier)
+    result = process_file.delay(path, identifier, ignore_limit)
     file_object.taskid = result.id
 
     file_object.save()

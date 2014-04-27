@@ -12,10 +12,11 @@ class Processor(object):
     outputs = []
     extras = []
 
-    def __init__(self, tmppath, f, processor_state):
+    def __init__(self, tmppath, f, processor_state, ignore_limit):
         self.path = tmppath
         self.output = os.path.join(_cfg("storage_folder"), f.hash)
         self.processor_state = processor_state
+        self.ignore_limit = ignore_limit
 
         self.important = True
 
@@ -25,7 +26,7 @@ class Processor(object):
         ext = extension(self.f.original)
 
         tlc = Invocation(command)(self.path, self.output, extension=ext)
-        tlc.run(self.time)
+        tlc.run(self.time if not self.ignore_limit else None)
 
         if tlc.exited and self.important:
             raise TimeoutException
