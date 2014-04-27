@@ -112,7 +112,7 @@ with the properties set as you would like them to be.
     <div class="parameters">
         <input type="text" name="list" placeholder="hash,hash,hash..." value="5HM9b5vnEHbU,U37IX05BI_5j,EM41XyYgaI65" />
         <textarea name="__body__" placeholder="json blob...">
-        
+
 [
     {"result": "success", "flags": {"loop": true}, "hash": hash1},
     {"result": "success", "flags": {"nsfw": true}, "hash": hash2},
@@ -146,7 +146,51 @@ Creates a new album.
 
 ### File Objects
 
-    Example goes here
+    {
+      "blob_type": "video",
+      "compression": 4.41,
+      "extras": [
+        {
+          "type": "image/jpeg",
+          "url": "https://mediacru.sh/lfkM4lq1pD3F.jpg"
+        }
+      ],
+      "files": [
+        {
+          "type": "image/gif",
+          "url": "https://mediacru.sh/lfkM4lq1pD3F.gif"
+        },
+        {
+          "type": "video/mp4",
+          "url": "https://mediacru.sh/lfkM4lq1pD3F.mp4"
+        },
+        {
+          "type": "video/webm",
+          "url": "https://mediacru.sh/lfkM4lq1pD3F.webm"
+        },
+        {
+          "type": "video/ogg",
+          "url": "https://mediacru.sh/lfkM4lq1pD3F.ogv"
+        }
+      ],
+      "flags": {
+        "autoplay": true,
+        "loop": true,
+        "mute": true,
+        "nsfw": false
+      },
+      "hash": "lfkM4lq1pD3F",
+      "metadata": {
+        "dimensions": {
+          "height": 152,
+          "width": 250
+        },
+        "has_audio": false,
+        "has_subtitles": false,
+        "has_video": true
+      },
+      "original": "https://mediacru.sh/lfkM4lq1pD3F.gif"
+    }
 
 Details details details
 
