@@ -55,10 +55,16 @@ _objects = {
 class APIv2(FlaskView):
     decorators = [json_output] # TODO: `cors_v2`
 
-    def get(self, hash):
-        cls = RedisObject.klass(hash)
-        if cls not in _objects:
-            return NOT_FOUND
+    def get(self, q):
+        hashes = q.split("+")
+        ret = []
 
-        obj = cls.from_hash(hash)
-        return _objects[cls](obj)
+        for hash in hashes:
+            cls = RedisObject.klass(hash)
+            if cls not in _objects:
+                return NOT_FOUND
+
+            obj = cls.from_hash(hash)
+            ret.append(_objects[cls](obj))
+
+        return {'list': ret}
