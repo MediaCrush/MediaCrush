@@ -52,7 +52,8 @@ class URLFile(object):
 
     def download(self, url):
         r = requests.get(url, stream=True)
-        if r.headers["content-length"] > MAX_SIZE:
+        length = r.headers["content-length"]
+        if not length.isdigit() or int(length) > MAX_SIZE:
             raise FileTooBig("The file was larger than 50 MB")
 
         for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
