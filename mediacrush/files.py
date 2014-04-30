@@ -18,6 +18,13 @@ from mediacrush.tasks import process_file
 from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
 from mediacrush.celery import app
 
+
+MAX_SIZE = 52428800 # TODO get it from config
+
+class FileTooBig(Exception):
+    pass
+
+
 class URLFile(object):
     filename = None
     content_type = None
@@ -45,7 +52,9 @@ class URLFile(object):
 
     def download(self, url):
         r = requests.get(url, stream=True)
-        for chunk in r.iter_content(chunk_size=1024):
+        for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
+            if i > MAX_SIZE / 1024:
+                raise FileTooBig("The file was larger than 50 MB")
             self.f.write(chunk)
             self.f.flush()
 
