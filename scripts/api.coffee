@@ -55,6 +55,8 @@ API = (->
                     file.hash = response['hash']
                     file.isHashed = true
                     file.updateStatus('done')
+                when 413
+                    error = "This file is too large."
                 when 415
                     error = "This filetype is not supported."
                 when 420
