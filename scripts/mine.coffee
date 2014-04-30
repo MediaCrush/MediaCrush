@@ -64,30 +64,33 @@ loadPage = (items) ->
     container = document.getElementById('items')
     container.appendChild(createView(item)) for item in items
 
+createMissing = (item, container) ->
+    container.id = item
+    container.className = 'missing-item'
+    text = document.createElement('div')
+    text.textContent = 'This item no longer exists.'
+    container.appendChild(text)
+    forget = document.createElement('a')
+    forget.textContent = 'Remove from history'
+    forget.href = '/forget/' + item
+    ((item) ->
+        forget.addEventListener('click', (e) ->
+            e.preventDefault()
+            confirm((a) ->
+                return if not a
+                UserHistory.remove(item)
+                container.parentElement.removeChild(container)
+                loadCurrentPage()
+            )
+        , false)
+    )(item)
+    container.appendChild(forget)
+    return container
+
 createView = (item, noLink = false) ->
     container = document.createElement('div')
     if not item.hash
-        container.id = item
-        container.className = 'missing-item'
-        text = document.createElement('div')
-        text.textContent = 'This item no longer exists.'
-        container.appendChild(text)
-        forget = document.createElement('a')
-        forget.textContent = 'Remove from history'
-        forget.href = '/forget/' + item
-        ((item) ->
-            forget.addEventListener('click', (e) ->
-                e.preventDefault()
-                confirm((a) ->
-                    return if not a
-                    UserHistory.remove(item)
-                    container.parentElement.removeChild(container)
-                    loadCurrentPage()
-                )
-            , false)
-        )(item)
-        container.appendChild(forget)
-        return container
+        return createMissing(item, container)
     else
         preview = null
         if item.blob_type == 'video'
@@ -113,7 +116,7 @@ createView = (item, noLink = false) ->
             preview.className = 'album-preview'
             for file in item.files[..3]
                 preview.appendChild(createView(file, true))
-        return if not preview?
+        return createMissing(item, container) if not preview?
         preview.classList.add('item')
         if not noLink
             outerContainer = document.createElement('div')
