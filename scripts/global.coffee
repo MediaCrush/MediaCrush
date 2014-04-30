@@ -131,29 +131,19 @@ window.addEventListener('DOMContentLoaded', (e) ->
 
 
 console.log("""
-      ........                                    
-     /hdddddddyyyy///`                            
-    /ddddddddddddddddddyo+-`                      
-   /dddddddddddddddddddddddhy//.                  
-  /hdddddddddddddddddddddddddddds+-`              
- .yddddddddddddddddddddddddddddddddh+-            
-`oddddddddddddddddddddddddddddddddddddy-            Want to read the unobsfucated source? Check it out
-.dddddddddddhyysssssyhdhyysssssyhdddddddhs-         at https://github.com/MediaCrush/MediaCrush
-ydddddddddhs-`       .:-`       .sdddddddddo.     
-dddddddddds                      :hdddddddddds-     Send us some pull requests!
-dddddddddd-   `+yyy:    /yyy+    :hdddddddddddh+  
-dddddddddy`   -dddh:   .yddd+   `+ddddddddddddddy:
-ddddddddd+`   odddy`   :hddd-   `ydddddddddddddddd
-ddddddddh:    ydddo    +dddy`   -hddddddddddddddy:
-ddddddddy.   -hddh:   .sdddo`   +dddddddddddddy-  
-ddddddddo`   +hddh`   -hddh:    ydddddddddddds`   
-+ddddddh/   `sddds   `+dddy.   -hddddddddddo.     
-.ddddddhyyyyyhdddhyyyyhdddhyyyyyddddddddy:.       
-`+ddddddddddddddddddddddddddddddddddddy-          
- .yddddddddddddddddddddddddddddddddh/-            
-  /hdddddddddddddddddddddddddddds+-               
-   /dddddddddddddddddddddddhys/.                  
-    /ddddddddddddddddddhs+--                      
-     /hdddddddhyyy///:                            
-      .........                                   
+   -++++:--`                  
+  -hddddddddhy+/.             
+ -hddddddddddddddhy/.         
+`ydddddddddddddddddddy+`      
++ddddddhsoooshyooooydddhs:    
+ddddddo`     `      ydddddy:  
+dddddh` `yh+  :hy.  yddddddds`  Want to read the unobsfucated source? Check it out
+ddddds  :dd:  sdy` .hddddddddh  at https://github.com/MediaCrush/MediaCrush
+ddddd/  odh. `hdo  /dddddddh+`
+hdddh. `hds  :dh:  sddddddy-    Send us some pull requests!
+/dddhsssddyssydhssshdddh+-    
+`ydddddddddddddddddddy+`      
+ -hddddddddddddddhy/.         
+  -hdddddddddyo/-`            
+   -++++/--``                 
 """)
