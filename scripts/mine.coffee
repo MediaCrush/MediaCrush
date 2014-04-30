@@ -113,6 +113,7 @@ createView = (item, noLink = false) ->
             preview.className = 'album-preview'
             for file in item.files[..3]
                 preview.appendChild(createView(file, true))
+        return if not preview?
         preview.classList.add('item')
         if not noLink
             outerContainer = document.createElement('div')
