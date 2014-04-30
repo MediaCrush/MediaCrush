@@ -724,7 +724,7 @@ Description of fields:
 * `files`: A list of files that are the result of converting the original file into different formats.
 * `extras`: Auxiliary files, such as a thumbnail or subtitles.
 * `flags`: A dictionary of flags that determine the behaviour of the player relevant to the `blob_type`. Note that the flags shown here are an example set and the list of available flags may vary. Consult Appendix B for more information.
-* `metadata`: Various attributes that describe the media file, such as duration or resolution. Each media type will have different metadata, and some or all of it may not be present. Each media type will have different metadata, and some or all of it may not be present.
+* `metadata`: Various attributes that describe the media file, such as duration or resolution. Each media type will have different metadata, and some or all of it may not be present.
 * `original`: The original file that was uploaded, as-is.
 * `hash`: A unique identifier within MediaCrush.
 * `type`: The original mimetype, provided by the user. You should not base decisions on this value.
