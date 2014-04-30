@@ -128,3 +128,32 @@ window.addEventListener('DOMContentLoaded', (e) ->
         ad.innerHTML = "Sorry! You won't see any ads again. If you change your mind, <a href='/advertising'>opt-in here</a>." for ad in document.querySelectorAll('.advertisement')
     , false) for link in document.querySelectorAll('.ad-opt-out')
 , false)
+
+
+console.log("""
+      ........                                    
+     /hdddddddyyyy///`                            
+    /ddddddddddddddddddyo+-`                      
+   /dddddddddddddddddddddddhy//.                  
+  /hdddddddddddddddddddddddddddds+-`              
+ .yddddddddddddddddddddddddddddddddh+-            
+`oddddddddddddddddddddddddddddddddddddy-            Want to read the unobsfucated source? Check it out
+.dddddddddddhyysssssyhdhyysssssyhdddddddhs-         at https://github.com/MediaCrush/MediaCrush
+ydddddddddhs-`       .:-`       .sdddddddddo.     
+dddddddddds                      :hdddddddddds-     Send us some pull requests!
+dddddddddd-   `+yyy:    /yyy+    :hdddddddddddh+  
+dddddddddy`   -dddh:   .yddd+   `+ddddddddddddddy:
+ddddddddd+`   odddy`   :hddd-   `ydddddddddddddddd
+ddddddddh:    ydddo    +dddy`   -hddddddddddddddy:
+ddddddddy.   -hddh:   .sdddo`   +dddddddddddddy-  
+ddddddddo`   +hddh`   -hddh:    ydddddddddddds`   
++ddddddh/   `sddds   `+dddy.   -hddddddddddo.     
+.ddddddhyyyyyhdddhyyyyhdddhyyyyyddddddddy:.       
+`+ddddddddddddddddddddddddddddddddddddy-          
+ .yddddddddddddddddddddddddddddddddh/-            
+  /hdddddddddddddddddddddddddddds+-               
+   /dddddddddddddddddddddddhys/.                  
+    /ddddddddddddddddddhs+--                      
+     /hdddddddhyyy///:                            
+      .........                                   
+""")
