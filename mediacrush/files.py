@@ -52,8 +52,13 @@ class URLFile(object):
 
     def download(self, url):
         r = requests.get(url, stream=True)
+        if r.headers["content-length"] > MAX_SIZE:
+            raise FileTooBig("The file was larger than 50 MB")
+
         for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
             if i > MAX_SIZE / 1024:
+                # Evil servers may send more than Content-Length bytes
+                # As of 54541a9, python-requests keeps reading indefinitely
                 raise FileTooBig("The file was larger than 50 MB")
             self.f.write(chunk)
             self.f.flush()
