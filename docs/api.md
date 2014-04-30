@@ -656,6 +656,11 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>true</td>
     </tr>
     <tr>
+        <td>413</td>
+        <td>The file is larger than maximum allowed size.</td>
+        <td>false</td>
+    </tr>
+    <tr>
         <td>415</td>
         <td>The file extension is not acceptable.</td>
         <td>false</td>
