@@ -2,6 +2,7 @@
 
 #page-header {
   background: $brand-color;
+  margin-bottom: 30px;
   padding: 30px;
   border-radius: 4px;
   text-align: center;
@@ -16,6 +17,28 @@
 
   p {
     margin: 0;
+  }
+}
+
+#official-apps {
+  .app {
+    overflow: auto;
+    margin-bottom: 30px;
+  }
+  .image {
+    float: left;
+    width: 150px;
+    height: 150px;
+    background: #F0F0F0;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .description {
+    float: right;
+    width: 810px;
+  }
+  h2 {
+    margin-bottom: 5px;
   }
 }
 

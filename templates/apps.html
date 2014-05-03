@@ -7,29 +7,65 @@
   <h1>MediaCrush apps</h1>
   <p>To make it easier and faster to use MediaCrush</p>
 </header>
-<h3>Web Browsers</h3>
-<p>We've made a <a href="https://chrome.google.com/webstore/detail/mediacrush/efbojpedpjjpppahkknegfblpdliiple" target="_blank">Chrome extension</a>
+
+<section id="official-apps">
+  <div class="app">
+    <div class="image">
+      <img src="{{ url_for('static', filename='icon-browser.svg') }}" alt="Web browser icon">
+    </div>
+    <div class="description">
+      <h2>Web Browsers</h2>
+      <p>We've made a <a href="https://chrome.google.com/webstore/detail/mediacrush/efbojpedpjjpppahkknegfblpdliiple" target="_blank">Chrome extension</a>
 and a <a href="https://addons.mozilla.org/en-US/firefox/addon/mediacrush/" target="_blank">Firefox add-on</a> that lets you upload images on the
 web straight to MediaCrush.  Give them a try!</p>
-<h3>Mobile</h3>
-<p>Using MediaCrush on the go is as simple as can be &mdash; just head over to <a href="/">https://mediacru.sh</a>
+    </div>
+  </div>
+
+  <div class="app">
+    <div class="image">
+      <img src="{{ url_for('static', filename='icon-mobile.svg') }}" alt="Mobile phone icon">
+    </div>
+    <div class="description">
+      <h2>Mobile</h2>
+      <p>Using MediaCrush on the go is as simple as can be &mdash; just head over to <a href="/">https://mediacru.sh</a>
 from your mobile device to use our mobile site.</p>
-<h3>Windows</h3>
-<p>Using Windows? <a href="https://github.com/MediaCrush/MediaCrush-Windows/releases/download/1.0.0/MediaCrush.exe">Download</a> the official MediaCrush
-Windows application. You can upload files straight from your desktop and send screenshots directly to MediaCrush. And of course, it's
-<a href="https://github.com/MediaCrush/MediaCrush-Windows">open source</a>.</p>
-<h3>Linux</h3>
-<p>For Linux users, we have <a href="https://github.com/MediaCrush/MediaCrush-cli">MediaCrush-cli</a>, which allows you to upload media from the comfort
+    </div>
+  </div>
+
+  <div class="app">
+    <div class="image">
+      <img src="{{ url_for('static', filename='icon-windows.svg') }}" alt="Windows logo">
+    </div>
+    <div class="description">
+      <h2>Windows</h2>
+      <p>Using Windows? <a href="https://github.com/MediaCrush/MediaCrush-Windows/releases/download/1.0.0/MediaCrush.exe">Download</a> the official MediaCrush
+Windows application. You can upload files straight from your desktop and send screenshots directly to MediaCrush. And of course, it's <a href="https://github.com/MediaCrush/MediaCrush-Windows">open source</a>.</p>
+    </div>
+  </div>
+
+  <div class="app">
+    <div class="image">
+      <img src="{{ url_for('static', filename='icon-linux.svg') }}" alt="Linux logo">
+    </div>
+    <div class="description">
+      <h2>Linux</h2>
+      <p>For Linux users, we have <a href="https://github.com/MediaCrush/MediaCrush-cli">MediaCrush-cli</a>, which allows you to upload media from the comfort
 of your favorite shell. Arch Linux users can install it via the <a href="https://aur.archlinux.org/packages/mediacrush-cli/">AUR package</a>, and
 Gentoo users can get it through the <a href="https://packages.gentoo.org/package/app-misc/mediacrush-cli">portage package</a>.</p>
-<h3>Everyone Else</h3>
-We're still working on more ways to use MediaCrush on your system. Want it faster? Have a look at our
-straightforward <a href="/docs">API</a> and see if you can make your own!</p>
-<h3>Third party apps</h3>
-<p>There are also a number of third party apps with MediaCrush support. <a href="mailto:support@mediacru.sh">Have you written one?</a></p>
-<ul>
+    </div>
+  </div>
+</section>
+
+<section id="everyone-else">
+  <h2>Everyone Else</h2>
+  <p>We're still working on more ways to use MediaCrush on your system. Want it faster? Have a look at our straightforward <a href="/docs">API</a> and see if you can make your own!</p>
+
+  <h3>Third party apps</h3>
+  <p>There are also a number of third party apps with MediaCrush support. <a href="mailto:support@mediacru.sh">Have you written one?</a></p>
+  <ul>
     <li><a href="http://screengrab.doomer.org/">ScreenGrab</a> lets you take screenshots and upload them, on Linux and Windows</li>
     <li><a href="http://redditenhancementsuite.com/">Reddit Enhancement Suite</a> can display MediaCrush links inline on Reddit</li>
     <li><a href="https://chrome.google.com/webstore/detail/imagus/immpkjjlgappgfkkfieppnmlhakdmaab">Imagus</a> shows you MediaCrush links on hover anywhere on the web</li>
-</ul>
+  </ul>
+</section>
 {% endblock %}
