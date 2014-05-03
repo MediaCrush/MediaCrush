@@ -44,6 +44,9 @@
 /*
  * Element styles and UI components
  */
+
+$brand-color: #005580; // mediacrush blue
+
 body {
     font-family: "Open Sans", sans-serif;
 }
@@ -53,6 +56,7 @@ body {
 
     a {
         color: #000;
+        font-weight: 300;
 
         &:hover {
             color: #000;
