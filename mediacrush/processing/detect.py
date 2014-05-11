@@ -145,6 +145,8 @@ def detect_interlacing(path):
             progressive = float(match.group(3))
             undetermined = float(match.group(4))
             total = tff + bff + progressive + undetermined
+            if total == 0:
+                return False
             tff = tff / total
             bff = bff / total
             progressive = progressive / total
