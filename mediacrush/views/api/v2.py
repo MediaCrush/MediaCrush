@@ -28,8 +28,10 @@ def _file_object(f):
         'flags': f.flags.as_dict(),
         'status': f.status
     }
+
     if f.compression:
         ret['compression'] = float(f.compression)
+
     if f.status in ['error', 'timeout', 'unrecognized']:
         # TODO: We should not use magic strings here, but instead we should modify the processing pipeline
         ret['status'] = 'error'
@@ -43,6 +45,7 @@ def _file_object(f):
             continue
 
         ret['files'].append(_file_entry(name))
+
     for f_ext in processor.extras:
         ret['extras'].append(_file_entry("%s.%s" % (f.hash, f_ext)))
 
@@ -77,4 +80,4 @@ class APIv2(FlaskView):
             else:
                 ret.append(_objects[klass](obj))
 
-        return {'list': ret}
+        return {'result': ret}

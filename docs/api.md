@@ -68,7 +68,7 @@ Returns [file objects](#file-objects) for the specified hashes.
 <div class="tester" data-method="GET" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl https://mediacru.sh/api/v2/hash1,hash2,hash3
 {
-    'list': [
+    'result': [
         { file object },
         { file object },
         { file object }
@@ -88,7 +88,7 @@ Deletes one or more file objects. You must include the `userToken` cookie.
 <div class="tester" data-method="DELETE" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -X DELETE https://mediacru.sh/api/v2/hash1,hash2,hash3
 {
-    'list': [
+    'result': [
         {"result": "success", "hash": hash1},
         {"result": "not_found", "hash": hash2},
         {"result": "unauthorized", "hash": hash3}
@@ -109,7 +109,7 @@ with the properties set as you would like them to be.
 <div class="tester" data-method="POST" data-endpoint="/api/v2/{ list }">
 <pre class="response">$ curl -F '[{"flags": {"loop": true}}, ...]' https://mediacru.sh/api/v2/hash1,hash2,hash3
 {
-    'list': [
+    'result': [
         { file object },
         { file object },
         { file object }
