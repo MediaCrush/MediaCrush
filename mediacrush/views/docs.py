@@ -1,4 +1,4 @@
-from flask.ext.classy import FlaskView
+from flask.ext.classy import FlaskView, route
 from flask import render_template, abort
 
 from ..config import _cfg
@@ -17,8 +17,9 @@ class DocsView(FlaskView):
     def index(self):
         return DocsView._get_doc('index')
 
-    def get(self, doc):
+    @route("/<path:path>")
+    def get(self, path):
         try:
-            return DocsView._get_doc(doc)
+            return DocsView._get_doc(path)
         except:
             abort(404)
