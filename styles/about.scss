@@ -1,36 +1,108 @@
 @import 'stylesheet.scss'
 
-.row {
-    margin-top: -20px;
+.head {
+    .intro {
+        width: 700px;
+        margin: 0 auto;
 
-    .left {
-        float: left;
+        h2 {
+            text-align: center;
+            line-height: 75px;
+        }
     }
 
-    .right {
-        float: right;
+    .nav {
+        list-style: none;
+        text-align: center;
+        padding-left: 0;
+
+        li {
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+            width: 180px;
+            border-color: #aaa;
+            border-style: solid;
+            border-width: 1px 1px 1px 0px;
+
+            &:first-child {
+                border-left-width: 1px;
+                border-radius: 5px 0 0 5px;
+            }
+
+            &:last-child {
+                border-radius: 0 5px 5px 0;
+            }
+
+            a {
+                color: #888;
+                display: block;
+                padding: 10px;
+            }
+
+            &.selected, &:hover {
+                a { color: #fff; }
+                background: #005580;
+            }
+        }
+    }
+}
+
+blockquote {
+    width: 80%;
+    margin: 0 auto;
+    background: #eee;
+    padding: 10px;
+    border-radius: 10px;
+    
+    footer {
+        color: #888;
         text-align: right;
     }
+}
 
-    .middle {
-        float: left;
-        margin-left: 60px;
-        margin-top: 150px;
-        text-align: center;
-    }
-
+.grid {
     .item {
-        float: left;
-        width: 333px;
-        height: 43px;
-        line-height: 43px;
+        width: 22%;
+        margin: 0 10px;
+        display: inline-block;
+        color: #888;
+        text-align: center;
+
+        strong {
+            color: #333;
+            display: block;
+        }
+
+        h3 {
+            font-size: 16pt;
+            color: #08C;
+            margin: 0;
+        }
     }
 }
 
-h2 {
-    margin-bottom: 0;
-}
+#types {
+    text-align: center;
 
-p {
-    margin-top: 0;
+    li {
+        width: 75px;
+        padding-right: 45px;
+        text-align: center;
+        display: inline-block;
+        height: 50px;
+        line-height: 110px;
+
+        &.images {
+            background: url('/static/home-photo.png') no-repeat 22px 0;
+        }
+
+        &.videos {
+            background: url('/static/home-video.png') no-repeat 12px 0;
+        }
+
+        &.audio {
+            background: url('/static/home-audio.png') no-repeat 18px 0;
+        }
+    }
 }
