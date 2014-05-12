@@ -88,7 +88,8 @@ def inject():
         'is_tor': is_tor(),
         'ip': get_ip(),
         'media_url': media_url,
-        'root': _cfg("protocol") + "://" + _cfg("domain")
+        'root': _cfg("protocol") + "://" + _cfg("domain"),
+        'random': random
     }
 
 @app.route("/")
@@ -105,7 +106,7 @@ def apps():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html", choice=random.randint(0, 4))
 
 @app.route('/demo')
 def demo():
