@@ -1,11 +1,12 @@
 from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
+from flask import request
 
 from mediacrush.decorators import json_output
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.objects import RedisObject, File, FailedFile, Album
-from mediacrush.files import media_url, get_mimetype, delete_file
+from mediacrush.files import media_url, get_mimetype, delete_file, upload
 from mediacrush.network import get_ip
 
 import json
@@ -62,6 +63,23 @@ def _file_entry(f, mimetype=None):
         'url': media_url(f)
     }
 
+def _upload_object(result, status):
+    print result, status
+    if status == 200:
+        return SUCCESS(result)
+    else:
+        errors = {
+            420: "ratelimit",
+            415: "bad_format"
+        }
+
+        if status == 409:
+            return _file_object(File.from_hash(result))
+
+        resp = {'result': errors[result]}
+        return resp
+
+
 _objects = {
     File: _file_object
 }
@@ -114,3 +132,14 @@ class APIv2(FlaskView):
                 ret.append(UNAUTHORIZED(hash))
 
         return {'result': ret}
+
+    @route("/upload", methods=['POST'])
+    def upload(self):
+        if "file" in request.files:
+            f = request.files['file']
+            filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
+
+            return _upload_object(*upload(f, filename))
+        else:
+            # Upload from URL: TODO
+            pass

@@ -82,7 +82,11 @@ def _album_object(a):
 
     return ret
 
+def _failedfile_object(f):
+        return {"hash": f.hash, "status": f.status}
+
 objects = {
+    FailedFile: _failedfile_object,
     File: _file_object,
     Album: _album_object,
 }
