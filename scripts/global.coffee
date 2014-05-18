@@ -129,8 +129,8 @@ window.addEventListener('DOMContentLoaded', (e) ->
     , false) for link in document.querySelectorAll('.ad-opt-out')
 , false)
 
-
-console.log("""
+if not window.embedded
+    console.log("""
    -++++:--`                  
   -hddddddddhy+/.             
  -hddddddddddddddhy/.         
