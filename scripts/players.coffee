@@ -280,7 +280,6 @@ MediaPlayer = (container) ->
     window.resizeMedia = (width, height) ->
         return if not isVideo
         return if not ready
-        console.log(width, height)
         media.width = width
         media.height = height - 5
         if subtitleRenderers[id]?
