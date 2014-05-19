@@ -225,9 +225,6 @@ class MediaView(FlaskView):
         send = self._send_file(id)
         if send:
             return send
-        # We only want to maintain one page for mobile, not a dozen
-        if request.user_agent.platform in ['android', 'iphone', 'ipad'] or 'windows phone' in request.user_agent.string.lower():
-            return redirect("/" + id, code=302)
 
         klass = RedisObject.klass(id)
         if klass is Album:
