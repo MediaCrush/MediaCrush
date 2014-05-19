@@ -7,7 +7,7 @@ from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.files import media_url, get_mimetype, delete_file, upload
-from mediacrush.network import get_ip
+from mediacrush.network import get_ip, secure_ip
 
 import json
 
@@ -15,6 +15,7 @@ NOT_FOUND = lambda hash: {"hash": hash, "result": "not_found"}
 UNAUTHORIZED = lambda hash: {"hash": hash, "result": "unauthorized"}
 SUCCESS = lambda hash: {"hash": hash, "result": "success"}
 OBJ_ERROR = lambda obj: {"hash": obj.hash, "result": obj.status}
+ERROR = lambda err: {"result": err}
 
 def _file_object(f):
     mimetype = f.mimetype
@@ -143,3 +144,26 @@ class APIv2(FlaskView):
         else:
             # Upload from URL: TODO
             pass
+
+    @route("/album", methods=['POST'])
+    def album(self):
+        if "items" not in request.form:
+            return ERROR("bad_request")
+
+        hashes = request.form["items"].split(",")
+        if len(hashes) > 1024:
+            return ERROR("too_big")
+
+        for hash in hashes:
+            klass = RedisObject.klass(hash)
+
+            if klass is not File:
+                return ERROR("bad_hash")
+
+        a = Album()
+        a.items = hashes
+        a.ip = secure_ip()
+        a.save()
+
+        return SUCCESS(a.hash)
+
