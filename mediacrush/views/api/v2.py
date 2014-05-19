@@ -2,7 +2,7 @@ from flask.ext.classy import FlaskView, route
 from flaskext.bcrypt import check_password_hash
 from flask import request
 
-from mediacrush.decorators import json_output
+from mediacrush.decorators import json_output_v2
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.objects import RedisObject, File, FailedFile, Album
@@ -80,9 +80,16 @@ def _upload_object(result, status):
         resp = {'result': errors[result]}
         return resp
 
+def _album_object(a):
+    return {
+        "type": "album",
+        "hash": a.hash,
+        "items": [_file_object(item) for item in a.items]
+    }
 
 _objects = {
-    File: _file_object
+    File: _file_object,
+    Album: _album_object
 }
 
 _deletion_funcs = {
@@ -91,7 +98,7 @@ _deletion_funcs = {
 }
 
 class APIv2(FlaskView):
-    decorators = [json_output] # TODO: `cors_v2`
+    decorators = [json_output_v2] # TODO: `cors_v2`
 
     def get(self, q):
         hashes = q.split(",")
@@ -109,7 +116,7 @@ class APIv2(FlaskView):
             else:
                 ret.append(_objects[klass](obj))
 
-        return {'result': ret}
+        return ret
 
     def delete(self, q):
         hashes = q.split(",")
@@ -132,7 +139,7 @@ class APIv2(FlaskView):
             except:
                 ret.append(UNAUTHORIZED(hash))
 
-        return {'result': ret}
+        return ret
 
     @route("/upload", methods=['POST'])
     def upload(self):
@@ -166,4 +173,3 @@ class APIv2(FlaskView):
         a.save()
 
         return SUCCESS(a.hash)
-

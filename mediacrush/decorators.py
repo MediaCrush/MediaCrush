@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from functools import wraps
 import json
 
@@ -23,6 +23,32 @@ def json_output(f):
         if isinstance(result, tuple):
             return jsonify_wrap(result[0]), result[1]
         if isinstance(result, dict):
+            return jsonify_wrap(result)
+
+        # This is a fully fleshed out  response, return it immediately
+        return result
+
+    return wrapper
+
+def json_output_v2(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        def jsonify_wrap(obj):
+            callback = request.args.get('callback', False)
+            jsonification = Response(json.dumps(obj, indent=2, separators=(',', ': ')))
+            if callback:
+                jsonification.data = "%s(%s);\n%s" % (callback, jsonification.data, jsonp_notice) # Alter the response
+
+            jsonification.mimetype = "text/javascript"
+
+            return jsonification
+
+        result = f(*args, **kwargs)
+        if isinstance(result, tuple):
+            return jsonify_wrap(result[0]), result[1]
+        if isinstance(result, dict):
+            return jsonify_wrap(result)
+        if isinstance(result, list):
             return jsonify_wrap(result)
 
         # This is a fully fleshed out  response, return it immediately
