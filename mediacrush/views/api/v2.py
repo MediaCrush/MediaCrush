@@ -27,7 +27,7 @@ def _file_object(f):
 
     ret = {
         'original': media_url(f.original),
-        'blob_type': normalise_processor(f.processor),
+        'type': normalise_processor(f.processor),
         'hash': f.hash,
         'files': [],
         'extras': [],
