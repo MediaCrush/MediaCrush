@@ -32,8 +32,9 @@ Have you written a cool API wrapper for MediaCrush? [Let us know](mailto:support
 
 * [jCrush](https://github.com/hypereddie10/jCrush) - API wrapper written in (and for) Java - MIT license
 
-Note: We're looking for a node.js version of mediacrush.js. Interested in contributing one? Join us on IRC
-for a chat: [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4).
+### Node.js
+
+* [NodeCrush](https://github.com/dlion/NodeCrush) - API wrapper written in node.js - MIT license
 
 ### .NET
 
