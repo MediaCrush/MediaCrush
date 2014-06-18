@@ -150,7 +150,7 @@ initializeScrollLoading = (includeClearfix, itemsLoaded) ->
     checkLoad = () ->
         return if itemsLoaded == window.files.length
         return if isLoading
-        if lastItemY - getScroll() < viewPortHeight()
+        if lastItemY - getScroll() < (viewPortHeight() / 2)
             isLoading = true
             document.querySelector('.progress').classList.remove('hidden')
             nextItem = window.files[itemsLoaded]
