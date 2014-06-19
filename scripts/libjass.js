@@ -25,11 +25,11 @@
          *
          * Elements are stored as properties of an object, with names derived from their type.
          *
-         * @constructor
          * @template T
          *
+         * @constructor
+         * @memberOf libjass
          * @private
-         * @memberof libjass
          */
         var SimpleSet = function() {
             function SimpleSet() {
@@ -111,11 +111,11 @@
          *
          * Keys and values are stored as properties of an object, with property names derived from the key type.
          *
-         * @constructor
          * @template K, V
          *
+         * @constructor
+         * @memberOf libjass
          * @private
-         * @memberof libjass
          */
         var SimpleMap = function() {
             function SimpleMap() {
@@ -153,6 +153,9 @@
                 if (property === null) {
                     throw new Error("This Map implementation only supports Number and String keys, or keys with an id property.");
                 }
+                if (!(property in this._keys)) {
+                    this._size++;
+                }
                 this._keys[property] = key;
                 this._values[property] = value;
                 return this;
@@ -170,6 +173,7 @@
                 if (result) {
                     delete this._keys[property];
                     delete this._values[property];
+                    this._size--;
                 }
                 return result;
             };
@@ -178,6 +182,7 @@
             SimpleMap.prototype.clear = function() {
                 this._keys = Object.create(null);
                 this._values = Object.create(null);
+                this._size = 0;
             };
             /**
              * @param {function(V, K, libjass.Map.<K, V>)} callbackfn A function that is called with each key and value in the map.
@@ -190,8 +195,11 @@
                 }
             };
             Object.defineProperty(SimpleMap.prototype, "size", {
+                /**
+                 * @type {number}
+                 */
                 get: function() {
-                    throw new Error("This Map implementation doesn't support size.");
+                    return this._size;
                 },
                 enumerable: true,
                 configurable: true
@@ -222,6 +230,221 @@
         } else {
             libjass.Map = SimpleMap;
         }
+        function mixin(derived, mixins) {
+            mixins.forEach(function(mixin) {
+                Object.getOwnPropertyNames(mixin.prototype).forEach(function(name) {
+                    derived.prototype[name] = mixin.prototype[name];
+                });
+            });
+        }
+        libjass.mixin = mixin;
+    })(libjass || (libjass = {}));
+    (function(libjass) {
+        (function(webworker) {
+            Object.defineProperty(webworker, "supported", {
+                value: typeof Worker !== "undefined",
+                configurable: true,
+                enumerable: true
+            });
+            /**
+             * Create a new web worker.
+             *
+             * @return {!libjass.webworker.WorkerChannel} A communication channel to the new web worker.
+             */
+            function createWorker() {
+                return new WorkerChannelImpl(new Worker(_scriptNode.src));
+            }
+            webworker.createWorker = createWorker;
+            /**
+             * The commands that can be sent to or from a web worker.
+             */
+            (function(WorkerCommands) {
+                WorkerCommands[WorkerCommands["Response"] = 0] = "Response";
+            })(webworker.WorkerCommands || (webworker.WorkerCommands = {}));
+            /**
+             * Registers a handler for the given worker command.
+             *
+             * @param {number} command The command that this handler will handle. Valid values are the values of libjass.webworker.WorkerCommands
+             * @param {function(*, function(*, *))} handler The handler. A function of the form (parameters: *, response: function(error: *, result: *): void): void
+             */
+            function _registerWorkerCommand(command, handler) {
+                workerCommands.set(command, handler);
+            }
+            webworker._registerWorkerCommand = _registerWorkerCommand;
+            function _registerClassPrototype(prototype) {
+                prototype._classTag = classPrototypes.size;
+                classPrototypes.set(prototype._classTag, prototype);
+            }
+            webworker._registerClassPrototype = _registerClassPrototype;
+            var _scriptNode = null;
+            if (typeof document !== "undefined" && document.currentScript !== undefined) {
+                _scriptNode = document.currentScript;
+            }
+            var workerCommands = new libjass.Map();
+            var classPrototypes = new libjass.Map();
+            /**
+             * Internal implementation of libjass.webworker.WorkerChannel
+             *
+             * @param {!*} comm The other side of the channel. When created by the host, this is the web worker. When created by the web worker, this is its global object.
+             *
+             * @constructor
+             * @memberOf libjass.webworker
+             * @private
+             */
+            var WorkerChannelImpl = function() {
+                function WorkerChannelImpl(comm) {
+                    var _this = this;
+                    this._comm = comm;
+                    this._pendingRequests = new libjass.Map();
+                    this._comm.addEventListener("message", function(ev) {
+                        return _this._onMessage(ev.data);
+                    }, false);
+                }
+                WorkerChannelImpl.prototype.request = function(command, parameters) {
+                    var requestId = null;
+                    var promise = new WorkerPromiseImpl(this);
+                    var requestId = promise.id;
+                    this._pendingRequests.set(requestId, promise);
+                    var requestMessage = {
+                        requestId: requestId,
+                        command: command,
+                        parameters: parameters
+                    };
+                    this._comm.postMessage(WorkerChannelImpl._toJSON(requestMessage));
+                    return promise;
+                };
+                WorkerChannelImpl.prototype.cancelRequest = function(requestId) {
+                    this._pendingRequests.delete(requestId);
+                };
+                WorkerChannelImpl.prototype._respond = function(message) {
+                    this._comm.postMessage(WorkerChannelImpl._toJSON({
+                        command: 0,
+                        requestId: message.requestId,
+                        error: message.error,
+                        result: message.result
+                    }));
+                };
+                WorkerChannelImpl.prototype._onMessage = function(message) {
+                    var _this = this;
+                    message = WorkerChannelImpl._fromJSON(message);
+                    if (message.command === 0) {
+                        var responseMessage = message;
+                        var promise = this._pendingRequests.get(responseMessage.requestId);
+                        if (promise !== undefined) {
+                            this._pendingRequests.delete(responseMessage.requestId);
+                            promise.resolve(responseMessage.error, responseMessage.result);
+                        }
+                        return;
+                    }
+                    var requestMessage = message;
+                    var commandCallback = workerCommands.get(requestMessage.command);
+                    if (commandCallback === undefined) {
+                        this._respond({
+                            requestId: requestMessage.requestId,
+                            error: new Error("Unrecognized command: " + requestMessage.command),
+                            result: null
+                        });
+                        return;
+                    }
+                    commandCallback(requestMessage.parameters, function(error, result) {
+                        return _this._respond({
+                            requestId: requestMessage.requestId,
+                            error: error,
+                            result: result
+                        });
+                    });
+                };
+                WorkerChannelImpl._toJSON = function(obj) {
+                    return JSON.stringify(obj, function(key, value) {
+                        if (value && value._classTag !== undefined) {
+                            value._classTag = value._classTag;
+                        }
+                        return value;
+                    });
+                };
+                WorkerChannelImpl._fromJSON = function(str) {
+                    return JSON.parse(str, function(key, value) {
+                        if (value && value._classTag !== undefined) {
+                            var hydratedValue = Object.create(classPrototypes.get(value._classTag));
+                            Object.keys(value).forEach(function(key) {
+                                if (key !== "_classTag") {
+                                    hydratedValue[key] = value[key];
+                                }
+                            });
+                            value = hydratedValue;
+                        }
+                        return value;
+                    });
+                };
+                return WorkerChannelImpl;
+            }();
+            var inWorker = typeof WorkerGlobalScope !== "undefined" && global instanceof WorkerGlobalScope;
+            if (inWorker) {
+                new WorkerChannelImpl(global);
+            }
+            var WorkerPromiseImpl = function() {
+                function WorkerPromiseImpl(channel) {
+                    this._channel = channel;
+                    this._resolved = false;
+                    this._result = null;
+                    this._error = null;
+                    this._callback = null;
+                    this._id = ++WorkerPromiseImpl._lastPromiseId;
+                }
+                Object.defineProperty(WorkerPromiseImpl.prototype, "resolved", {
+                    get: function() {
+                        return this._resolved;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(WorkerPromiseImpl.prototype, "result", {
+                    get: function() {
+                        if (!this._resolved) {
+                            throw new Error("Unresolved promise.");
+                        }
+                        if (this._error !== null) {
+                            throw this._error;
+                        }
+                        return this._result;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                WorkerPromiseImpl.prototype.then = function(callback) {
+                    var _this = this;
+                    this._callback = callback;
+                    if (this._resolved) {
+                        setTimeout(function() {
+                            return _this._callback(_this);
+                        }, 0);
+                    }
+                };
+                WorkerPromiseImpl.prototype.cancel = function() {
+                    if (this._resolved) {
+                        return;
+                    }
+                    this._channel.cancelRequest(this._id);
+                };
+                Object.defineProperty(WorkerPromiseImpl.prototype, "id", {
+                    get: function() {
+                        return this._id;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                WorkerPromiseImpl.prototype.resolve = function(error, result) {
+                    this._resolved = true;
+                    this._error = error;
+                    this._result = result;
+                    if (this._callback !== null) {
+                        this._callback(this);
+                    }
+                };
+                WorkerPromiseImpl._lastPromiseId = -1;
+                return WorkerPromiseImpl;
+            }();
+        })(libjass.webworker || (libjass.webworker = {}));
     })(libjass || (libjass = {}));
     (function(libjass) {
         (function(parts) {
@@ -230,13 +453,13 @@
              *
              * Instances of this class are immutable.
              *
-             * @constructor
              * @param {number} red
              * @param {number} green
              * @param {number} blue
              * @param {number=1} alpha
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Color = function() {
                 function Color(red, green, blue, alpha) {
@@ -318,10 +541,10 @@
             /**
              * A comment, i.e., any text enclosed in {} that is not understood as an ASS tag.
              *
-             * @constructor
              * @param {string} value The text of this comment
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Comment = function() {
                 function Comment(value) {
@@ -345,10 +568,10 @@
             /**
              * A block of text, i.e., any text not enclosed in {}. Also includes \h.
              *
-             * @constructor
              * @param {string} value The content of this block of text
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Text = function() {
                 function Text(value) {
@@ -376,8 +599,7 @@
              * A newline character \N.
              *
              * @constructor
-             *
-             * @memberof libjass.parts
+             * @memberOf libjass.parts
              */
             var NewLine = function() {
                 function NewLine() {}
@@ -387,10 +609,10 @@
             /**
              * An italic tag {\i}
              *
-             * @constructor
              * @param {?boolean} value {\i1} -> true, {\i0} -> false, {\i} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Italic = function() {
                 function Italic(value) {
@@ -414,10 +636,10 @@
             /**
              * A bold tag {\b}
              *
-             * @constructor
              * @param {*} value {\b1} -> true, {\b0} -> false, {\b###} -> weight of the bold (number), {\b} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Bold = function() {
                 function Bold(value) {
@@ -441,10 +663,10 @@
             /**
              * An underline tag {\u}
              *
-             * @constructor
              * @param {?boolean} value {\u1} -> true, {\u0} -> false, {\u} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Underline = function() {
                 function Underline(value) {
@@ -468,10 +690,10 @@
             /**
              * A strike-through tag {\s}
              *
-             * @constructor
              * @param {?boolean} value {\s1} -> true, {\s0} -> false, {\s} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var StrikeThrough = function() {
                 function StrikeThrough(value) {
@@ -495,10 +717,10 @@
             /**
              * A border tag {\bord}
              *
-             * @constructor
              * @param {?number} value {\bord###} -> width (number), {\bord} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Border = function() {
                 function Border(value) {
@@ -522,10 +744,10 @@
             /**
              * A horizontal border tag {\xbord}
              *
-             * @constructor
              * @param {?number} value {\xbord###} -> width (number), {\xbord} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var BorderX = function() {
                 function BorderX(value) {
@@ -549,10 +771,10 @@
             /**
              * A vertical border tag {\ybord}
              *
-             * @constructor
              * @param {?number} value {\ybord###} -> height (number), {\ybord} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var BorderY = function() {
                 function BorderY(value) {
@@ -576,10 +798,10 @@
             /**
              * A shadow tag {\shad}
              *
-             * @constructor
              * @param {?number} value {\shad###} -> depth (number), {\shad} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Shadow = function() {
                 function Shadow(value) {
@@ -603,10 +825,10 @@
             /**
              * A horizontal shadow tag {\xshad}
              *
-             * @constructor
              * @param {?number} value {\xshad###} -> depth (number), {\xshad} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ShadowX = function() {
                 function ShadowX(value) {
@@ -630,10 +852,10 @@
             /**
              * A vertical shadow tag {\yshad}
              *
-             * @constructor
              * @param {?number} value {\yshad###} -> depth (number), {\yshad} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ShadowY = function() {
                 function ShadowY(value) {
@@ -657,10 +879,10 @@
             /**
              * A blur tag {\be}
              *
-             * @constructor
              * @param {?number} value {\be###} -> strength (number), {\be} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Blur = function() {
                 function Blur(value) {
@@ -684,10 +906,10 @@
             /**
              * A Gaussian blur tag {\blur}
              *
-             * @constructor
              * @param {?number} value {\blur###} -> strength (number), {\blur} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var GaussianBlur = function() {
                 function GaussianBlur(value) {
@@ -711,10 +933,10 @@
             /**
              * A font name tag {\fn}
              *
-             * @constructor
              * @param {?string} value {\fn###} -> name (string), {\fn} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var FontName = function() {
                 function FontName(value) {
@@ -738,10 +960,10 @@
             /**
              * A font size tag {\fs}
              *
-             * @constructor
              * @param {?number} value {\fs###} -> size (number), {\fs} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var FontSize = function() {
                 function FontSize(value) {
@@ -765,10 +987,10 @@
             /**
              * A horizontal font scaling tag {\fscx}
              *
-             * @constructor
              * @param {?number} value {\fscx###} -> scale (number), {\fscx} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var FontScaleX = function() {
                 function FontScaleX(value) {
@@ -792,10 +1014,10 @@
             /**
              * A vertical font scaling tag {\fscy}
              *
-             * @constructor
              * @param {?number} value {\fscy###} -> scale (number), {\fscy} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var FontScaleY = function() {
                 function FontScaleY(value) {
@@ -819,10 +1041,10 @@
             /**
              * A letter-spacing tag {\fsp}
              *
-             * @constructor
              * @param {?number} value {\fsp###} -> spacing (number), {\fsp} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var LetterSpacing = function() {
                 function LetterSpacing(value) {
@@ -846,10 +1068,10 @@
             /**
              * An X-axis rotation tag {\frx}
              *
-             * @constructor
              * @param {?number} value {\frx###} -> angle (number), {\frx} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var RotateX = function() {
                 function RotateX(value) {
@@ -873,10 +1095,10 @@
             /**
              * A Y-axis rotation tag {\fry}
              *
-             * @constructor
              * @param {?number} value {\fry###} -> angle (number), {\fry} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var RotateY = function() {
                 function RotateY(value) {
@@ -900,10 +1122,10 @@
             /**
              * A Z-axis rotation tag {\fr} or {\frz}
              *
-             * @constructor
              * @param {?number} value {\frz###} -> angle (number), {\frz} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var RotateZ = function() {
                 function RotateZ(value) {
@@ -927,10 +1149,10 @@
             /**
              * An X-axis shearing tag {\fax}
              *
-             * @constructor
              * @param {?number} value {\fax###} -> angle (number), {\fax} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var SkewX = function() {
                 function SkewX(value) {
@@ -954,10 +1176,10 @@
             /**
              * A Y-axis shearing tag {\fay}
              *
-             * @constructor
              * @param {?number} value {\fay###} -> angle (number), {\fay} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var SkewY = function() {
                 function SkewY(value) {
@@ -981,10 +1203,10 @@
             /**
              * A primary color tag {\c} or {\1c}
              *
-             * @constructor
              * @param {libjass.parts.Color} value {\1c###} -> color (Color), {\1c} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var PrimaryColor = function() {
                 function PrimaryColor(value) {
@@ -1008,10 +1230,10 @@
             /**
              * A secondary color tag {\2c}
              *
-             * @constructor
              * @param {libjass.parts.Color} value {\2c###} -> color (Color), {\2c} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var SecondaryColor = function() {
                 function SecondaryColor(value) {
@@ -1035,10 +1257,10 @@
             /**
              * An outline color tag {\3c}
              *
-             * @constructor
              * @param {libjass.parts.Color} value {\3c###} -> color (Color), {\3c} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var OutlineColor = function() {
                 function OutlineColor(value) {
@@ -1062,10 +1284,10 @@
             /**
              * A shadow color tag {\4c}
              *
-             * @constructor
              * @param {libjass.parts.Color} value {\4c###} -> color (Color), {\4c} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ShadowColor = function() {
                 function ShadowColor(value) {
@@ -1089,10 +1311,10 @@
             /**
              * An alpha tag {\alpha}
              *
-             * @constructor
              * @param {?number} value {\alpha###} -> alpha (number), {\alpha} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Alpha = function() {
                 function Alpha(value) {
@@ -1116,10 +1338,10 @@
             /**
              * A primary alpha tag {\1a}
              *
-             * @constructor
              * @param {?number} value {\1a###} -> alpha (number), {\1a} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var PrimaryAlpha = function() {
                 function PrimaryAlpha(value) {
@@ -1143,10 +1365,10 @@
             /**
              * A secondary alpha tag {\2a}
              *
-             * @constructor
              * @param {?number} value {\2a###} -> alpha (number), {\2a} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var SecondaryAlpha = function() {
                 function SecondaryAlpha(value) {
@@ -1170,10 +1392,10 @@
             /**
              * An outline alpha tag {\3a}
              *
-             * @constructor
              * @param {?number} value {\3a###} -> alpha (number), {\3a} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var OutlineAlpha = function() {
                 function OutlineAlpha(value) {
@@ -1197,10 +1419,10 @@
             /**
              * A shadow alpha tag {\4a}
              *
-             * @constructor
              * @param {?number} value {\4a###} -> alpha (number), {\4a} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ShadowAlpha = function() {
                 function ShadowAlpha(value) {
@@ -1224,10 +1446,10 @@
             /**
              * An alignment tag {\an} or {\a}
              *
-             * @constructor
              * @param {number} value {\an###} -> alignment (number)
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Alignment = function() {
                 function Alignment(value) {
@@ -1251,10 +1473,10 @@
             /**
              * A color karaoke tag {\k}
              *
-             * @constructor
              * @param {number} duration {\k###} -> duration (number)
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ColorKaraoke = function() {
                 function ColorKaraoke(duration) {
@@ -1278,10 +1500,10 @@
             /**
              * A sweeping color karaoke tag {\K} or {\kf}
              *
-             * @constructor
              * @param {number} duration {\kf###} -> duration (number)
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var SweepingColorKaraoke = function() {
                 function SweepingColorKaraoke(duration) {
@@ -1305,10 +1527,10 @@
             /**
              * An outline karaoke tag {\ko}
              *
-             * @constructor
              * @param {number} duration {\ko###} -> duration (number)
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var OutlineKaraoke = function() {
                 function OutlineKaraoke(duration) {
@@ -1332,10 +1554,10 @@
             /**
              * A wrapping style tag {\q}
              *
-             * @constructor
              * @param {number} value {\q###} -> style (number)
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var WrappingStyle = function() {
                 function WrappingStyle(value) {
@@ -1359,10 +1581,10 @@
             /**
              * A style reset tag {\r}
              *
-             * @constructor
              * @param {?string} value {\r###} -> style name (string), {\r} -> null
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Reset = function() {
                 function Reset(value) {
@@ -1386,11 +1608,11 @@
             /**
              * A position tag {\pos}
              *
-             * @constructor
              * @param {number} x
              * @param {number} y
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Position = function() {
                 function Position(x, y) {
@@ -1427,7 +1649,6 @@
             /**
              * A movement tag {\move}
              *
-             * @constructor
              * @param {number} x1
              * @param {number} y1
              * @param {number} x2
@@ -1435,7 +1656,8 @@
              * @param {number} t1
              * @param {number} t2
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Move = function() {
                 function Move(x1, y1, x2, y2, t1, t2) {
@@ -1524,11 +1746,11 @@
             /**
              * A rotation origin tag {\org}
              *
-             * @constructor
              * @param {number} x
              * @param {number} y
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var RotationOrigin = function() {
                 function RotationOrigin(x, y) {
@@ -1565,11 +1787,11 @@
             /**
              * A simple fade tag {\fad}
              *
-             * @constructor
              * @param {number} start
              * @param {number} end
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Fade = function() {
                 function Fade(start, end) {
@@ -1606,7 +1828,6 @@
             /**
              * A complex fade tag {\fade}
              *
-             * @constructor
              * @param {number} a1
              * @param {number} a2
              * @param {number} a3
@@ -1615,7 +1836,8 @@
              * @param {number} t3
              * @param {number} t4
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var ComplexFade = function() {
                 function ComplexFade(a1, a2, a3, t1, t2, t3, t4) {
@@ -1717,13 +1939,13 @@
             /**
              * A transform tag {\t}
              *
-             * @constructor
              * @param {number} start
              * @param {number} end
              * @param {number} accel
              * @param {!Array.<!libjass.parts.Tag>} tags
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var Transform = function() {
                 function Transform(start, end, accel, tags) {
@@ -1786,14 +2008,14 @@
             /**
              * A rectangular clip tag {\clip} or {\iclip}
              *
-             * @constructor
              * @param {number} x1
              * @param {number} y1
              * @param {number} x2
              * @param {number} y2
              * @param {boolean} inside
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var RectangularClip = function() {
                 function RectangularClip(x1, y1, x2, y2, inside) {
@@ -1869,12 +2091,12 @@
             /**
              * A vector clip tag {\clip} or {\iclip}
              *
-             * @constructor
              * @param {number} scale
              * @param {!Array.<!libjass.parts.drawing.Instruction>} instructions
              * @param {boolean} inside
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var VectorClip = function() {
                 function VectorClip(scale, instructions, inside) {
@@ -1924,10 +2146,10 @@
             /**
              * A drawing mode tag {\p}
              *
-             * @constructor
              * @param {number} scale
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var DrawingMode = function() {
                 function DrawingMode(scale) {
@@ -1951,10 +2173,10 @@
             /**
              * A drawing mode baseline offset tag {\pbo}
              *
-             * @constructor
              * @param {number} value
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var DrawingBaselineOffset = function() {
                 function DrawingBaselineOffset(value) {
@@ -1978,10 +2200,10 @@
             /**
              * A pseudo-part representing text interpreted as drawing instructions
              *
-             * @constructor
              * @param {!Array.<!libjass.parts.drawing.Instruction>} instructions
              *
-             * @memberof libjass.parts
+             * @constructor
+             * @memberOf libjass.parts
              */
             var DrawingInstructions = function() {
                 function DrawingInstructions(instructions) {
@@ -2006,11 +2228,11 @@
                 /**
                  * An instruction to move to a particular position.
                  *
-                 * @constructor
                  * @param {number} x
                  * @param {number} y
                  *
-                 * @memberof libjass.parts.drawing
+                 * @constructor
+                 * @memberOf libjass.parts.drawing
                  */
                 var MoveInstruction = function() {
                     function MoveInstruction(x, y) {
@@ -2047,11 +2269,11 @@
                 /**
                  * An instruction to draw a line to a particular position.
                  *
-                 * @constructor
                  * @param {number} x
                  * @param {number} y
                  *
-                 * @memberof libjass.parts.drawing
+                 * @constructor
+                 * @memberOf libjass.parts.drawing
                  */
                 var LineInstruction = function() {
                     function LineInstruction(x, y) {
@@ -2088,7 +2310,6 @@
                 /**
                  * An instruction to draw a cubic bezier curve to a particular position, with two given control points.
                  *
-                 * @constructor
                  * @param {number} x1
                  * @param {number} y1
                  * @param {number} x2
@@ -2096,7 +2317,8 @@
                  * @param {number} x3
                  * @param {number} y3
                  *
-                 * @memberof libjass.parts.drawing
+                 * @constructor
+                 * @memberOf libjass.parts.drawing
                  */
                 var CubicBezierCurveInstruction = function() {
                     function CubicBezierCurveInstruction(x1, y1, x2, y2, x3, y3) {
@@ -2200,12 +2422,14 @@
                 var value = libjass.parts[key];
                 if (value instanceof Function) {
                     addToString(value, key);
+                    libjass.webworker._registerClassPrototype(value.prototype);
                 }
             });
             Object.keys(libjass.parts.drawing).forEach(function(key) {
                 var value = libjass.parts.drawing[key];
                 if (value instanceof Function) {
                     addToString(value, "Drawing" + key);
+                    libjass.webworker._registerClassPrototype(value.prototype);
                 }
             });
         })(libjass.parts || (libjass.parts = {}));
@@ -2218,8 +2442,6 @@
              * @param {string} input
              * @param {string} rule
              * @return {*}
-             *
-             * @memberof libjass.parser
              */
             function parse(input, rule) {
                 var run = new ParserRun(input, rule);
@@ -2235,13 +2457,12 @@
             /**
              * This class represents a single run of the parser.
              *
-             * @constructor
-             *
              * @param {string} input
              * @param {string} rule
              *
+             * @constructor
+             * @memberOf libjass.parser
              * @private
-             * @memberof libjass.parser
              */
             var ParserRun = function() {
                 function ParserRun(input, rule) {
@@ -2263,11 +2484,11 @@
                  * @param {!ParseNode} parent
                  * @return {ParseNode}
                  */
-                ParserRun.prototype.parse_script = function(parent) {
+                ParserRun.prototype.parse_assScript = function(parent) {
                     var current = new ParseNode(parent);
                     current.value = Object.create(null);
                     while (this._haveMore()) {
-                        var scriptSectionNode = this.parse_scriptSection(current);
+                        var scriptSectionNode = this.parse_assScriptSection(current);
                         if (scriptSectionNode !== null) {
                             current.value[scriptSectionNode.value.name] = scriptSectionNode.value.contents;
                         } else if (this.read(current, "\n") === null) {
@@ -2281,11 +2502,11 @@
                  * @param {!ParseNode} parent
                  * @return {ParseNode}
                  */
-                ParserRun.prototype.parse_scriptSection = function(parent) {
+                ParserRun.prototype.parse_assScriptSection = function(parent) {
                     var current = new ParseNode(parent);
                     current.value = Object.create(null);
                     current.value.contents = null;
-                    var sectionHeaderNode = this.parse_scriptSectionHeader(current);
+                    var sectionHeaderNode = this.parse_assScriptSectionHeader(current);
                     if (sectionHeaderNode === null) {
                         parent.pop();
                         return null;
@@ -2293,10 +2514,10 @@
                     current.value.name = sectionHeaderNode.value;
                     var formatSpecifier = null;
                     while (this._haveMore() && this._peek() !== "[") {
-                        if (this.parse_scriptComment(current) !== null) {
+                        if (this.parse_assScriptComment(current) !== null) {
                             continue;
                         }
-                        var propertyNode = this.parse_scriptProperty(current);
+                        var propertyNode = this.parse_assScriptProperty(current);
                         if (propertyNode !== null) {
                             var property = propertyNode.value;
                             if (property.key === "Format") {
@@ -2336,7 +2557,7 @@
                  * @param {!ParseNode} parent
                  * @return {ParseNode}
                  */
-                ParserRun.prototype.parse_scriptSectionHeader = function(parent) {
+                ParserRun.prototype.parse_assScriptSectionHeader = function(parent) {
                     var current = new ParseNode(parent);
                     if (this.read(current, "[") === null) {
                         parent.pop();
@@ -2361,7 +2582,7 @@
                  * @param {!ParseNode} parent
                  * @return {ParseNode}
                  */
-                ParserRun.prototype.parse_scriptProperty = function(parent) {
+                ParserRun.prototype.parse_assScriptProperty = function(parent) {
                     var current = new ParseNode(parent);
                     current.value = Object.create(null);
                     var keyNode = new ParseNode(current, "");
@@ -2393,7 +2614,7 @@
                  * @param {!ParseNode} parent
                  * @return {ParseNode}
                  */
-                ParserRun.prototype.parse_scriptComment = function(parent) {
+                ParserRun.prototype.parse_assScriptComment = function(parent) {
                     var current = new ParseNode(parent);
                     if (this.read(current, ";") === null) {
                         parent.pop();
@@ -3650,6 +3871,168 @@
                 };
                 /**
                  * @param {!ParseNode} parent
+                 * @return {ParseNode}
+                 */
+                ParserRun.prototype.parse_srtScript = function(parent) {
+                    var current = new ParseNode(parent);
+                    current.value = [];
+                    while (this._haveMore()) {
+                        var dialogueNode = this.parse_srtDialogue(current);
+                        if (dialogueNode === null) {
+                            parent.pop();
+                            return null;
+                        }
+                        current.value.push(dialogueNode.value);
+                        if (this.read(current, "\n") === null && this._haveMore()) {
+                            parent.pop();
+                            return null;
+                        }
+                        while (this.read(current, "\n") !== null) {}
+                    }
+                    return current;
+                };
+                /**
+                 * @param {!ParseNode} parent
+                 * @return {ParseNode}
+                 */
+                ParserRun.prototype.parse_srtDialogue = function(parent) {
+                    var current = new ParseNode(parent);
+                    current.value = Object.create(null);
+                    current.value.bounds = Object.create(null);
+                    current.value.bounds.x1 = null;
+                    current.value.bounds.y1 = null;
+                    current.value.bounds.x2 = null;
+                    current.value.bounds.y2 = null;
+                    var numberNode = this.parse_unsignedDecimal(current);
+                    if (numberNode === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    current.value.number = parseInt(numberNode.value);
+                    if (this.read(current, "\n") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var startTimeNode = this.parse_srtTime(current);
+                    if (startTimeNode === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    current.value.start = startTimeNode.value;
+                    if (this.read(current, " --> ") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var endTimeNode = this.parse_srtTime(current);
+                    if (endTimeNode === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    current.value.end = endTimeNode.value;
+                    if (this.read(current, " ") !== null) {
+                        var positionNode = new ParseNode(current, "");
+                        for (var next = this._peek(); next !== "\n" && this._haveMore(); next = this._peek()) {
+                            positionNode.value += next;
+                        }
+                        current.value.bounds = positionNode.value;
+                    }
+                    if (this.read(current, "\n") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var lineNode = new ParseNode(current, "");
+                    while (this._peek() !== "\n" && this._haveMore()) {
+                        var currentLine = "";
+                        for (var next = this._peek(); currentLine[currentLine.length - 1] !== "\n" && this._haveMore(); next = this._peek()) {
+                            currentLine += next;
+                            lineNode.value += next;
+                        }
+                    }
+                    current.value.text = lineNode.value;
+                    if (current.value.text[current.value.text.length - 1] === "\n") {
+                        current.value.text = current.value.text.substr(0, current.value.text.length - 1);
+                    }
+                    return current;
+                };
+                /**
+                 * @param {!ParseNode} parent
+                 * @return {ParseNode}
+                 */
+                ParserRun.prototype.parse_srtTime = function(parent) {
+                    var current = new ParseNode(parent);
+                    var hourDigitNodes = new Array(2);
+                    for (var i = 0; i < hourDigitNodes.length; i++) {
+                        if (!this._haveMore()) {
+                            parent.pop();
+                            return null;
+                        }
+                        var next = this._peek();
+                        if (next >= "0" && next <= "9") {
+                            hourDigitNodes[i] = new ParseNode(current, next);
+                        } else {
+                            parent.pop();
+                            return null;
+                        }
+                    }
+                    if (this.read(current, ":") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var minuteDigitNodes = new Array(2);
+                    for (var i = 0; i < minuteDigitNodes.length; i++) {
+                        if (!this._haveMore()) {
+                            parent.pop();
+                            return null;
+                        }
+                        var next = this._peek();
+                        if (next >= "0" && next <= "9") {
+                            minuteDigitNodes[i] = new ParseNode(current, next);
+                        } else {
+                            parent.pop();
+                            return null;
+                        }
+                    }
+                    if (this.read(current, ":") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var secondDigitNodes = new Array(2);
+                    for (var i = 0; i < secondDigitNodes.length; i++) {
+                        if (!this._haveMore()) {
+                            parent.pop();
+                            return null;
+                        }
+                        var next = this._peek();
+                        if (next >= "0" && next <= "9") {
+                            secondDigitNodes[i] = new ParseNode(current, next);
+                        } else {
+                            parent.pop();
+                            return null;
+                        }
+                    }
+                    if (this.read(current, ",") === null) {
+                        parent.pop();
+                        return null;
+                    }
+                    var millisecondDigitNodes = new Array(3);
+                    for (var i = 0; i < millisecondDigitNodes.length; i++) {
+                        if (!this._haveMore()) {
+                            parent.pop();
+                            return null;
+                        }
+                        var next = this._peek();
+                        if (next >= "0" && next <= "9") {
+                            millisecondDigitNodes[i] = new ParseNode(current, next);
+                        } else {
+                            parent.pop();
+                            return null;
+                        }
+                    }
+                    current.value = hourDigitNodes[0].value + hourDigitNodes[1].value + ":" + minuteDigitNodes[0].value + minuteDigitNodes[1].value + ":" + secondDigitNodes[0].value + secondDigitNodes[1].value + "." + millisecondDigitNodes[0].value + millisecondDigitNodes[1].value + millisecondDigitNodes[2].value;
+                    return current;
+                };
+                /**
+                 * @param {!ParseNode} parent
                  * @param {string} next
                  * @return {ParseNode}
                  */
@@ -3753,7 +4136,7 @@
                     var valueNode = valueParser.call(self, current);
                     if (valueNode !== null) {
                         current.value = new tagConstructor(valueNode.value);
-                    } else if (required) {
+                    } else if (!required) {
                         current.value = new tagConstructor(null);
                     } else {
                         parent.pop();
@@ -3806,12 +4189,12 @@
             /**
              * This class represents a single parse node. It has a start and end position, and an optional value object.
              *
-             * @constructor
              * @param {ParseNode} parent The parent of this parse node. The parent's end position will be updated to the end position of this node whenever the latter changes.
              * @param {?string=null} value A shortcut to assign a string to the value property.
              *
+             * @constructor
+             * @memberOf libjass.parser
              * @private
-             * @memberof libjass.parser
              */
             var ParseNode = function() {
                 function ParseNode(parent, value) {
@@ -3927,36 +4310,156 @@
             }();
         })(libjass.parser || (libjass.parser = {}));
     })(libjass || (libjass = {}));
-    var __extends = function(d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() {
-            this.constructor = d;
-        }
-        __.prototype = b.prototype;
-        d.prototype = new __();
-    };
+    (function(libjass) {
+        (function(webworker) {
+            (function(WorkerCommands) {
+                WorkerCommands[WorkerCommands["Parse"] = 1] = "Parse";
+            })(webworker.WorkerCommands || (webworker.WorkerCommands = {}));
+            libjass.webworker._registerWorkerCommand(1, function(parameters, response) {
+                try {
+                    response(null, libjass.parser.parse(parameters.input, parameters.rule));
+                } catch (ex) {
+                    response(ex, null);
+                }
+            });
+        })(libjass.webworker || (libjass.webworker = {}));
+    })(libjass || (libjass = {}));
     (function(libjass) {
         (function(renderers) {
             /**
-             * A renderer implementation that doesn't output anything.
+             * A mixin class that represents an event source.
+             *
+             * @template T
              *
              * @constructor
+             * @memberOf libjass.renderers
+             */
+            var EventSource = function() {
+                function EventSource() {}
+                /**
+                 * Add a listener for the given event.
+                 *
+                 * @param {!T} type The type of event to attach the listener for
+                 * @param {!Function} listener The listener
+                 */
+                EventSource.prototype.addEventListener = function(type, listener) {
+                    var listeners = this._eventListeners.get(type);
+                    if (listeners === undefined) {
+                        this._eventListeners.set(type, listeners = []);
+                    }
+                    listeners.push(listener);
+                };
+                /**
+                 * @param {!T} type The type of event to dispatch
+                 * @param {!Array.<*>} args Arguments for the listeners of the event
+                 */
+                EventSource.prototype._dispatchEvent = function(type, args) {
+                    var _this = this;
+                    var listeners = this._eventListeners.get(type);
+                    if (listeners !== undefined) {
+                        listeners.forEach(function(listener) {
+                            listener.apply(_this, args);
+                        });
+                    }
+                };
+                return EventSource;
+            }();
+            renderers.EventSource = EventSource;
+            (function(ClockEvent) {
+                ClockEvent[ClockEvent["Play"] = 0] = "Play";
+                ClockEvent[ClockEvent["Pause"] = 1] = "Pause";
+                ClockEvent[ClockEvent["TimeUpdate"] = 2] = "TimeUpdate";
+            })(renderers.ClockEvent || (renderers.ClockEvent = {}));
+            /**
+             * An implementation of libjass.renderers.Clock that allows user script to manually trigger play, pause and timeUpdate events.
+             *
+             * @constructor
+             * @memberOf libjass.renderers
+             */
+            var ManualClock = function() {
+                function ManualClock() {
+                    this._currentTime = -1;
+                    // EventSource members
+                    this._eventListeners = new libjass.Map();
+                }
+                /**
+                 * Trigger a play event.
+                 */
+                ManualClock.prototype.play = function() {
+                    this._dispatchEvent(0, []);
+                };
+                /**
+                 * Trigger a pause event.
+                 */
+                ManualClock.prototype.pause = function() {
+                    this._dispatchEvent(1, []);
+                };
+                /**
+                 * Trigger a timeUpdate event with the given current time.
+                 *
+                 * @param {number} currentTime
+                 */
+                ManualClock.prototype.timeUpdate = function(currentTime) {
+                    this._currentTime = currentTime;
+                    this._dispatchEvent(2, []);
+                };
+                Object.defineProperty(ManualClock.prototype, "currentTime", {
+                    /**
+                     * @type {number}
+                     */
+                    get: function() {
+                        return this._currentTime;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(ManualClock.prototype, "enabled", {
+                    /**
+                     * @type {boolean}
+                     */
+                    get: function() {
+                        return true;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                /**
+                 * Enable the clock. This is a no-op for this type.
+                 */
+                ManualClock.prototype.enable = function() {};
+                /**
+                 * Disable the clock. This is a no-op for this type.
+                 */
+                ManualClock.prototype.disable = function() {};
+                /**
+                 * Toggle the clock. This is a no-op for this type.
+                 */
+                ManualClock.prototype.toggle = function() {};
+                return ManualClock;
+            }();
+            renderers.ManualClock = ManualClock;
+            libjass.mixin(ManualClock, [ EventSource ]);
+            var VideoClockState;
+            (function(VideoClockState) {
+                VideoClockState[VideoClockState["Playing"] = 0] = "Playing";
+                VideoClockState[VideoClockState["Paused"] = 1] = "Paused";
+            })(VideoClockState || (VideoClockState = {}));
+            /**
+             * An implementation of libjass.renderers.Clock that generates play, pause and timeUpdate events according to the state of a <video> element.
              *
              * @param {!HTMLVideoElement} video
-             * @param {!libjass.ASS} ass
-             * @param {!libjass.renderers.RendererSettings} settings
              *
-             * @memberof libjass.renderers
+             * @constructor
+             * @memberOf libjass.renderers
              */
-            var NullRenderer = function() {
-                function NullRenderer(video, ass, settings) {
+            var VideoClock = function() {
+                function VideoClock(video) {
                     var _this = this;
                     this._video = video;
-                    this._ass = ass;
                     this._enabled = true;
                     this._nextAnimationFrameRequestId = null;
-                    this._id = ++NullRenderer._lastRendererId;
-                    this._settings = RendererSettings.from(settings);
+                    // EventSource members
+                    this._eventListeners = new libjass.Map();
                     this._video.addEventListener("playing", function() {
                         return _this._onVideoPlaying();
                     }, false);
@@ -3967,6 +4470,155 @@
                         return _this._onVideoSeeking();
                     }, false);
                 }
+                Object.defineProperty(VideoClock.prototype, "currentTime", {
+                    /**
+                     * @type {number}
+                     */
+                    get: function() {
+                        return this._currentTime;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(VideoClock.prototype, "enabled", {
+                    /**
+                     * @type {boolean}
+                     */
+                    get: function() {
+                        return this._enabled;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                /**
+                 * Enable the clock.
+                 */
+                VideoClock.prototype.enable = function() {
+                    if (this._enabled) {
+                        return;
+                    }
+                    this._enabled = true;
+                    this._onVideoPlaying();
+                };
+                /**
+                 * Disable the clock.
+                 */
+                VideoClock.prototype.disable = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    this._onVideoPause();
+                    this._enabled = false;
+                };
+                /**
+                 * Toggle the clock.
+                 */
+                VideoClock.prototype.toggle = function() {
+                    if (this._enabled) {
+                        this.disable();
+                    } else {
+                        this.enable();
+                    }
+                };
+                VideoClock.prototype._onVideoPlaying = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    if (this._state === 0) {
+                        return;
+                    }
+                    this._state = 0;
+                    this._dispatchEvent(0, []);
+                    if (this._nextAnimationFrameRequestId === null) {
+                        this._timerTick();
+                    }
+                };
+                VideoClock.prototype._onVideoPause = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    this._state = 1;
+                    this._dispatchEvent(1, []);
+                    if (this._nextAnimationFrameRequestId === null) {
+                        if (libjass.debugMode) {
+                            console.warn("VideoClock._onVideoPause: Abnormal state detected. VideoClock._nextAnimationFrameRequestId should not have been null");
+                        }
+                    }
+                    cancelAnimationFrame(this._nextAnimationFrameRequestId);
+                    this._nextAnimationFrameRequestId = null;
+                    if (libjass.verboseMode) {
+                        console.log("VideoClock._onVideoPause: Cancelled VideoClock._nextAnimationFrameRequestId");
+                    }
+                };
+                VideoClock.prototype._onVideoSeeking = function() {
+                    if (!this._enabled) {
+                        return;
+                    }
+                    if (this._currentTime === this._video.currentTime) {
+                        return;
+                    }
+                    if (this._state !== 1) {
+                        return;
+                    }
+                    this._currentTime = this._video.currentTime;
+                    this._dispatchEvent(0, []);
+                    this._dispatchEvent(2, []);
+                    this._dispatchEvent(1, []);
+                };
+                VideoClock.prototype._timerTick = function() {
+                    var _this = this;
+                    if (this._currentTime !== this._video.currentTime) {
+                        this._currentTime = this._video.currentTime;
+                        if (this._state !== 0) {
+                            this._state = 0;
+                            this._dispatchEvent(0, []);
+                        }
+                        this._dispatchEvent(2, []);
+                    } else {
+                        if (this._state !== 1) {
+                            this._state = 1;
+                            this._dispatchEvent(1, []);
+                        }
+                    }
+                    this._nextAnimationFrameRequestId = requestAnimationFrame(function() {
+                        return _this._timerTick();
+                    });
+                };
+                return VideoClock;
+            }();
+            renderers.VideoClock = VideoClock;
+            libjass.mixin(VideoClock, [ EventSource ]);
+        })(libjass.renderers || (libjass.renderers = {}));
+    })(libjass || (libjass = {}));
+    (function(libjass) {
+        (function(renderers) {
+            /**
+             * A renderer implementation that doesn't output anything.
+             *
+             * @param {!libjass.ASS} ass
+             * @param {!libjass.renderers.Clock} clock
+             * @param {!libjass.renderers.RendererSettings} settings
+             *
+             * @constructor
+             * @memberOf libjass.renderers
+             */
+            var NullRenderer = function() {
+                function NullRenderer(ass, clock, settings) {
+                    var _this = this;
+                    this._ass = ass;
+                    this._clock = clock;
+                    this._id = ++NullRenderer._lastRendererId;
+                    this._settings = RendererSettings.from(settings);
+                    this._clock.addEventListener(0, function() {
+                        return _this._onClockPlay();
+                    });
+                    this._clock.addEventListener(1, function() {
+                        return _this._onClockPause();
+                    });
+                    this._clock.addEventListener(2, function() {
+                        return _this._onClockTimeUpdate();
+                    });
+                }
                 Object.defineProperty(NullRenderer.prototype, "id", {
                     /**
                      * The unique ID of this renderer. Auto-generated.
@@ -3975,16 +4627,6 @@
                      */
                     get: function() {
                         return this._id;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(NullRenderer.prototype, "video", {
-                    /**
-                     * @type {!HTMLVideoElement}
-                     */
-                    get: function() {
-                        return this._video;
                     },
                     enumerable: true,
                     configurable: true
@@ -3999,6 +4641,16 @@
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(NullRenderer.prototype, "clock", {
+                    /**
+                     * @type {!libjass.renderers.Clock}
+                     */
+                    get: function() {
+                        return this._clock;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 Object.defineProperty(NullRenderer.prototype, "settings", {
                     /**
                      * @type {!libjass.renderers.RendererSettings}
@@ -4009,785 +4661,64 @@
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(NullRenderer.prototype, "currentTime", {
-                    /**
-                     * @type {number}
-                     */
-                    get: function() {
-                        return this._currentTime;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
-                Object.defineProperty(NullRenderer.prototype, "enabled", {
-                    get: function() {
-                        return this._enabled;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 /**
-                 * Enable the renderer.
-                 */
-                NullRenderer.prototype.enable = function() {
-                    if (this._enabled) {
-                        return;
-                    }
-                    this._enabled = true;
-                    this._onVideoPlaying();
-                };
-                /**
-                 * Disable the renderer.
-                 */
-                NullRenderer.prototype.disable = function() {
-                    if (!this._enabled) {
-                        return;
-                    }
-                    this._onVideoPause();
-                    this._enabled = false;
-                };
-                /**
-                 * Toggle the renderer.
-                 */
-                NullRenderer.prototype.toggle = function() {
-                    if (this._enabled) {
-                        this.disable();
-                    } else {
-                        this.enable();
-                    }
-                };
-                /**
-                 * Pre-render a dialogue. This is a no-op.
+                 * Pre-render a dialogue. This is a no-op for this type.
                  *
                  * @param {!libjass.Dialogue} dialogue
                  */
                 NullRenderer.prototype.preRender = function() {};
                 /**
-                 * Draw a dialogue. This is a no-op.
+                 * Draw a dialogue. This is a no-op for this type.
                  *
                  * @param {!libjass.Dialogue} dialogue
                  */
                 NullRenderer.prototype.draw = function() {};
                 /**
-                 * Runs when the video starts playing, or is resumed from pause.
+                 * Runs when the clock starts playing, or is resumed from pause.
                  */
-                NullRenderer.prototype.onVideoPlaying = function() {
+                NullRenderer.prototype._onClockPlay = function() {
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoPlaying: " + this._getStateLogString());
+                        console.log("NullRenderer._onClockPlay");
                     }
                 };
                 /**
-                 * Runs when the video is paused.
+                 * Runs when the clock is paused.
                  */
-                NullRenderer.prototype.onVideoPause = function() {
+                NullRenderer.prototype._onClockPause = function() {
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoPause: " + this._getStateLogString());
+                        console.log("NullRenderer._onClockPause");
                     }
                 };
                 /**
-                 * Runs when the video's current time changed. This might be a result of either regular playback or seeking.
+                 * Runs when the clock's current time changed. This might be a result of either regular playback or seeking.
                  */
-                NullRenderer.prototype.onVideoTimeUpdate = function() {
+                NullRenderer.prototype._onClockTimeUpdate = function() {
+                    var currentTime = this.clock.currentTime;
                     if (libjass.verboseMode) {
-                        console.log("NullRenderer.onVideoTimeUpdate: " + this._getStateLogString());
+                        console.log("NullRenderer._onClockTimeUpdate: currentTime = " + currentTime);
                     }
                     for (var i = 0; i < this._ass.dialogues.length; i++) {
                         var dialogue = this._ass.dialogues[i];
-                        if (dialogue.end > this._currentTime) {
-                            if (dialogue.start <= this._currentTime) {
+                        if (dialogue.end > currentTime) {
+                            if (dialogue.start <= currentTime) {
                                 // This dialogue is visible right now. Draw it.
                                 this.draw(dialogue);
-                            } else if (dialogue.start <= this._currentTime + this._settings.preRenderTime) {
+                            } else if (dialogue.start <= currentTime + this._settings.preRenderTime) {
                                 // This dialogue will be visible soon. Pre-render it.
                                 this.preRender(dialogue);
                             }
                         }
                     }
                 };
-                NullRenderer.prototype._timerTick = function() {
-                    var _this = this;
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._timerTick: " + this._getStateLogString());
-                    }
-                    if (this._currentTime !== this._video.currentTime) {
-                        this._currentTime = this._video.currentTime;
-                        if (this._state !== 0) {
-                            this._state = 0;
-                            this.onVideoPlaying();
-                        }
-                        this.onVideoTimeUpdate();
-                    } else {
-                        if (this._state !== 1) {
-                            this._state = 1;
-                            this.onVideoPause();
-                        }
-                    }
-                    this._nextAnimationFrameRequestId = requestAnimationFrame(function() {
-                        return _this._timerTick();
-                    });
-                };
-                NullRenderer.prototype._onVideoPlaying = function() {
-                    if (!this._enabled) {
-                        return;
-                    }
-                    if (this._state === 0) {
-                        return;
-                    }
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPlaying: " + this._getStateLogString());
-                    }
-                    this._state = 0;
-                    this.onVideoPlaying();
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPlaying: Set NullRenderer._nextAnimationFrameRequestId to " + this._nextAnimationFrameRequestId);
-                    }
-                    if (this._nextAnimationFrameRequestId === null) {
-                        this._timerTick();
-                    }
-                };
-                NullRenderer.prototype._onVideoPause = function() {
-                    if (!this._enabled) {
-                        return;
-                    }
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPause: " + this._getStateLogString());
-                    }
-                    this._state = 1;
-                    this.onVideoPause();
-                    if (this._nextAnimationFrameRequestId === null) {
-                        if (libjass.debugMode) {
-                            console.warn("NullRenderer._onVideoPause: Abnormal state detected. NullRenderer._nextAnimationFrameRequestId should not have been null");
-                        }
-                    }
-                    cancelAnimationFrame(this._nextAnimationFrameRequestId);
-                    this._nextAnimationFrameRequestId = null;
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoPause: Cancelled NullRenderer._nextAnimationFrameRequestId");
-                    }
-                };
-                NullRenderer.prototype._onVideoSeeking = function() {
-                    if (!this._enabled) {
-                        return;
-                    }
-                    if (libjass.verboseMode) {
-                        console.log("NullRenderer._onVideoSeeking: " + this._getStateLogString());
-                    }
-                    if (this._currentTime === this._video.currentTime) {
-                        return;
-                    }
-                    if (this._state !== 1) {
-                        return;
-                    }
-                    this._currentTime = this._video.currentTime;
-                    this.onVideoPlaying();
-                    this.onVideoTimeUpdate();
-                    this.onVideoPause();
-                };
-                NullRenderer.prototype._getStateLogString = function() {
-                    return "state = " + RendererState[this._state] + ", video.currentTime = " + this._video.currentTime + ", video.paused = " + this._video.paused + ", video.seeking = " + this._video.seeking;
-                };
                 NullRenderer._lastRendererId = -1;
                 return NullRenderer;
             }();
             renderers.NullRenderer = NullRenderer;
-            var RendererState;
-            (function(RendererState) {
-                RendererState[RendererState["Playing"] = 0] = "Playing";
-                RendererState[RendererState["Paused"] = 1] = "Paused";
-            })(RendererState || (RendererState = {}));
             /**
-             * A default renderer implementation.
+             * Settings for the renderer.
              *
              * @constructor
-             * @extends {libjass.renderers.NullRenderer}
-             *
-             * @param {!HTMLVideoElement} video
-             * @param {!libjass.ASS} ass
-             * @param {!libjass.renderers.RendererSettings} settings
-             *
-             * @memberof libjass.renderers
-             */
-            var DefaultRenderer = function(_super) {
-                __extends(DefaultRenderer, _super);
-                function DefaultRenderer(video, ass, settings) {
-                    var _this = this;
-                    _super.call(this, video, ass, settings);
-                    this._layerWrappers = [];
-                    this._layerAlignmentWrappers = [];
-                    this._fontSizeElement = null;
-                    this._animationStyleElement = null;
-                    this._svgDefsElement = null;
-                    this._currentSubs = new libjass.Map();
-                    this._preRenderedSubs = new libjass.Map();
-                    this._videoIsFullScreen = false;
-                    this._eventListeners = new libjass.Map();
-                    this._videoSubsWrapper = document.createElement("div");
-                    video.parentElement.replaceChild(this._videoSubsWrapper, video);
-                    this._videoSubsWrapper.className = "libjass-wrapper";
-                    this._videoSubsWrapper.appendChild(video);
-                    this._subsWrapper = document.createElement("div");
-                    this._videoSubsWrapper.appendChild(this._subsWrapper);
-                    this._subsWrapper.className = "libjass-subs";
-                    this._fontSizeElement = document.createElement("div");
-                    this._videoSubsWrapper.appendChild(this._fontSizeElement);
-                    this._fontSizeElement.className = "libjass-font-measure";
-                    this._fontSizeElement.appendChild(document.createTextNode("M"));
-                    var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    this._videoSubsWrapper.appendChild(svgElement);
-                    svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                    svgElement.setAttribute("version", "1.1");
-                    svgElement.setAttribute("class", "libjass-filters");
-                    svgElement.setAttribute("width", "0");
-                    svgElement.setAttribute("height", "0");
-                    this._svgDefsElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-                    svgElement.appendChild(this._svgDefsElement);
-                    if (this.settings.fontMap === null) {
-                        setTimeout(function() {
-                            return _this._ready();
-                        }, 0);
-                    } else {
-                        var urlsToPreload = [];
-                        this.settings.fontMap.forEach(function(src) {
-                            urlsToPreload.unshift.apply(urlsToPreload, src);
-                        });
-                        var urlsLeftToPreload = urlsToPreload.length;
-                        if (libjass.debugMode) {
-                            console.log("Preloading fonts...");
-                        }
-                        urlsToPreload.forEach(function(url) {
-                            var xhr = new XMLHttpRequest();
-                            xhr.open("GET", url, true);
-                            xhr.addEventListener("readystatechange", function() {
-                                if (xhr.readyState === XMLHttpRequest.DONE) {
-                                    if (libjass.debugMode) {
-                                        console.log("Preloaded " + url + ".");
-                                    }
-                                    --urlsLeftToPreload;
-                                    if (libjass.debugMode) {
-                                        console.log(urlsLeftToPreload + " fonts left to preload.");
-                                    }
-                                    if (urlsLeftToPreload === 0) {
-                                        if (libjass.debugMode) {
-                                            console.log("All fonts have been preloaded.");
-                                        }
-                                        _this._ready();
-                                    }
-                                }
-                            }, false);
-                            xhr.send(null);
-                            return xhr;
-                        });
-                        if (libjass.debugMode) {
-                            console.log(urlsLeftToPreload + " fonts left to preload.");
-                        }
-                        if (urlsLeftToPreload === 0) {
-                            setTimeout(function() {
-                                if (libjass.debugMode) {
-                                    console.log("All fonts have been preloaded.");
-                                }
-                                _this._ready();
-                            }, 0);
-                        }
-                    }
-                    this._eventListeners.set("ready", []);
-                    this._eventListeners.set("fullScreenChange", []);
-                }
-                /**
-                 * Add a listener for the given event.
-                 *
-                 * The "ready" event is fired when fonts have been preloaded if settings.preLoadFonts is true, or in the next tick after the DefaultRenderer object is constructed otherwise.
-                 *
-                 * The "fullScreenChange" event is fired when the browser's fullscreenchange event is fired for the video element.
-                 *
-                 * @param {string} type The type of event to attach the listener for. One of "ready" and "fullScreenChange".
-                 * @param {!Function} listener The listener
-                 */
-                DefaultRenderer.prototype.addEventListener = function(type, listener) {
-                    var listeners = this._eventListeners.get(type);
-                    if (listeners !== null) {
-                        listeners.push(listener);
-                    }
-                };
-                /**
-                 * Resize the subtitles to the given new dimensions.
-                 *
-                 * @param {number} width
-                 * @param {number} height
-                 */
-                DefaultRenderer.prototype.resize = function(width, height) {
-                    this._removeAllSubs();
-                    var ratio = Math.min(width / this.ass.properties.resolutionX, height / this.ass.properties.resolutionY);
-                    var subsWrapperWidth = this.ass.properties.resolutionX * ratio;
-                    var subsWrapperHeight = this.ass.properties.resolutionY * ratio;
-                    this._subsWrapper.style.width = subsWrapperWidth.toFixed(3) + "px";
-                    this._subsWrapper.style.height = subsWrapperHeight.toFixed(3) + "px";
-                    this._subsWrapper.style.left = ((width - subsWrapperWidth) / 2).toFixed(3) + "px";
-                    this._subsWrapper.style.top = ((height - subsWrapperHeight) / 2).toFixed(3) + "px";
-                    this._scaleX = subsWrapperWidth / this.ass.properties.resolutionX;
-                    this._scaleY = subsWrapperHeight / this.ass.properties.resolutionY;
-                    // Any dialogues which have been pre-rendered will need to be pre-rendered again.
-                    this._preRenderedSubs.clear();
-                    if (this._animationStyleElement !== null) {
-                        while (this._animationStyleElement.firstChild !== null) {
-                            this._animationStyleElement.removeChild(this._animationStyleElement.firstChild);
-                        }
-                    }
-                    while (this._svgDefsElement.firstChild !== null) {
-                        this._svgDefsElement.removeChild(this._svgDefsElement.firstChild);
-                    }
-                    // this.currentTime will be undefined if resize() is called before video begins playing for the first time. In this situation, there is no need to force a redraw.
-                    if (this.currentTime !== undefined) {
-                        this.onVideoTimeUpdate();
-                    }
-                };
-                /**
-                 * @deprecated
-                 */
-                DefaultRenderer.prototype.resizeVideo = function(width, height) {
-                    console.warn("`DefaultRenderer.resizeVideo(width, height)` has been deprecated. Use `DefaultRenderer.resize(width, height)` instead.");
-                    this.resize(width, height);
-                };
-                DefaultRenderer.prototype.enable = function() {
-                    _super.prototype.enable.call(this);
-                    this._subsWrapper.style.display = "";
-                };
-                DefaultRenderer.prototype.disable = function() {
-                    _super.prototype.disable.call(this);
-                    this._subsWrapper.style.display = "none";
-                };
-                /**
-                 * The magic happens here. The subtitle div is rendered and stored. Call draw() to get a clone of the div to display.
-                 *
-                 * @param {!libjass.Dialogue} dialogue
-                 */
-                DefaultRenderer.prototype.preRender = function(dialogue) {
-                    var _this = this;
-                    if (this._preRenderedSubs.has(dialogue.id)) {
-                        return;
-                    }
-                    var sub = document.createElement("div");
-                    sub.style.marginLeft = (this._scaleX * dialogue.style.marginLeft).toFixed(3) + "px";
-                    sub.style.marginRight = (this._scaleX * dialogue.style.marginRight).toFixed(3) + "px";
-                    sub.style.marginTop = sub.style.marginBottom = (this._scaleY * dialogue.style.marginVertical).toFixed(3) + "px";
-                    sub.style.minWidth = (this._subsWrapper.offsetWidth - 2 * (this._scaleX * dialogue.style.marginLeft)).toFixed(3) + "px";
-                    switch (dialogue.alignment) {
-                      case 1:
-                      case 4:
-                      case 7:
-                        sub.style.textAlign = "left";
-                        break;
-
-                      case 2:
-                      case 5:
-                      case 8:
-                        sub.style.textAlign = "center";
-                        break;
-
-                      case 3:
-                      case 6:
-                      case 9:
-                        sub.style.textAlign = "right";
-                        break;
-                    }
-                    var animationCollection = new AnimationCollection(this, dialogue);
-                    var currentSpan = null;
-                    var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._fontSizeElement, this._svgDefsElement);
-                    var startNewSpan = function(addNewLine) {
-                        if (currentSpan !== null && currentSpan.textContent !== "") {
-                            sub.appendChild(currentSpanStyles.setStylesOnSpan(currentSpan));
-                        }
-                        if (addNewLine) {
-                            sub.appendChild(document.createElement("br"));
-                        }
-                        currentSpan = document.createElement("span");
-                    };
-                    startNewSpan(false);
-                    var currentDrawing = null;
-                    var wrappingStyle = this.ass.properties.wrappingStyle;
-                    dialogue.parts.forEach(function(part) {
-                        if (part instanceof libjass.parts.Italic) {
-                            currentSpanStyles.italic = part.value;
-                        } else if (part instanceof libjass.parts.Bold) {
-                            currentSpanStyles.bold = part.value;
-                        } else if (part instanceof libjass.parts.Underline) {
-                            currentSpanStyles.underline = part.value;
-                        } else if (part instanceof libjass.parts.StrikeThrough) {
-                            currentSpanStyles.strikeThrough = part.value;
-                        } else if (part instanceof libjass.parts.Border) {
-                            currentSpanStyles.outlineWidth = part.value;
-                            currentSpanStyles.outlineHeight = part.value;
-                        } else if (part instanceof libjass.parts.BorderX) {
-                            currentSpanStyles.outlineWidth = part.value;
-                        } else if (part instanceof libjass.parts.BorderY) {
-                            currentSpanStyles.outlineHeight = part.value;
-                        } else if (part instanceof libjass.parts.Shadow) {
-                            currentSpanStyles.shadowDepthX = part.value;
-                            currentSpanStyles.shadowDepthY = part.value;
-                        } else if (part instanceof libjass.parts.ShadowX) {
-                            currentSpanStyles.shadowDepthX = part.value;
-                        } else if (part instanceof libjass.parts.ShadowY) {
-                            currentSpanStyles.shadowDepthY = part.value;
-                        } else if (part instanceof libjass.parts.GaussianBlur) {
-                            currentSpanStyles.blur = part.value;
-                        } else if (part instanceof libjass.parts.FontName) {
-                            currentSpanStyles.fontName = part.value;
-                        } else if (part instanceof libjass.parts.FontSize) {
-                            currentSpanStyles.fontSize = part.value;
-                        } else if (part instanceof libjass.parts.FontScaleX) {
-                            currentSpanStyles.fontScaleX = part.value;
-                        } else if (part instanceof libjass.parts.FontScaleY) {
-                            currentSpanStyles.fontScaleY = part.value;
-                        } else if (part instanceof libjass.parts.LetterSpacing) {
-                            currentSpanStyles.letterSpacing = part.value;
-                        } else if (part instanceof libjass.parts.RotateX) {
-                            currentSpanStyles.rotationX = part.value;
-                        } else if (part instanceof libjass.parts.RotateY) {
-                            currentSpanStyles.rotationY = part.value;
-                        } else if (part instanceof libjass.parts.RotateZ) {
-                            currentSpanStyles.rotationZ = part.value;
-                        } else if (part instanceof libjass.parts.SkewX) {
-                            currentSpanStyles.skewX = part.value;
-                        } else if (part instanceof libjass.parts.SkewY) {
-                            currentSpanStyles.skewY = part.value;
-                        } else if (part instanceof libjass.parts.PrimaryColor) {
-                            currentSpanStyles.primaryColor = part.value;
-                        } else if (part instanceof libjass.parts.SecondaryColor) {
-                            currentSpanStyles.secondaryColor = part.value;
-                        } else if (part instanceof libjass.parts.OutlineColor) {
-                            currentSpanStyles.outlineColor = part.value;
-                        } else if (part instanceof libjass.parts.ShadowColor) {
-                            currentSpanStyles.shadowColor = part.value;
-                        } else if (part instanceof libjass.parts.Alpha) {
-                            currentSpanStyles.primaryAlpha = part.value;
-                            currentSpanStyles.secondaryAlpha = part.value;
-                            currentSpanStyles.outlineAlpha = part.value;
-                            currentSpanStyles.shadowAlpha = part.value;
-                        } else if (part instanceof libjass.parts.PrimaryAlpha) {
-                            currentSpanStyles.primaryAlpha = part.value;
-                        } else if (part instanceof libjass.parts.SecondaryAlpha) {
-                            currentSpanStyles.secondaryAlpha = part.value;
-                        } else if (part instanceof libjass.parts.OutlineAlpha) {
-                            currentSpanStyles.outlineAlpha = part.value;
-                        } else if (part instanceof libjass.parts.ShadowAlpha) {
-                            currentSpanStyles.shadowAlpha = part.value;
-                        } else if (part instanceof libjass.parts.Alignment) {} else if (part instanceof libjass.parts.WrappingStyle) {
-                            wrappingStyle = part.value;
-                        } else if (part instanceof libjass.parts.Reset) {
-                            var newStyleName = part.value;
-                            var newStyle = null;
-                            if (newStyleName !== null) {
-                                newStyle = _this.ass.styles[newStyleName];
-                            }
-                            currentSpanStyles.reset(newStyle);
-                        } else if (part instanceof libjass.parts.Position) {
-                            var positionPart = part;
-                            sub.style.position = "absolute";
-                            sub.style.left = (_this._scaleX * positionPart.x).toFixed(3) + "px";
-                            sub.style.top = (_this._scaleY * positionPart.y).toFixed(3) + "px";
-                        } else if (part instanceof libjass.parts.Move) {
-                            var movePart = part;
-                            sub.style.position = "absolute";
-                            animationCollection.addCustom("linear", [ new Keyframe(0, {
-                                left: (_this._scaleX * movePart.x1).toFixed(3) + "px",
-                                top: (_this._scaleY * movePart.y1).toFixed(3) + "px"
-                            }), new Keyframe(movePart.t1, {
-                                left: (_this._scaleX * movePart.x1).toFixed(3) + "px",
-                                top: (_this._scaleY * movePart.y1).toFixed(3) + "px"
-                            }), new Keyframe(movePart.t2, {
-                                left: (_this._scaleX * movePart.x2).toFixed(3) + "px",
-                                top: (_this._scaleY * movePart.y2).toFixed(3) + "px"
-                            }), new Keyframe(dialogue.end - dialogue.start, {
-                                left: (_this._scaleX * movePart.x2).toFixed(3) + "px",
-                                top: (_this._scaleY * movePart.y2).toFixed(3) + "px"
-                            }) ]);
-                        } else if (part instanceof libjass.parts.Fade) {
-                            var fadePart = part;
-                            if (fadePart.start !== 0) {
-                                animationCollection.addFadeIn(0, fadePart.start);
-                            }
-                            if (fadePart.end !== 0) {
-                                animationCollection.addFadeOut(dialogue.end - dialogue.start - fadePart.end, fadePart.end);
-                            }
-                        } else if (part instanceof libjass.parts.ComplexFade) {
-                            var complexFadePart = part;
-                            animationCollection.addCustom("linear", [ new Keyframe(0, {
-                                opacity: String(complexFadePart.a1)
-                            }), new Keyframe(complexFadePart.t1, {
-                                opacity: String(complexFadePart.a1)
-                            }), new Keyframe(complexFadePart.t2, {
-                                opacity: String(complexFadePart.a2)
-                            }), new Keyframe(complexFadePart.t3, {
-                                opacity: String(complexFadePart.a2)
-                            }), new Keyframe(complexFadePart.t4, {
-                                opacity: String(complexFadePart.a3)
-                            }), new Keyframe(dialogue.end, {
-                                opacity: String(complexFadePart.a3)
-                            }) ]);
-                        } else if (part instanceof libjass.parts.DrawingMode) {
-                            currentDrawing = new Drawing(part.scale, _this._scaleX, _this._scaleY);
-                        } else if (part instanceof libjass.parts.DrawingBaselineOffset) {
-                            currentDrawing.baselineOffset = part.value;
-                        } else if (part instanceof libjass.parts.DrawingInstructions) {
-                            currentDrawing.instructions = part.instructions;
-                            currentSpan.appendChild(currentDrawing.toSVG(currentSpanStyles.primaryColor));
-                            currentDrawing = null;
-                            startNewSpan(false);
-                        } else if (part instanceof libjass.parts.Text || libjass.debugMode && part instanceof libjass.parts.Comment) {
-                            currentSpan.appendChild(document.createTextNode(part.value));
-                            startNewSpan(false);
-                        } else if (part instanceof libjass.parts.NewLine) {
-                            startNewSpan(true);
-                        }
-                    });
-                    dialogue.parts.some(function(part) {
-                        if (part instanceof libjass.parts.Position || part instanceof libjass.parts.Move) {
-                            var transformOriginParts = DefaultRenderer._getTransformOrigin(dialogue);
-                            var translateX = -transformOriginParts[0];
-                            var translateY = -transformOriginParts[1];
-                            var divTransformStyle = "translate(" + translateX + "%, " + translateY + "%) translate(-" + sub.style.marginLeft + ", -" + sub.style.marginTop + ")";
-                            var transformOriginString = transformOriginParts[0] + "% " + transformOriginParts[1] + "%";
-                            sub.style.webkitTransform = divTransformStyle;
-                            sub.style.webkitTransformOrigin = transformOriginString;
-                            sub.style.transform = divTransformStyle;
-                            sub.style.transformOrigin = transformOriginString;
-                            return true;
-                        }
-                        return false;
-                    });
-                    switch (wrappingStyle) {
-                      case 0:
-                      case 3:
-                        sub.style.whiteSpace = "pre-wrap";
-                        break;
-
-                      case 1:
-                      case 2:
-                        sub.style.whiteSpace = "pre";
-                        break;
-                    }
-                    if (this._animationStyleElement === null) {
-                        this._animationStyleElement = document.createElement("style");
-                        this._animationStyleElement.id = "libjass-animation-styles-" + this.id;
-                        this._animationStyleElement.type = "text/css";
-                        document.querySelector("head").appendChild(this._animationStyleElement);
-                    }
-                    this._animationStyleElement.appendChild(document.createTextNode(animationCollection.cssText));
-                    sub.style.webkitAnimation = animationCollection.animationStyle;
-                    sub.style.animation = animationCollection.animationStyle;
-                    sub.setAttribute("data-dialogue-id", this.id + "-" + dialogue.id);
-                    this._preRenderedSubs.set(dialogue.id, sub);
-                };
-                /**
-                 * Returns the subtitle div for display. The currentTime is used to shift the animations appropriately, so that at the time the
-                 * div is inserted into the DOM and the animations begin, they are in sync with the video time.
-                 *
-                 * @param {!libjass.Dialogue} dialogue
-                 */
-                DefaultRenderer.prototype.draw = function(dialogue) {
-                    var _this = this;
-                    if (this._currentSubs.has(dialogue)) {
-                        return;
-                    }
-                    if (libjass.debugMode) {
-                        console.log(dialogue.toString());
-                    }
-                    var preRenderedSub = this._preRenderedSubs.get(dialogue.id);
-                    if (preRenderedSub === undefined) {
-                        if (libjass.debugMode) {
-                            console.warn("This dialogue was not pre-rendered. Call preRender() before calling draw() so that draw() is faster.");
-                        }
-                        this.preRender(dialogue);
-                        preRenderedSub = this._preRenderedSubs.get(dialogue.id);
-                        if (libjass.debugMode) {
-                            console.log(dialogue.toString());
-                        }
-                    }
-                    var result = preRenderedSub.cloneNode(true);
-                    var defaultAnimationDelay = result.style.webkitAnimationDelay;
-                    if (defaultAnimationDelay === undefined) {
-                        defaultAnimationDelay = result.style.animationDelay;
-                    }
-                    if (defaultAnimationDelay !== "") {
-                        var animationDelay = defaultAnimationDelay.split(",").map(function(delay) {
-                            return (parseFloat(delay) + dialogue.start - _this.currentTime).toFixed(3) + "s";
-                        }).join(",");
-                        result.style.webkitAnimationDelay = animationDelay;
-                        result.style.animationDelay = animationDelay;
-                    }
-                    var layer = dialogue.layer;
-                    var alignment = result.style.position === "absolute" ? 0 : dialogue.alignment;
-                    // Create the layer wrapper div and the alignment div inside it if not already created
-                    if (this._layerWrappers[layer] === undefined) {
-                        var layerWrapper = document.createElement("div");
-                        layerWrapper.className = "layer layer" + layer;
-                        // Find the next greater layer div and insert this div before that one
-                        var insertBeforeElement = null;
-                        for (var insertBeforeLayer = layer + 1; insertBeforeLayer < this._layerWrappers.length && insertBeforeElement === null; insertBeforeLayer++) {
-                            if (this._layerWrappers[insertBeforeLayer] !== undefined) {
-                                insertBeforeElement = this._layerWrappers[insertBeforeLayer];
-                            }
-                        }
-                        this._subsWrapper.insertBefore(layerWrapper, insertBeforeElement);
-                        this._layerWrappers[layer] = layerWrapper;
-                        this._layerAlignmentWrappers[layer] = [];
-                    }
-                    if (this._layerAlignmentWrappers[layer][alignment] === undefined) {
-                        var layerAlignmentWrapper = document.createElement("div");
-                        layerAlignmentWrapper.className = "an an" + alignment;
-                        // Find the next greater layer,alignment div and insert this div before that one
-                        var layerWrapper = this._layerWrappers[layer];
-                        var insertBeforeElement = null;
-                        for (var insertBeforeAlignment = alignment + 1; insertBeforeAlignment < this._layerAlignmentWrappers[layer].length && insertBeforeElement === null; insertBeforeAlignment++) {
-                            if (this._layerAlignmentWrappers[layer][insertBeforeAlignment] !== undefined) {
-                                insertBeforeElement = this._layerAlignmentWrappers[layer][insertBeforeAlignment];
-                            }
-                        }
-                        layerWrapper.insertBefore(layerAlignmentWrapper, insertBeforeElement);
-                        this._layerAlignmentWrappers[layer][alignment] = layerAlignmentWrapper;
-                    }
-                    this._layerAlignmentWrappers[layer][alignment].appendChild(result);
-                    this._currentSubs.set(dialogue, result);
-                };
-                DefaultRenderer.prototype.onVideoPlaying = function() {
-                    _super.prototype.onVideoPlaying.call(this);
-                    this._removeAllSubs();
-                    this._subsWrapper.classList.remove("paused");
-                };
-                DefaultRenderer.prototype.onVideoPause = function() {
-                    _super.prototype.onVideoPause.call(this);
-                    this._subsWrapper.classList.add("paused");
-                };
-                DefaultRenderer.prototype.onVideoTimeUpdate = function() {
-                    var _this = this;
-                    _super.prototype.onVideoTimeUpdate.call(this);
-                    this._currentSubs.forEach(function(sub, dialogue) {
-                        if (dialogue.start > _this.currentTime || dialogue.end < _this.currentTime) {
-                            _this._currentSubs.delete(dialogue);
-                            _this._removeSub(sub);
-                        }
-                    });
-                };
-                DefaultRenderer.prototype._ready = function() {
-                    var _this = this;
-                    document.addEventListener("webkitfullscreenchange", function() {
-                        return _this._onFullScreenChange();
-                    }, false);
-                    document.addEventListener("mozfullscreenchange", function() {
-                        return _this._onFullScreenChange();
-                    }, false);
-                    document.addEventListener("fullscreenchange", function() {
-                        return _this._onFullScreenChange();
-                    }, false);
-                    this.resize(this.video.offsetWidth, this.video.offsetHeight);
-                    this._dispatchEvent("ready", []);
-                };
-                DefaultRenderer.prototype._onFullScreenChange = function() {
-                    var fullScreenElement = document.fullscreenElement;
-                    if (fullScreenElement === undefined) {
-                        fullScreenElement = document.mozFullScreenElement;
-                    }
-                    if (fullScreenElement === undefined) {
-                        fullScreenElement = document.msFullscreenElement;
-                    }
-                    if (fullScreenElement === undefined) {
-                        fullScreenElement = document.webkitFullscreenElement;
-                    }
-                    if (fullScreenElement === this.video) {
-                        this._videoSubsWrapper.classList.add("libjass-full-screen");
-                        this.resize(screen.width, screen.height);
-                        this._videoIsFullScreen = true;
-                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
-                    } else if (fullScreenElement === null && this._videoIsFullScreen) {
-                        this._videoSubsWrapper.classList.remove("libjass-full-screen");
-                        this._videoIsFullScreen = false;
-                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
-                    }
-                };
-                /**
-                 * @param {string} type
-                 * @param {!Array.<*>} args
-                 *
-                 * @private
-                 */
-                DefaultRenderer.prototype._dispatchEvent = function(type, args) {
-                    var _this = this;
-                    var listeners = this._eventListeners.get(type);
-                    if (listeners !== null) {
-                        listeners.forEach(function(listener) {
-                            listener.apply(_this, args);
-                        });
-                    }
-                };
-                DefaultRenderer.prototype._removeSub = function(sub) {
-                    sub.parentNode.removeChild(sub);
-                };
-                DefaultRenderer.prototype._removeAllSubs = function() {
-                    var _this = this;
-                    this._currentSubs.forEach(function(sub) {
-                        return _this._removeSub(sub);
-                    });
-                    this._currentSubs.clear();
-                };
-                DefaultRenderer._getTransformOrigin = function(dialogue) {
-                    var transformOriginX;
-                    var transformOriginY;
-                    switch (dialogue.alignment) {
-                      case 1:
-                        transformOriginX = 0;
-                        transformOriginY = 100;
-                        break;
-
-                      case 2:
-                        transformOriginX = 50;
-                        transformOriginY = 100;
-                        break;
-
-                      case 3:
-                        transformOriginX = 100;
-                        transformOriginY = 100;
-                        break;
-
-                      case 4:
-                        transformOriginX = 0;
-                        transformOriginY = 50;
-                        break;
-
-                      case 5:
-                        transformOriginX = 50;
-                        transformOriginY = 50;
-                        break;
-
-                      case 6:
-                        transformOriginX = 100;
-                        transformOriginY = 50;
-                        break;
-
-                      case 7:
-                        transformOriginX = 0;
-                        transformOriginY = 0;
-                        break;
-
-                      case 8:
-                        transformOriginX = 50;
-                        transformOriginY = 0;
-                        break;
-
-                      case 9:
-                        transformOriginX = 100;
-                        transformOriginY = 0;
-                        break;
-                    }
-                    return [ transformOriginX, transformOriginY ];
-                };
-                return DefaultRenderer;
-            }(NullRenderer);
-            renderers.DefaultRenderer = DefaultRenderer;
-            /**
-             * Settings for the default renderer.
-             *
-             * @constructor
-             *
-             * @memberof libjass.renderers
+             * @memberOf libjass.renderers
              */
             var RendererSettings = function() {
                 function RendererSettings() {}
@@ -4861,15 +4792,528 @@
                 return RendererSettings;
             }();
             renderers.RendererSettings = RendererSettings;
+        })(libjass.renderers || (libjass.renderers = {}));
+    })(libjass || (libjass = {}));
+    var __extends = function(d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() {
+            this.constructor = d;
+        }
+        __.prototype = b.prototype;
+        d.prototype = new __();
+    };
+    (function(libjass) {
+        (function(renderers) {
+            /**
+             * A renderer implementation that draws subtitles to the given <div>
+             *
+             * @param {!libjass.ASS} ass
+             * @param {!libjass.renderers.Clock} clock
+             * @param {!libjass.renderers.RendererSettings} settings
+             * @param {!HTMLDivElement} libjassSubsWrapper Subtitles will be rendered to this <div>
+             *
+             * @constructor
+             * @extends {libjass.renderers.NullRenderer}
+             * @memberOf libjass.renderers
+             */
+            var WebRenderer = function(_super) {
+                __extends(WebRenderer, _super);
+                function WebRenderer(ass, clock, settings, libjassSubsWrapper) {
+                    var _this = this;
+                    _super.call(this, ass, clock, settings);
+                    this._libjassSubsWrapper = libjassSubsWrapper;
+                    this._layerWrappers = [];
+                    this._layerAlignmentWrappers = [];
+                    this._fontSizeElement = null;
+                    this._animationStyleElement = null;
+                    this._svgDefsElement = null;
+                    this._currentSubs = new libjass.Map();
+                    this._preRenderedSubs = new libjass.Map();
+                    this._enabled = true;
+                    // EventSource members
+                    this._eventListeners = new libjass.Map();
+                    this._libjassSubsWrapper.classList.add("libjass-wrapper");
+                    this._subsWrapper = document.createElement("div");
+                    this._libjassSubsWrapper.appendChild(this._subsWrapper);
+                    this._subsWrapper.className = "libjass-subs";
+                    this._fontSizeElement = document.createElement("div");
+                    this._libjassSubsWrapper.appendChild(this._fontSizeElement);
+                    this._fontSizeElement.className = "libjass-font-measure";
+                    this._fontSizeElement.appendChild(document.createTextNode("M"));
+                    var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    this._libjassSubsWrapper.appendChild(svgElement);
+                    svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                    svgElement.setAttribute("version", "1.1");
+                    svgElement.setAttribute("class", "libjass-filters");
+                    svgElement.setAttribute("width", "0");
+                    svgElement.setAttribute("height", "0");
+                    this._svgDefsElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                    svgElement.appendChild(this._svgDefsElement);
+                    if (this.settings.fontMap === null) {
+                        setTimeout(function() {
+                            return _this._ready();
+                        }, 0);
+                    } else {
+                        // Preload fonts
+                        var urlsToPreload = [];
+                        this.settings.fontMap.forEach(function(src) {
+                            urlsToPreload.unshift.apply(urlsToPreload, src);
+                        });
+                        var urlsLeftToPreload = urlsToPreload.length;
+                        if (libjass.debugMode) {
+                            console.log("Preloading fonts...");
+                        }
+                        urlsToPreload.forEach(function(url) {
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("GET", url, true);
+                            xhr.addEventListener("readystatechange", function() {
+                                if (xhr.readyState === XMLHttpRequest.DONE) {
+                                    if (libjass.debugMode) {
+                                        console.log("Preloaded " + url + ".");
+                                    }
+                                    --urlsLeftToPreload;
+                                    if (libjass.debugMode) {
+                                        console.log(urlsLeftToPreload + " fonts left to preload.");
+                                    }
+                                    if (urlsLeftToPreload === 0) {
+                                        if (libjass.debugMode) {
+                                            console.log("All fonts have been preloaded.");
+                                        }
+                                        _this._ready();
+                                    }
+                                }
+                            }, false);
+                            xhr.send(null);
+                            return xhr;
+                        });
+                        if (libjass.debugMode) {
+                            console.log(urlsLeftToPreload + " fonts left to preload.");
+                        }
+                        if (urlsLeftToPreload === 0) {
+                            setTimeout(function() {
+                                if (libjass.debugMode) {
+                                    console.log("All fonts have been preloaded.");
+                                }
+                                _this._ready();
+                            }, 0);
+                        }
+                    }
+                }
+                Object.defineProperty(WebRenderer.prototype, "libjassSubsWrapper", {
+                    get: function() {
+                        return this._libjassSubsWrapper;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(WebRenderer.prototype, "enabled", {
+                    /**
+                     * @type {boolean}
+                     */
+                    get: function() {
+                        return this._enabled;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                /**
+                 * Resize the subtitles to the given new dimensions.
+                 *
+                 * @param {number} width
+                 * @param {number} height
+                 */
+                WebRenderer.prototype.resize = function(width, height) {
+                    this._removeAllSubs();
+                    var ratio = Math.min(width / this.ass.properties.resolutionX, height / this.ass.properties.resolutionY);
+                    var subsWrapperWidth = this.ass.properties.resolutionX * ratio;
+                    var subsWrapperHeight = this.ass.properties.resolutionY * ratio;
+                    this._subsWrapper.style.width = subsWrapperWidth.toFixed(3) + "px";
+                    this._subsWrapper.style.height = subsWrapperHeight.toFixed(3) + "px";
+                    this._subsWrapper.style.left = ((width - subsWrapperWidth) / 2).toFixed(3) + "px";
+                    this._subsWrapper.style.top = ((height - subsWrapperHeight) / 2).toFixed(3) + "px";
+                    this._scaleX = subsWrapperWidth / this.ass.properties.resolutionX;
+                    this._scaleY = subsWrapperHeight / this.ass.properties.resolutionY;
+                    // Any dialogues which have been pre-rendered will need to be pre-rendered again.
+                    this._preRenderedSubs.clear();
+                    if (this._animationStyleElement !== null) {
+                        while (this._animationStyleElement.firstChild !== null) {
+                            this._animationStyleElement.removeChild(this._animationStyleElement.firstChild);
+                        }
+                    }
+                    while (this._svgDefsElement.firstChild !== null) {
+                        this._svgDefsElement.removeChild(this._svgDefsElement.firstChild);
+                    }
+                    // this.currentTime will be -1 if resize() is called before the clock begins playing for the first time. In this situation, there is no need to force a redraw.
+                    if (this.clock.currentTime !== -1) {
+                        this._onClockTimeUpdate();
+                    }
+                };
+                WebRenderer.prototype.enable = function() {
+                    this.clock.enable();
+                    this._subsWrapper.style.display = "";
+                    this._enabled = true;
+                };
+                WebRenderer.prototype.disable = function() {
+                    this.clock.disable();
+                    this._subsWrapper.style.display = "none";
+                    this._enabled = false;
+                };
+                WebRenderer.prototype.toggle = function() {
+                    if (this._enabled) {
+                        this.disable();
+                    } else {
+                        this.enable();
+                    }
+                };
+                /**
+                 * The magic happens here. The subtitle div is rendered and stored. Call draw() to get a clone of the div to display.
+                 *
+                 * @param {!libjass.Dialogue} dialogue
+                 */
+                WebRenderer.prototype.preRender = function(dialogue) {
+                    var _this = this;
+                    if (this._preRenderedSubs.has(dialogue.id)) {
+                        return;
+                    }
+                    var sub = document.createElement("div");
+                    sub.style.marginLeft = (this._scaleX * dialogue.style.marginLeft).toFixed(3) + "px";
+                    sub.style.marginRight = (this._scaleX * dialogue.style.marginRight).toFixed(3) + "px";
+                    sub.style.marginTop = sub.style.marginBottom = (this._scaleY * dialogue.style.marginVertical).toFixed(3) + "px";
+                    sub.style.minWidth = (this._subsWrapper.offsetWidth - this._scaleX * (dialogue.style.marginLeft + dialogue.style.marginRight)).toFixed(3) + "px";
+                    var animationCollection = new AnimationCollection(this, dialogue);
+                    var currentSpan = null;
+                    var currentSpanStyles = new SpanStyles(this, dialogue, this._scaleX, this._scaleY, this._fontSizeElement, this._svgDefsElement);
+                    var startNewSpan = function(addNewLine) {
+                        if (currentSpan !== null && currentSpan.textContent !== "") {
+                            sub.appendChild(currentSpanStyles.setStylesOnSpan(currentSpan));
+                        }
+                        if (addNewLine) {
+                            sub.appendChild(document.createElement("br"));
+                        }
+                        currentSpan = document.createElement("span");
+                    };
+                    startNewSpan(false);
+                    var currentDrawingStyles = new DrawingStyles(this._scaleX, this._scaleY);
+                    var wrappingStyle = this.ass.properties.wrappingStyle;
+                    dialogue.parts.forEach(function(part) {
+                        if (part instanceof libjass.parts.Italic) {
+                            currentSpanStyles.italic = part.value;
+                        } else if (part instanceof libjass.parts.Bold) {
+                            currentSpanStyles.bold = part.value;
+                        } else if (part instanceof libjass.parts.Underline) {
+                            currentSpanStyles.underline = part.value;
+                        } else if (part instanceof libjass.parts.StrikeThrough) {
+                            currentSpanStyles.strikeThrough = part.value;
+                        } else if (part instanceof libjass.parts.Border) {
+                            currentSpanStyles.outlineWidth = part.value;
+                            currentSpanStyles.outlineHeight = part.value;
+                        } else if (part instanceof libjass.parts.BorderX) {
+                            currentSpanStyles.outlineWidth = part.value;
+                        } else if (part instanceof libjass.parts.BorderY) {
+                            currentSpanStyles.outlineHeight = part.value;
+                        } else if (part instanceof libjass.parts.Shadow) {
+                            currentSpanStyles.shadowDepthX = part.value;
+                            currentSpanStyles.shadowDepthY = part.value;
+                        } else if (part instanceof libjass.parts.ShadowX) {
+                            currentSpanStyles.shadowDepthX = part.value;
+                        } else if (part instanceof libjass.parts.ShadowY) {
+                            currentSpanStyles.shadowDepthY = part.value;
+                        } else if (part instanceof libjass.parts.Blur) {
+                            currentSpanStyles.blur = part.value;
+                        } else if (part instanceof libjass.parts.GaussianBlur) {
+                            currentSpanStyles.gaussianBlur = part.value;
+                        } else if (part instanceof libjass.parts.FontName) {
+                            currentSpanStyles.fontName = part.value;
+                        } else if (part instanceof libjass.parts.FontSize) {
+                            currentSpanStyles.fontSize = part.value;
+                        } else if (part instanceof libjass.parts.FontScaleX) {
+                            currentSpanStyles.fontScaleX = part.value;
+                        } else if (part instanceof libjass.parts.FontScaleY) {
+                            currentSpanStyles.fontScaleY = part.value;
+                        } else if (part instanceof libjass.parts.LetterSpacing) {
+                            currentSpanStyles.letterSpacing = part.value;
+                        } else if (part instanceof libjass.parts.RotateX) {
+                            currentSpanStyles.rotationX = part.value;
+                        } else if (part instanceof libjass.parts.RotateY) {
+                            currentSpanStyles.rotationY = part.value;
+                        } else if (part instanceof libjass.parts.RotateZ) {
+                            currentSpanStyles.rotationZ = part.value;
+                        } else if (part instanceof libjass.parts.SkewX) {
+                            currentSpanStyles.skewX = part.value;
+                        } else if (part instanceof libjass.parts.SkewY) {
+                            currentSpanStyles.skewY = part.value;
+                        } else if (part instanceof libjass.parts.PrimaryColor) {
+                            currentSpanStyles.primaryColor = part.value;
+                        } else if (part instanceof libjass.parts.SecondaryColor) {
+                            currentSpanStyles.secondaryColor = part.value;
+                        } else if (part instanceof libjass.parts.OutlineColor) {
+                            currentSpanStyles.outlineColor = part.value;
+                        } else if (part instanceof libjass.parts.ShadowColor) {
+                            currentSpanStyles.shadowColor = part.value;
+                        } else if (part instanceof libjass.parts.Alpha) {
+                            currentSpanStyles.primaryAlpha = part.value;
+                            currentSpanStyles.secondaryAlpha = part.value;
+                            currentSpanStyles.outlineAlpha = part.value;
+                            currentSpanStyles.shadowAlpha = part.value;
+                        } else if (part instanceof libjass.parts.PrimaryAlpha) {
+                            currentSpanStyles.primaryAlpha = part.value;
+                        } else if (part instanceof libjass.parts.SecondaryAlpha) {
+                            currentSpanStyles.secondaryAlpha = part.value;
+                        } else if (part instanceof libjass.parts.OutlineAlpha) {
+                            currentSpanStyles.outlineAlpha = part.value;
+                        } else if (part instanceof libjass.parts.ShadowAlpha) {
+                            currentSpanStyles.shadowAlpha = part.value;
+                        } else if (part instanceof libjass.parts.Alignment) {} else if (part instanceof libjass.parts.WrappingStyle) {
+                            wrappingStyle = part.value;
+                        } else if (part instanceof libjass.parts.Reset) {
+                            var newStyleName = part.value;
+                            var newStyle = null;
+                            if (newStyleName !== null) {
+                                newStyle = _this.ass.styles[newStyleName];
+                            }
+                            currentSpanStyles.reset(newStyle);
+                        } else if (part instanceof libjass.parts.Position) {
+                            var positionPart = part;
+                            sub.style.position = "absolute";
+                            sub.style.left = (_this._scaleX * positionPart.x).toFixed(3) + "px";
+                            sub.style.top = (_this._scaleY * positionPart.y).toFixed(3) + "px";
+                        } else if (part instanceof libjass.parts.Move) {
+                            var movePart = part;
+                            sub.style.position = "absolute";
+                            animationCollection.add("linear", [ new Keyframe(0, {
+                                left: (_this._scaleX * movePart.x1).toFixed(3) + "px",
+                                top: (_this._scaleY * movePart.y1).toFixed(3) + "px"
+                            }), new Keyframe(movePart.t1, {
+                                left: (_this._scaleX * movePart.x1).toFixed(3) + "px",
+                                top: (_this._scaleY * movePart.y1).toFixed(3) + "px"
+                            }), new Keyframe(movePart.t2, {
+                                left: (_this._scaleX * movePart.x2).toFixed(3) + "px",
+                                top: (_this._scaleY * movePart.y2).toFixed(3) + "px"
+                            }), new Keyframe(dialogue.end - dialogue.start, {
+                                left: (_this._scaleX * movePart.x2).toFixed(3) + "px",
+                                top: (_this._scaleY * movePart.y2).toFixed(3) + "px"
+                            }) ]);
+                        } else if (part instanceof libjass.parts.Fade) {
+                            var fadePart = part;
+                            animationCollection.add("linear", [ new Keyframe(0, {
+                                opacity: "0"
+                            }), new Keyframe(fadePart.start, {
+                                opacity: "1"
+                            }), new Keyframe(dialogue.end - dialogue.start - fadePart.end, {
+                                opacity: String("1")
+                            }), new Keyframe(dialogue.end - dialogue.start, {
+                                opacity: "0"
+                            }) ]);
+                        } else if (part instanceof libjass.parts.ComplexFade) {
+                            var complexFadePart = part;
+                            animationCollection.add("linear", [ new Keyframe(0, {
+                                opacity: String(complexFadePart.a1)
+                            }), new Keyframe(complexFadePart.t1, {
+                                opacity: String(complexFadePart.a1)
+                            }), new Keyframe(complexFadePart.t2, {
+                                opacity: String(complexFadePart.a2)
+                            }), new Keyframe(complexFadePart.t3, {
+                                opacity: String(complexFadePart.a2)
+                            }), new Keyframe(complexFadePart.t4, {
+                                opacity: String(complexFadePart.a3)
+                            }), new Keyframe(dialogue.end - dialogue.start, {
+                                opacity: String(complexFadePart.a3)
+                            }) ]);
+                        } else if (part instanceof libjass.parts.DrawingMode) {
+                            var drawingModePart = part;
+                            if (drawingModePart.scale !== 0) {
+                                currentDrawingStyles.scale = drawingModePart.scale;
+                            }
+                        } else if (part instanceof libjass.parts.DrawingBaselineOffset) {
+                            currentDrawingStyles.baselineOffset = part.value;
+                        } else if (part instanceof libjass.parts.DrawingInstructions) {
+                            currentSpan.appendChild(currentDrawingStyles.toSVG(part, currentSpanStyles.primaryColor.withAlpha(currentSpanStyles.primaryAlpha)));
+                            startNewSpan(false);
+                        } else if (part instanceof libjass.parts.Text) {
+                            currentSpan.appendChild(document.createTextNode(part.value));
+                            startNewSpan(false);
+                        } else if (libjass.debugMode && part instanceof libjass.parts.Comment) {
+                            currentSpan.appendChild(document.createTextNode(part.value));
+                            startNewSpan(false);
+                        } else if (part instanceof libjass.parts.NewLine) {
+                            startNewSpan(true);
+                        }
+                    });
+                    dialogue.parts.some(function(part) {
+                        if (part instanceof libjass.parts.Position || part instanceof libjass.parts.Move) {
+                            var transformOrigin = WebRenderer._transformOrigins[dialogue.alignment];
+                            var divTransformStyle = "translate(" + -transformOrigin[0] + "%, " + -transformOrigin[1] + "%) translate(-" + sub.style.marginLeft + ", -" + sub.style.marginTop + ")";
+                            var transformOriginString = transformOrigin[0] + "% " + transformOrigin[1] + "%";
+                            sub.style.webkitTransform = divTransformStyle;
+                            sub.style.webkitTransformOrigin = transformOriginString;
+                            sub.style.transform = divTransformStyle;
+                            sub.style.transformOrigin = transformOriginString;
+                            return true;
+                        }
+                        return false;
+                    });
+                    switch (wrappingStyle) {
+                      case 0:
+                      case 3:
+                        sub.style.whiteSpace = "pre-wrap";
+                        break;
+
+                      case 1:
+                      case 2:
+                        sub.style.whiteSpace = "pre";
+                        break;
+                    }
+                    if (sub.style.position !== "") {
+                        switch (dialogue.alignment) {
+                          case 1:
+                          case 4:
+                          case 7:
+                            sub.style.textAlign = "left";
+                            break;
+
+                          case 2:
+                          case 5:
+                          case 8:
+                            sub.style.textAlign = "center";
+                            break;
+
+                          case 3:
+                          case 6:
+                          case 9:
+                            sub.style.textAlign = "right";
+                            break;
+                        }
+                    }
+                    if (this._animationStyleElement === null) {
+                        this._animationStyleElement = document.createElement("style");
+                        this._animationStyleElement.id = "libjass-animation-styles-" + this.id;
+                        this._animationStyleElement.type = "text/css";
+                        document.querySelector("head").appendChild(this._animationStyleElement);
+                    }
+                    this._animationStyleElement.appendChild(document.createTextNode(animationCollection.cssText));
+                    sub.style.webkitAnimation = animationCollection.animationStyle;
+                    sub.style.animation = animationCollection.animationStyle;
+                    sub.setAttribute("data-dialogue-id", this.id + "-" + dialogue.id);
+                    this._preRenderedSubs.set(dialogue.id, sub);
+                };
+                /**
+                 * Returns the subtitle div for display. The currentTime is used to shift the animations appropriately, so that at the time the
+                 * div is inserted into the DOM and the animations begin, they are in sync with the clock time.
+                 *
+                 * @param {!libjass.Dialogue} dialogue
+                 */
+                WebRenderer.prototype.draw = function(dialogue) {
+                    var _this = this;
+                    if (this._currentSubs.has(dialogue)) {
+                        return;
+                    }
+                    if (libjass.debugMode) {
+                        console.log(dialogue.toString());
+                    }
+                    var preRenderedSub = this._preRenderedSubs.get(dialogue.id);
+                    if (preRenderedSub === undefined) {
+                        if (libjass.debugMode) {
+                            console.warn("This dialogue was not pre-rendered. Call preRender() before calling draw() so that draw() is faster.");
+                        }
+                        this.preRender(dialogue);
+                        preRenderedSub = this._preRenderedSubs.get(dialogue.id);
+                        if (libjass.debugMode) {
+                            console.log(dialogue.toString());
+                        }
+                    }
+                    var result = preRenderedSub.cloneNode(true);
+                    var defaultAnimationDelay = result.style.webkitAnimationDelay;
+                    if (defaultAnimationDelay === undefined) {
+                        defaultAnimationDelay = result.style.animationDelay;
+                    }
+                    if (defaultAnimationDelay !== "") {
+                        var animationDelay = defaultAnimationDelay.split(",").map(function(delay) {
+                            return (parseFloat(delay) + dialogue.start - _this.clock.currentTime).toFixed(3) + "s";
+                        }).join(",");
+                        result.style.webkitAnimationDelay = animationDelay;
+                        result.style.animationDelay = animationDelay;
+                    }
+                    var layer = dialogue.layer;
+                    var alignment = result.style.position === "absolute" ? 0 : dialogue.alignment;
+                    // Create the layer wrapper div and the alignment div inside it if not already created
+                    if (this._layerWrappers[layer] === undefined) {
+                        var layerWrapper = document.createElement("div");
+                        layerWrapper.className = "layer layer" + layer;
+                        // Find the next greater layer div and insert this div before that one
+                        var insertBeforeElement = null;
+                        for (var insertBeforeLayer = layer + 1; insertBeforeLayer < this._layerWrappers.length && insertBeforeElement === null; insertBeforeLayer++) {
+                            if (this._layerWrappers[insertBeforeLayer] !== undefined) {
+                                insertBeforeElement = this._layerWrappers[insertBeforeLayer];
+                            }
+                        }
+                        this._subsWrapper.insertBefore(layerWrapper, insertBeforeElement);
+                        this._layerWrappers[layer] = layerWrapper;
+                        this._layerAlignmentWrappers[layer] = [];
+                    }
+                    if (this._layerAlignmentWrappers[layer][alignment] === undefined) {
+                        var layerAlignmentWrapper = document.createElement("div");
+                        layerAlignmentWrapper.className = "an an" + alignment;
+                        // Find the next greater layer,alignment div and insert this div before that one
+                        var layerWrapper = this._layerWrappers[layer];
+                        var insertBeforeElement = null;
+                        for (var insertBeforeAlignment = alignment + 1; insertBeforeAlignment < this._layerAlignmentWrappers[layer].length && insertBeforeElement === null; insertBeforeAlignment++) {
+                            if (this._layerAlignmentWrappers[layer][insertBeforeAlignment] !== undefined) {
+                                insertBeforeElement = this._layerAlignmentWrappers[layer][insertBeforeAlignment];
+                            }
+                        }
+                        layerWrapper.insertBefore(layerAlignmentWrapper, insertBeforeElement);
+                        this._layerAlignmentWrappers[layer][alignment] = layerAlignmentWrapper;
+                    }
+                    this._layerAlignmentWrappers[layer][alignment].appendChild(result);
+                    this._currentSubs.set(dialogue, result);
+                };
+                WebRenderer.prototype._onClockPlay = function() {
+                    _super.prototype._onClockPlay.call(this);
+                    this._removeAllSubs();
+                    this._subsWrapper.classList.remove("paused");
+                };
+                WebRenderer.prototype._onClockPause = function() {
+                    _super.prototype._onClockPause.call(this);
+                    this._subsWrapper.classList.add("paused");
+                };
+                WebRenderer.prototype._onClockTimeUpdate = function() {
+                    var _this = this;
+                    var currentTime = this.clock.currentTime;
+                    _super.prototype._onClockTimeUpdate.call(this);
+                    this._currentSubs.forEach(function(sub, dialogue) {
+                        if (dialogue.start > currentTime || dialogue.end < currentTime) {
+                            _this._currentSubs.delete(dialogue);
+                            _this._removeSub(sub);
+                        }
+                    });
+                };
+                WebRenderer.prototype._ready = function() {
+                    this._dispatchEvent("ready", []);
+                };
+                WebRenderer.prototype._removeSub = function(sub) {
+                    sub.parentNode.removeChild(sub);
+                };
+                WebRenderer.prototype._removeAllSubs = function() {
+                    var _this = this;
+                    this._currentSubs.forEach(function(sub) {
+                        return _this._removeSub(sub);
+                    });
+                    this._currentSubs.clear();
+                };
+                WebRenderer._transformOrigins = [ null, [ 0, 100 ], [ 50, 100 ], [ 100, 100 ], [ 0, 50 ], [ 50, 50 ], [ 100, 50 ], [ 0, 0 ], [ 50, 0 ], [ 100, 0 ] ];
+                return WebRenderer;
+            }(renderers.NullRenderer);
+            renderers.WebRenderer = WebRenderer;
+            libjass.mixin(WebRenderer, [ renderers.EventSource ]);
             /**
              * This class represents a single keyframe. It has a list of CSS properties (names and values) associated with a point in time. Multiple keyframes make up an animation.
              *
-             * @constructor
              * @param {number} time
              * @param {!Object.<string, string>} properties
              *
+             * @constructor
+             * @memberOf libjass.renderers
              * @private
-             * @memberof libjass.renderers
              */
             var Keyframe = function() {
                 function Keyframe(time, properties) {
@@ -4902,12 +5346,12 @@
              * This class represents a collection of animations. Each animation contains one or more keyframes.
              * The collection can then be converted to a CSS3 representation.
              *
-             * @constructor
              * @param {!libjass.renderers.NullRenderer} renderer The renderer that this collection is associated with
              * @param {!libjass.Dialogue} dialogue The Dialogue that this collection is associated with
              *
+             * @constructor
+             * @memberOf libjass.renderers
              * @private
-             * @memberof libjass.renderers
              */
             var AnimationCollection = function() {
                 function AnimationCollection(renderer, dialogue) {
@@ -4943,36 +5387,12 @@
                     configurable: true
                 });
                 /**
-                 * Add a fade-in animation to this collection.
-                 *
-                 * @param {number} start The time from the dialogue start to start the fade-in
-                 * @param {number} duration The duration of the fade-in
-                 */
-                AnimationCollection.prototype.addFadeIn = function(start, duration) {
-                    if (this._animationStyle !== "") {
-                        this._animationStyle += ",";
-                    }
-                    this._animationStyle += "fade-in " + duration.toFixed(3) + "s linear " + start.toFixed(3) + "s";
-                };
-                /**
-                 * Add a fade-out animation to this collection.
-                 *
-                 * @param {number} start The time from the dialogue start to start the fade-out
-                 * @param {number} duration The duration of the fade-out
-                 */
-                AnimationCollection.prototype.addFadeOut = function(start, duration) {
-                    if (this._animationStyle !== "") {
-                        this._animationStyle += ",";
-                    }
-                    this._animationStyle += "fade-out " + duration.toFixed(3) + "s linear " + start.toFixed(3) + "s";
-                };
-                /**
-                 * Add a custom animation to this collection. The given keyframes together make one animation.
+                 * Add an animation to this collection. The given keyframes together make one animation.
                  *
                  * @param {string} timingFunction One of the acceptable values for the "animation-timing-function" CSS property
                  * @param {Array.<!{time: number, properties: !Object.<string, string>}>} keyframes
                  */
-                AnimationCollection.prototype.addCustom = function(timingFunction, keyframes) {
+                AnimationCollection.prototype.add = function(timingFunction, keyframes) {
                     var _this = this;
                     var startTime = null;
                     var endTime = null;
@@ -5001,7 +5421,6 @@
              * This class represents the style attribute of a span.
              * As a Dialogue's div is rendered, individual parts are added to span's, and this class is used to maintain the style attribute of those.
              *
-             * @constructor
              * @param {!libjass.renderers.NullRenderer} renderer The renderer that this set of styles is associated with
              * @param {!libjass.Dialogue} dialogue The Dialogue that this set of styles is associated with
              * @param {number} scaleX The horizontal scaling of the subtitles
@@ -5009,8 +5428,9 @@
              * @param {!HTMLDivElement} fontSizeElement A <div> element to measure font sizes with
              * @param {!SVGDefsElement} svgDefsElement An SVG <defs> element to append filter definitions to
              *
+             * @constructor
+             * @memberOf libjass.renderers
              * @private
-             * @memberof libjass.renderers
              */
             var SpanStyles = function() {
                 function SpanStyles(renderer, dialogue, scaleX, scaleY, fontSizeElement, svgDefsElement) {
@@ -5059,6 +5479,7 @@
                     this.outlineAlpha = null;
                     this.shadowAlpha = null;
                     this.blur = null;
+                    this.gaussianBlur = null;
                 };
                 /**
                  * Sets the style attribute on the given span element.
@@ -5067,6 +5488,7 @@
                  * @return {!HTMLSpanElement} The resulting <span> with the CSS styles applied. This may be a wrapper around the input <span> if the styles were applied using SVG filters.
                  */
                 SpanStyles.prototype.setStylesOnSpan = function(span) {
+                    var isTextOnlySpan = span.childNodes[0] instanceof Text;
                     var fontStyleOrWeight = "";
                     if (this._italic) {
                         fontStyleOrWeight += "italic ";
@@ -5076,7 +5498,12 @@
                     } else if (this._bold !== false) {
                         fontStyleOrWeight += this._bold + " ";
                     }
-                    var fontSize = (this._scaleY * SpanStyles._getFontSize(this._fontName, this._fontSize, this._fontSizeElement)).toFixed(3);
+                    var fontSize;
+                    if (isTextOnlySpan) {
+                        fontSize = (this._scaleY * SpanStyles._getFontSize(this._fontName, this._fontSize * this._fontScaleX, this._fontSizeElement)).toFixed(3);
+                    } else {
+                        fontSize = (this._scaleY * SpanStyles._getFontSize(this._fontName, this._fontSize, this._fontSizeElement)).toFixed(3);
+                    }
                     var lineHeight = (this._scaleY * this._fontSize).toFixed(3);
                     span.style.font = fontStyleOrWeight + fontSize + "px/" + lineHeight + 'px "' + this._fontName + '"';
                     var textDecoration = "";
@@ -5088,11 +5515,17 @@
                     }
                     span.style.textDecoration = textDecoration.trim();
                     var transform = "";
-                    if (this._fontScaleX !== 1) {
-                        transform += "scaleX(" + this._fontScaleX + ") ";
-                    }
-                    if (this._fontScaleY !== 1) {
-                        transform += "scaleY(" + this._fontScaleY + ") ";
+                    if (isTextOnlySpan) {
+                        if (this._fontScaleY !== this._fontScaleX) {
+                            transform += "scaleY(" + (this._fontScaleY / this._fontScaleX).toFixed(3) + ") ";
+                        }
+                    } else {
+                        if (this._fontScaleX !== 1) {
+                            transform += "scaleX(" + this._fontScaleX + ") ";
+                        }
+                        if (this._fontScaleY !== 1) {
+                            transform += "scaleY(" + this._fontScaleY + ") ";
+                        }
                     }
                     if (this._rotationY !== null) {
                         transform += "rotateY(" + this._rotationY + "deg) ";
@@ -5147,11 +5580,14 @@
                             outlineFilter += '	<feMorphology in="SourceAlpha" operator="dilate" radius="' + radii[0].toFixed(3) + " " + radii[1].toFixed(3) + '" result="outline' + index + '" />\n';
                             mergeOutlinesFilter += '		<feMergeNode in="outline' + index + '" />\n';
                         });
-                        outlineFilter = '	<feFlood flood-color="' + outlineColor.toString() + '" result="outlineColor"/>' + outlineFilter + "	<feMerge>\n" + mergeOutlinesFilter + "	</feMerge>\n" + '	<feComposite operator="in" in="outlineColor" />';
+                        outlineFilter = '	<feFlood flood-color="' + outlineColor.toString() + '" result="outlineColor" />' + outlineFilter + "	<feMerge>\n" + mergeOutlinesFilter + "	</feMerge>\n" + '	<feComposite operator="in" in="outlineColor" />';
                     }
                     var blurFilter = "";
-                    if (this._blur > 0) {
-                        blurFilter = '	<feGaussianBlur stdDeviation="' + this._blur + '" />\n';
+                    if (this._gaussianBlur > 0) {
+                        blurFilter += '	<feGaussianBlur stdDeviation="' + this._gaussianBlur + '" />\n';
+                    }
+                    for (var i = 0; i < this._blur; i++) {
+                        blurFilter += '	<feConvolveMatrix kernelMatrix="1 2 1 2 4 2 1 2 1" edgeMode="none" />\n';
                     }
                     var filterWrapperSpan = document.createElement("span");
                     filterWrapperSpan.appendChild(span);
@@ -5166,7 +5602,7 @@
                         var shadowColor = this._shadowColor.withAlpha(this._shadowAlpha);
                         span.style.textShadow = shadowColor.toString() + " " + (this._shadowDepthX * this._scaleX / this._fontScaleX).toFixed(3) + "px " + (this._shadowDepthY * this._scaleY / this._fontScaleY).toFixed(3) + "px 0px";
                     }
-                    if (this._rotationZ !== null) {
+                    if (this._rotationZ !== 0) {
                         // Perspective needs to be set on a "transformable element"
                         filterWrapperSpan.style.display = "inline-block";
                     }
@@ -5276,6 +5712,18 @@
                      */
                     set: function(value) {
                         this._blur = SpanStyles._valueOrDefault(value, 0);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(SpanStyles.prototype, "gaussianBlur", {
+                    /**
+                     * Sets the Gaussian blur property. null defaults it to 0.
+                     *
+                     * @type {?number}
+                     */
+                    set: function(value) {
+                        this._gaussianBlur = SpanStyles._valueOrDefault(value, 0);
                     },
                     enumerable: true,
                     configurable: true
@@ -5458,6 +5906,14 @@
                 });
                 Object.defineProperty(SpanStyles.prototype, "primaryAlpha", {
                     /**
+                     * Gets the primary alpha property.
+                     *
+                     * @type {?number}
+                     */
+                    get: function() {
+                        return this._primaryAlpha;
+                    },
+                    /**
                      * Sets the primary alpha property.
                      *
                      * @type {?number}
@@ -5526,23 +5982,31 @@
             /**
              * This class represents an ASS drawing - a set of drawing instructions between {\p} tags.
              *
-             * @constructor
-             * @param {number} drawingScale
-             * @param {number} scaleX
-             * @param {number} scaleY
+             * @param {number} outputScaleX
+             * @param {number} outputScaleY
              *
+             * @constructor
+             * @memberOf libjass.renderers
              * @private
-             * @memberof libjass.renderers
              */
-            var Drawing = function() {
-                function Drawing(drawingScale, scaleX, scaleY) {
+            var DrawingStyles = function() {
+                function DrawingStyles(outputScaleX, outputScaleY) {
+                    this._outputScaleX = outputScaleX;
+                    this._outputScaleY = outputScaleY;
+                    this._scale = 1;
                     this._baselineOffset = 0;
-                    this._instructions = [];
-                    var scaleFactor = Math.pow(2, drawingScale - 1);
-                    this._scaleX = scaleX / scaleFactor;
-                    this._scaleY = scaleY / scaleFactor;
                 }
-                Object.defineProperty(Drawing.prototype, "baselineOffset", {
+                Object.defineProperty(DrawingStyles.prototype, "scale", {
+                    /**
+                     * @type {number}
+                     */
+                    set: function(value) {
+                        this._scale = value;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(DrawingStyles.prototype, "baselineOffset", {
                     /**
                      * @type {number}
                      */
@@ -5552,28 +6016,22 @@
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(Drawing.prototype, "instructions", {
-                    /**
-                     * @type {!Array.<!libjass.parts.drawing.Instruction>}
-                     */
-                    set: function(value) {
-                        this._instructions = value;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 /**
                  * Converts this drawing to an <svg> element.
                  *
+                 * @param {!libjass.parts.DrawingInstructions} drawingInstructions
                  * @param {!libjass.parts.Color} fillColor
                  * @return {!SVGSVGElement}
                  */
-                Drawing.prototype.toSVG = function(fillColor) {
+                DrawingStyles.prototype.toSVG = function(drawingInstructions, fillColor) {
                     var _this = this;
+                    var scaleFactor = Math.pow(2, this._scale - 1);
+                    var scaleX = this._outputScaleX / scaleFactor;
+                    var scaleY = this._outputScaleY / scaleFactor;
                     var path = "";
                     var bboxWidth = 0;
                     var bboxHeight = 0;
-                    this._instructions.forEach(function(instruction) {
+                    drawingInstructions.instructions.forEach(function(instruction) {
                         if (instruction instanceof libjass.parts.drawing.MoveInstruction) {
                             var movePart = instruction;
                             path += " M " + movePart.x + " " + (movePart.y + _this._baselineOffset);
@@ -5591,10 +6049,10 @@
                             bboxHeight = Math.max(bboxHeight, cubicBezierCurvePart.y1 + _this._baselineOffset, cubicBezierCurvePart.y2 + _this._baselineOffset, cubicBezierCurvePart.y3 + _this._baselineOffset);
                         }
                     });
-                    var result = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + (bboxWidth * this._scaleX).toFixed(3) + 'px" height="' + (bboxHeight * this._scaleY).toFixed(3) + 'px">\n' + '	<g transform="scale(' + this._scaleX.toFixed(3) + " " + this._scaleY.toFixed(3) + ')">\n' + '		<path d="' + path + '" fill="' + fillColor.toString() + '" />\n' + "	</g>\n" + "</svg>";
+                    var result = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + (bboxWidth * scaleX).toFixed(3) + 'px" height="' + (bboxHeight * scaleY).toFixed(3) + 'px">\n' + '	<g transform="scale(' + scaleX.toFixed(3) + " " + scaleY.toFixed(3) + ')">\n' + '		<path d="' + path + '" fill="' + fillColor.toString() + '" />\n' + "	</g>\n" + "</svg>";
                     return domParser.parseFromString(result, "image/svg+xml").childNodes[0];
                 };
-                return Drawing;
+                return DrawingStyles;
             }();
             var domParser;
             if (typeof DOMParser !== "undefined") {
@@ -5603,12 +6061,74 @@
         })(libjass.renderers || (libjass.renderers = {}));
     })(libjass || (libjass = {}));
     (function(libjass) {
+        (function(renderers) {
+            /**
+             * A default renderer implementation.
+             *
+             * @param {!HTMLVideoElement} video
+             * @param {!libjass.ASS} ass
+             * @param {!libjass.renderers.RendererSettings} settings
+             *
+             * @constructor
+             * @extends {libjass.renderers.WebRenderer}
+             * @memberOf libjass.renderers
+             */
+            var DefaultRenderer = function(_super) {
+                __extends(DefaultRenderer, _super);
+                function DefaultRenderer(video, ass, settings) {
+                    _super.call(this, ass, new renderers.VideoClock(video), settings, document.createElement("div"));
+                    this._video = video;
+                    this._videoIsFullScreen = false;
+                    this._video.parentElement.replaceChild(this.libjassSubsWrapper, this._video);
+                    this.libjassSubsWrapper.insertBefore(this._video, this.libjassSubsWrapper.firstElementChild);
+                }
+                /**
+                 * @deprecated
+                 */
+                DefaultRenderer.prototype.resizeVideo = function(width, height) {
+                    console.warn("`DefaultRenderer.resizeVideo(width, height)` has been deprecated. Use `DefaultRenderer.resize(width, height)` instead.");
+                    this.resize(width, height);
+                };
+                DefaultRenderer.prototype._ready = function() {
+                    var _this = this;
+                    document.addEventListener("mozfullscreenchange", function() {
+                        return _this._onFullScreenChange(document.mozFullScreenElement);
+                    }, false);
+                    document.addEventListener("webkitfullscreenchange", function() {
+                        return _this._onFullScreenChange(document.webkitFullscreenElement);
+                    }, false);
+                    document.addEventListener("fullscreenchange", function() {
+                        return _this._onFullScreenChange(document.fullscreenElement);
+                    }, false);
+                    this.resize(this._video.offsetWidth, this._video.offsetHeight);
+                    _super.prototype._ready.call(this);
+                };
+                DefaultRenderer.prototype._onFullScreenChange = function(fullScreenElement) {
+                    if (fullScreenElement === undefined) {
+                        fullScreenElement = document.msFullscreenElement;
+                    }
+                    if (fullScreenElement === this._video) {
+                        this.libjassSubsWrapper.classList.add("libjass-full-screen");
+                        this.resize(screen.width, screen.height);
+                        this._videoIsFullScreen = true;
+                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
+                    } else if (fullScreenElement === null && this._videoIsFullScreen) {
+                        this.libjassSubsWrapper.classList.remove("libjass-full-screen");
+                        this._videoIsFullScreen = false;
+                        this._dispatchEvent("fullScreenChange", [ this._videoIsFullScreen ]);
+                    }
+                };
+                return DefaultRenderer;
+            }(renderers.WebRenderer);
+            renderers.DefaultRenderer = DefaultRenderer;
+        })(libjass.renderers || (libjass.renderers = {}));
+    })(libjass || (libjass = {}));
+    (function(libjass) {
         /**
          * This class represents an ASS script. It contains the script properties, an array of Styles, and an array of Dialogues.
          *
          * @constructor
-         *
-         * @memberof libjass
+         * @memberOf libjass
          */
         var ASS = function() {
             function ASS() {
@@ -5659,14 +6179,30 @@
             /**
              * Creates an ASS object from the raw text of an ASS script.
              *
-             * @param {string} rawASS The raw text of the ASS script.
+             * @param {string} raw The raw text of the script.
+             * @param {number=0} type The type of the script. One of the libjass.Format constants.
              * @return {!libjass.ASS}
              *
              * @static
              */
-            ASS.fromString = function(rawASS) {
-                rawASS = rawASS.replace(/\r$/gm, "");
-                var script = libjass.parser.parse(rawASS, "script");
+            ASS.fromString = function(raw, type) {
+                if (typeof type === "undefined") {
+                    type = 0;
+                }
+                raw = raw.replace(/\r$/gm, "");
+                switch (type) {
+                  case 0:
+                    return ASS._fromASSString(raw);
+
+                  case 1:
+                    return ASS._fromSRTString(raw);
+
+                  default:
+                    throw new Error("Illegal value of type: " + type);
+                }
+            };
+            ASS._fromASSString = function(rawASS) {
+                var script = libjass.parser.parse(rawASS, "assScript");
                 var result = new ASS();
                 // Get the script info template
                 var infoTemplate = script["Script Info"];
@@ -5703,9 +6239,61 @@
                 });
                 return result;
             };
+            ASS._fromSRTString = function(rawSRT) {
+                var script = libjass.parser.parse(rawSRT, "srtScript");
+                var result = new ASS();
+                // Parse the script properties
+                result.properties.resolutionX = 1280;
+                result.properties.resolutionY = 720;
+                result.properties.wrappingStyle = 1;
+                result.properties.scaleBorderAndShadow = true;
+                var newStyle = new Style({
+                    Name: "Default",
+                    Italic: "0",
+                    Bold: "0",
+                    Underline: "0",
+                    StrikeOut: "0",
+                    Fontname: "",
+                    Fontsize: "50",
+                    ScaleX: "100",
+                    ScaleY: "100",
+                    Spacing: "0",
+                    Angle: "0",
+                    PrimaryColour: "&H0000FFFF",
+                    SecondaryColour: "&H00000000",
+                    OutlineColour: "&H00000000",
+                    BackColour: "&H00000000",
+                    Outline: "1",
+                    BorderStyle: "1",
+                    Shadow: "1",
+                    Alignment: "2",
+                    MarginL: "80",
+                    MarginR: "80",
+                    MarginV: "35"
+                });
+                result.styles[newStyle.name] = newStyle;
+                script.sort(function(line1, line2) {
+                    return line1["number"] - line2["number"];
+                }).forEach(function(line) {
+                    result.dialogues.push(new Dialogue({
+                        Style: "Default",
+                        Start: line.start,
+                        End: line.end,
+                        Layer: "0",
+                        Text: line.text.replace("<b>", "{\\b1}").replace("</b>", "{\\b0}").replace("<i>", "{\\i1}").replace("</i>", "{\\i0}").replace("<u>", "{\\u1}").replace("</u>", "{\\u0}").replace(/<font color="#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})">/g, function(substring, red, green, blue) {
+                            return "{c&H" + blue + green + red + "&}";
+                        }).replace("</font>", "{\\c}")
+                    }, result));
+                });
+                return result;
+            };
             return ASS;
         }();
         libjass.ASS = ASS;
+        (function(Format) {
+            Format[Format["ASS"] = 0] = "ASS";
+            Format[Format["SRT"] = 1] = "SRT";
+        })(libjass.Format || (libjass.Format = {}));
         (function(WrappingStyle) {
             WrappingStyle[WrappingStyle["SmartWrappingWithWiderTopLine"] = 0] = "SmartWrappingWithWiderTopLine";
             WrappingStyle[WrappingStyle["SmartWrappingWithWiderBottomLine"] = 3] = "SmartWrappingWithWiderBottomLine";
@@ -5716,8 +6304,7 @@
          * This class represents the properties of an ASS script.
          *
          * @constructor
-         *
-         * @memberof libjass
+         * @memberOf libjass
          */
         var ScriptProperties = function() {
             function ScriptProperties() {}
@@ -5811,7 +6398,6 @@
         /**
          * This class represents a single global style declaration in an ASS script. The styles can be obtained via the ASS.styles property.
          *
-         * @constructor
          * @param {!Object} template The template object that contains the style's properties. It is a map of the string values read from the ASS file.
          * @param {string} template["Name"] The name of the style
          * @param {string} template["Italic"] -1 if the style is italicized
@@ -5833,7 +6419,8 @@
          * @param {string} template["MarginR"] The right margin
          * @param {string} template["MarginV"] The vertical margin
          *
-         * @memberof libjass
+         * @constructor
+         * @memberOf libjass
          */
         var Style = function() {
             function Style(template) {
@@ -6130,7 +6717,6 @@
         /**
          * This class represents a dialogue in an ASS script.
          *
-         * @constructor
          * @param {!Object} template The template object that contains the dialogue's properties. It is a map of the string values read from the ASS file.
          * @param {string} template["Style"] The name of the default style of this dialogue
          * @param {string} template["Start"] The start time
@@ -6139,7 +6725,8 @@
          * @param {string} template["Text"] The text of this dialogue
          * @param {ASS} ass The ASS object to which this dialogue belongs
          *
-         * @memberof libjass
+         * @constructor
+         * @memberOf libjass
          */
         var Dialogue = function() {
             function Dialogue(template, ass) {
