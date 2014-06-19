@@ -176,7 +176,8 @@ class Feedback(RedisObject):
 class Album(RedisObject):
     _items = None
     ip = None
-    __store__ = ['_items', 'ip'] # ORM override for __get_vars
+    metadata = None
+    __store__ = ['_items', 'ip', 'metadata'] # ORM override for __get_vars
 
     @property
     def items(self):

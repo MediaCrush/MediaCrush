@@ -1,14 +1,30 @@
 from mediacrush.config import _cfgi
-from mediacrush.objects import RedisObject, File, FailedFile
+from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.celery import app, get_task_logger, chord
 from mediacrush.processing import processor_table, detect
-from mediacrush.fileutils import compression_rate, delete_file
+from mediacrush.fileutils import compression_rate, delete_file, file_storage
 
 import time
 import os
 import json
 
+from subprocess import call
+
 logger = get_task_logger(__name__)
+
+@app.task
+def zip_album(h):
+    a = Album.from_hash(h)
+    paths = map(lambda f: file_storage(f.original), a.items)
+    zip_path = file_storage(h + ".zip")
+
+    if os.path.exists(zip_path):
+        return
+
+    call(["zip", "-j", zip_path] + paths)
+
+    a.metadata = json.dumps({"has_zip": True})
+    a.save()
 
 @app.task(bind=True, track_started=True)
 def convert_file(self, h, path, p, metadata, processor_state, ignore_limit):

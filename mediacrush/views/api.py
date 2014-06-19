@@ -12,6 +12,7 @@ from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.config import _cfg
 from mediacrush.tor import tor_redirect
+from mediacrush.tasks import zip_album
 
 import json
 
@@ -56,9 +57,14 @@ def _file_entry(f, mimetype=None):
     }
 
 def _album_object(a):
+    metadata = {}
+    if a.metadata and a.metadata != 'None':
+        metadata = json.loads(a.metadata)
+
     ret = {
         'type': 'application/album',
         'hash': a.hash,
+        'metadata': metadata,
         'files': [],
     }
 
@@ -114,9 +120,24 @@ class APIView(FlaskView):
         a = Album()
         a.items = items
         a.ip = secure_ip()
+        a.metadata = json.dumps({'has_zip': False})
         a.save()
 
         return {"hash": a.hash}
+
+    @route("/api/album/zip", methods=['POST'])
+    def album_zip(self):
+        if "hash" not in request.form:
+            return {"error": 415}, 415
+
+        h = request.form["hash"]
+        klass = RedisObject.klass(h)
+        if not klass or klass is not Album:
+            return {"error": 404}, 404
+
+        zip_album.delay(h)
+
+        return {"status": "success"}
 
     @route("/api/<id>")
     @route("/<id>.json")
