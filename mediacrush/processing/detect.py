@@ -187,7 +187,7 @@ def ffprobe_addExtraMetadata(metadata, result):
 def detect_stream(stream):
     if not "codec_name" in stream or stream["codec_name"] == "attachment":
         if "tags" in stream and "mimetype" in stream["tags"]:
-            if stream["tags"]["mimetype"] == 'application/x-truetype-font':
+            if stream["tags"]["mimetype"] == 'application/x-truetype-font' or stream["tags"]["mimetype"] == "application/vnd.ms-opentype":
                 return {
                     'type': 'font',
                     'processor_state': stream["tags"]["filename"],
