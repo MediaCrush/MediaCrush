@@ -137,7 +137,8 @@ class JPEGProcessor(Processor):
     outputs = ['jpg']
 
     def sync(self):
-        self._execute("jpegtran -optimize -perfect -copy none -outfile {1}.{extension} {0}")
+        self._execute("jhead -purejpg {0}")
+        self._execute("cp {0} {1}.{extension}")
 
 class SVGProcessor(Processor):
     time = 5
@@ -156,7 +157,7 @@ class XCFProcessor(Processor):
     def sync(self):
         self._execute(copy)
         self._execute('xcf2png {0} -o {1}.png')
-    
+
     def async(self):
         self._execute('optipng -o5 {1}.png')
 
