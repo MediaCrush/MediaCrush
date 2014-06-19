@@ -9,12 +9,13 @@ from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
 from mediacrush.network import get_ip, secure_ip
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
-from mediacrush.fileutils import normalise_processor
+from mediacrush.fileutils import normalise_processor, file_storage
 from mediacrush.config import _cfg
 from mediacrush.tor import tor_redirect
 from mediacrush.tasks import zip_album
 
 import json
+import os
 
 def _file_object(f):
     mimetype = f.mimetype
@@ -134,6 +135,9 @@ class APIView(FlaskView):
         klass = RedisObject.klass(h)
         if not klass or klass is not Album:
             return {"error": 404}, 404
+
+        if os.path.exists(file_storage(h) + ".zip"):
+            return {"status": "done"}
 
         zip_album.delay(h)
 
