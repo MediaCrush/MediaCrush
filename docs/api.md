@@ -35,19 +35,6 @@ Example:
         "hash": "LxqXxVPAvqqC"
     }
 
-### POST /api/album/zip
-
-*Parameters*: `hash`, the hash of the album that needs to be zipped.
-
-*Returns*: `success` if the task to zip the files in the album was submitted successfully, `done` if the zip file was already created, or `error` if there was an error in the process.
-
-    POST /api/album/zip
-    hash=LxqXxVPAvqqC
-
-    {
-        "status": "success"
-    }
-
 In case of error, the response will contain an 'error' parameter and additional information if necessary.
 
 *Return codes*:
@@ -79,6 +66,19 @@ In case of error, the response will contain an 'error' parameter and additional 
         <td>false</td>
     </tr>
 </table>
+
+### POST /api/album/zip
+
+*Parameters*: `hash`, the hash of the album that needs to be zipped.
+
+*Returns*: `success` if the task to zip the files in the album was submitted successfully, `done` if the zip file was already created, or `error` if there was an error in the process.
+
+    POST /api/album/zip
+    hash=LxqXxVPAvqqC
+
+    {
+        "status": "success"
+    }
 
 ## Hash information endpoints
 
