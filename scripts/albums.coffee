@@ -9,10 +9,12 @@ window.addEventListener('DOMContentLoaded', () ->
     
     document.getElementById('album-download').addEventListener('click', (e) ->
         e.preventDefault()
+        e.target.classList.add('hidden')
         downloadAlbum()
     , false)
 , false)
 
+zipComplete = false
 downloadAlbum = () ->
     API.zipAlbum(window.filename, (result) ->
         if result.error?
@@ -22,6 +24,9 @@ downloadAlbum = () ->
             downloadFinishedZip()
         else if result.status == 'success'
             showDownloadModal()
+            window.onbeforeunload = ->
+                if not zipComplete
+                    return "If you leave this page, you won't get your zip file."
             window.setTimeout(pollZip, 1000)
         else
             alert('An error occured with your request.')
@@ -32,6 +37,7 @@ downloadFinishedZip = () ->
     iframe.src = "/download/#{window.filename}.zip"
     iframe.className = 'hidden'
     document.body.appendChild(iframe)
+    zipComplete = true
 
 pollZip = () ->
     API.zipAlbum(window.filename, (result) ->
