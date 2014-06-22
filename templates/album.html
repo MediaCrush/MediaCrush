@@ -35,9 +35,19 @@
 {% endfor %}
 {% endblock %}
 {% block content %}
+<div class="dialog hidden album-pending">
+    <div>
+        <h2>We're making you a zip</h2>
+        <p>It takes a little while to put this together. We'll let you know when it's ready.</p>
+        <div class="buttons">
+            <button class="no blue">Dismiss</button>
+        </div>
+    </div>
+</div>
 <div class="album-header">
     <h2 class="center album">{% block album_header %}Album - {{ len(items) }} files{% endblock %}</h2>
     {% block layout %}{% endblock %}
+    <a href="#" id="album-download">Download Album</a>
 </div>
 
 {% block album %}{% endblock %}

@@ -6,7 +6,49 @@ window.addEventListener('DOMContentLoaded', () ->
     switch window.albumType
         when 'list' then initializeScrollLoading(true, 3)
         when 'focus' then initializeFocus()
+    
+    document.getElementById('album-download').addEventListener('click', (e) ->
+        e.preventDefault()
+        downloadAlbum()
+    , false)
 , false)
+
+downloadAlbum = () ->
+    API.zipAlbum(window.filename, (result) ->
+        if result.error?
+            alert('An error occured with your request.')
+            return
+        if result.status == 'done'
+            downloadFinishedZip()
+        else if result.status == 'success'
+            showDownloadModal()
+            window.setTimeout(pollZip, 1000)
+        else
+            alert('An error occured with your request.')
+    )
+
+downloadFinishedZip = () ->
+    iframe = document.createElement('iframe')
+    iframe.src = "/download/#{window.filename}.zip"
+    iframe.className = 'hidden'
+    document.body.appendChild(iframe)
+
+pollZip = () ->
+    API.zipAlbum(window.filename, (result) ->
+        if result.status == 'done'
+            downloadFinishedZip()
+        else
+            window.setTimeout(pollZip, 1000)
+    )
+
+showDownloadModal = () ->
+    document.querySelector('.album-pending').classList.remove('hidden')
+    document.querySelector('.album-pending .no').focus()
+    dialogNo = document.querySelector('.dialog .no')
+    dialogNo.addEventListener('click', (e) ->
+        e.preventDefault()
+        document.querySelector('.album-pending').classList.add('hidden')
+    , false)
 
 selected = 0
 loaded = 6

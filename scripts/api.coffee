@@ -116,6 +116,20 @@ API = (->
                 callback({ error: true }) if callback
             callback({ hash: result.hash }) if callback
         xhr.send(formData)
+    
+    self.zipAlbum = (hash, callback) ->
+        xhr = new XMLHttpRequest()
+        formData = new FormData()
+        formData.append('hash', hash)
+        xhr.open('POST', '/api/album/zip')
+        xhr.onload = ->
+            if this.status isnt 200
+                callback({ error: true }) if callback
+            result = JSON.parse(this.responseText)
+            if result.error?
+                callback({ error: true }) if callback
+            callback(result) if callback
+        xhr.send(formData)
 
     self.reportFile = (file) ->
         xhr = new XMLHttpRequest()
