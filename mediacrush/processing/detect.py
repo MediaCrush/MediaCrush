@@ -176,12 +176,20 @@ def ffprobe_addExtraMetadata(metadata, result):
             t = f['tags']
             if 'ALBUM' in t:
                 metadata['album'] = t['ALBUM']
+            if 'album' in t:
+                metadata['album'] = t['album']
             if 'COMPOSER' in t:
                 metadata['composer'] = t['COMPOSER']
+            if 'composer' in t:
+                metadata['composer'] = t['composer']
             if 'ARTIST' in t:
                 metadata['artist'] = t['ARTIST']
+            if 'artist' in t:
+                metadata['artist'] = t['artist']
             if 'TITLE' in t:
                 metadata['title'] = t['TITLE']
+            if 'title' in t:
+                metadata['title'] = t['title']
     return metadata
 
 def detect_stream(stream):
