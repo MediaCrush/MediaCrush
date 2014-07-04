@@ -65,15 +65,19 @@ def cleanup(results, path, h):
 @app.task
 def process_file(path, h, ignore_limit):
     f = File.from_hash(h)
-    result = detect(path)
 
-    processor = result['type'] if result else 'default'
-    if processor == 'default': # Unrecognised file type
-        failed = FailedFile(hash=h, status="unrecognised")
-        failed.save()
+    try:
+        result = detect(path)
+        processor = result['type'] if result else 'default'
+    except:
+        processor = 'default'
+    finally:
+        if processor == 'default': # Unrecognised file type
+            failed = FailedFile(hash=h, status="unrecognised")
+            failed.save()
 
-        delete_file(f)
-        return
+            delete_file(f)
+            return
 
     metadata = result['metadata'] if result else {}
     processor_state = result['processor_state'] if result else {}

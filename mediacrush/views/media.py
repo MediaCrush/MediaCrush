@@ -172,6 +172,11 @@ class MediaView(FlaskView):
             abort(404)
 
         f = File.from_hash(id)
+
+        if f.processor == "None":
+            # TODO: Better error page
+            return render_template("error.html", error="Unable to detect file type")
+
         return render_template("view.html", **_template_params(f))
 
     @route("/report/<id>", methods=['GET', 'POST'])
