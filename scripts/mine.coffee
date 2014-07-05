@@ -103,7 +103,6 @@ createView = (item, noLink = false) ->
                 source.type = file.type
                 preview.appendChild(source)
             preview.volume = 0
-            preview.play()
         else if item.blob_type == 'image'
             preview = document.createElement('img')
             preview.src = window.cdn + item.files[0].file
