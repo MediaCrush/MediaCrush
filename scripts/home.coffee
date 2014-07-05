@@ -118,7 +118,6 @@ createHistoryItem = (h, noLink = false) ->
         if not noLink
             a = document.createElement('a')
             a.href = '/' + h.hash
-            a.target = '_blank'
             a.appendChild(preview)
             container.appendChild(a)
     return container

@@ -163,7 +163,6 @@ createView = (item, noLink = false) ->
 
             a = document.createElement('a')
             a.href = '/' + item.hash
-            a.target = '_blank'
             a.appendChild(preview)
             container.appendChild(a)
             container.appendChild(bar)
