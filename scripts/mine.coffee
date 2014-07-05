@@ -95,6 +95,8 @@ createView = (item, noLink = false) ->
         preview = null
         if item.blob_type == 'video'
             preview = document.createElement('video')
+            if item.extras? and item.extras.length > 0
+                preview.poster = item.extras[0].url
             preview.loop = true
             for file in item.files
                 continue if file.type == 'image/gif'
@@ -103,6 +105,10 @@ createView = (item, noLink = false) ->
                 source.type = file.type
                 preview.appendChild(source)
             preview.volume = 0
+            preview.onmouseenter = (e) ->
+                e.target.play()
+            preview.onmouseleave = (e) ->
+                e.target.pause()
         else if item.blob_type == 'image'
             preview = document.createElement('img')
             preview.src = window.cdn + item.files[0].file
