@@ -201,7 +201,7 @@ class UploadTestCase(APITestCase):
         h = self._get_hash("not_media.dat")
         status = json.loads(self.client.get("/api/%s/status" % h).data)['status']
 
-        self.assertEqual(status, 'unrecognised')
+        self.assertEqual(status, 'error')
 
 class URLUploadTestCase(APITestCase):
     def test_upload_url(self):
