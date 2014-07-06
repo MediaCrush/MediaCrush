@@ -135,7 +135,6 @@ def detect_interlacing(path):
         return False
     result = a.stdout[1].split('\n')
     for line in result:
-        print(line)
         if line.startswith('[Parsed_idet_'):
             match = re.search('TFF:([0-9]+) BFF:([0-9]+) Progressive:([0-9]+) Undetermined:([0-9]+)', line)
             if match == None:
@@ -283,39 +282,40 @@ def detect_imagemagick(path):
     a = Invocation('identify -verbose {0}')
     a(path)
     a.run()
-    if a.returncode or a.exited:
-        return None
-    result = a.stdout[0].split('\n')
-    # Check for an actual mimetype first
-    mimetype = None
-    for line in result:
-        line = line.lstrip(' ')
-        if line.startswith('Mime type: '):
-            mimetype = line[11:]
-    if mimetype in [ 'image/png', 'image/jpeg', 'image/svg+xml' ]:
-        return {
-            'type': mimetype,
-            'metadata': None,
-            'processor_state': None,
-            'flags': None
-        }
-    # Check for other formats
-    for line in result:
-        line = line.lstrip(' ')
-        if line == 'Format: XCF (GIMP image)':
+    try:
+        result = a.stdout[0].split('\n')
+        # Check for an actual mimetype first
+        mimetype = None
+        for line in result:
+            line = line.lstrip(' ')
+            if line.startswith('Mime type: '):
+                mimetype = line[11:]
+        if mimetype in [ 'image/png', 'image/jpeg', 'image/svg+xml' ]:
             return {
-                'type': 'image/x-gimp-xcf',
+                'type': mimetype,
                 'metadata': None,
                 'processor_state': None,
                 'flags': None
             }
+        # Check for other formats
+        for line in result:
+            line = line.lstrip(' ')
+            if line == 'Format: XCF (GIMP image)':
+                return {
+                    'type': 'image/x-gimp-xcf',
+                    'metadata': None,
+                    'processor_state': None,
+                    'flags': None
+                }
 
-    return {
-        'type': 'image',
-        'metadata': None,
-        'processor_state': None,
-        'flags': None
-    }
+        return {
+            'type': 'image',
+            'metadata': None,
+            'processor_state': None,
+            'flags': None
+        }
+    except:
+        return None
 
 def detect_plaintext(path):
     a = Invocation('file -b -e elf -e tar -e compress -e cdf -e apptype -i {0}')
