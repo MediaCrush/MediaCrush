@@ -1,4 +1,4 @@
-# MediaCrush [![Build Status](https://img.shields.io/travis/MediaCrush/MediaCrush/master.svg)](https://travis-ci.org/MediaCrush/MediaCrush)
+# MediaCrush
 
 A website for serving media super fast, by [SirCmpwn](https://github.com/SirCmpwn) and
 [jdiez](https://github.com/jdiez17), and several
