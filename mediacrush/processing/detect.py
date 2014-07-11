@@ -240,7 +240,7 @@ def detect_stream(stream):
         return {
             'type': 'video',
             'metadata': { 'dimensions': { 'width': int(stream['width']), 'height': int(stream['height']) } },
-            'processor_state': { 'has_audio': False, 'has_video': True },
+            'processor_state': { 'has_audio': False, 'has_video': True, 'video_codec': stream['codec_name'] },
             'flags': {
                 'autoplay': False,
                 'loop': False,
