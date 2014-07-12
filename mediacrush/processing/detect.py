@@ -66,6 +66,8 @@ def detect_ffprobe(path):
 
     for stream in result["streams"]:
         s = detect_stream(stream)
+        if s == None:
+            continue
         # Set up some metadata
         if s['metadata'] != None:
             if 'duration' in s['metadata']:
