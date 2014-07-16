@@ -64,10 +64,12 @@ def cleanup(results, path, h):
 
 @app.task
 def process_file(path, h, ignore_limit):
-    f = File.from_hash(h)
-    if f == None: # Redis hasn't caught up yet.
-        time.sleep(2)
+    t = time.time() + 2
+    while True:
         f = File.from_hash(h)
+        if f or time.time() > t:
+            break
+        time.sleep(0.05) # Wait for Redis to catch up
 
     try:
         result = detect(path)
