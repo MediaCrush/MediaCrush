@@ -286,16 +286,20 @@ def detect_imagemagick(path):
     a.run()
     try:
         result = a.stdout[0].split('\n')
-        # Check for an actual mimetype first
+        # Get mime type and dimensions
         mimetype = None
+        metadata = None
         for line in result:
             line = line.lstrip(' ')
             if line.startswith('Mime type: '):
                 mimetype = line[11:]
+            match = re.search('(\d+)x(\d+)', line)
+            if line.startswith('Geometry: '):
+                metadata = { 'dimensions': { 'width': int(match.group(1)), 'height': int(match.group(2)) } }
         if mimetype in [ 'image/png', 'image/jpeg', 'image/svg+xml' ]:
             return {
                 'type': mimetype,
-                'metadata': None,
+                'metadata': metadata,
                 'processor_state': None,
                 'flags': None
             }
@@ -305,14 +309,14 @@ def detect_imagemagick(path):
             if line == 'Format: XCF (GIMP image)':
                 return {
                     'type': 'image/x-gimp-xcf',
-                    'metadata': None,
+                    'metadata': metadata,
                     'processor_state': None,
                     'flags': None
                 }
 
         return {
             'type': 'image',
-            'metadata': None,
+            'metadata': metadata,
             'processor_state': None,
             'flags': None
         }
