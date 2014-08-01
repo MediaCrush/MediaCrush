@@ -3,6 +3,7 @@ from mediacrush.mimeinfo import EXTENSIONS, get_mimetype, extension
 from mediacrush.processing import get_processor
 
 import os
+import json
 
 class BitVector(object):
     shifts = {}
@@ -62,6 +63,18 @@ flags_per_processor = {
     'image/x-gimp-xcf': ['nsfw'],
     'audio': ['nsfw']
 }
+
+def get_flags(normalised_processor, metadata):
+    flags = flags_per_processor.get(normalised_processor, [])
+    if metadata:
+        metadata = json.loads(metadata)
+
+        if normalised_processor == "video":
+            if "has_audio" in metadata:
+                if metadata["has_audio"] == True:
+                    flags.remove("autoplay")
+
+    return flags
 
 def normalise_processor(processor):
     if not processor: return None

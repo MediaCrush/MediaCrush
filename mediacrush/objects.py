@@ -1,7 +1,7 @@
 from mediacrush.database import r, _k
 from mediacrush.celery import app
 
-from mediacrush.fileutils import normalise_processor, flags_per_processor, BitVector
+from mediacrush.fileutils import normalise_processor, get_flags, BitVector
 
 import hashlib
 import uuid
@@ -165,7 +165,7 @@ class File(RedisObject):
         self._processor = v
 
         # When the processor is changed, so is the interpretation of the flags.
-        options = flags_per_processor.get(normalise_processor(v), [])
+        options = get_flags(normalise_processor(v), self.metadata)
         self.flags = BitVector(options, iv=self._configvector)
 
 
