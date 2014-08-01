@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from mediacrush.config import _cfg
 
-from celery import Celery, chord
+from celery import Celery, chord, signature
 from celery.utils.log import get_task_logger
 
 redis_connection = 'redis://%s:%s/1' % (_cfg("redis-ip"), _cfg("redis-port"))
@@ -18,6 +18,9 @@ app.conf.update(
     CELERY_TASK_SERIALIZER='json',
     CELERY_RESULT_SERIALIZER='json',
     CELERY_CHORD_PROPAGATES=False,
+    CELERY_ROUTES = {
+        'mediacrush.tasks.process_file': {'queue': 'priority'}
+    }
 )
 
 if __name__ == '__main__':

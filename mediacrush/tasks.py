@@ -1,6 +1,6 @@
 from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File, FailedFile, Album
-from mediacrush.celery import app, get_task_logger, chord
+from mediacrush.celery import app, get_task_logger, chord, signature
 from mediacrush.processing import processor_table, detect
 from mediacrush.fileutils import compression_rate, delete_file, file_storage
 
@@ -88,6 +88,7 @@ def process_file(path, h, ignore_limit):
     processor_state = result['processor_state'] if result else {}
 
     f.processor = processor
+    queue = "priority" if processor.startswith("image") else "celery"
 
     setattr(f.flags, 'nsfw', False)
     if result and result['flags']:
@@ -96,7 +97,8 @@ def process_file(path, h, ignore_limit):
 
     f.save()
 
-    task = convert_file.s(h, path, processor, metadata, processor_state, ignore_limit)
+    args = [h, path, processor, metadata, processor_state, ignore_limit]
+    task = signature("mediacrush.tasks.convert_file", args=args, options={'queue': queue})
     task_result = task.freeze() # This sets the taskid, so we can pass it to the UI
 
     # This chord will execute `syncstep` and `asyncstep`, and `cleanup` after both of them have finished.
