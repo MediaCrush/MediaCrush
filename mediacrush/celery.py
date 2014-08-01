@@ -18,6 +18,9 @@ app.conf.update(
     CELERY_TASK_SERIALIZER='json',
     CELERY_RESULT_SERIALIZER='json',
     CELERY_CHORD_PROPAGATES=False,
+    CELERY_ROUTES = {
+        'mediacrush.tasks.process_file': {'queue': 'priority'}
+    }
 )
 
 if __name__ == '__main__':

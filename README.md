@@ -95,7 +95,7 @@ MediaCrush requires the daemon and the website to be running concurently to work
 `app.py`, and the daemon is celery. The daemon is responsible for handling media processing. Run the
 daemon, then the website:
 
-    celery worker -A mediacrush
+    celery worker -A mediacrush -Q celery,priority
     python app.py
 
 This runs the site in debug mode. If you want to run this on a production server, you'll probably want to
