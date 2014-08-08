@@ -130,6 +130,8 @@ In case of error, the response will contain an 'error' parameter and additional 
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
       "type": "image/gif",
+      "title": null,
+      "description": null
     }
 
 When a file is uploaded to MediaCrush, it enters our processing pipeline. Various (lossless) tweaks and
@@ -197,6 +199,8 @@ If the file is not found, you will get a dictionary like:
         "original": "/CPvuR5lRhmS0.gif",
         "hash": "CPvuR5lRhmS0",
         "type": "image/gif",
+        "title": null,
+        "description": null
       },
       "tVWMM_ziA3nm": {
         "blob_type": "video",
@@ -236,6 +240,8 @@ If the file is not found, you will get a dictionary like:
         "original": "/tVWMM_ziA3nm.gif",
         "hash": "tVWMM_ziA3nm",
         "type": "image/gif"
+        "title": null,
+        "description": null
       }
     }
 
@@ -272,7 +278,9 @@ If the file is not found, you will get a dictionary like:
         },
         "hash": "4Gt0YcGMPA7S",
         "original": "/4Gt0YcGMPA7S.jpg",
-        "type": "image/jpeg"
+        "type": "image/jpeg",
+        "title": null,
+        "description": null
       }
     }
 
@@ -355,7 +363,9 @@ If the file is not found, you will get a dictionary like:
         },
         "original": "/LxqXxVPAvqqB.gif",
         "hash": "LxqXxVPAvqqB",
-        "type": "image/gif"
+        "type": "image/gif",
+        "title": null,
+        "description": null
       }
     }
 
@@ -465,6 +475,57 @@ The "result" object will only be included if the status is "done".
 </table>
 
 ## Hash manipulation endpoints
+
+### POST /api/&lt;hash&gt;/text
+
+*Parameters*: `title` or `description` (or both). Text fields that are to be changed. 
+
+*Returns*: `sucess` if it was successful, `error` otherwise. 
+
+    POST /api/Ta-nbchtCw6d/text
+    title=Cute cat
+
+    return {'status': 'success'}
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the flags have been updated.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>You did not provide a new `title` or `description`.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no such hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>408</td>
+        <td>You are no longer allowed to edit the title or description. (timeout)</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>414</td>
+        <td>Either of the fields was over 2048 characters.</td>
+        <td>false</td>
+    </tr>
+</table>
 
 ### POST /api/&lt;hash&gt;/flags
 
@@ -600,7 +661,9 @@ In case of error, the response will contain an 'error' parameter and additional 
         ],
         "original": "/LxqXxVPAvqqB.png",
         "hash": "LxqXxVPAvqqB",
-        "type": "image/png"
+        "type": "image/png",
+        "title": null,
+        "description": null
       }
     }
 
@@ -726,7 +789,9 @@ In case of error, the response will contain an 'error' parameter and additional 
       },
       "original": "/CPvuR5lRhmS0.gif",
       "hash": "CPvuR5lRhmS0",
-      "type": "image/gif"
+      "type": "image/gif",
+      "title": null,
+      "description": null
     }
 
 When a file is uploaded to MediaCrush, several associated files may be generated. In the case of GIF
@@ -746,6 +811,8 @@ Description of fields:
 * `original`: The original file that was uploaded, as-is.
 * `hash`: A unique identifier within MediaCrush.
 * `type`: The original mimetype, provided by the user. You should not base decisions on this value.
+* `title`: A title for the file. Plaintext.
+* `description`: A description for the file. To be rendered using a stripped down version of Markdown: *italics*, **bold** and [links](https://mediacru.sh).
 
 ## Album
 
@@ -816,7 +883,9 @@ Description of fields:
         }
       ],
       "hash": "6ecd2bbd34ec",
-      "type": "application/album"
+      "type": "application/album",
+      "title": null,
+      "description": null
     }
 
 # Appendix B - Flags by `blob_type`

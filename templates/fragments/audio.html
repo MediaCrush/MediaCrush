@@ -1,3 +1,6 @@
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 {% if metadata %}
     {% if 'title' in metadata and 'artist' in metadata %}
     <h2 class="audio-title">{{ metadata['artist'] }} - {{ metadata['title'] }}</h2>
@@ -55,6 +58,9 @@
         </div>
     </div>
 </div>
+{% if file.description %}
+    {{ file.description | safe }}
+{% endif %}
 <script>
 document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));

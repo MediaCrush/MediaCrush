@@ -13,6 +13,12 @@ class RedisObject(object):
 
     def __init__(self, **kw):
         for k, v in kw.items():
+            if v == "True" or v == "False":
+                v = v == "True"
+
+            if v == "None":
+                v = None
+
             setattr(self, k, v)
 
         if "hash" not in kw:
@@ -96,7 +102,7 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata', 'title', 'description', 'text_locked']
 
     original = None
     mimetype = None
@@ -107,6 +113,9 @@ class File(RedisObject):
     _processor = None
     metadata = None
     flags = None
+    title = None
+    text_locked = False
+    description = None
 
     def add_report(self):
         self.reports = int(self.reports)
@@ -177,7 +186,10 @@ class Album(RedisObject):
     _items = None
     ip = None
     metadata = None
-    __store__ = ['_items', 'ip', 'metadata'] # ORM override for __get_vars
+    title = None
+    description = None
+    text_locked = False
+    __store__ = ['_items', 'ip', 'metadata', 'title', 'description', 'text_locked'] # ORM override for __get_vars
 
     @property
     def items(self):

@@ -50,6 +50,9 @@ window.addEventListener('load', function() {
 }, false);
 </script>
 
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 <div id="media-select-{{ filename }}" class="media-select">
     <a href="#" class="left" id="selectHtml5-{{ filename }}">
         <div>Tap here to</div>
@@ -75,6 +78,9 @@ window.addEventListener('load', function() {
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 <video controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.jpg">
   {% if ua_platform == 'android' %}
     <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
@@ -86,4 +92,7 @@ window.addEventListener('load', function() {
     <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
   {% endif %}
 </video>
+{% endif %}
+{% if file.description %}
+    {{ file.description | safe }}
 {% endif %}

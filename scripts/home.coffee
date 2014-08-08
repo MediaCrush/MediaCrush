@@ -381,6 +381,29 @@ window.statusHook = (file, status, oldStatus) ->
         return if status == 'ready' and oldStatus == 'done'
     updateAlbumUI()
 
+createTitleUI = () ->
+    container = document.createElement('div')
+    container.classList.add('title-editor')
+    title = document.createElement('input')
+    title.type = 'text'
+    title.placeholder = 'Title...'
+    description = document.createElement('textarea')
+    description.placeholder = 'Description...'
+    description.rows = 4
+    save = document.createElement('button')
+    save.classList.add('save')
+    save.textContent = 'Save'
+    cancel = document.createElement('button')
+    cancel.textContent = 'Cancel'
+    cancel.classList.add('cancel')
+    cancel.onclick = () ->
+        container.parentElement.classList.remove('titled')
+    container.appendChild(title)
+    container.appendChild(description)
+    container.appendChild(save)
+    container.appendChild(cancel)
+    return container
+
 createPreview = (name) ->
     create = (element, className) ->
         _ = document.createElement(element)
@@ -401,6 +424,13 @@ createPreview = (name) ->
     fullSize = create('a', 'full-size hidden')
     progress = create('div', 'progress')
     progress.style.width = 0
+    toggleTitle = create('a', 'toggle-title hidden')
+    toggleTitle.innerHTML = '<span class="icon" data-icon="\uF030"></span> Edit title/description'
+    toggleTitle.href = '#'
+    toggleTitle.onclick = (e) ->
+        e.preventDefault()
+        container.classList.add('titled')
+    titleUI = createTitleUI()
     container.appendChild(preview)
     container.appendChild(fade)
     container.appendChild(title)
@@ -408,6 +438,8 @@ createPreview = (name) ->
     container.appendChild(status)
     container.appendChild(error)
     container.appendChild(link)
+    container.appendChild(toggleTitle)
+    container.appendChild(titleUI)
     container.appendChild(deleteLink)
     container.appendChild(fullSize)
     container.appendChild(progress)
