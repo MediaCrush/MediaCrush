@@ -14,6 +14,15 @@
     </div>
 </div>
 {% else %}
+
+{% if file.title %}
+{{ file.title }} 
+{% endif %}
+
+{% if file.description %}
+{{ file.description }}
+{% endif %}
+
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
     {% if processor in [ 'image/png', 'image/jpeg', 'image/svg+xml' ] %}
     <img id="img-{{filename}}" src="{{ cdn }}/{{ original }}" alt="MediaCrush" />

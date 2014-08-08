@@ -88,6 +88,7 @@ def _template_params(f):
         'processor': f.processor,
         'protocol': _cfg("protocol"),
         'domain': _cfg("domain"),
+        'file': f
     }
 
 def _album_params(album):
@@ -173,7 +174,7 @@ class MediaView(FlaskView):
 
         f = File.from_hash(id)
 
-        if f.processor == "None":
+        if not f.processor:
             # TODO: Better error page
             return render_template("error.html", error="Unable to detect file type")
 

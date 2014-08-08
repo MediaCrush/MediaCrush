@@ -16,6 +16,9 @@ class RedisObject(object):
             if v == "True" or v == "False":
                 v = v == "True"
 
+            if v == "None":
+                v = None
+
             setattr(self, k, v)
 
         if "hash" not in kw:
