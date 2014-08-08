@@ -136,16 +136,6 @@ API = (->
         xhr.open('POST', "/report/#{window.filename}")
         xhr.send()
 
-    self.setText = (hash, title, description, callback) ->
-        xhr = new XMLHttpRequest()
-        formData = new FormData()
-        formData.append('title', title)
-        formData.append('description', description)
-        xhr.open('POST', "/api/#{hash}/text")
-        xhr.onload = ->
-            callback(self) if callback
-        xhr.send(formData)
-
     return self
 )()
 window.API = API if window?

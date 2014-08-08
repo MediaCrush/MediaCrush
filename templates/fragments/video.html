@@ -1,6 +1,3 @@
-{% if file.title %}
-    <h3>{{ file.title }}</h3>
-{% endif %}
 <div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
     <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload poster="{{ cdn }}/{{ filename }}.jpg" controls>
         {% if 'video/mp4' in types %}
@@ -80,9 +77,6 @@
         </div>
     </div>
 </div>
-{% if file.description %}
-    {{ file.description | safe }}
-{% endif %}
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));

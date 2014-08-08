@@ -23,13 +23,28 @@
     }
 }
 
-#droparea {
+#drop-wrapper {
     position: relative;
     width: 700px;
     height: 595px;
     overflow: hidden;
+}
+
+#droparea {
+    background: #fff;
+    overflow: hidden;
+    padding: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 595px;
+    -webkit-transition: box-shadow 0.25s linear;
+    -moz-transition: box-shadow 0.25s linear;
+    transition: box-shadow 0.25s linear;
     background: url('/static/upload.png') transparent no-repeat 230px 320px;
-    padding-right: 5px;
+    width: 100%;
+    padding-right: 50px;
+    margin-left: 6px;
 
     &.hover {
         box-shadow: 0 0 10px 2px rgba(82, 168, 236, 0.6) inset;
@@ -46,7 +61,7 @@
     #record {
         position: absolute;
         left: 5px;
-        top: 5px;
+        top: 9px;
         font-size: 10pt;
         padding: 3px;
         z-index: 1000;
@@ -291,68 +306,6 @@
         }
     }
 
-    a.toggle-title {
-        font-size: 10pt;
-        position: relative;
-        z-index: 1;
-        margin-top: 15px;
-        display: block;
-
-        &:hover {
-            text-decoration: underline;
-        }
-
-        .icon {
-            font-size: 12px;
-        }
-    }
-
-    .title-editor {
-        display: none;
-    }
-
-    &.titled {
-        a.toggle-title {
-            display: none;
-        }
-
-        height: 215px;
-
-        .title-editor {
-            display: block;
-            position: relative;
-            z-index: 1;
-
-            input, textarea {
-                display: block;
-                width: 450px;
-            }
-
-            button {
-                background: #08C;
-                color: #fff;
-                border: none;
-                margin-top: 2px;
-                padding: 3px 50px;
-                cursor: pointer;
-                margin-right: 10px;
-
-                &.cancel {
-                    color: #fff;
-                    background: #ccc;
-
-                    &:hover {
-                        background: #aaa;
-                    }
-                }
-
-                &:hover {
-                    background: #005580;
-                }
-            }
-        }
-    }
-
     border: 1px solid #888;
     clear: both;
     height: 112px;
@@ -368,7 +321,7 @@
     .preview {
         float: left;
         margin-right: 10px;
-        min-height: 100%;
+        min-height: 113px;
         width: 200px;
 
         & {
@@ -384,7 +337,7 @@
         }
     }
 
-    & > a {
+    a {
         position: relative;
         z-index: 0;
 

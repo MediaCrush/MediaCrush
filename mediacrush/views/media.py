@@ -17,7 +17,6 @@ from mediacrush.network import get_ip
 from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
 from mediacrush.views.api import objects
-from mediacrush.slimdown import slimdown
 
 def fragment(processor):
     np = normalise_processor(processor)
@@ -73,9 +72,6 @@ def _template_params(f):
                 subtitles['url'] = '/' + f.hash + '.' + subtitles['info']['codec_name']
                 break
 
-    if f.description:
-        f.description = slimdown.convert(f.description)
-
     return {
         'filename': f.hash,
         'original': f.original,
@@ -92,7 +88,6 @@ def _template_params(f):
         'processor': f.processor,
         'protocol': _cfg("protocol"),
         'domain': _cfg("domain"),
-        'file': f
     }
 
 def _album_params(album):
@@ -120,9 +115,6 @@ def _album_params(album):
             can_delete = check_password_hash(f.ip, get_ip())
     except:
         pass
-
-    if album.description:
-        album.description = slimdown.convert(album.description)
 
     return vars()
 
@@ -181,7 +173,7 @@ class MediaView(FlaskView):
 
         f = File.from_hash(id)
 
-        if not f.processor:
+        if f.processor == "None":
             # TODO: Better error page
             return render_template("error.html", error="Unable to detect file type")
 

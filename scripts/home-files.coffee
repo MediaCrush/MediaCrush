@@ -143,9 +143,6 @@ class MediaFile
         largeLink.classList.remove('hidden')
         @preload()
         if @isUserOwned
-            editTitle = @preview.querySelector('.toggle-title')
-            editTitle.classList.remove('hidden')
-            saveTitle = @preview.querySelector('.title-editor button.save')
             deleteLink = @preview.querySelector('.delete')
             deleteLink.href = "/api/#{@hash}/delete"
             self = this
@@ -161,14 +158,6 @@ class MediaFile
                         if Object.keys(uploadedFiles).length == 0
                             document.getElementById('droparea').classList.remove('files')
                         window.statusHook(self, self.status, oldStatus) if window.statusHook
-                )
-            , false)
-            saveTitle.addEventListener('click', (e) ->
-                e.preventDefault()
-                title = self.preview.querySelector('.title-editor input').value
-                description = self.preview.querySelector('.title-editor textarea').value
-                API.setText(self.hash, title, description, () ->
-                    self.preview.classList.remove('titled')
                 )
             , false)
             deleteLink.classList.remove('hidden')

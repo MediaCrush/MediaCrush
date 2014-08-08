@@ -33,8 +33,6 @@ def _file_object(f):
         'extras': [],
         'metadata': metadata,
         'flags': f.flags.as_dict(),
-        'title': f.title,
-        'description': f.description,
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -69,8 +67,6 @@ def _album_object(a):
         'hash': a.hash,
         'metadata': metadata,
         'files': [],
-        'title': a.title,
-        'description': a.description,
     }
 
     if not a.items:
@@ -338,38 +334,6 @@ class APIView(FlaskView):
 
         return {"flags": o.flags.as_dict()}
 
-    @route("/api/<h>/text", methods=["POST"])
-    def hash_text(self, h):
-        klass = RedisObject.klass(h)
-        max_length = 2048
-
-        if not klass or klass not in [Album, File]:
-            return {'error': 404}, 404
-
-        properties = ["title", "description"]
-        if not any(prop in request.form for prop in properties):
-            return {'error': 400}, 400
-
-        try:
-            o = klass.from_hash(h) # We don't care about the object type
-            if not check_password_hash(o.ip, get_ip()):
-                return {'error': 401}, 401
-        except:
-            return {'error': 401}, 401
-
-        if o.text_locked:
-            return {'error': 408}, 408
-
-
-        for prop in properties:
-            if prop in request.form:
-                data = request.form[prop]
-                if len(data) > max_length:
-                    return {'error': 414}, 414
-
-                setattr(o, prop, data)
-        o.save()
-        return {'status': 'success'}
 
     @route("/api/feedback", methods=['POST'])
     def feedback(self):
