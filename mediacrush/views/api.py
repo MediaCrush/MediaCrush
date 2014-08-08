@@ -346,7 +346,6 @@ class APIView(FlaskView):
         if not klass or klass not in [Album, File]:
             return {'error': 404}, 404
 
-
         properties = ["title", "description"]
         if not any(prop in request.form for prop in properties):
             return {'error': 400}, 400
@@ -361,20 +360,14 @@ class APIView(FlaskView):
         if o.text_locked:
             return {'error': 408}, 408
 
-        if "title" in request.form:
-            title = request.form["title"]
-            if len(title) > max_length:
-                return {'error': 414}, 414
 
-            o.title = title
+        for prop in properties:
+            if prop in request.form:
+                data = request.form[prop]
+                if len(data) > max_length:
+                    return {'error': 414}, 414
 
-        if "description" in request.form:
-            description = request.form["title"]
-            if len(description) > max_length:
-                return {'error': 414}, 414
-
-            o.description = description
-
+                setattr(o, prop, data)
         o.save()
         return {'status': 'success'}
 
