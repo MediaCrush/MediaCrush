@@ -13,6 +13,9 @@ class RedisObject(object):
 
     def __init__(self, **kw):
         for k, v in kw.items():
+            if v == "True" or v == "False":
+                v = v == "True"
+
             setattr(self, k, v)
 
         if "hash" not in kw:
@@ -96,7 +99,7 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata', 'text_locked']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata', 'title', 'description', 'text_locked']
 
     original = None
     mimetype = None

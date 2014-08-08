@@ -376,6 +376,7 @@ class APIView(FlaskView):
             o.description = description
 
         o.save()
+        return {'status': 'success'}
 
     @route("/api/feedback", methods=['POST'])
     def feedback(self):
