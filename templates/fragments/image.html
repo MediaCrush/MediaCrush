@@ -1,4 +1,7 @@
 {% if album %}
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 <div class="item-wrapper">
     <a href="/{{ filename }}" target="_blank" id="img-a-{{ filename }}">
         {% if processor in [ 'image/png', 'image/jpeg', 'image/svg+xml' ] %}
@@ -13,16 +16,13 @@
         <a class="right" href="/download/{{ original }}">Download</a>
     </div>
 </div>
-{% else %}
-
-{% if file.title %}
-{{ file.title }} 
-{% endif %}
-
 {% if file.description %}
-{{ file.description }}
+    {{ file.description | safe }}
 {% endif %}
-
+{% else %}
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
     {% if processor in [ 'image/png', 'image/jpeg', 'image/svg+xml' ] %}
     <img id="img-{{filename}}" src="{{ cdn }}/{{ original }}" alt="MediaCrush" />
@@ -30,6 +30,9 @@
     <img id="img-{{filename}}" src="{{ cdn }}/{{ filename }}.png" alt="MediaCrush" />
     {% endif %}
 </a>
+{% if file.description %}
+    {{ file.description | safe }}
+{% endif %}
 <script type="text/javascript">
 function mediaSizeReporter() {
     var img = document.getElementById('img-{{filename}}');

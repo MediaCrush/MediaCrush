@@ -1,4 +1,10 @@
+{% if file.title %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
 <audio controls>
   <source src="{{ cdn }}/{{ filename }}.mp3" type='audio/mp3'>
   <source src="{{ cdn }}/{{ filename }}.ogg" type='audio/ogg'>
 </audio>
+{% if file.description %}
+    {{ file.description | safe }}
+{% endif %}

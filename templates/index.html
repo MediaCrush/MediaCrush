@@ -15,52 +15,49 @@
         {# <div id="beta">
             <span>Beta</span>
         </div> #}
-        <div id="drop-wrapper">
-            <div id="droparea">
-                <input type="file" id="browse" class="hidden" multiple />
-                <div id="albumUI">
-                    <div class="status hidden">Processing, please wait...</div>
-                    <a href="#" class="button hidden">Create Album</a>
-                    <div class="result hidden">
-                        Album: <a href="#" target="_blank"></a>
-                    </div>
-                </div>
-                <div id="record" class="hidden">
-                    <span class="info hidden">Recording...</span>
-                    <a href="#" class="icon record" data-icon="&#xF073;" title="Upload directly from your microphone"></a>
-                </div>
-                <div id="files">
-                    {# Things in here will be removed after the first file is uploaded #}
-                    <div class="konami icons hidden">
-                        <img src="/static/konami-icons.png" alt="Hazards" />
-                    </div>
-                    <div class="social">
-                        <a target="_blank" href="https://pay.reddit.com/r/MediaCrush">/r/MediaCrush</a>
-                        <a target="_blank" href="https://twitter.com/mediacru_sh">@mediacru_sh</a>
-                    </div>
-                    {% if notice_enabled %}
-                    <div id="notice">
-                        <div>{{ notice_text }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="hint">
-                    {# Things in here stay in here past the first upload #}
-                    <div id="droptext">
-                        <div class="hidden-if-noscript">
-                            <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
-                        </div>
-                    </div>
-                    <noscript class="center" style="line-height: 25px; position: relative; top: -40px">
-                        <form method="POST" enctype="multipart/form-data" action="/api/upload/noscript">
-                            Upload video, audio, or images:<br />
-                            <input type="file" name="file" /><input type="submit" value="Upload" /><br />
-                            Anonymous users, please take special note of the <a href="/serious">terms of service</a>.
-                        </form>
-                    </noscript>
+        <div id="droparea">
+            <input type="file" id="browse" class="hidden" multiple />
+            <div id="albumUI">
+                <div class="status hidden">Processing, please wait...</div>
+                <a href="#" class="button hidden">Create Album</a>
+                <div class="result hidden">
+                    Album: <a href="#" target="_blank"></a>
                 </div>
             </div>
-            <div class="fader"></div>
+            <div id="record" class="hidden">
+                <span class="info hidden">Recording...</span>
+                <a href="#" class="icon record" data-icon="&#xF073;" title="Upload directly from your microphone"></a>
+            </div>
+            <div id="files">
+                {# Things in here will be removed after the first file is uploaded #}
+                <div class="konami icons hidden">
+                    <img src="/static/konami-icons.png" alt="Hazards" />
+                </div>
+                <div class="social">
+                    <a target="_blank" href="https://pay.reddit.com/r/MediaCrush">/r/MediaCrush</a>
+                    <a target="_blank" href="https://twitter.com/mediacru_sh">@mediacru_sh</a>
+                </div>
+                {% if notice_enabled %}
+                <div id="notice">
+                    <div>{{ notice_text }}</div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="hint">
+                {# Things in here stay in here past the first upload #}
+                <div id="droptext">
+                    <div class="hidden-if-noscript">
+                        <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
+                    </div>
+                </div>
+                <noscript class="center" style="line-height: 25px; position: relative; top: -40px">
+                    <form method="POST" enctype="multipart/form-data" action="/api/upload/noscript">
+                        Upload video, audio, or images:<br />
+                        <input type="file" name="file" /><input type="submit" value="Upload" /><br />
+                        Anonymous users, please take special note of the <a href="/serious">terms of service</a>.
+                    </form>
+                </noscript>
+            </div>
         </div>
         <div class="small center" style="margin-top: 14px">
             <ul class="inline">
