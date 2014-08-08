@@ -476,6 +476,57 @@ The "result" object will only be included if the status is "done".
 
 ## Hash manipulation endpoints
 
+### POST /api/&lt;hash&gt;/text
+
+*Parameters*: `title` or `description` (or both). Text fields that are to be changed. 
+
+*Returns*: `sucess` if it was successful, `error` otherwise. 
+
+    POST /api/Ta-nbchtCw6d/text
+    title=Cute cat
+
+    return {'status': 'success'}
+
+*Return codes*:
+
+<table>
+    <tr>
+        <th>HTTP code</th>
+        <th>Meaning</th>
+        <th>Success</th>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>The IP matches the stored hash and the flags have been updated.</td>
+        <td>true</td>
+    </tr>
+    <tr>
+        <td>400</td>
+        <td>You did not provide a new `title` or `description`.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>401</td>
+        <td>The IP does not match the stored hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>There is no such hash.</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>408</td>
+        <td>You are no longer allowed to edit the title or description. (timeout)</td>
+        <td>false</td>
+    </tr>
+    <tr>
+        <td>414</td>
+        <td>Either of the fields was over 2048 characters.</td>
+        <td>false</td>
+    </tr>
+</table>
+
 ### POST /api/&lt;hash&gt;/flags
 
 *Parameters*: the flags that are to be changed, with a value of `true` to activate a flag and `false` to deactivate it.
