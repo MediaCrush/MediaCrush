@@ -73,7 +73,8 @@ def _template_params(f):
                 subtitles['url'] = '/' + f.hash + '.' + subtitles['info']['codec_name']
                 break
 
-    f.description = slimdown.convert(f.description)
+    if f.description:
+        f.description = slimdown.convert(f.description)
 
     return {
         'filename': f.hash,
@@ -120,7 +121,8 @@ def _album_params(album):
     except:
         pass
 
-    album.description = slimdown.convert(album.description)
+    if album.description:
+        album.description = slimdown.convert(album.description)
 
     return vars()
 
