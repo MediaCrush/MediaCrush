@@ -33,6 +33,8 @@ def _file_object(f):
         'extras': [],
         'metadata': metadata,
         'flags': f.flags.as_dict(),
+        'title': f.title,
+        'description': f.description,
     }
     if f.compression:
         ret['compression'] = float(f.compression)
@@ -67,6 +69,8 @@ def _album_object(a):
         'hash': a.hash,
         'metadata': metadata,
         'files': [],
+        'title': a.title,
+        'description': a.description,
     }
 
     if not a.items:

@@ -107,6 +107,8 @@ class File(RedisObject):
     _processor = None
     metadata = None
     flags = None
+    title = None
+    description = None
 
     def add_report(self):
         self.reports = int(self.reports)
@@ -177,7 +179,9 @@ class Album(RedisObject):
     _items = None
     ip = None
     metadata = None
-    __store__ = ['_items', 'ip', 'metadata'] # ORM override for __get_vars
+    title = None
+    description = None
+    __store__ = ['_items', 'ip', 'metadata', 'title', 'description'] # ORM override for __get_vars
 
     @property
     def items(self):
