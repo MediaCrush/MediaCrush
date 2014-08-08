@@ -17,6 +17,7 @@ from mediacrush.network import get_ip
 from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
 from mediacrush.views.api import objects
+from mediacrush.slimdown import slimdown
 
 def fragment(processor):
     np = normalise_processor(processor)
@@ -72,6 +73,8 @@ def _template_params(f):
                 subtitles['url'] = '/' + f.hash + '.' + subtitles['info']['codec_name']
                 break
 
+    f.description = slimdown.convert(f.description)
+
     return {
         'filename': f.hash,
         'original': f.original,
@@ -116,6 +119,8 @@ def _album_params(album):
             can_delete = check_password_hash(f.ip, get_ip())
     except:
         pass
+
+    album.description = slimdown.convert(album.description)
 
     return vars()
 
