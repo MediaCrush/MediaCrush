@@ -96,7 +96,7 @@ class RedisObject(object):
         r.delete(self.__get_key())
 
 class File(RedisObject):
-    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata']
+    __store__ = ['original', 'mimetype', 'compression', 'reports', 'ip', 'taskid', 'processor', 'configvector', 'metadata', 'text_locked']
 
     original = None
     mimetype = None
@@ -108,6 +108,7 @@ class File(RedisObject):
     metadata = None
     flags = None
     title = None
+    text_locked = False
     description = None
 
     def add_report(self):
@@ -181,7 +182,8 @@ class Album(RedisObject):
     metadata = None
     title = None
     description = None
-    __store__ = ['_items', 'ip', 'metadata', 'title', 'description'] # ORM override for __get_vars
+    text_locked = False
+    __store__ = ['_items', 'ip', 'metadata', 'title', 'description', 'text_locked'] # ORM override for __get_vars
 
     @property
     def items(self):
