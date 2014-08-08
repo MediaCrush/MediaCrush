@@ -50,7 +50,7 @@ window.addEventListener('load', function() {
 }, false);
 </script>
 
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 <div id="media-select-{{ filename }}" class="media-select">
@@ -78,7 +78,7 @@ window.addEventListener('load', function() {
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 <video controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.jpg">
@@ -93,6 +93,6 @@ window.addEventListener('load', function() {
   {% endif %}
 </video>
 {% endif %}
-{% if file.description %}
+{% if file.description and not embedded %}
     {{ file.description | safe }}
 {% endif %}

@@ -1,5 +1,5 @@
 {% if album %}
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 <div class="item-wrapper">
@@ -16,11 +16,11 @@
         <a class="right" href="/download/{{ original }}">Download</a>
     </div>
 </div>
-{% if file.description %}
+{% if file.description and not embedded %}
     {{ file.description | safe }}
 {% endif %}
 {% else %}
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 <a href="{{ share('directlink', filename) }}" id="img-a-{{ filename }}">
@@ -30,7 +30,7 @@
     <img id="img-{{filename}}" src="{{ cdn }}/{{ filename }}.png" alt="MediaCrush" />
     {% endif %}
 </a>
-{% if file.description %}
+{% if file.description and not embedded %}
     {{ file.description | safe }}
 {% endif %}
 <script type="text/javascript">

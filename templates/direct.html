@@ -40,7 +40,7 @@
         <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
         {% endif %}
     </head>
-    <body class="view">
+    <body class="view {% if embedded %}embedded{% endif %}">
         <div style="display: inline-block">
             {% include fragment %}
         </div>

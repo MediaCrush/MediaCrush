@@ -1,4 +1,4 @@
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 <div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
@@ -80,7 +80,7 @@
         </div>
     </div>
 </div>
-{% if file.description %}
+{% if file.description and not embedded %}
     {{ file.description | safe }}
 {% endif %}
 <script type="text/javascript">
