@@ -1,4 +1,4 @@
-{% if file.title %}
+{% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
 {% if metadata %}
@@ -58,7 +58,7 @@
         </div>
     </div>
 </div>
-{% if file.description %}
+{% if file.description and not embedded %}
     {{ file.description | safe }}
 {% endif %}
 <script>
