@@ -27,3 +27,11 @@ del inline["autolink"]
 del inline["automail"]
 del inline["entity"]
 slimdown.inlinePatterns = inline
+
+# Monkey-patch unicode fix
+slimdown._convert = slimdown.convert
+def slimdown_convert(text):
+    text = text.decode('utf-8')
+
+    return slimdown._convert(text)
+slimdown.convert = slimdown_convert
