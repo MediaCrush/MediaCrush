@@ -19,6 +19,10 @@ class RedisObject(object):
             if v == "None":
                 v = None
 
+            # If the value is a string, interpet it as UTF-8.
+            if type(v) == str:
+                v = v.decode('utf-8')
+
             setattr(self, k, v)
 
         if "hash" not in kw:
