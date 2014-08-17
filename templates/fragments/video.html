@@ -4,18 +4,18 @@
 <div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
     <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload poster="{{ cdn }}/{{ filename }}.jpg" controls>
         {% if 'video/mp4' in types %}
-        <source src="{{ cdn }}/{{ filename }}.mp4" type='video/mp4;'>
+        <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
         {% endif %}
         {% if 'video/webm' in types %}
-        <source src="{{ cdn }}/{{ filename }}.webm" type='video/webm;'>
+        <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
         {% endif %}
         {% if 'video/ogg' in types %}
-        <source src="{{ cdn }}/{{ filename }}.ogv" type='video/ogg'>
+        <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
         {% endif %}
         {% if has_subtitles %}
         {% if subtitles['info']['codec_name'] == 'srt' %}
         {# srt is converted to vtt, so it's not actually located at /filename.{codec_name} #}
-        <track src="{{ cdn }}/{{ filename }}.vtt" kind="subtitles" data-format="vtt" default />
+        <track src="{{ cdn_url(filename + '.vtt') }}" kind="subtitles" data-format="vtt" default />
         {% else %}
         <track src="{{ subtitles['url'] }}" kind="metadata" data-format="{{ subtitles['info']['codec_name'] }}" default />
         {% endif %}

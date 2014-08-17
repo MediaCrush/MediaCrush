@@ -9,7 +9,7 @@ import subprocess
 import random
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
-from mediacrush.config import _cfg, _cfgi
+from mediacrush.config import _cfg, _cfgi, cdn_url
 from mediacrush.files import extension, get_mimetype, media_url
 from mediacrush.views.media import render_media
 from mediacrush.share import share
@@ -58,7 +58,6 @@ def exception_catch_all(e):
 
 @app.context_processor
 def inject():
-    cdn = _cfg("cdn")
     if is_tor():
         cdn = _cfg("tor_domain")
     ads = True
@@ -68,6 +67,7 @@ def inject():
         ads = False
     if not _cfg("project_wonderful_id"):
         ads = False
+
     return {
         'mobile': g.mobile,
         'ua_platform': request.user_agent.platform,
@@ -86,7 +86,7 @@ def inject():
         'len': len,
         'str': str,
         'get_mimetype': get_mimetype,
-        'cdn': cdn,
+        'cdn_url': cdn_url,
         'is_tor': is_tor(),
         'ip': get_ip(),
         'media_url': media_url,

@@ -1,6 +1,8 @@
 import logging
 from mediacrush.network import is_tor
 
+from flask import request
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -33,6 +35,8 @@ def domain_url(path):
     return "%s://%s/%s" % (_cfg("protocol"), _cfg("domain"), path)
 
 def cdn_url(path):
-    if is_tor():
-        return "%s/%s" % (_cfg("tor_domain"), path)
-    return "%s/%s" % (_cfg("protocol") + "://" + _cfg("domain") if _cfg("cdn") == '' else _cfg("cdn"), path)
+    request_domain = request.headers["Host"]
+    if request_domain is not _cfg("domain"):
+        return "/" + path
+    else:
+        return "%s/%s" % (_cfg("protocol") + "://" + _cfg("domain") if _cfg("cdn") == '' else _cfg("cdn"), path)
