@@ -24,7 +24,7 @@ class VideoProcessor(Processor):
         if 'interlaced' in self.processor_state:
             print("WARNING: Detected interlacing on " + self.output)
             filter_string = 'yadif,' + filter_string
-        self._execute("ffmpeg -y -i {0} -vcodec libx264 -acodec libfdk_aac -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf " + filter_string + map_string  + " {1}.mp4")
+        self._execute("ffmpeg -y -i {0} -vcodec libx264 -acodec libfdk_aac -movflags faststart -pix_fmt yuv420p -profile:v baseline -preset slower -crf 18 -vf " + filter_string + map_string  + " {1}.mp4")
         skip_webm = False
         for s in self.processor_state['streams']:
             if 'info' in s:
