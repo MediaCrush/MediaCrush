@@ -5,6 +5,7 @@ from mediacrush.files import extension
 import os
 import scss
 import coffeescript
+import tempfile
 from slimit import minify
 from shutil import rmtree, copyfile
 
@@ -14,9 +15,8 @@ scss.config.LOAD_PATHS = [
 ]
 
 def prepare():
-    if os.path.exists(app.static_folder):
-        rmtree(app.static_folder)
-    os.makedirs(app.static_folder)
+    path = tempfile.mkdtemp()
+
     compiler = scss.Scss(scss_opts = {
         'style': 'compressed' if not app.debug else None
     })
@@ -31,7 +31,7 @@ def prepare():
             parts = f.rsplit('.')
             css = '.'.join(parts[:-1]) + ".css"
 
-            with open(os.path.join(app.static_folder, css), "w") as w:
+            with open(os.path.join(path, css), "w") as w:
                 w.write(output)
                 w.flush()
 
@@ -39,7 +39,7 @@ def prepare():
     d = os.walk('scripts')
     preprocess = ['scripts/mediacrush.js']
     for f in list(d)[0][2]:
-        outputpath = os.path.join(app.static_folder, os.path.basename(f))
+        outputpath = os.path.join(path, os.path.basename(f))
         inputpath = os.path.join('scripts', f)
 
         if extension(f) == "js":
@@ -82,9 +82,19 @@ def prepare():
             if not app.debug:
                 javascript = minify(javascript)
 
-            with open(os.path.join(app.static_folder, output), "w") as w:
+            with open(os.path.join(path, output), "w") as w:
                 w.write(javascript.encode("utf-8"))
                 w.flush()
+
+    if os.path.exists(app.static_folder):
+        rmtree(app.static_folder)
+    os.makedirs(app.static_folder)
+
+    d = os.walk(path)
+    for f in list(d)[0][2]:
+        inputpath = os.path.join(path, os.path.basename(f))
+        outputpath = os.path.join(app.static_folder, f)
+        copyfile(inputpath, outputpath)
 
     d = os.walk('images')
     for f in list(d)[0][2]:
