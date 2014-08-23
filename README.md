@@ -93,6 +93,12 @@ Note: you'll need to use Python 2. If Python 3 is your default python interprete
 Review `config.ini` and change any details you like. The default place to store uploaded files is `./storage`,
 which you'll need to create (`mkdir storage`) and set the `storage_folder` variable in the config to an absolute path to this folder.
 
+**Compile static files**
+
+If you make a change to any of the scripts, you will need to run the `compile_static.py` script.
+
+    python compile_static.py
+
 **Start the services**
 
 You'll want to make sure Redis is running at this point. It's probably best to set it up to run when you boot
