@@ -12,8 +12,6 @@ protocol = https
 domain = mediacru.sh
 tor_domain = 
 
-error_folder = 
-
 # URLs to media files will be prefixed with this. Do not include a trailing forward slash.
 # If you don't use a CDN, you can leave this empty.
 cdn =
