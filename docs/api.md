@@ -883,6 +883,7 @@ Description of fields:
         }
       ],
       "hash": "6ecd2bbd34ec",
+      "blob_type": "album",
       "type": "application/album",
       "title": null,
       "description": null

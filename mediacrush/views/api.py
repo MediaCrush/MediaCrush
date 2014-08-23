@@ -65,6 +65,7 @@ def _album_object(a):
         metadata = json.loads(a.metadata)
 
     ret = {
+        'blob_type': 'album',
         'type': 'application/album',
         'hash': a.hash,
         'metadata': metadata,
