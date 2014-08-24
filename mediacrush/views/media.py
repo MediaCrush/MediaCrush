@@ -16,7 +16,6 @@ from mediacrush.objects import File, Album, RedisObject
 from mediacrush.network import get_ip
 from mediacrush.tor import tor_redirect
 from mediacrush.processing import get_processor
-from mediacrush.views.api import objects
 from mediacrush.slimdown import slimdown
 
 def fragment(processor):
