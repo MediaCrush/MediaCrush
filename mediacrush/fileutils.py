@@ -2,10 +2,13 @@ from mediacrush.config import _cfg
 from mediacrush.mimeinfo import EXTENSIONS, get_mimetype, extension
 from mediacrush.processing import get_processor
 
+from urlparse import urlparse
 import requests
 import os
 import mimetypes
 import tempfile
+
+MAX_SIZE = 52428800 # TODO get it from config
 
 class FileTooBig(Exception):
     pass
@@ -14,10 +17,8 @@ class FileTooBig(Exception):
 class URLFile(object):
     filename = None
     content_type = None
+    ext = None
     override_methods = ["save"]
-
-    def __init__(self, *args, **kwargs):
-        self.f = tempfile.TemporaryFile()
 
     def __getattr__(self, name):
         target = self.f if name not in self.override_methods else self
@@ -38,15 +39,23 @@ class URLFile(object):
 
     def download(self, url):
         r = requests.get(url, stream=True)
-        length = r.headers["content-length"]
-        if not length.isdigit() or int(length) > MAX_SIZE:
-            raise FileTooBig("The file was larger than 50 MB")
+
+        ext = None
+        if "content-type" in r.headers:
+            self.content_type = r.headers['content-type']
+            ext = mimetypes.guess_extension(self.content_type)[1:]
+        else:
+            ext = extension(url)
+
+        self.f = tempfile.NamedTemporaryFile(suffix="." + ext, delete=False)
+        self.ext = ext
 
         for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
             if i > MAX_SIZE / 1024:
                 # Evil servers may send more than Content-Length bytes
                 # As of 54541a9, python-requests keeps reading indefinitely
                 raise FileTooBig("The file was larger than 50 MB")
+
             self.f.write(chunk)
             self.f.flush()
 
@@ -55,12 +64,6 @@ class URLFile(object):
 
         parsed_url = urlparse(url)
         self.filename = list(reversed(parsed_url.path.split("/")))[0]
-
-        if "content-type" in r.headers:
-            self.content_type = r.headers['content-type']
-            ext = mimetypes.guess_extension(self.content_type)
-            if ext:
-                self.filename = self.filename + ext
 
         if "content-disposition" in r.headers:
             disposition = r.headers['content-disposition']

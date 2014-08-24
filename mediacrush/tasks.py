@@ -2,7 +2,7 @@ from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.celery import app, get_task_logger, chord, signature
 from mediacrush.processing import processor_table, detect
-from mediacrush.fileutils import compression_rate, delete_file, file_storage, URLFile
+from mediacrush.fileutils import compression_rate, delete_file, file_storage, URLFile, FileTooBig
 
 import time
 import os
@@ -22,6 +22,16 @@ def download_url(h, url, ip):
     except FileTooBig:
         pass # Do something about this
     print "done"
+
+    dbfile = File.from_hash(h)
+    dbfile.original = "%s.%s" % (h, f.ext)
+    dbfile.mimetype = f.content_type
+    dbfile.compression = os.path.getsize(f.f.name)
+    dbfile.save()
+
+    result = process_file.delay(f.f.name, h, False)
+    dbfile.taskid = result.id
+    dbfile.save()
 
 @app.task
 def zip_album(h):

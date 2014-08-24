@@ -6,7 +6,6 @@ import tempfile
 import re
 
 from flask import current_app
-from urlparse import urlparse
 
 from mediacrush.config import _cfg
 from mediacrush.database import r, _k
@@ -16,10 +15,6 @@ from mediacrush.network import secure_ip, get_ip
 from mediacrush.tasks import process_file
 from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
 from mediacrush.celery import app
-
-
-MAX_SIZE = 52428800 # TODO get it from config
-
 
 def get_hash(f):
     f.seek(0)

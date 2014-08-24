@@ -19,6 +19,9 @@ OBJ_ERROR = lambda obj: {"hash": obj.hash, "result": obj.status}
 ERROR = lambda err: {"result": err}
 
 def _file_object(f):
+    if f.status not in ["done", "ready"]:
+        return {'hash': f.hash, 'status': f.status}
+
     mimetype = f.mimetype
     processor = get_processor(f.processor)
 
@@ -39,11 +42,6 @@ def _file_object(f):
 
     if f.compression:
         ret['compression'] = float(f.compression)
-
-    if f.status in ['error', 'timeout', 'unrecognized']:
-        # TODO: We should not use magic strings here, but instead we should modify the processing pipeline
-        ret['status'] = 'error'
-        ret['error'] = f.status
 
     ret['files'].append(_file_entry(f.original, mimetype=f.mimetype))
 
