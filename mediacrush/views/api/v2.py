@@ -6,8 +6,9 @@ from mediacrush.decorators import json_output_v2
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor
 from mediacrush.objects import RedisObject, File, FailedFile, Album
-from mediacrush.files import media_url, get_mimetype, delete_file, upload
+from mediacrush.files import media_url, get_mimetype, delete_file, upload, to_id
 from mediacrush.network import get_ip, secure_ip
+from mediacrush.tasks import download_url
 
 import json
 
@@ -148,9 +149,23 @@ class APIv2(FlaskView):
             filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
 
             return _upload_object(*upload(f, filename))
+        elif "url" in request.form:
+            url = request.form["url"]
+            h = to_id(url)
+
+            if File.exists(h):
+                return _file_object(File.from_hash(h))
+
+            f = File(hash=h)
+            f.save()
+
+            result = download_url.delay(h, url, secure_ip())
+            f.taskid = result.id
+            f.save()
+
+            return SUCCESS(h)
         else:
-            # Upload from URL: TODO
-            pass
+            return ERROR("bad_request")
 
     @route("/album", methods=['POST'])
     def album(self):

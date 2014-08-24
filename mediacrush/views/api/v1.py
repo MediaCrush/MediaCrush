@@ -3,7 +3,8 @@ from flaskext.bcrypt import check_password_hash
 from flask import request, current_app, redirect
 
 from mediacrush.decorators import json_output, cors
-from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile, FileTooBig
+from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload
+from mediacrush.fileutils import URLFile, FileTooBig
 from mediacrush.database import r, _k
 from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
 from mediacrush.network import get_ip, secure_ip

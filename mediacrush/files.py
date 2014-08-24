@@ -3,7 +3,6 @@ import base64
 import hashlib
 import os
 import tempfile
-import requests
 import re
 
 from flask import current_app
@@ -21,71 +20,6 @@ from mediacrush.celery import app
 
 MAX_SIZE = 52428800 # TODO get it from config
 
-class FileTooBig(Exception):
-    pass
-
-
-class URLFile(object):
-    filename = None
-    content_type = None
-    override_methods = ["save"]
-
-    def __init__(self, *args, **kwargs):
-        self.f = tempfile.TemporaryFile()
-
-    def __getattr__(self, name):
-        target = self.f if name not in self.override_methods else self
-        return getattr(target, name)
-
-    def save(self, path):
-        bufsize = 1024 * 1024
-        with open(path, "w") as f:
-            while True:
-                cpbuffer = self.f.read(bufsize)
-                if cpbuffer:
-                    f.write(cpbuffer)
-                else:
-                    break
-
-            f.flush()
-            f.close()
-
-    def download(self, url):
-        r = requests.get(url, stream=True)
-        length = r.headers["content-length"]
-        if not length.isdigit() or int(length) > MAX_SIZE:
-            raise FileTooBig("The file was larger than 50 MB")
-
-        for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
-            if i > MAX_SIZE / 1024:
-                # Evil servers may send more than Content-Length bytes
-                # As of 54541a9, python-requests keeps reading indefinitely
-                raise FileTooBig("The file was larger than 50 MB")
-            self.f.write(chunk)
-            self.f.flush()
-
-        if r.status_code == 404:
-            return False
-
-        parsed_url = urlparse(url)
-        self.filename = list(reversed(parsed_url.path.split("/")))[0]
-
-        if "content-type" in r.headers:
-            self.content_type = r.headers['content-type']
-            ext = mimetypes.guess_extension(self.content_type)
-            if ext:
-                self.filename = self.filename + ext
-
-        if "content-disposition" in r.headers:
-            disposition = r.headers['content-disposition']
-            parts = disposition.split(';')
-            if len(parts) > 1:
-                self.filename = parts[1].strip(' ')
-                self.filename = self.filename[self.filename.find('=') + 1:].strip(' ')
-
-        self.filename = ''.join([c for c in self.filename if c.isalpha() or c == '.'])
-
-        return True
 
 def get_hash(f):
     f.seek(0)
@@ -105,7 +39,7 @@ def file_length(f):
 
     return by
 
-def upload(f, filename):
+def upload(f, filename, ip=None, h=None):
     if not f.content_type:
         f.content_type = get_mimetype(filename) or "application/octet-stream"
 
@@ -118,7 +52,9 @@ def upload(f, filename):
         if rate_limit_exceeded():
             return None, 420
 
-    h = get_hash(f)
+    if not h:
+        h = get_hash(f)
+
     identifier = to_id(h)
     if "." not in filename:
         ext = mimetypes.guess_extension(f.content_type)[1:] # This not very scientific, but it works
@@ -140,11 +76,14 @@ def upload(f, filename):
     f.seek(0)  # Otherwise it'll write a 0-byte file
     f.save(path)
 
+    if not ip:
+        ip = secure_ip()
+
     file_object = File(hash=identifier)
     file_object.compression = os.path.getsize(path)
     file_object.original = filename
     file_object.mimetype = f.content_type
-    file_object.ip = secure_ip()
+    file_object.ip = ip
 
     result = process_file.delay(path, identifier, ignore_limit)
     file_object.taskid = result.id

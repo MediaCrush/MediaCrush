@@ -2,7 +2,7 @@ from mediacrush.config import _cfgi
 from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.celery import app, get_task_logger, chord, signature
 from mediacrush.processing import processor_table, detect
-from mediacrush.fileutils import compression_rate, delete_file, file_storage
+from mediacrush.fileutils import compression_rate, delete_file, file_storage, URLFile
 
 import time
 import os
@@ -11,6 +11,17 @@ import json
 from subprocess import call
 
 logger = get_task_logger(__name__)
+
+@app.task
+def download_url(h, url, ip):
+    f = URLFile()
+
+    print "downloading", url
+    try:
+        f.download(url)
+    except FileTooBig:
+        pass # Do something about this
+    print "done"
 
 @app.task
 def zip_album(h):
