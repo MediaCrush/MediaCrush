@@ -7,7 +7,7 @@
 window.MediaCrush = (function() {
     var self = this;
     self.version = 1;
-    self.domain = 'http://localhost:5000';
+    self.domain = 'https://mediacru.sh/';
     self.maxMediaWidth = -1;
     self.maxMediaHeight = -1;
     self.preserveAspectRatio = true;
