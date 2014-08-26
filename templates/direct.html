@@ -39,6 +39,14 @@
         {% if has_subtitles %}
         <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
         {% endif %}
+        {% if file.processor == "3d" %}
+        <script src="/static/Three.js"></script>
+        <script src="/static/plane.js"></script>
+        <script src="/static/thingiview.js"></script>
+        <script>
+            thingiurlbase = "/static";
+        </script>
+        {% endif %}
     </head>
     <body class="view {% if embedded %}embedded{% endif %}">
         <div style="display: inline-block">

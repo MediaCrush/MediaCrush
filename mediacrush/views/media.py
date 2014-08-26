@@ -104,6 +104,8 @@ def _album_params(album):
     types = set([f.processor for f in items])
     filename = album.hash
     subtitles = False
+    threedee = False
+
     for f in items:
         metadata = {}
         if f.metadata and f.metadata != 'null':
@@ -113,6 +115,8 @@ def _album_params(album):
                 pass
         if 'has_subtitles' in metadata:
             subtitles = metadata['has_subtitles']
+
+        threedee |= f.processor == "3d"
 
     can_delete = None
     try:

@@ -1,5 +1,5 @@
 Thingiview = function(containerId) {
-  scope = this;
+  var scope = this;
   
   this.containerId  = containerId;
   var container     = document.getElementById(containerId);
@@ -220,7 +220,7 @@ Thingiview = function(containerId) {
     // targetRotation = object.rotation.z;
     if (timer == null) {
       // log('starting loop');
-      timer = setInterval(sceneLoop, 1000/60);
+      timer = setInterval(scope.sceneLoop, 1000/60);
     }
   }
 
@@ -287,7 +287,7 @@ Thingiview = function(containerId) {
     targetXRotation = object.rotation.z;
     targetYRotation = object.rotation.x;
 
-    timer = setInterval(sceneLoop, 1000/60);
+    timer = setInterval(scope.sceneLoop, 1000/60);
 
   	if (event.touches.length == 1) {
   		event.preventDefault();
@@ -319,7 +319,7 @@ Thingiview = function(containerId) {
   	}
   }
 
-  sceneLoop = function() {
+  this.sceneLoop = function() {
     if (object) {
       // if (view == 'bottom') {
       //   if (showPlane) {
@@ -360,7 +360,7 @@ Thingiview = function(containerId) {
   rotateLoop = function() {
     // targetRotation += 0.01;
     targetXRotation += 0.05;
-    sceneLoop();
+    scope.sceneLoop();
   }
 
   this.getShowPlane = function(){
@@ -384,7 +384,7 @@ Thingiview = function(containerId) {
       }
     }
     
-    sceneLoop();
+    scope.sceneLoop();
   }
 
   this.getRotation = function() {
@@ -395,7 +395,7 @@ Thingiview = function(containerId) {
     rotation = rotate;
     
     if (rotate) {
-      rotateTimer = setInterval(rotateLoop, 1000/60);
+      //rotateTimer = setInterval(rotateLoop, 1000/60);
     } else {
       clearInterval(rotateTimer);
       rotateTimer = null;
@@ -473,7 +473,7 @@ Thingiview = function(containerId) {
     
     scope.centerCamera();
     
-    sceneLoop();
+    scope.sceneLoop();
   }
 
   this.setCameraZoom = function(factor) {
@@ -501,7 +501,7 @@ Thingiview = function(containerId) {
       camera.position.z -= factor;
     }
 
-    sceneLoop();
+    scope.sceneLoop();
   }
 
   this.getObjectMaterial = function() {
@@ -740,7 +740,7 @@ Thingiview = function(containerId) {
       targetXRotation = 0;
       targetYRotation = 0;
 
-      sceneLoop();
+      scope.sceneLoop();
     }
   }
 

@@ -3,3 +3,4 @@ shims.coffee
 history.coffee
 api.coffee
 players.coffee
+3d.coffee

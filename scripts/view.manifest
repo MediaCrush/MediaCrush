@@ -4,3 +4,4 @@ history.coffee
 api.coffee
 players.coffee
 view.coffee
+3d.coffee
