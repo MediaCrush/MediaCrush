@@ -76,6 +76,11 @@ a.album-direct {
     }
 }
 
+#thingiviewer {
+    width: 400px;
+    height: 400px;
+}
+
 @import 'view-responsive.scss'
 .scss-fix {}
 @import 'media-players.scss'

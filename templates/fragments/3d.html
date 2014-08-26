@@ -1,0 +1,36 @@
+{% if album %}
+{% if file.title and not embedded %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
+<div class="item-wrapper">
+    <div id="thingiviewer"></div>
+</div>
+{% if file.description and not embedded %}
+    {{ file.description | safe }}
+{% endif %}
+
+{% else %}
+
+<div id="thingiviewer"></div>
+
+{% if file.title and not embedded %}
+    <h3>{{ file.title }}</h3>
+{% endif %}
+
+<script src="/static/Three.js"></script>
+<script src="/static/plane.js"></script>
+<script src="/static/thingiview.js"></script>
+
+<script type="text/javascript">
+window.addEventListener('load', function() {
+    thingiurlbase = "/static";
+    thingiview = new Thingiview("thingiviewer");
+    thingiview.setObjectColor('#005580');
+    thingiview.setBackgroundColor("#fff");
+    thingiview.setShowPlane(false);
+    thingiview.initScene();
+    thingiview.loadSTL("{{ cdn_url(original) }}");
+}, false);
+</script>
+
+{% endif %}
