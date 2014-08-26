@@ -31,13 +31,13 @@ import re
 
 def detect(path):
     result = detect_ffprobe(path)
-    if result != None:
+    if result:
         return result
     result = detect_imagemagick(path)
-    if result != None:
+    if result:
         return result
     result = detect_plaintext(path)
-    if result != None:
+    if result:
         return result
     return None
 
@@ -284,6 +284,10 @@ def detect_imagemagick(path):
     a = Invocation('identify -verbose {0}')
     a(path)
     a.run()
+
+    if a.returncode != 0:
+        return
+
     try:
         result = a.stdout[0].split('\n')
         # Get mime type and dimensions
