@@ -60,7 +60,8 @@ flags_per_processor = {
     'image/jpeg': ['nsfw'],
     'image/svg+xml': ['nsfw'],
     'image/x-gimp-xcf': ['nsfw'],
-    'audio': ['nsfw']
+    'audio': ['nsfw'],
+    '3d': ['nsfw']
 }
 
 def normalise_processor(processor):

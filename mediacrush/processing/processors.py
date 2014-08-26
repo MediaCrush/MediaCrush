@@ -167,6 +167,13 @@ class XCFProcessor(Processor):
     def async(self):
         self._execute('optipng -o5 {1}.png')
 
+class ThreeDeeProcessor(Processor):
+    time = 5
+    outputs = []
+
+    def sync(self):
+        self._execute(copy)
+
 class DefaultProcessor(Processor):
     def sync(self):
         raise UnrecognisedFormatException # It shouldn't get to this point, but if it does, invalidate the file
@@ -179,6 +186,7 @@ processor_table = {
     'image/jpeg': JPEGProcessor,
     'image/svg+xml': SVGProcessor,
     'image/x-gimp-xcf': XCFProcessor,
+    '3d': ThreeDeeProcessor,
     'default': DefaultProcessor,
 }
 

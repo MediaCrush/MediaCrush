@@ -3,6 +3,8 @@ from mediacrush.config import _cfg, _cfgi
 import sys
 import json
 import re
+import os
+import struct
 
 # Given a file, this will examine it to learn all of its secrets. It will identify the
 # file type, and for certain files, will gather more details about it. It works by
@@ -37,6 +39,9 @@ def detect(path):
     if result:
         return result
     result = detect_plaintext(path)
+    if result:
+        return result
+    result = detect_stl(path)
     if result:
         return result
     return None
@@ -342,3 +347,38 @@ def detect_plaintext(path):
             'flags': None
         }
     return None
+
+def detect_stl(path):
+    # STL spec
+    bytes_per_triangle = 4 * 4 * 3 + 2 # Normal vector, 3 vertices, attr byte count
+    header_bytes = 80
+    overhead = 4
+
+    size = os.path.getsize(path)
+
+    with open(path) as f:
+        start = f.read(5)
+        if start != "solid":
+            f.read(header_bytes - f.tell()) # Ignore remaining header bytes
+            triangles = struct.unpack("<L", f.read(4))[0] # Read four bytes and interpret triangle count
+            expected_size = bytes_per_triangle * triangles + header_bytes + overhead
+
+            if size == expected_size:
+                return {
+                    'type': '3d',
+                    'metadata': {'triangles': triangles},
+                    'processor_state': None,
+                    'flags': None
+                }
+        else:
+            name = f.readline()
+            f.seek(size - f.tell() - 3)
+            end = f.read(8)
+
+            if end == "endsolid":
+                return {
+                    'type': '3d',
+                    'metadata': None,
+                    'processor_state': None,
+                    'flags': None
+                }
