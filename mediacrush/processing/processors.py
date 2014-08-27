@@ -167,7 +167,7 @@ class XCFProcessor(Processor):
     def async(self):
         self._execute('optipng -o5 {1}.png')
 
-class ThreeDeeProcessor(Processor):
+class BasicProcessor(Processor):
     time = 5
     outputs = []
 
@@ -186,7 +186,7 @@ processor_table = {
     'image/jpeg': JPEGProcessor,
     'image/svg+xml': SVGProcessor,
     'image/x-gimp-xcf': XCFProcessor,
-    '3d': ThreeDeeProcessor,
+    '3d': BasicProcessor,
     'default': DefaultProcessor,
 }
 
