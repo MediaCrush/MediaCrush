@@ -18,6 +18,14 @@
     <script type="text/javascript" src="{{ url_for('static', filename='libjass.js') }}"></script>
     {% endif %}
     {% endif %}
+    {% if file.processor == "3d" %}
+    <script src="/static/Three.js"></script>
+    <script src="/static/plane.js"></script>
+    <script src="/static/thingiview.js"></script>
+    <script>
+        thingiurlbase = "/static";
+    </script>
+    {% endif %}
 {% endblock %}
 {% block meta %}
     <meta name="robots" content="noindex">

@@ -2,3 +2,4 @@ global.coffee
 players.coffee
 api.coffee
 albums.coffee
+3d.coffee
