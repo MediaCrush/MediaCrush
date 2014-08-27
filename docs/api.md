@@ -413,7 +413,7 @@ If the file is not found, you will get a dictionary like:
     </tr>
     <tr>
         <td>pending</td>
-        <td>The is in the processing queue.</td>
+        <td>The file is in the processing queue.</td>
     </tr>
     <tr>
         <td>processing</td>
