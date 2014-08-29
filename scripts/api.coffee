@@ -5,7 +5,7 @@
         this.setRequestHeader('X-Requested-With','XMLHttpRequest')
 )(XMLHttpRequest)
 
-API = (->
+API = new (->
     self = this
 
     self.uploadFile = (file, progress, callback) ->

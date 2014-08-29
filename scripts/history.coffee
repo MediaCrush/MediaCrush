@@ -1,4 +1,4 @@
-window.UserHistory = (->
+window.UserHistory = new (->
     self = this
 
     userHistory = []

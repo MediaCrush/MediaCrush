@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from mediacrush.app import app
 from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
