@@ -146,4 +146,6 @@ hdddh. `hds  :dh:  sddddddy-    Send us some pull requests!
  -hddddddddddddddhy/.         
   -hdddddddddyo/-`            
    -++++/--``                 
+
+Try exploring `window.API` and `window.UserHistory` to have some fun.
 """)
