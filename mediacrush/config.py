@@ -37,7 +37,7 @@ def domain_url(path):
 def cdn_url(path):
     request_domain = request.headers["Host"].strip()
 
-    if request_domain != _cfg("domain").strip():
+    if request_domain != _cfg("incoming_domain").strip():
         return "/" + path
     else:
         return "%s/%s" % (_cfg("protocol") + "://" + _cfg("domain") if _cfg("cdn") == '' else _cfg("cdn"), path)

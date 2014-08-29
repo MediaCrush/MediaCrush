@@ -10,6 +10,7 @@ environment = dev
 # mediacrush.js.
 protocol = https
 domain = mediacru.sh
+incoming_domain = mediacru.sh # If you're proxying to this server, change this to what the servers set the Host to
 tor_domain = 
 
 # URLs to media files will be prefixed with this. Do not include a trailing forward slash.
