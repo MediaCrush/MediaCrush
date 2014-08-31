@@ -39,7 +39,7 @@ def jinja_template_loader():
            or 'windows phone' in request.user_agent.string.lower() \
            or 'mobile' in request.user_agent.string.lower()
     g.mobile = mobile
-    if mobile:
+    if mobile and False:
         app.jinja_loader = ChoiceLoader([
             FileSystemLoader(os.path.join("templates", "mobile")),
             FileSystemLoader("templates"),
@@ -76,7 +76,7 @@ def inject():
         'dwolla_id': _cfg("dwolla_id"),
         'coinbase_id': _cfg("coinbase_id"),
         'flattr_id': _cfg("flattr_id"),
-        'dark_theme': "dark_theme" in request.cookies,
+        'dark_theme': False,
         'ads': ads,
         'ad_id': _cfg("project_wonderful_id"),
         'notice_text': notice_text,
