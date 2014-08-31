@@ -21,8 +21,8 @@ app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 
-notice_enabled = False
-notice_text = "We're having some technical issues with GIF uploads."
+notice_enabled = True
+notice_text = "Uploads are temporarily halted due to high server load."
 
 @app.before_request
 def find_dnt():
