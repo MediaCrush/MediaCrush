@@ -21,7 +21,7 @@ app.jinja_env.cache = None
 bcrypt = Bcrypt(app)
 Markdown(app)
 
-notice_enabled = True
+notice_enabled = False
 notice_text = "Uploads are temporarily halted due to high server load."
 
 @app.before_request
