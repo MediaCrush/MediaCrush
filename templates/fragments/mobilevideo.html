@@ -66,15 +66,9 @@ window.addEventListener('load', function() {
     </a>
 </div>
 <video class="hidden" id="video-option-{{ filename }}" controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.jpg">
-  {% if ua_platform == 'android' %}
-    <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
-    <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
-    <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
-  {% else %}
     <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
     <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
     <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
-  {% endif %}
 </video>
 <img src="this space intentionally left blank" class="hidden" id="gif-option-{{ filename }}" />
 {% else %}
@@ -82,15 +76,9 @@ window.addEventListener('load', function() {
     <h3>{{ file.title }}</h3>
 {% endif %}
 <video controls {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.jpg">
-  {% if ua_platform == 'android' %}
-    <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
-    <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
-    <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
-  {% else %}
     <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
     <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
     <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
-  {% endif %}
 </video>
 {% endif %}
 {% if file.description and not embedded %}
