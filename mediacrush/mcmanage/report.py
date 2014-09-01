@@ -36,6 +36,8 @@ types = {}
 def report():
     files = File.get_all()
     for f in files:
+        if not 'original' in f:
+            continue
         if f.original == None:
             continue # This is something we should think about cleaning up after at some point
         try:
