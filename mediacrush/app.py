@@ -38,9 +38,8 @@ def jinja_template_loader():
     mobile = request.user_agent.platform in ['android', 'iphone', 'ipad'] \
            or 'windows phone' in request.user_agent.string.lower() \
            or 'mobile' in request.user_agent.string.lower()
-    mobile = False
     g.mobile = mobile
-    if mobile:
+    if mobile and False:
         app.jinja_loader = ChoiceLoader([
             FileSystemLoader(os.path.join("templates", "mobile")),
             FileSystemLoader("templates"),
