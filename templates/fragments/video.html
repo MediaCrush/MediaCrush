@@ -2,7 +2,7 @@
     <h3>{{ file.title }}</h3>
 {% endif %}
 <div class="player video {% if has_subtitles %}subtitled{% endif %} {% if has_subtitles and not subtitles['info']['default'] %}subs-off{% endif %}" id="player-{{ filename }}" data-media="{{ filename }}">
-    <video id="video-{{ filename }}" {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload poster="{{ cdn }}/{{ filename }}.jpg" controls>
+    <video id="video-{{ filename }}" {% if flags['mute'] %}muted="true"{% endif %} {% if flags['autoplay'] %}autoplay="true" {% endif %}{% if flags['loop'] %}loop="true" {% endif %} preload poster="{{ cdn }}/{{ filename }}.jpg" controls>
         {% if 'video/mp4' in types %}
         <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
         {% endif %}
