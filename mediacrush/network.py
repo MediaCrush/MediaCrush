@@ -35,4 +35,4 @@ def secure_ip():
     return generate_password_hash(ip)
 
 def is_tor():
-    return get_ip() == '5.254.104.62'
+    return get_ip() == '127.0.0.2'
