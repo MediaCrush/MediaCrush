@@ -6,7 +6,7 @@ from mediacrush.decorators import json_output, cors
 from mediacrush.files import media_url, get_mimetype, extension, delete_file, upload, URLFile, FileTooBig
 from mediacrush.database import r, _k
 from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
-from mediacrush.network import get_ip, secure_ip
+from mediacrush.network import get_ip, secure_ip, is_tor
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
 from mediacrush.fileutils import normalise_processor, file_storage
@@ -210,6 +210,9 @@ class APIView(FlaskView):
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
+        if is_tor():
+            return {'error': 420}, 420
+
         f = request.files['file']
         filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
 
@@ -217,6 +220,9 @@ class APIView(FlaskView):
 
     @route("/api/upload/url", methods=['POST'])
     def upload_url(self):
+        if is_tor():
+            return {'error': 420}, 420
+
         url = request.form['url']
         f = URLFile()
 
