@@ -27,8 +27,16 @@
         {# Generated thumbnail #}
         <meta property="og:image" content="{{ root }}/{{ filename }}.jpg" />
         <meta property="twitter:card" content="player" />
+        {% if file.title %}
+        <meta property="twitter:title" content="{{ file.title }}" />
+        {% else %}
         <meta property="twitter:title" content="MediaCrush" />
+        {% endif %}
+        {% if file.description %}
+        <meta property="twitter:description" content="{{ file.description }}" />
+        {% else %}
         <meta property="twitter:description" content="A video shared with MediaCrush." />
+        {% endif %}
         <meta property="twitter:player" content="{{ share('frame', filename) }}" />
         <meta property="twitter:player:stream" content="{{ media_url(filename) }}.mp4" />
         <meta property="twitter:player:stream:content_type" content="video/mp4" />
