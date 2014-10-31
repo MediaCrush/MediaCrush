@@ -245,7 +245,7 @@ handlePaste = (e) ->
             if e.clipboardData.items # webkit
                 for item in e.clipboardData.items
                     if item.type.indexOf('image/') == 0
-                        file = item.getAsFile
+                        file = item.getAsFile()
                         file.name = 'Clipboard'
                         handleFiles([ file ])
             else # not webkit
