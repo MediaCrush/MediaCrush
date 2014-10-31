@@ -256,6 +256,9 @@ handlePaste = (e) ->
                             blob = dataURItoBlob(img)
                             blob.name = 'Clipboard'
                             handleFiles([ blob ])
+                        else if img.indexOf('http://') == 0 or img.indexOf('https://') == 0
+                            # this could be handled better, by painting the image locally or something...
+                            uploadUrls([ img ])
                         target.innerHTML = ''
                     else
                         setTimeout(check, 100)
