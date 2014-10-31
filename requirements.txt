@@ -27,4 +27,3 @@ redis==2.7.6
 requests==2.0.0
 six==1.4.1
 slimit==0.8.1
-wsgiref==0.1.2
