@@ -1,6 +1,6 @@
 CoffeeScript==1.0.8
 Flask==0.10.1
-Flask-Bcrypt==0.5.2
+Flask-Bcrypt==0.6.0
 Flask-Classy==0.6.3
 Flask-Markdown==0.3
 Jinja2==2.7

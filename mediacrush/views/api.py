@@ -1,5 +1,5 @@
 from flask.ext.classy import FlaskView, route
-from flaskext.bcrypt import check_password_hash
+from flask_bcrypt import check_password_hash
 from flask import request, current_app, redirect
 
 from mediacrush.decorators import json_output, cors

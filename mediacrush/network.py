@@ -1,7 +1,7 @@
 import json
 from mediacrush.config import _cfg
 from flask import request, current_app, redirect
-from flaskext.bcrypt import generate_password_hash
+from flask_bcrypt import generate_password_hash
 
 def get_ip():
     ip = request.remote_addr
