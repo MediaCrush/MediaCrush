@@ -270,10 +270,16 @@ table {
 }
 
 .psuedohidden {
+    // We cannot simply hide this, as some browsers will refuse to give it
+    // focus and break paste. However, we can give it a size and move it
+    // off-screen and make sure overflow is hidden.
     display: inline-block;
     position: absolute;
     left: -1000px;
     top: -1000px;
+    height: 100px;
+    width: 100px;
+    overflow: hidden;
 }
 
 /**
