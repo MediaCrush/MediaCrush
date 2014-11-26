@@ -87,19 +87,6 @@
 document.addEventListener('DOMContentLoaded', function(e) {
     var player = new MediaPlayer(document.getElementById('player-{{filename}}'));
 }, false);
-document.addEventListener('keypress', function(e)
-{
-    key = typeof window.event === "undefined" ? e.which : window.event.keyCode;
-    if(key == 32)
-    {
-        e.preventDefault();
-        video = document.getElementById('video-{{filename}}');
-        if(video.paused)
-            video.play();
-        else
-            video.pause();
-    };
-}, true);
 </script>
 {% if has_subtitles and subtitles['info']['codec_name'] == 'ass' %}
 <link rel="stylesheet" type="text/css" href="/{{ filename }}_fonts.css" id="font-map-{{filename}}"></link>

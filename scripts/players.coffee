@@ -340,3 +340,16 @@ document.addEventListener('DOMContentLoaded', () ->
                 video.textTracks[0].mode = 'hidden' if video.parentElement.classList.contains('subs-off')
         )(player)
 , false)
+ 
+document.addEventListener "keypress", ((e) ->
+  key = (if typeof window.event is "undefined" then e.which else window.event.keyCode)
+  if key is 32
+    video = document.getElementsByTagName("video")[0]
+    if video
+      e.preventDefault()
+      if video.paused
+        video.play()
+      else
+        video.pause()
+  return
+), true
