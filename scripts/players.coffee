@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () ->
 , false)
  
 document.addEventListener "keypress", ((e) ->
-  key = (if typeof window.event is "undefined" then e.which else window.event.keyCode)
+  key = (if not window.event? then e.which else window.event.keyCode)
   if key is 32
     video = document.getElementsByTagName("video")[0]
     if video
@@ -351,5 +351,4 @@ document.addEventListener "keypress", ((e) ->
         video.play()
       else
         video.pause()
-  return
 ), true
