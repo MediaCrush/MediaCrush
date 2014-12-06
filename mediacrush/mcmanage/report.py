@@ -8,7 +8,7 @@ from .compliments import compliments
 
 from datetime import datetime
 import os
-import subprocess 
+import subprocess
 import random
 
 TEMPLATE = """
@@ -36,42 +36,45 @@ types = {}
 def report():
     files = File.get_all()
     for f in files:
-        if not 'original' in f:
-            continue
-        if f.original == None:
-            continue # This is something we should think about cleaning up after at some point
         try:
-            with open(os.path.join(_cfg("storage_folder"), f.original)):
-                size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
-        except IOError: pass
-        processor = get_processor(f._processor)
-        for f_ext in processor.outputs:
-            name = "%s.%s" % (f.hash, f_ext)
-            if name == f.original:
+            if not 'original' in f:
                 continue
+            if f.original == None:
+                continue # This is something we should think about cleaning up after at some point
             try:
-                with open(os.path.join(_cfg("storage_folder"), name)):
-                    size += os.path.getsize(os.path.join(_cfg("storage_folder"), name))
+                with open(os.path.join(_cfg("storage_folder"), f.original)):
+                    size = os.path.getsize(os.path.join(_cfg("storage_folder"), f.original))
             except IOError: pass
-        for f_ext in processor.extras:
-            try:
-                with open(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext))):
-                    size += os.path.getsize(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext)))
-            except IOError: pass
-        size /= float(1 << 20)
-        size = round(size, 2)
+            processor = get_processor(f._processor)
+            for f_ext in processor.outputs:
+                name = "%s.%s" % (f.hash, f_ext)
+                if name == f.original:
+                    continue
+                try:
+                    with open(os.path.join(_cfg("storage_folder"), name)):
+                        size += os.path.getsize(os.path.join(_cfg("storage_folder"), name))
+                except IOError: pass
+            for f_ext in processor.extras:
+                try:
+                    with open(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext))):
+                        size += os.path.getsize(os.path.join(_cfg("storage_folder"), "%s.%s" % (f.hash, f_ext)))
+                except IOError: pass
+            size /= float(1 << 20)
+            size = round(size, 2)
 
-        if f._processor not in types:
-            types[f._processor] = 1
-        else:
-            types[f._processor] += 1
+            if f._processor not in types:
+                types[f._processor] = 1
+            else:
+                types[f._processor] += 1
 
-        if f._processor not in sizes:
-            sizes[f._processor] = size
-        else:
-            sizes[f._processor] += size
+            if f._processor not in sizes:
+                sizes[f._processor] = size
+            else:
+                sizes[f._processor] += size
+        except:
+            pass
 
-    fileinfo = "" 
+    fileinfo = ""
     for t in types:
         fileinfo += "    -%d %s blobs (%0.2f MB)\n" % (types[t], t, sizes[t])
 
@@ -82,8 +85,11 @@ def report():
 
     reportinfo = ""
     for report in reports:
-        f = File.from_hash(report)
-        reportinfo += "    https://mediacru.sh/%s (%s reports)\n" % (report, f.reports) 
+        try:
+            f = File.from_hash(report)
+            reportinfo += "    https://mediacru.sh/%s (%s reports)\n" % (report, f.reports)
+        except:
+            pass
 
     if len(reports) == 0:
         reportinfo += "    No reports today. Good job!"
@@ -92,7 +98,7 @@ def report():
     albums = len(r.keys(_k("album.*")))
 
     feedback = Feedback.get_all()
-    user_feedback = "" 
+    user_feedback = ""
     for f in feedback:
         user_feedback += "    %s:\n        %s\n" % (f.useragent, f.text)
         f.delete()
@@ -112,4 +118,4 @@ def report():
     )
 
 
-    return report 
+    return report
