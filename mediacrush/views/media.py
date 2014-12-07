@@ -162,7 +162,7 @@ class MediaView(FlaskView):
 
     # We have to force the most vexing parse on this route.
     # Otherwise we will not go to space today.
-    @route("/<path:p>.<ext>")
+    @route("/<path:p>.<except(json):ext>")
     def static_file(self, p, ext):
         f = p + "." + ext
 

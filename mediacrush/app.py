@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, g, Response, redirect
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
+
+from werkzeug.routing import BaseConverter, ValidationError
 from jinja2 import FileSystemLoader, ChoiceLoader
 import os
 import traceback
@@ -23,6 +25,18 @@ Markdown(app)
 
 notice_enabled = False
 notice_text = "Uploads are temporarily halted due to high server load."
+
+class ExceptConverter(BaseConverter):
+    def __init__(self, url_map, *exclusions):
+        super(BaseConverter, self).__init__()
+        self.exclusions = exclusions
+
+    def to_python(self, v):
+        if v in self.exclusions:
+            raise ValidationError()
+        return v
+
+app.url_map.converters['except'] = ExceptConverter
 
 @app.before_request
 def find_dnt():
@@ -146,6 +160,6 @@ def troubleshooting():
     return render_template("troubleshooting.html")
 
 DocsView.register(app)
-APIView.register(app)
 HookView.register(app)
 MediaView.register(app)
+APIView.register(app)
