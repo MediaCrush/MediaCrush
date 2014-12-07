@@ -142,6 +142,10 @@ class MediaView(FlaskView):
             path = os.path.join(base, id)
             if os.path.exists(path): # These requests are handled by nginx if it's set up
                 return send_file(path, as_attachment=True)
+            else:
+                return abort(404)
+
+        return False
 
     @route("/status/<id>")
     def status(self, id):
@@ -173,10 +177,6 @@ class MediaView(FlaskView):
     @route("/<id>", defaults = {'layout': 'list'})
     @route("/<id>/<layout>")
     def get(self, id, layout):
-        send = self._send_file(id)
-        if send:
-            return send
-
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)
