@@ -1,4 +1,4 @@
-from mediacrush.config import _cfgi, _cfg
+from mediacrush.config import _cfgi, _cfg, shard
 import base64
 import string
 import os
@@ -36,4 +36,14 @@ def init(args):
             print(e)
 
 def migrate(args):
-    print("ho")
+    base = _cfg("storage_folder")
+    for f in os.listdir(base):
+        path = os.path.join(base, f)
+        if os.path.isfile(path):
+            newpath = os.path.join(base, shard(f))
+
+            try:
+                print("Moving " + path + " into " + newpath)
+                os.rename(path, newpath)
+            except:
+                print("Move failed")
