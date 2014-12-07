@@ -31,7 +31,7 @@ class VideoProcessor(Processor):
                 if 'video_codec' in s['info'] and s['info']['video_codec'] == 'vp8':
                     skip_webm = True
         if not skip_webm:
-            self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -pix_fmt yuv420p -quality good -b:v 5M -crf 5 -vf " + filter_string + map_string + " {1}.webm")
+            self._execute("ffmpeg -y -i {0} -c:v libvpx -c:a libvorbis -q:a 5 -pix_fmt yuv420p -quality good -b:v 5M -crf 5 -vf " + filter_string + map_string + " {1}.webm")
         # Extract extra streams if present
         fonts = []
         extract_fonts = False
@@ -101,7 +101,7 @@ class VideoProcessor(Processor):
             map_string += ' -map 0:v:0'
         if self.processor_state['has_audio']:
             map_string += ' -map 0:a:0'
-        self._execute("ffmpeg -y -i {0} -q:v 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora" + map_string + " {1}.ogv")
+        self._execute("ffmpeg -y -i {0} -q:v 5 -q:a 5 -pix_fmt yuv420p -acodec libvorbis -vcodec libtheora" + map_string + " {1}.ogv")
 
 class AudioProcessor(Processor):
     time = 600
@@ -109,10 +109,10 @@ class AudioProcessor(Processor):
 
     def sync(self):
         self._execute(copy)
-        self._execute("ffmpeg -y -i {0} -acodec libmp3lame -q:a 0 -map 0:a:0 {1}.mp3")
+        self._execute("ffmpeg -y -i {0} -acodec libmp3lame -q:a 2 -map 0:a:0 {1}.mp3")
 
     def async(self):
-        self._execute("ffmpeg -y -i {0} -acodec libvorbis -q:a 10 -map 0:a:0 {1}.ogg")
+        self._execute("ffmpeg -y -i {0} -acodec libvorbis -q:a 5 -map 0:a:0 {1}.ogg")
 
 class ImageProcessor(Processor):
     time = 60
