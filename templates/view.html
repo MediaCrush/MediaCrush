@@ -25,7 +25,7 @@
     <meta property="og:site_name" content="MediaCrush" />
     {% if processor.startswith("video") %}
         {# Generated thumbnail #}
-        <meta property="og:image" content="{{ root }}/{{ filename }}.jpg" />
+        <meta property="og:image" content="{{ root }}/{{ shard(filename) }}.jpg" />
         <meta property="twitter:card" content="player" />
         {% if file.title %}
         <meta property="twitter:title" content="{{ file.title }}" />
@@ -46,7 +46,7 @@
     {% elif processor.startswith("audio") %}
         <meta property="og:image" content="/static/audio.png" />
     {% else %}
-    <meta property="og:image" content="{{ root }}/{{ original }}" />
+    <meta property="og:image" content="{{ media_url(original) }}" />
         <meta name="twitter:card" content="photo">
         <meta name="twitter:image" content="{{ media_url(original) }}">
     {% endif %}
@@ -79,13 +79,13 @@
     <ul class="inline hidden-if-noscript">
         <li><a href="#" id="embed-link">Embed</a></li>
         <li><a href="#" id="share-link">Share</a></li>
-        <li><a href="/download/{{ original }}">Download</a></li>
+        <li><a href="/download/{{ shard(original) }}">Download</a></li>
         <li><a href="/report/{{ filename }}" id="report">Report</a></li>
         <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>
     <noscript>
     <ul class="inline">
-        <li><a href="/download/{{ original }}">Download</a></li>
+        <li><a href="/download/{{ shard(original) }}">Download</a></li>
         <li><a href="/report/{{ filename }}" class="red">Report</a></li>
         <li class="{% if can_delete == 'check' or can_delete == False %}hidden{% endif %}"><a href="#" class="red" id="delete">Delete</a></li>
     </ul>

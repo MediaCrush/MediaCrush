@@ -9,13 +9,13 @@ import re
 from flask import current_app
 from urlparse import urlparse
 
-from mediacrush.config import _cfg
+from mediacrush.config import _cfg, file_storage, shard
 from mediacrush.database import r, _k
 from mediacrush.objects import File
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.network import secure_ip, get_ip
 from mediacrush.tasks import process_file
-from mediacrush.fileutils import EXTENSIONS, get_mimetype, file_storage, extension, delete_file
+from mediacrush.fileutils import EXTENSIONS, get_mimetype, extension, delete_file
 from mediacrush.celery import app
 
 
@@ -92,6 +92,7 @@ def get_hash(f):
     return hashlib.md5(f.read()).digest()
 
 def media_url(f, absolute=True):
+    f = shard(f)
     cdn = _cfg("cdn")
     domain = _cfg("domain")
     base = _cfg("protocol") + "://" + domain if len(cdn) == 0 else cdn

@@ -9,8 +9,8 @@ from mediacrush.objects import File, Album, Feedback, RedisObject, FailedFile
 from mediacrush.network import get_ip, secure_ip, is_tor
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update
 from mediacrush.processing import get_processor
-from mediacrush.fileutils import normalise_processor, file_storage
-from mediacrush.config import _cfg
+from mediacrush.fileutils import normalise_processor
+from mediacrush.config import _cfg, file_storage
 from mediacrush.tor import tor_redirect
 from mediacrush.tasks import zip_album
 

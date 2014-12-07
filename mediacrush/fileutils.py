@@ -1,4 +1,4 @@
-from mediacrush.config import _cfg
+from mediacrush.config import _cfg, _cfgi, file_storage
 from mediacrush.mimeinfo import EXTENSIONS, get_mimetype, extension
 from mediacrush.processing import get_processor
 
@@ -67,8 +67,7 @@ def normalise_processor(processor):
     if not processor: return None
     return processor.split("/")[0] if "/" in processor else processor
 
-def file_storage(f):
-    return os.path.join(_cfg("storage_folder"), f)
+
 
 def compression_rate(originalpath, f):
     if f.processor == 'default': return 0

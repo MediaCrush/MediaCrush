@@ -9,7 +9,7 @@ import subprocess
 import random
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
-from mediacrush.config import _cfg, _cfgi, cdn_url
+from mediacrush.config import _cfg, _cfgi, cdn_url, shard
 from mediacrush.files import extension, get_mimetype, media_url
 from mediacrush.views.media import render_media
 from mediacrush.share import share
@@ -91,7 +91,8 @@ def inject():
         'ip': get_ip(),
         'media_url': media_url,
         'root': _cfg("protocol") + "://" + _cfg("domain"),
-        'random': random
+        'random': random,
+        'shard': shard
     }
 
 @app.route("/")

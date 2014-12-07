@@ -1,4 +1,4 @@
-from mediacrush.config import _cfg, domain_url, cdn_url
+from mediacrush.config import _cfg, domain_url, cdn_url, shard
 from mediacrush.objects import File
 from mediacrush.network import is_tor
 
@@ -38,19 +38,19 @@ class Share(object):
         return self.link_other(h) + "/frame"
 
     def markdown_still(self, h):
-        return "![](%s)" % domain_url(h)
+        return "![](%s)" % domain_url(shard(h))
 
     def markdown_other(self, h):
         return "[MediaCrush](%s)" % domain_url(h)
 
     def html_still(self, h):
-        return "<img src='%s'>" % domain_url(h)
+        return "<img src='%s'>" % domain_url(shard(h))
 
     def html_other(self, h):
         return "<a href='%s'>MediaCrush</a>" % domain_url(h)
 
     def bbcode_still(self, h):
-        return "[img]%s[/img]" % domain_url(h)
+        return "[img]%s[/img]" % domain_url(shard(h))
 
     def bbcode_other(self, h):
         return "[url=%s]MediaCrush[/url]" % domain_url(h)
