@@ -65,7 +65,7 @@ window.addEventListener('load', function() {
         <div>Loads more reliably</div>
     </a>
 </div>
-<video class="hidden" id="video-option-{{ filename }}" controls {% if flags['mute'] %}muted="true"{% endif %} {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{filename}}.jpg">
+<video class="hidden" id="video-option-{{ filename }}" controls {% if flags['mute'] %}muted="true"{% endif %} {% if flags['loop'] %}loop{% endif %} poster="{{ cdn }}/{{ shard(filename) }}.jpg">
     <source src="{{ cdn_url(filename + '.mp4') }}" type='video/mp4;'>
     <source src="{{ cdn_url(filename + '.webm') }}" type='video/webm;'>
     <source src="{{ cdn_url(filename + '.ogv') }}" type='video/ogg'>
