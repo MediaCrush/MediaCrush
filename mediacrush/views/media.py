@@ -143,10 +143,6 @@ class MediaView(FlaskView):
             if os.path.exists(path): # These requests are handled by nginx if it's set up
                 return send_file(path, as_attachment=True)
 
-    @route("/download/<path:file>")
-    def download(self, file):
-        return self._send_file(file)
-
     @route("/status/<id>")
     def status(self, id):
         klass = RedisObject.klass(id)
@@ -168,6 +164,9 @@ class MediaView(FlaskView):
 
         if p.startswith("static/"):
             return self._send_file(f.split("/")[1], base=current_app.static_folder)
+        elif p.startswith("download/"):
+            path = '/'.join(f.split("/")[1:])
+            return self._send_file(path)
         else:
             return self._send_file(f)
 
