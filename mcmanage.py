@@ -11,6 +11,8 @@ Usage:
     mcmanage.py report email
     mcmanage.py files delete <hash>
     mcmanage.py files nsfw <hash>
+    mcmanage.py shard init
+    mcmanage.py shard migrate
 """
 
 from docopt import docopt
@@ -18,6 +20,7 @@ from docopt import docopt
 from mediacrush.mcmanage.database import database_clear, database_sync
 from mediacrush.mcmanage.report import report
 from mediacrush.mcmanage.files import files_delete, files_nsfw
+from mediacrush.mcmanage.shard import init, migrate
 
 from mediacrush.email import send_report
 
@@ -39,10 +42,16 @@ files_commands = {
     'nsfw': files_nsfw
 }
 
+shard_commands = {
+    'init': init,
+    'migrate': migrate
+}
+
 mapping = {
     'database': database_commands,
     'report': report_commands,
     'files': files_commands,
+    'shard': shard_commands,
     'admin': None,
 }
 

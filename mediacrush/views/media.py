@@ -134,18 +134,18 @@ def render_media(f, album=False):
 class MediaView(FlaskView):
     route_base = '/'
 
-    def _send_file(self, id):
+    def _send_file(self, id, base=_cfg("storage_folder")):
         if ".." in id or id.startswith("/"):
             abort(403)
 
         if "." in id:
-            if os.path.exists(os.path.join(_cfg("storage_folder"), id)): # These requests are handled by nginx if it's set up
-                path = os.path.join(_cfg("storage_folder"), id)
+            path = os.path.join(base, id)
+            if os.path.exists(path): # These requests are handled by nginx if it's set up
                 return send_file(path, as_attachment=True)
+            else:
+                return abort(404)
 
-    @route("/download/<path:file>")
-    def download(self, file):
-        return self._send_file(file)
+        return False
 
     @route("/status/<id>")
     def status(self, id):
@@ -160,13 +160,23 @@ class MediaView(FlaskView):
             return tor_redirect('/' + f.hash)
         return render_template("status.html", **_template_params(f))
 
+    # We have to force the most vexing parse on this route.
+    # Otherwise we will not go to space today.
+    @route("/<path:p>.<except(json):ext>")
+    def static_file(self, p, ext):
+        f = p + "." + ext
+
+        if p.startswith("static/"):
+            return self._send_file(f.split("/")[1], base=current_app.static_folder)
+        elif p.startswith("download/"):
+            path = '/'.join(f.split("/")[1:])
+            return self._send_file(path)
+        else:
+            return self._send_file(f)
+
     @route("/<id>", defaults = {'layout': 'list'})
     @route("/<id>/<layout>")
     def get(self, id, layout):
-        send = self._send_file(id)
-        if send:
-            return send
-
         klass = RedisObject.klass(id)
         if klass is Album:
             album = klass.from_hash(id)

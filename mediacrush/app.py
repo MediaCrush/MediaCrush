@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, g, Response, redirect
 from flaskext.bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
+
+from werkzeug.routing import BaseConverter, ValidationError
 from jinja2 import FileSystemLoader, ChoiceLoader
 import os
 import traceback
@@ -9,7 +11,7 @@ import subprocess
 import random
 
 from mediacrush.views import HookView, APIView, MediaView, DocsView
-from mediacrush.config import _cfg, _cfgi, cdn_url
+from mediacrush.config import _cfg, _cfgi, cdn_url, shard
 from mediacrush.files import extension, get_mimetype, media_url
 from mediacrush.views.media import render_media
 from mediacrush.share import share
@@ -23,6 +25,18 @@ Markdown(app)
 
 notice_enabled = False
 notice_text = "Uploads are temporarily halted due to high server load."
+
+class ExceptConverter(BaseConverter):
+    def __init__(self, url_map, *exclusions):
+        super(BaseConverter, self).__init__()
+        self.exclusions = exclusions
+
+    def to_python(self, v):
+        if v in self.exclusions:
+            raise ValidationError()
+        return v
+
+app.url_map.converters['except'] = ExceptConverter
 
 @app.before_request
 def find_dnt():
@@ -91,7 +105,8 @@ def inject():
         'ip': get_ip(),
         'media_url': media_url,
         'root': _cfg("protocol") + "://" + _cfg("domain"),
-        'random': random
+        'random': random,
+        'shard': shard
     }
 
 @app.route("/")
@@ -145,6 +160,6 @@ def troubleshooting():
     return render_template("troubleshooting.html")
 
 DocsView.register(app)
-APIView.register(app)
 HookView.register(app)
 MediaView.register(app)
+APIView.register(app)

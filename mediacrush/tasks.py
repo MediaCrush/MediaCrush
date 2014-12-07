@@ -1,8 +1,8 @@
-from mediacrush.config import _cfgi
+from mediacrush.config import _cfgi, file_storage
 from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.celery import app, get_task_logger, chord, signature
 from mediacrush.processing import processor_table, detect
-from mediacrush.fileutils import compression_rate, delete_file, file_storage
+from mediacrush.fileutils import compression_rate, delete_file
 
 import time
 import os

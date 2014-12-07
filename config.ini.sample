@@ -63,6 +63,9 @@ from_email = admin@mediacru.sh
 # If you put the dev docs somewhere other than ./docs/, update this
 docs_path = docs
 
+# Sharding: 0 = 1 shard (default), 1 = 64 shards, 2 = 4096 shards.
+sharding = 0 
+
 [ratelimit-upload]
 # Period is in seconds. Units in bytes. Default rate limit is 0.2ish GB per hour
 period = 3600 

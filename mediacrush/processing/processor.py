@@ -1,4 +1,4 @@
-from mediacrush.config import _cfg
+from mediacrush.config import _cfg, file_storage
 from mediacrush.processing.invocation import Invocation
 from mediacrush.mimeinfo import extension
 
@@ -14,7 +14,7 @@ class Processor(object):
 
     def __init__(self, tmppath, f, processor_state, ignore_limit):
         self.path = tmppath
-        self.output = os.path.join(_cfg("storage_folder"), f.hash)
+        self.output = file_storage(f.hash)
         self.processor_state = processor_state
         self.ignore_limit = ignore_limit
 
