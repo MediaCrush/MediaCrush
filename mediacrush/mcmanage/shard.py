@@ -1,4 +1,5 @@
-from mediacrush.config import _cfgi, _cfg, shard
+from mediacrush.config import _cfgi, _cfg
+from mediacrush.paths import shard
 import base64
 import string
 import os

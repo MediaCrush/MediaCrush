@@ -9,7 +9,8 @@ import re
 from flask import current_app
 from urlparse import urlparse
 
-from mediacrush.config import _cfg, file_storage, shard
+from mediacrush.config import _cfg
+from mediacrush.paths import file_storage, shard
 from mediacrush.database import r, _k
 from mediacrush.objects import File
 from mediacrush.ratelimit import rate_limit_exceeded, rate_limit_update

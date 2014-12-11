@@ -1,4 +1,5 @@
-from mediacrush.config import _cfg, domain_url, cdn_url, shard
+from mediacrush.config import _cfg
+from mediacrush.paths import domain_url, cdn_url, shard
 from mediacrush.objects import File
 from mediacrush.network import is_tor
 

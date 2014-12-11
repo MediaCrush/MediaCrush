@@ -1,4 +1,5 @@
-from mediacrush.config import _cfg, _cfgi, file_storage
+from mediacrush.config import _cfg, _cfgi
+from mediacrush.paths import file_storage
 from mediacrush.mimeinfo import EXTENSIONS, get_mimetype, extension
 from mediacrush.processing import get_processor
 

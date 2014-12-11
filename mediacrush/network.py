@@ -1,4 +1,5 @@
 import json
+from mediacrush.config import _cfg
 from flask import request, current_app, redirect
 from flaskext.bcrypt import generate_password_hash
 
@@ -35,4 +36,4 @@ def secure_ip():
     return generate_password_hash(ip)
 
 def is_tor():
-    return get_ip() == '127.0.0.1'
+    return _cfg("tor_domain") and get_ip() == '127.0.0.1'

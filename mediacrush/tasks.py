@@ -1,4 +1,5 @@
-from mediacrush.config import _cfgi, file_storage
+from mediacrush.config import _cfgi
+from mediacrush.paths import file_storage
 from mediacrush.objects import RedisObject, File, FailedFile, Album
 from mediacrush.celery import app, get_task_logger, chord, signature
 from mediacrush.processing import processor_table, detect
