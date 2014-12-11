@@ -1,4 +1,8 @@
 {% if album %}
+<div class="bar">
+    <a class="left" href="{{ cdn }}/{{ filename }}">Direct Link</a>
+    <a class="right" href="/download/{{ original }}">Download</a>
+</div>
 {% if file.title and not embedded %}
     <h3>{{ file.title }}</h3>
 {% endif %}
@@ -11,10 +15,6 @@
         <img id="img-{{filename}}" src="{{ cdn_url(filename + '.png') }}" alt="MediaCrush" />
         {% endif %}
     </a>
-    <div class="bar">
-        <a class="left" href="{{ cdn }}/{{ filename }}">Direct Link</a>
-        <a class="right" href="/download/{{ original }}">Download</a>
-    </div>
 </div>
 {% if file.description and not embedded %}
     {{ file.description | safe }}

@@ -128,10 +128,6 @@ h2 {
 
 .media {
     overflow: hidden;
-}
-
-.item-wrapper {
-    overflow: hidden;
 
     a {
         color: #fff;
@@ -141,11 +137,15 @@ h2 {
         }
     }
 
-    div {
-        display: inline-block;
-        min-width: 100px;
+    .item-wrapper {
         overflow: hidden;
-        position: relative;
+
+        div {
+            display: inline-block;
+            min-width: 100px;
+            overflow: hidden;
+            position: relative;
+        }
     }
 
     .bar {
