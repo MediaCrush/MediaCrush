@@ -4,10 +4,10 @@ albumAttached = false
 maxConcurrentUploads = 3
 
 window.addEventListener('DOMContentLoaded', ->
-    window.addEventListener('dragenter', dragNop, false)
-    window.addEventListener('dragleave', dragNop, false)
-    window.addEventListener('dragover', dragNop, false)
-    window.addEventListener('drop', handleDragDrop, false)
+    #window.addEventListener('dragenter', dragNop, false)
+    #window.addEventListener('dragleave', dragNop, false)
+    #window.addEventListener('dragover', dragNop, false)
+    #window.addEventListener('drop', handleDragDrop, false)
     document.getElementById('browse-link').addEventListener('click', (e) ->
         e.preventDefault()
         document.getElementById('browse').click()
