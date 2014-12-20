@@ -3,9 +3,9 @@ import shutil
 import os
 import time
 
-from ..app import app
-from ..config import _cfg
-from ..mcmanage.database import database_clear
+from mediacrush.app import app
+from mediacrush.config import _cfg
+from mediacrush.mcmanage.database import database_clear
 
 def clear_env():
     database_clear({'silent': True})
