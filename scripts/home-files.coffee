@@ -18,7 +18,7 @@ class MediaFile
         @updateStatus('error')
         @preview.querySelector('.error').textContent = error
     
-    updateStatus: (status) ->
+    updateStatus: (status, message='') ->
         oldStatus = @status
         @status = status
         window.statusChanged(this, @status, oldStatus) if window.statusChanged
@@ -55,7 +55,10 @@ class MediaFile
             @preview.querySelector('.status').style.display = 'none'
             error = @preview.querySelector('.error')
             error.classList.remove('hidden')
-            error.textContent = 'There was a problem with this file.'
+            if message != ''
+                error.textContent = message
+            else
+                error.textContent = 'There was a problem with this file.'
             progress.className = 'progress progress-stalled progress-red'
     
     loadPreview: ->

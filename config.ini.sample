@@ -30,6 +30,8 @@ debug-static-recompile=false
 storage_folder = storage
 # This value is currently ignored, and each supported mimetype has its own timing rules.
 max_processing_time = 60
+# Max upload size (source file)
+max_file_size = 50M
 
 # Hooks allow the site to rebuild itself when there's a commit to the repository
 # POST github-style hook messages to /hook/ to update

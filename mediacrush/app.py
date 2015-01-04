@@ -13,7 +13,7 @@ import random
 from mediacrush.views import HookView, APIView, MediaView, DocsView
 from mediacrush.config import _cfg, _cfgi
 from mediacrush.paths import cdn_url, shard
-from mediacrush.files import extension, get_mimetype, media_url
+from mediacrush.files import extension, get_mimetype, media_url, get_maxsize
 from mediacrush.views.media import render_media
 from mediacrush.share import share
 from mediacrush.network import is_tor, get_ip
@@ -107,7 +107,8 @@ def inject():
         'media_url': media_url,
         'root': _cfg("protocol") + "://" + _cfg("domain"),
         'random': random,
-        'shard': shard
+        'shard': shard,
+        'max_file_size': get_maxsize()
     }
 
 @app.route("/")
