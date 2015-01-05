@@ -1,9 +1,11 @@
 subtitleRenderers = {}
 
-document.cancelFullScreen = document.cancelFullScreen ||
+document.exitFullscreen = document.exitFullscreen ||
+                   document.cancelFullScreen ||
                    document.mozCancelFullScreen ||
+                   document.webkitExitFullscreen ||
                    document.webkitCancelFullScreen ||
-                   document.msExitFullscreen # Thanks for that last one, Microsoft, well done
+                   document.msExitFullscreen
 
 MediaPlayer = (container) ->
     media = container.querySelector('video, audio')
@@ -229,7 +231,7 @@ MediaPlayer = (container) ->
             isFullscreen = false
             container.classList.remove('fullscreen')
             fullscreen.classList.remove('disabled')
-            document.cancelFullScreen()
+            document.exitFullscreen()
             # Chrome hack to fix positioning when leaving full screen
             _ = document.querySelector('.media')
             _.style.right = 0 if _
