@@ -19,9 +19,6 @@ from mediacrush.tasks import process_file
 from mediacrush.fileutils import EXTENSIONS, get_mimetype, extension, delete_file
 from mediacrush.celery import app
 
-
-MAX_SIZE = 52428800 # TODO get it from config
-
 class FileTooBig(Exception):
     pass
 
@@ -54,14 +51,14 @@ class URLFile(object):
     def download(self, url):
         r = requests.get(url, stream=True)
         length = r.headers["content-length"]
-        if not length.isdigit() or int(length) > MAX_SIZE:
-            raise FileTooBig("The file was larger than 50 MB")
+        if not length.isdigit() or int(length) > get_maxsize():
+            raise FileTooBig("The file was larger than "+_cfg("max_file_size"))
 
         for i, chunk in enumerate(r.iter_content(chunk_size=1024)):
-            if i > MAX_SIZE / 1024:
+            if i > get_maxsize() / 1024:
                 # Evil servers may send more than Content-Length bytes
                 # As of 54541a9, python-requests keeps reading indefinitely
-                raise FileTooBig("The file was larger than 50 MB")
+                raise FileTooBig("The file was larger than "+_cfg("max_file_size"))
             self.f.write(chunk)
             self.f.flush()
 
@@ -106,6 +103,18 @@ def file_length(f):
     f.seek(0)
 
     return by
+
+def get_maxsize():
+    size = _cfg("max_file_size")
+    symbols = ('B', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+    letter = size[-1:].strip().upper()
+    num = size[:-1]
+    assert num.isdigit() and letter in symbols
+    num = float(num)
+    prefix = {symbols[0]:1}
+    for i, size in enumerate(symbols[1:]):
+        prefix[size] = 1 << (i+1)*10
+    return int(num * prefix[letter])
 
 def upload(f, filename):
     if not f.content_type:

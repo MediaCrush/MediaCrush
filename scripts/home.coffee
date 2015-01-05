@@ -161,8 +161,11 @@ updateQueue = ->
             mediaFile.preview = fileList.lastElementChild
             mediaFile.loadPreview()
             mediaFile.hash = new String(guid())
-            mediaFile.updateStatus('local-pending')
-            uploadedFiles[mediaFile.hash] = mediaFile
+            if file.size < window.max_file_size
+                mediaFile.updateStatus('local-pending')
+                uploadedFiles[mediaFile.hash] = mediaFile
+            else
+                mediaFile.updateStatus('error', "This file is too large.")
         )(file)
     for url in urls
         ((url) ->
