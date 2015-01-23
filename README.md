@@ -59,7 +59,7 @@ Optional dependencies:
 
 On Mac OS X you can use [Homebrew](http://brew.sh/) to install ffmpeg w/ the requisite add-ons:
 
-    brew install ffmpeg --with-theora --with-livorbis --with-fdk-aac --with-libvpx
+    brew install ffmpeg --with-theora --with-libvorbis --with-fdk-aac --with-libvpx
 
 **Clone the repository**
 
