@@ -201,6 +201,8 @@ class APIView(FlaskView):
 
     @route("/api/upload/noscript", methods=['POST'])
     def upload_noscript(self):
+        return {"error": 403}, 403
+        
         f = request.files['file']
         filename = ''.join(c for c in f.filename if c.isalnum() or c == '.')
 
@@ -211,6 +213,8 @@ class APIView(FlaskView):
 
     @route("/api/upload/file", methods=['POST'])
     def upload_file(self):
+        return {"error": 403}, 403
+        
         if is_tor():
             return {'error': 420}, 420
 
@@ -221,6 +225,8 @@ class APIView(FlaskView):
 
     @route("/api/upload/url", methods=['POST'])
     def upload_url(self):
+        return {"error": 403}, 403
+        
         if is_tor():
             return {'error': 420}, 420
 
