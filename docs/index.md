@@ -1,5 +1,7 @@
 # Developer Documentation
 
+**Notice**: MediaCrush has shut down. Our API only exists if you are running your own instance, or using a third party instance.
+
 If you have any questions about using our service from a development standpoint, please feel free to join
 [#mediacrush on irc.freenode.net](http://webchat.freenode.net/?channels=mediacrush&uio=d4) to get help.
 
