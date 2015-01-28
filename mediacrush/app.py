@@ -121,28 +121,27 @@ def mine():
 
 @app.route("/apps")
 def apps():
-    return render_template("apps.html")
+    return redirect("/")
 
 @app.route("/about")
 def about():
-    return render_template("about.html", choice=random.randint(0, 4))
+    return redirect("/")
 
 @app.route('/demo')
 def demo():
-    return redirect('/about', code=301)
+    return redirect("/")
 
 @app.route('/advertising')
 def advertising():
-    return render_template("advertising.html")
+    return redirect("/")
 
 @app.route("/donate")
 def donate():
-    opted_out = "ad-opt-out" in request.cookies
-    return render_template("donate.html", ads=not opted_out)
+    return redirect("/")
 
 @app.route("/thanks")
 def thanks():
-    return render_template("thanks.html")
+    return redirect("/")
 
 @app.route("/version")
 def version():
@@ -159,7 +158,7 @@ def serious():
 
 @app.route("/troubleshooting")
 def troubleshooting():
-    return render_template("troubleshooting.html")
+    return redirect("/")
 
 DocsView.register(app)
 HookView.register(app)

@@ -1,7 +1,4 @@
-{% extends "layout.html" %}
-{% block scripts %}
-<script src="{{ url_for('static', filename='home.js') }}" type="text/javascript"></script>
-{% endblock %}
+{% extends "layout-end.html" %}
 {% block styles %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}" />
 {% endblock %}
@@ -9,88 +6,45 @@
 <meta property="og:image" content="https://mediacru.sh/static/logo.png" />
 {% endblock %}
 {% block content %}
-<div class="psuedohidden" id="paste-target" contenteditable></div>
-<div class="grid">
-    <div class="column">
-        {# <div id="beta">
-            <span>Beta</span>
-        </div> #}
-        <div id="droparea">
-            <input type="file" id="browse" class="hidden" multiple />
-            <div id="albumUI">
-                <div class="status hidden">Processing, please wait...</div>
-                <a href="#" class="button hidden">Create Album</a>
-                <div class="result hidden">
-                    Album: <a href="#" target="_blank"></a>
-                </div>
-            </div>
-            <div id="record" class="hidden">
-                <span class="info hidden">Recording...</span>
-                <a href="#" class="icon record" data-icon="&#xF073;" title="Upload directly from your microphone"></a>
-            </div>
-            <div id="files">
-                {# Things in here will be removed after the first file is uploaded #}
-                <div class="konami icons hidden">
-                    <img src="/static/konami-icons.png" alt="Hazards" />
-                </div>
-                <div class="social">
-                    <a target="_blank" href="https://www.reddit.com/r/MediaCrush">/r/MediaCrush</a>
-                    <a target="_blank" href="https://twitter.com/mediacru_sh">@mediacru_sh</a>
-                </div>
-                {% if notice_enabled %}
-                <div id="notice">
-                    <div>{{ notice_text }}</div>
-                </div>
-                {% endif %}
-            </div>
-            <div class="hint">
-                {# Things in here stay in here past the first upload #}
-                <div id="droptext">
-                    <div class="hidden-if-noscript">
-                        <a href="#" id="browse-link">Drag and drop or click to upload<br/><span class="small">Or use Ctrl+V to paste images or URLs<br />Upload several to create an album!</span></a>
-                    </div>
-                </div>
-                <noscript class="center" style="line-height: 25px; position: relative; top: -40px">
-                    <form method="POST" enctype="multipart/form-data" action="/api/upload/noscript">
-                        Upload video, audio, or images:<br />
-                        <input type="file" name="file" /><input type="submit" value="Upload" /><br />
-                        Anonymous users, please take special note of the <a href="/serious">terms of service</a>.
-                    </form>
-                </noscript>
-            </div>
-        </div>
-        <div class="small center" style="margin-top: 14px">
-            <ul class="inline">
-                <li><a href="/serious">Terms & Privacy</a></li>
-                <li><a href="/docs">Developers</a></li>
-                {% if is_tor %}
-                <li><a href="https://mediacru.sh">Clearnet Site</a></li>
-                {% else %}
-                <li><a href="http://mediacrs5ujufxog.onion">Hidden Service</a></li>
-                {% endif %}
-                <li><a href="mailto:support@mediacru.sh">Help</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="column narrow">
-        <div id="blurb">
-            <p>MediaCrush is fast, open-source media hosting without the usual nonsense. We support pretty much every video, audio, and image format.</p>
-            <p>You can just start uploading, or you can <a href="/about">read more about MediaCrush</a>.</p>
-            </div>
-        </div>
-        <div id="history" class="hidden">
-            <ul>
-                <li class="fader"></li>
-            </ul>
-            <div>
-                <a href="/mine" class="small pull-left" id="histView">View full history</a>
-                <a href="#" class="small pull-right" id="historyEnabled">Disable local history</a>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="clearfix"></div>
-<div class="konami credit hidden">
-    Music by <a target="_blank" href="https://soundcloud.com/superspink">superspink</a>
+<div style="text-align: center; width: 1000px;">
+    <small>Published January 28th, 2014</small>
+    <h1 class="brand">
+        <img style="float: none; position: relative; top: 3px;" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MjQuMDk5IiBoZWlnaHQ9IjQyMS40NjkiIHZpZXdCb3g9IjAgMCA0MjQuMDk5IDQyMS40NjkwOSIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgNTEyIDUxMiI+PHBhdGggZD0iTTU3LjA2IDQwNi4xM1MwIDMyOC43NiAwIDIxMC4wOTdDMCA5MS40MyA1Ny4wNjYgMTUuMTA2IDU3LjA2NiAxNS4xMDZzOTQuMzItNC44MzUgMjAyLjMwMiA1MC41NzdjMTA3Ljk4NiA1NS40MTIgMTY0LjczIDE0My44OSAxNjQuNzMgMTQzLjg5cy02My43OSA5Ni4yMi0xNzAuMzg1IDE1MC4wNjZDMTQ3LjEyIDQxMy40ODIgNTcuMDYgNDA2LjEzIDU3LjA2IDQwNi4xM3oiIGZpbGw9IiMwMDU1ODAiLz48cGF0aCBkPSJNNjkuNDY3IDI4OS4xOThoNDAuMjQ1bDE2LjY1My0xMDYuMjUuMjM2LTEuNTA3Yy4yOTQtLjU5OC40NTYtMSAuNDktMS4yMDQgMi4zNjUtNi4yMzcgNi41MjgtOS4zNTcgMTIuNDkyLTkuMzU3aDE5LjA3YzUuMzQgMS40MDcgNy41ODIgNC44MyA2LjczIDEwLjI2bC0xNi45MzcgMTA4LjA1OGg0MC4yNDdsMTYuOTM4LTEwOC4wNmMuNzI1LTQuNjIzIDMuMzEyLTcuNzQ0IDcuNzcyLTkuMzUyIDEuNjkyLS42MDUgMy4wNC0uOTA3IDQuMDQzLS45MDdoMTcuNzE3YzcuNDAzIDAgMTAuNDggNC4wMiA5LjIyIDEyLjA3bC0xNi42NTYgMTA2LjI0OGg0MC4yNDdsMTguOTI2LTEyMC43NGMxLjM1OC04LjY3LjY2NS0xNS44MzUtMi4wNy0yMS40ODUtNS41MTUtMTEuMDkyLTE1LjIyMy0xNi42NDMtMjkuMTItMTYuNjQzaC0zMC44MTdjLTE1LjUxMiAwLTI2LjczIDQuNzQyLTMzLjY1IDE0LjIyMy0zLjk1My05LjQ4LTEzLjY4Ni0xNC4yMjMtMjkuMTk2LTE0LjIyM2gtMzAuODJjLTEzLjkgMC0yNS4zNDMgNS41NS0zNC4zMzQgMTYuNjQzLTQuMjQ4IDUuMjQ4LTcuMDggMTIuNDA4LTguNTA0IDIxLjQ4Nkw2OS40NjYgMjg5LjE5N3oiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="logo" width=24 height=24 />
+        MediaCrush
+    </h1>
+    <p>MediaCrush is being shut down today. Before I tell you why, I want to clarify a few things:</p>
+    <ul>
+        <li>All content uploaded prior to today remains available</li>
+        <li>The <a href="https://github.com/MediaCrush/MediaCrush">open source project</a> is still alive and well</li>
+    </ul>
+    <p>It's been a year and a half and we've come to the point where we can no longer continue this project.
+    We have reached our storage capacity, and our ad revenue and donations are lower than ever. We cannot
+    justify expanding our infrastructure and costs to continue losing money on this project. I'm extremely
+    grateful to the folks who have been here for us, but it's time for us to move on to other things.</p>
+    <p>We will answer your questions on Twitter <a href="https://twitter.com/mediacru_sh">@mediacru_sh</a>, and at
+    our personal accounts <a href="https://twitter.com/sircmpwn">@sircmpwn</a> and 
+    <a href="https://twitter.com/jdiezlopez">@jdiezlopez</a>. You can also participate in the relevant thread
+    on <a href="https://www.reddit.com/r/mediacru_sh/asdfasdfasdf">/r/MediaCrush TODO FIX THIS LINK</a>.
+    Personally, we're going to switch to <a href="https://img.bi">img.bi</a> and
+    <a href="https://pomf.se">pomf.se</a> for our needs. You can find more alternatives to MediaCrush at
+    <a href="https://prism-break.org/en/">Prism Break</a>. Your upload history (if you enabled it)
+    is still available <a href="/mine">here</a>.</p>
+    <p>Thanks for your support, everyone.<br />
+    <em>Drew DeVault and Jose Diez, the MediaCrush founders</em></p>
+    <br />
+    <br />
+    <br />
+    <p>
+    26,726,597 page views<br />
+    11,100,380 users served<br />
+    375,595 files uploaded<br />
+    12,245 albums created<br />
+    50 PB bandwidth used<br />
+    2 exhausted founders
+    </p>
+    <br />
+    <br />
+    <br />
+    <small><a href="mailto:admin@mediacru.sh">admin@mediacru.sh</a></small>
 </div>
 {% endblock %}
