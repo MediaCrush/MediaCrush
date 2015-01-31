@@ -33,7 +33,7 @@ def init(args):
     for i in range(64 ** sharding_level):
         try:
             os.mkdir(os.path.join(folder, int2base(i, 64)))
-        except OSError, e:
+        except OSError as e:
             print(e)
 
 def migrate(args):
