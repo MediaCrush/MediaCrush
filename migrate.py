@@ -11,7 +11,7 @@ if __name__ == '__main__':
     files = File.get_all()
     count = len(files)
 
-    print "About to process %d files." % count
+    print("About to process %d files." % count)
 
     done = 0
     errors = []
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         k = _k("file.%s" % h)
         r.hset(k, "ip", "")
 
-    print "\n%d/%d files processed, errors:" % (done, count), errors
+    print("\n%d/%d files processed, errors:" % (done, count), errors)
 
 def normalise_processor(processor):
     if not processor: return None

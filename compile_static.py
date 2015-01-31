@@ -4,6 +4,7 @@ from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
 
 import os
+import sys
 import scss
 import coffeescript
 import tempfile
@@ -47,19 +48,19 @@ def prepare():
 
         if extension(f) == "js":
             if inputpath in preprocess:
-                with open(inputpath) as r:
+                with open(inputpath, "rb") as r:
                     output = r.read().decode("utf-8")
                     output = output.replace("{{ protocol }}", _cfg("protocol"))
                     output = output.replace("{{ domain }}", _cfg("domain"))
 
-                with open(outputpath, "w") as w:
+                with open(outputpath, "wb") as w:
                     w.write(output.encode("utf-8"))
                     w.flush()
             else:
                 copyfile(inputpath, outputpath)
 
         elif extension(f) == "manifest":
-            with open(inputpath) as r:
+            with open(inputpath, "rb") as r:
                 manifest = r.read().decode("utf-8").split('\n')
 
             javascript = ''
@@ -84,9 +85,13 @@ def prepare():
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
 
             if not app.debug:
-                javascript = minify(javascript)
+                # FIXME https://github.com/rspivak/slimit/issues/64
+                if sys.version_info.major == 3:
+                    sys.stderr.write("WARNING: Minifying is not supported on Python 3 yet\n")
+                else:
+                    javascript = minify(javascript)
 
-            with open(os.path.join(path, output), "w") as w:
+            with open(os.path.join(path, output), "wb") as w:
                 w.write(javascript.encode("utf-8"))
                 w.flush()
 

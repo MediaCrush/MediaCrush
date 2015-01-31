@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, g, Response, redirect
-from flaskext.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 from flaskext.markdown import Markdown
 
 

@@ -7,7 +7,10 @@ import requests
 import re
 
 from flask import current_app
-from urlparse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError: # py2
+    from urlparse import urlparse
 
 from mediacrush.config import _cfg
 from mediacrush.paths import file_storage, shard

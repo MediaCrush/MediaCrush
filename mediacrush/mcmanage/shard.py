@@ -4,7 +4,7 @@ import base64
 import string
 import os
 
-digs = string.digits + string.letters + "-_"
+digs = string.digits + string.ascii_letters + "-_"
 
 # http://stackoverflow.com/posts/2267446/revisions
 def int2base(x, base):
@@ -33,7 +33,7 @@ def init(args):
     for i in range(64 ** sharding_level):
         try:
             os.mkdir(os.path.join(folder, int2base(i, 64)))
-        except OSError, e:
+        except OSError as e:
             print(e)
 
 def migrate(args):
