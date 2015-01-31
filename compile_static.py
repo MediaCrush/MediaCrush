@@ -4,6 +4,7 @@ from mediacrush.config import _cfg, _cfgi
 from mediacrush.files import extension
 
 import os
+import sys
 import scss
 import coffeescript
 import tempfile
@@ -84,7 +85,11 @@ def prepare():
             output = '.'.join(f.rsplit('.')[:-1]) + '.js'
 
             if not app.debug:
-                javascript = minify(javascript)
+                # FIXME https://github.com/rspivak/slimit/issues/64
+                if sys.version_info.major == 3:
+                    sys.stderr.write("WARNING: Minifying is not supported on Python 3 yet\n")
+                else:
+                    javascript = minify(javascript)
 
             with open(os.path.join(path, output), "wb") as w:
                 w.write(javascript.encode("utf-8"))
