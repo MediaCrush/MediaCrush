@@ -4,7 +4,7 @@ import base64
 import string
 import os
 
-digs = string.digits + string.letters + "-_"
+digs = string.digits + string.ascii_letters + "-_"
 
 # http://stackoverflow.com/posts/2267446/revisions
 def int2base(x, base):
